@@ -18,9 +18,6 @@ const HeaderContainer = styled.header`
       no-repeat; 
     background-size: 100% 1px;
   `)};
-  ${maxPhone(css`
-    height: initial;
-  `)};
   position: relative;
   width: 100%;
   ${props =>
@@ -29,6 +26,8 @@ const HeaderContainer = styled.header`
         css`
         position: fixed;
         border-bottom: 1px solid #fff;
+        height: 100vh;
+        z-index: 99999999;
       `
   )};
 `;

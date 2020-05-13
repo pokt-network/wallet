@@ -1,18 +1,13 @@
 import styled, { css } from "styled-components";
-import { maxPhone, maxTabletLandscape } from "../utils/media";
+import { maxPhone } from "../utils/media";
 
 const Wrapper = styled.div`
   width: 100%;
   max-width: 96%;
   margin: 0 auto;
   display: flex;
-  ${maxTabletLandscape(css`
-    &.t-wrapper {
-        display: block;
-    }
-  `)};
-  &.details-wr {
-    display: block;
+  &.wide-block-wr {
+      display: block;
   }
   ${maxPhone(css`
     &.footer-w {

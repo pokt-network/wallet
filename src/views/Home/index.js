@@ -1,11 +1,12 @@
 import React from 'react';
-import EmptyWrapper from '../../components/EmptyWrapper';
+import HomeContent from './Home';
+import Landing from '../../components/Landing';
 
 function Home (){
     return (
-        <EmptyWrapper>
-            <h1>Home</h1>
-        </EmptyWrapper>
+        <HomeContent>
+            <Landing />
+        </HomeContent>
     );
 }
 

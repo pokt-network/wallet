@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
+import styled, { css } from "styled-components";
 import { createGlobalStyle } from 'styled-components';
+import { maxPhone } from "./utils/media";
 
 import Home from './views/Home/index';
 import BuyPokt from './views/BuyPokt/index';
@@ -20,6 +22,9 @@ const GlobalStyles = createGlobalStyle`
   }
   .page-container {
     background-image: linear-gradient(126deg, #27a9e0 19%, #092e40 94%, #06202e 100%);
+    ${maxPhone(css`
+      background-image: linear-gradient(161deg, #27a9e0 -3%, #092e40 93%, #06202e 100%);
+    `)};
   }
 `
 

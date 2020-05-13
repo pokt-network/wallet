@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { maxTablet, tablet } from "../../utils/media";
+import { tablet } from "../../utils/media";
 import { colors } from '../../utils/colors';
 
 import StyledLink from "./Link";
