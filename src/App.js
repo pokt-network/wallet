@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-import styled, { css } from "styled-components";
+import { css } from "styled-components";
 import { createGlobalStyle } from 'styled-components';
 import { maxPhone } from "./utils/media";
 
