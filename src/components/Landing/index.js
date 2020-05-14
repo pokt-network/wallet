@@ -4,7 +4,7 @@ import Wrapper from '../../components/Wrapper';
 import LandingContent from './LandingContent';
 import logoPW from '../../utils/images/50x45.png';
 import Description from './Description';
-import TitleCta from './../Public/TitleCta/TitleCta';
+import Title from './../Public/Title/Title';
 import Button from './../Public/Button/Button';
 
 class Landing extends Component {
@@ -23,9 +23,9 @@ class Landing extends Component {
               </Description>
             </div>
             <div className="bottom">
-              <TitleCta>
+              <Title>
                 Do you have a Pocket account?
-              </TitleCta>
+              </Title>
               <div className="btns">
                 <Button href="http://example.com" dark>Create</Button>
                 <Button href="http://example.com">Import</Button>

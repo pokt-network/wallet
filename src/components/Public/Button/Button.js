@@ -17,7 +17,6 @@ const Button = styled.a`
   ${maxPhone(css`
     display: block;
     font-size: 14px;
-    margin-bottom: 20px;
     padding: 15px 50px;
   `)};
 `;

@@ -8,4 +8,5 @@ export const colors = {
     darkGray: "#474747",
     lightGray: "#d8d8d8",
     footerBg: "#07212f",
+    error: "#fa5849",
 }

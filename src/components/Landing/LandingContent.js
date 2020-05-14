@@ -54,6 +54,11 @@ const LandingContent = styled.section`
     `)};
     .btns {
       margin-top: 27px;
+      a {
+        ${maxPhone(css`
+          margin-bottom: 20px;
+        `)};
+      }
     }
     h1 {
       ${maxPhone(css`
