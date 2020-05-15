@@ -9,7 +9,7 @@ const Input = styled.input`
   border: solid 1px ${colors.blue};
   outline: none;
   padding: 9px 18px;
-  width: 100%;
+  width: calc(100% - 38px);
   background-color: transparent;
   &::placeholder {
     opacity: 1;
