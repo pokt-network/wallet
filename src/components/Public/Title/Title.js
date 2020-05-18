@@ -10,9 +10,9 @@ const Title = styled.h1`
   line-height: 1;
   text-align: center;
   ${maxPhone(css`
-    font-size: 22px;
+    font-size: 30px;
     line-height: 1.1;
-    max-width: 70%;
+    max-width: 100%;
     margin: 0 auto;
   `)};
 `;

@@ -141,22 +141,6 @@ const SendContent = styled.section`
         margin-right: 0;
       }
     }
-    .error {
-      display: block;
-      margin-top: 1px;
-      color: ${colors.error};
-      font-size: 14px;
-      font-weight: 300;
-      margin-right: 17px;
-      text-align: right;
-      ${maxPhone(css`
-        margin-right: 10px;
-      `)};
-      img {
-        max-width: 12px;
-        margin-right: -2px;
-      }
-    }
   }
 `;
 
