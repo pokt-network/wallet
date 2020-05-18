@@ -11,6 +11,7 @@ import Send from './views/Send/index';
 import Create from './views/Create/index';
 import CreatePrivateKey from './views/CreatePrivateKey/index';
 import LogOut from './views/LogOut/index';
+import Import from './views/Import/index';
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -59,6 +60,7 @@ class App extends Component {
             <Route exact path='/create' component={Create}></Route>
             <Route exact path='/createprivatekey' component={CreatePrivateKey}></Route>
             <Route exact path='/logout' component={LogOut}></Route>
+            <Route exact path='/import' component={Import}></Route>
             <Footer />
           </div>
       </Router>
