@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import { tablet, maxPhone } from "../../utils/media";
 import { colors } from '../../utils/colors';
 
-import StyledLink from "./Link";
+import StyledLink from "./link";
 
   const MenuButton = styled(StyledLink).attrs({
     height: null,
