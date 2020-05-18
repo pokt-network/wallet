@@ -30,11 +30,11 @@ function Send (){
                         <div className="container">
                             <label htmlFor="adrs">To address</label>
                             <Input type="text" name="address" id="adrs" placeholder="Pocket account address" />
-                            <span class="error"> <img src={altertR} alt="alert" /> Please enter an address</span>
+                            <span className="error"> <img src={altertR} alt="alert" /> Please enter an address</span>
                             <label>TX Fee 100,000POKT</label>
                             <div className="btn-subm">
                                 <Button href="http://example.com">Send</Button>
-                                <span class="error"> <img src={altertR} alt="alert" /> Not Enough Balance</span>
+                                <span className="error"> <img src={altertR} alt="alert" /> Not Enough Balance</span>
                             </div>
                         </div>
                     </form>

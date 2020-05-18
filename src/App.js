@@ -9,6 +9,7 @@ import Home from './views/Home/index';
 import BuyPokt from './views/BuyPokt/index';
 import Send from './views/Send/index';
 import LogOut from './views/LogOut/index';
+import Import from './views/Import/index';
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -26,6 +27,22 @@ const GlobalStyles = createGlobalStyle`
       background-image: linear-gradient(161deg, #27a9e0 -3%, #092e40 93%, #06202e 100%);
     `)};
   }
+  .error {
+    display: block;
+    margin-top: 1px;
+    color: #fa5849;
+    font-size: 14px;
+    font-weight: 300;
+    margin-right: 17px;
+    text-align: right;
+    ${maxPhone(css`
+      margin-right: 10px;
+    `)};
+    img {
+      max-width: 12px;
+      margin-right: -2px;
+    }
+  }
 `
 
 class App extends Component {
@@ -39,6 +56,7 @@ class App extends Component {
             <Route exact path='/buypokt' component={BuyPokt}></Route>
             <Route exact path='/send' component={Send}></Route>
             <Route exact path='/logout' component={LogOut}></Route>
+            <Route exact path='/import' component={Import}></Route>
             <Footer />
           </div>
       </Router>
