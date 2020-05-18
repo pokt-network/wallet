@@ -9,6 +9,7 @@ import Home from './views/Home/index';
 import BuyPokt from './views/BuyPokt/index';
 import Send from './views/Send/index';
 import Create from './views/Create/index';
+import CreatePrivateKey from './views/CreatePrivateKey/index';
 import LogOut from './views/LogOut/index';
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -56,6 +57,7 @@ class App extends Component {
             <Route exact path='/buypokt' component={BuyPokt}></Route>
             <Route exact path='/send' component={Send}></Route>
             <Route exact path='/create' component={Create}></Route>
+            <Route exact path='/createprivatekey' component={CreatePrivateKey}></Route>
             <Route exact path='/logout' component={LogOut}></Route>
             <Footer />
           </div>
