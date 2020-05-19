@@ -2,7 +2,7 @@ import styled, {css} from "styled-components";
 import { maxPhone } from "../../utils/media";
 import { colors } from '../../utils/colors';
 
-const CreatePKContent = styled.section`
+const AccountLContent = styled.section`
   position: relative;
   max-width: 800px;
   margin: 80px auto;
@@ -68,6 +68,15 @@ const CreatePKContent = styled.section`
 
           }
         }
+      }
+    }
+  }
+  .pokt-options {
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      .option {
+        flex-grow: 1;
       }
     }
   }
@@ -150,4 +159,4 @@ const CreatePKContent = styled.section`
   }
 `;
 
-export default CreatePKContent;
+export default AccountLContent;

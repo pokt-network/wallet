@@ -1,22 +1,22 @@
 import React from 'react';
 import Wrapper from '../../components/wrapper';
-import CreatePrivateKey from './create-private-key';
+import CreatePKContent from './create-private-key';
 import Input from '../../components/public/input/input';
 import Button from '../../components/public/button/button';
 import altertT from '../../utils/images/alert-triangle.png';
 import reload from '../../utils/images/reload.png'; 
-import increase from '../../utils/images/increase.png';
+import arrowUp from '../../utils/images/arrow-up.png';
 
-function Send (){
+function CreatePrivateKey (){
     return (
-        <CreatePrivateKey>
+        <CreatePKContent>
             <Wrapper className="wide-block-wr">
                 <div className="quantitypokt">
                     <div className="container">
                         <h1>0.00 POKT</h1>
                         <div className="stats">
                             <div className="stat">
-                                <img src={increase} alt="alert" />
+                                <img src={arrowUp} alt="alert" />
                                 <span>23,87% </span>
                             </div>
                             <div className="stat">
@@ -57,8 +57,8 @@ function Send (){
                     </div>
                 </form>
             </Wrapper>
-        </CreatePrivateKey>
+        </CreatePKContent>
     );
 }
 
-export default Send;
+export default CreatePrivateKey;
