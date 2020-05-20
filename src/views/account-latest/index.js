@@ -5,11 +5,20 @@ import Input from '../../components/public/input/input';
 import Button from '../../components/public/button/button';
 import ToggleBtn from '../../components/public/toggle/toggle-btn';
 import ContainerToggle from '../../components/public/toggle/container-toggle';
-import st from '../../utils/images/18x22.png';
-import ss from '../../utils/images/25x25.png';
-import at from '../../utils/images/22x22.png';
+import token from '../../utils/images/token.png';
+import unstaking from '../../utils/images/unstaking.png';
+import node from '../../utils/images/node.png';
+import sent from '../../utils/images/sent.png';
+import load from '../../utils/images/load.png';
 import reload from '../../utils/images/reload.png'; 
 import arrowUp from '../../utils/images/arrow-up.png';
+import T from '../../components/public/Table/Table';
+import Th from '../../components/public/Table/Th';
+import Td from '../../components/public/Table/Td';
+import Tr from '../../components/public/Table/Tr';
+import THead from '../../components/public/Table/THead';
+import TBody from '../../components/public/Table/TBody';
+import TFooter from '../../components/public/Table/TFooter';
 
 
 class AccountLatest extends Component {
@@ -34,7 +43,7 @@ class AccountLatest extends Component {
                                     <span>23,87% </span>
                                 </div>
                                 <div className="stat">
-                                    <span>$ 0.00 USD</span>
+                                    <span>$ 293,793.376 USD</span>
                                     <img src={reload} alt="reload" />
                                 </div>
                             </div>
@@ -44,21 +53,21 @@ class AccountLatest extends Component {
                         <div className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <h2> <img src={st} alt="staked tokens"/> 1900 <span>POKT</span></h2>
+                                    <h2> <img src={token} alt="staked tokens"/> 1900 <span>POKT</span></h2>
                                 </div>
-                                <span>Staked Tokens</span>
+                                <span className="title">Staked Tokens</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2> <img src={ss} alt="staked tokens"/> UNSTAKING </h2>
+                                    <h2> <img src={unstaking} alt="staked tokens"/> UNSTAKING </h2>
                                 </div>
-                                <span>Staking Status</span>
+                                <span className="title">Staking Status</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2> <img src={at} alt="staked tokens"/> NODE</h2>
+                                    <h2> <img src={node} alt="staked tokens"/> NODE</h2>
                                 </div>
-                                <span>Account Type</span>
+                                <span className="title">Account Type</span>
                             </div>
                         </div>
                         <div className="btn-subm">
@@ -68,11 +77,11 @@ class AccountLatest extends Component {
                     </div>
                     <form className="pass-pk">
                         <div className="container">
-                            <div className="cont-input second">
+                            <div className="cont-input">
                                 <label htmlFor="add">Address</label>
                                 <Input type="text" name="address" id="add" value="9L69144c864bd87a92e9a969144c864bd87a92e9" disabled />
                             </div>
-                            <div className="cont-input">
+                            <div className="cont-input second">
                                 <label htmlFor="puk">Public Key</label>
                                 <Input type="text" name="public-k" id="puk" value="a969144c864bd87a92e9a969144c864bd87a92e9" disabled />
                             </div>
@@ -82,7 +91,79 @@ class AccountLatest extends Component {
                         <ToggleBtn id="tooglebtn" onClick={this.onToggleBtn}>Latest Transactions</ToggleBtn>
                     </div>
                     <ContainerToggle isVisible={this.state.visibility}>
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos tempora explicabo illum praesentium vitae doloremque, dolor deleniti? Libero temporibus deserunt assumenda voluptates perferendis neque consequuntur quaerat, corrupti aspernatur. Ipsa, perferendis.
+                        <T>
+                            <THead className="latest-tx">
+                                <Tr>
+                                <Th> </Th>
+                                <Th>STATUS</Th>
+                                <Th>TIMESTAMP</Th>
+                                <Th> TX HASH</Th>
+                                </Tr>
+                            </THead>
+                            <TBody className="l-tx">
+                                <Tr>
+                                    <Td> <img src={load} alt="loading" /> </Td>
+                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sending</div> </Td>
+                                    <Td>34 sec ago</Td>
+                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
+                                </Tr>
+                                <Tr>
+                                    <Td> <img src={sent} alt="sent" /> </Td>
+                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sent</div> </Td>
+                                    <Td>34 sec ago</Td>
+                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
+                                </Tr>
+                                <Tr>
+                                    <Td> <img src={sent} alt="sent" /> </Td>
+                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Received</div> </Td>
+                                    <Td>34 sec ago</Td>
+                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
+                                </Tr>
+                                <Tr>
+                                    <Td> <img src={sent} alt="sent" /> </Td>
+                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sending</div> </Td>
+                                    <Td>34 sec ago</Td>
+                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
+                                </Tr>
+                                <Tr>
+                                    <Td> <img src={sent} alt="sent" /> </Td>
+                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sent</div> </Td>
+                                    <Td>34 sec ago</Td>
+                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
+                                </Tr>
+                                <Tr>
+                                    <Td> <img src={sent} alt="sent" /> </Td>
+                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Received</div> </Td>
+                                    <Td>34 sec ago</Td>
+                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
+                                </Tr>
+                                <Tr>
+                                    <Td> <img src={sent} alt="sent" /> </Td>
+                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sending</div> </Td>
+                                    <Td>34 sec ago</Td>
+                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
+                                </Tr>
+                                <Tr>
+                                    <Td> <img src={sent} alt="sent" /> </Td>
+                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sent</div> </Td>
+                                    <Td>34 sec ago</Td>
+                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
+                                </Tr>
+                                <Tr>
+                                    <Td> <img src={sent} alt="sent" /> </Td>
+                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Received</div> </Td>
+                                    <Td>34 sec ago</Td>
+                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
+                                </Tr>
+                            </TBody>
+                            <TFooter>
+                                <Tr>
+                                <Td colSpan={6}> 
+                                    <a href="http://example.com" className="button button-1"> Load More </a> 
+                                </Td>
+                                </Tr>
+                            </TFooter>
+                        </T>
                     </ContainerToggle>
                 </Wrapper>
             </AccountLContent>
