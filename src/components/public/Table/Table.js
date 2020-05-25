@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import { colors } from '../../../utils/colors';
-import { maxPhone, tablet, tabletLandscape, desktop } from "../../../utils/media";
+import { maxPhone, tablet } from "../../../utils/media";
 
 const T = styled.table`
     position: relative;
@@ -9,13 +9,31 @@ const T = styled.table`
     box-shadow: 0 6px 25px -8px rgba(0, 0, 0, 0.23);
     background-color: ${colors.white};
     margin: 0 auto;
-    .one-table-container & {
-        width: 100%;
-    }
-    .one-table-container & {
+    &.detail-table {
+        width: 535px;
         ${maxPhone(css`
-            margin-top: 20px;
+            max-width: 100%;
+            width: 100%;
         `)};
+        ${tablet(css`
+            &.desktop {
+                display: block;
+            }
+            &.mobile {
+                display: none;
+            }
+        `)};
+        ${maxPhone(css`
+            &.desktop {
+                display: none;
+            }
+            &.mobile {
+                display: block;
+            }
+        `)};
+    }
+    .states {
+        width: 100%;
     }
 `;
 

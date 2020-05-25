@@ -24,6 +24,22 @@ const Tr = styled.tr`
             margin-left: -48.25%;
             width: 96.5%;
         `)};
+        .detail-table & {
+            margin-left: -46%;
+            width: 92%;
+        }
+    }
+    .states & {
+        &:after {
+            display: none;
+        }
+    }
+    &:nth-child(odd) {
+        .detail-table.mobile & {
+            &:after {
+                display: none;
+            }
+        }
     }
 `;
 

@@ -16,6 +16,34 @@ const Th = styled.th`
     &:nth-child(2) {
         padding-left: 10px;
     }
+    tr & {
+        .detail-table.desktop & {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            padding-left: 38px;
+        }
+    }
+    tr:first-of-type & {
+        .detail-table.desktop & {
+            padding-top: 40px;
+        }
+    }
+    tr:last-of-type & {
+        .detail-table.desktop & {
+            padding-bottom: 40px;
+        }
+    }
+    tr & {
+        .detail-table.mobile & {
+            padding: 12px 20px 10px 25px;
+            width: 360px;
+        }
+    }
+    tr:first-of-type & {
+        .detail-table.mobile & {
+            padding-top: 40px;
+        }
+    }
 `;
 
 export default Th;

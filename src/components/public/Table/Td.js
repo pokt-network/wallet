@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import { colors } from '../../../utils/colors';
-import { maxPhone, tablet, maxTablet } from "../../../utils/media";
+import { maxPhone } from "../../../utils/media";
 
 const Td = styled.td`
     text-align: left;
@@ -77,37 +77,136 @@ const Td = styled.td`
         }
     }
     tr:first-of-type & {
-        .details & {
-            font-size: 12px;
-            color: ${colors.darkBlue};
-            font-weight: 900;
-            text-transform: uppercase;
+        .detail-table.desktop & {
+            padding-top: 40px;
+            color: ${colors.blueLink};
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+        }
+    }
+    tr:last-of-type & {
+        .detail-table.desktop & {
+            padding-bottom: 40px;
+            color: ${colors.blueLink};
         }
     }
     tr:nth-of-type(2) & {
-        .details & {
-            color: ${colors.gray};
-            font-weight: 300;
-            ${maxPhone(css`
-                max-width: 100px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            `)};
-        }
-    }
-    tr:nth-of-type(3) & {
-        .details & {
-            color: ${colors.gray};
-            font-weight: 300;
+        .detail-table.desktop & {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            position: relative;
+            &:first-of-type {
+                span {
+                    position: absolute;
+                    top: 16px;
+                    left: 44px;
+                }
+            }
+            &:last-of-type {
+                text-align: right;
+                span {
+                    position: absolute;
+                    top: 16px;
+                    right: 44px;
+                }
+            }
+            img {
+                max-width: 20px;
+                display: inline-block;
+            }
+            span {
+                font-size: 10px;
+                font-weight: 300;
+                color: #888888;
+                display: inline-block;
+            }
         }
     }
     tr:nth-of-type(4) & {
-        .details & {
+        .detail-table.desktop & {
             font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            color: ${colors.darkBlue};
+            span {
+                font-size: 10px;
+            }
+        }
+    }
+    tr & {
+        .detail-table.desktop & {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            font-weight: 300;
+            color: ${colors.darkGray};
+        }
+    }
+    tr & {
+        .detail-table.mobile & {
+            padding: 12px 20px 10px 25px;
+            font-size: 12px;
+            font-weight: 300;
+            color: ${colors.darkGray};
+            width: 360px;
+        }
+    }
+    tr:last-of-type & {
+        .detail-table.mobile & {
+            padding-bottom: 40px;
             color: ${colors.blueLink};
-            font-weight: 900;
-            font-size: 11px;
+        }
+    }
+    tr:nth-of-type(2) & {
+        .detail-table.mobile & {
+            color: ${colors.blueLink};
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+        }
+    }
+    tr:nth-of-type(4) & {
+        .detail-table.mobile & {
+            padding-top: 0;
+            padding-bottom: 5px;
+            position: relative;
+            &:first-of-type {
+                span {
+                    position: absolute;
+                    top: 4px;
+                    left: 52px;
+                }
+            }
+            &:last-of-type {
+                text-align: right;
+                span {
+                    position: absolute;
+                    top: 4px;
+                    right: 44px;
+                }
+            }
+            img {
+                max-width: 20px;
+                display: inline-block;
+            }
+            span {
+                font-size: 10px;
+                font-weight: 300;
+                color: #888888;
+                display: inline-block;
+            }
+        }
+    }
+    tr:nth-of-type(8) & {
+        .detail-table.mobile & {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            color: ${colors.darkBlue};
+            span {
+                font-size: 10px;
+            }
+        }
+    }
+    tr:nth-child(even) & {
+        .detail-table.mobile & {
+            padding-top: 0;
         }
     }
 `;

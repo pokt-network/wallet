@@ -11,6 +11,7 @@ import CreatePrivateKey from './views/create-private-key/index';
 import LogOut from './views/log-out/index';
 import AccountLatest from './views/account-latest/index';
 import ImportPocket from './views/import-pocket/index';
+import TransactionDetail from './views/transaction-detail/index';
 import Import from './views/import/index';
 import Header from "./components/header";
 import Footer from "./components/footer";
@@ -32,6 +33,7 @@ class App extends Component {
             <Route exact path='/logout' component={LogOut}></Route>
             <Route exact path='/import' component={Import}></Route>
             <Route exact path='/account-latest' component={AccountLatest}></Route>
+            <Route exact path='/transaction-detail' component={TransactionDetail}></Route>
             <Route exact path='/import-pocket' component={ImportPocket}></Route>
             <Footer />
           </div>
