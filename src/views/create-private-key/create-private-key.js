@@ -2,7 +2,7 @@ import styled, {css} from "styled-components";
 import { maxPhone } from "../../utils/media";
 import { colors } from '../../utils/colors';
 
-const CreatePrivateKey = styled.section`
+const CreatePKContent = styled.section`
   position: relative;
   max-width: 800px;
   margin: 80px auto;
@@ -45,7 +45,7 @@ const CreatePrivateKey = styled.section`
         .stat {
           &:first-of-type {
             img {
-              max-width: 20px;
+              max-width: 17px;
               margin-right: 5px;
             }  
           }
@@ -150,4 +150,4 @@ const CreatePrivateKey = styled.section`
   }
 `;
 
-export default CreatePrivateKey;
+export default CreatePKContent;
