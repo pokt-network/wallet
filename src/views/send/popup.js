@@ -1,8 +1,8 @@
 import React from 'react';
 import Popup from "reactjs-popup";
 import PopupContent from './popup-content';
-import Button from '../../components/Public/Button/button';
-import Input from '../../components/Public/Input/input';
+import Button from '../../components/public/button/button';
+import Input from '../../components/public/input/input';
 import exit from '../../utils/images/exit.png';
 
 function PopupPW (){

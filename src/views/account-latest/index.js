@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import Wrapper from '../../components/wrapper';
 import AccountLContent from './account-latest';
-import Input from '../../components/Public/Input/input';
-import Button from '../../components/Public/Button/button';
-import ToggleBtn from '../../components/Public/toggle/toggle-btn';
-import ContainerToggle from '../../components/Public/toggle/container-toggle';
+import Input from '../../components/public/input/input';
+import Button from '../../components/public/button/button';
+import ToggleBtn from '../../components/public/toggle/toggle-btn';
+import ContainerToggle from '../../components/public/toggle/container-toggle';
 import token from '../../utils/images/token.png';
 import unstaking from '../../utils/images/unstaking.png';
 import node from '../../utils/images/node.png';
@@ -12,13 +12,13 @@ import sent from '../../utils/images/sent.png';
 import load from '../../utils/images/load.png';
 import reload from '../../utils/images/reload.png'; 
 import arrowUp from '../../utils/images/arrow-up.png';
-import T from '../../components/Public/Table/Table';
-import Th from '../../components/Public/Table/Th';
-import Td from '../../components/Public/Table/Td';
-import Tr from '../../components/Public/Table/Tr';
-import THead from '../../components/Public/Table/THead';
-import TBody from '../../components/Public/Table/TBody';
-import TFooter from '../../components/Public/Table/TFooter';
+import T from '../../components/public/table/Table';
+import Th from '../../components/public/table/Th';
+import Td from '../../components/public/table/Td';
+import Tr from '../../components/public/table/Tr';
+import THead from '../../components/public/table/THead';
+import TBody from '../../components/public/table/TBody';
+import TFooter from '../../components/public/table/TFooter';
 
 
 class AccountLatest extends Component {
