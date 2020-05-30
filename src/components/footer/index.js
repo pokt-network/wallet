@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React, { Component } from "./node_modules/react";
 
 import FooterContent from './footer';
-import Wrapper from '.././wrapper';
+import Wrapper from '../wrapper';
 import HalfColumn from './half-column';
 import tw from '../../utils/images/twitter.png';
 import github from '../../utils/images/github.png';

@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css } from "./node_modules/styled-components";
 import { maxPhone, tablet } from "../../utils/media";
 import { colors } from '../../utils/colors'; 
 import arrow from '../../utils/images/down-arrow.png'

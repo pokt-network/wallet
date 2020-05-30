@@ -1,5 +1,5 @@
-import React from "react";
-import styled, { css } from "styled-components";
+import React from "./node_modules/react";
+import styled, { css } from "./node_modules/styled-components";
 import { tablet, maxPhone } from "../../utils/media";
 import { colors } from '../../utils/colors';
 

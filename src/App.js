@@ -13,8 +13,8 @@ import AccountLatest from './views/account-latest/index';
 import ImportPocket from './views/import-pocket/index';
 import TransactionDetail from './views/transaction-detail/index';
 import Import from './views/Import/index';
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Header from "./components/header";
+import Footer from "./components/footer";
 
 import './normalize.css';
 
