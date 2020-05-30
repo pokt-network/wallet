@@ -12,7 +12,7 @@ import LogOut from './views/log-out/index';
 import AccountLatest from './views/account-latest/index';
 import ImportPocket from './views/import-pocket/index';
 import TransactionDetail from './views/transaction-detail/index';
-import Import from './views/Import/index';
+import Import from './views/import/index';
 import Header from "./components/header";
 import Footer from "./components/footer";
 
