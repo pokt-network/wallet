@@ -5,7 +5,7 @@ import GlobalStyles from './components/global-style';
 
 import Home from './views/home/index';
 import BuyPokt from './views/buy-pokt/index';
-import Send from './views/Send/index';
+import Send from './views/send/index';
 import Create from './views/create/index';
 import CreatePrivateKey from './views/create-private-key/index';
 import LogOut from './views/log-out/index';

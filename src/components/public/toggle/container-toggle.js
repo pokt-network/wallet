@@ -1,4 +1,4 @@
-import styled, { css } from "./node_modules/styled-components";
+import styled, { css } from "styled-components";
 
 const ContainerToggle = styled.div`
   display: block;

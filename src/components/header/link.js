@@ -1,4 +1,4 @@
-import styled from "./node_modules/styled-components";
+import styled from "styled-components";
 
 const StyledLink = styled.a`
 

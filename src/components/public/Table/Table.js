@@ -1,4 +1,4 @@
-import styled, { css } from "./node_modules/styled-components";
+import styled, { css } from "styled-components";
 import { colors } from '../../../utils/colors';
 import { maxPhone, tablet } from "../../../utils/media";
 
