@@ -5,16 +5,16 @@ import GlobalStyles from './components/global-style';
 
 import Home from './views/home/index';
 import BuyPokt from './views/buy-pokt/index';
-import Send from './views/send/index';
+import Send from './views/Send/index';
 import Create from './views/create/index';
 import CreatePrivateKey from './views/create-private-key/index';
 import LogOut from './views/log-out/index';
 import AccountLatest from './views/account-latest/index';
 import ImportPocket from './views/import-pocket/index';
 import TransactionDetail from './views/transaction-detail/index';
-import Import from './views/import/index';
-import Header from "./components/header";
-import Footer from "./components/footer";
+import Import from './views/Import/index';
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 import './normalize.css';
 

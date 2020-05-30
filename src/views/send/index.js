@@ -1,8 +1,8 @@
 import React from 'react';
 import Wrapper from '../../components/wrapper';
 import SendContent from './send';
-import Title from '../../components/public/title/title';
-import Input from '../../components/public/input/input';
+import Title from '../../components/Public/Title/title';
+import Input from '../../components/Public/Input/input';
 import PopupPW from './popup';
 import altertR from '../../utils/images/alert-circle-red.png';
 

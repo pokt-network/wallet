@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import Wrapper from '../../components/wrapper';
 import DetailContent from './detail-content';
-import Title from '../../components/public/title/title';
-import T from '../../components/public/Table/Table';
-import Th from '../../components/public/Table/Th';
-import Td from '../../components/public/Table/Td';
-import Tr from '../../components/public/Table/Tr';
-import TBody from '../../components/public/Table/TBody';
+import Title from '../../components/Public/Title/title';
+import T from '../../components/Public/Table/Table';
+import Th from '../../components/Public/Table/Th';
+import Td from '../../components/Public/Table/Td';
+import Tr from '../../components/Public/Table/Tr';
+import TBody from '../../components/Public/Table/TBody';
 import load from '../../utils/images/load.png';
 import none from '../../utils/images/none.png';
 
