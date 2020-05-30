@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@pokt-network/pocket-js": "^0.4.1-rc",
+    "@pokt-network/pocket-js": "../pocket-js/",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -15,7 +15,7 @@
     "styled-components": "^5.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start --max_old_space_size=4096",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
