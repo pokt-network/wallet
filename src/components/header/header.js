@@ -1,4 +1,4 @@
-import styled, { css } from "./node_modules/styled-components";
+import styled, { css } from "styled-components";
 import { tablet, maxPhone } from "../../utils/media";
 
 const HeaderContainer = styled.header`
