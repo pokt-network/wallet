@@ -32,12 +32,10 @@ class Create extends Component {
             this.props.history.push({
                 pathname: '/createprivatekey',
                 data: accountObj
-              })
-            
-            // Go to create private key
-            // window.location = `/createprivatekey`
-        }else{
-            alert("passphrase is too short")
+            })
+        }else {
+            const errorLabel = document.getElementById('passphraseErrorLabel')
+            errorLabel.className = "error"
         }
     }
         // Render
@@ -52,14 +50,14 @@ class Create extends Component {
                         <form className="pass-form">
                             <div className="cont-input">
                                 <Input type="password" name="passphrase" id="passp" placeholder="•••••••••••••••••" />
-                                <span className="error"> <img src={altertR} alt="alert" />The password does not fit the requirements</span>
+                                <span id="passphraseErrorLabel" className="error passphrase-error"> <img src={altertR} alt="alert" />The passphrase does not fit the requirements</span>
                             </div>
                             <div className="btn-subm">
-                                <Button href="http://example.com">Download</Button>
+                                <Button onClick={this.handleCreateAccount} >Download</Button>
                                 <Button onClick={this.handleCreateAccount} dark>Create</Button>
                             </div>
                         </form>
-                        <a href="http://example.com" className="account">Already have an account? Access my Pocket account</a>
+                        <a href="/" className="account">Already have an account? Access my Pocket account</a>
                     </div>
                     <div className="alert">
                         <img src={altertT} alt="alert" />

@@ -99,10 +99,28 @@ const ImportContent = styled.section`
           margin-right: 2px;
         }
       }
+      .ok-modal-button {
+        padding: 9px 27px 8px 24px;
+        width: 10px;
+        display: block;
+      }
+      .ppk-error {
+        display: none;
+      }
+      .pk-error {
+        display: none;
+      }
+      .passphrase-error {
+        display: none;
+      }
+      .keyfile-label {
+        display: inline-block;
+      }
     }
     .btn-subm {
+      display: inline-block;
       position: relative;
-      margin: 2px 0 35px 0;
+      margin: 2px 0 15px 0;
       text-align: center;
       min-height: 32px;
       ${maxPhone(css`
