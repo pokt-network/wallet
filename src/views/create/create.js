@@ -24,6 +24,9 @@ const CreateContent = styled.section`
     padding-bottom: 33px;
     margin-bottom: 50px;
   }
+  .passphrase-error {
+    display: none;
+  }
   .passphrase {
     max-width: 481px;
     margin: 0 auto;

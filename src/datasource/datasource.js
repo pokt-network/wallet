@@ -4,7 +4,8 @@ import {
     typeGuard,
     RpcError,
     PocketAAT,
-    Configuration
+    Configuration,
+    Hex
 } from "@pokt-network/pocket-js/dist/web.js"
 
 export class DataSource {
@@ -23,7 +24,7 @@ export class DataSource {
             const clientPrivateKey = "c86b5424ab1d73da92522d21adbd48b217a66b61f78fa8e2c93e9ea47afa55716220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b"
             const clientAccount = await rpcProviderPocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), "test123")
             await rpcProviderPocket.keybase.unlockAccount(clientAccount.addressHex, "test123", 0)
-            const clientPubKeyHex = 
+            const clientPubKeyHex =
                 clientAccount.publicKey.toString("hex")
             const appPubKeyHex =
                 "3895f3a84afb824d7e2e63c5042a93ccdb13e0f891d5d61d10289df50d6c251d"
@@ -76,6 +77,58 @@ export class DataSource {
     }
 
     /**
+     * @returns {Account}
+     */
+    async importPortablePrivateKey(password, jsonStr, passphrase) {
+        const pocket = await this.getPocketInstance()
+        const accountOrError = await pocket.keybase.importPPKFromJSON(
+            password,
+            jsonStr,
+            passphrase
+        )
+
+        if (typeGuard(accountOrError, Error)) {
+            return undefined
+        } else {
+            return accountOrError
+        }
+    }
+
+     /**
+     * @returns {Account}
+     */
+    async importAccount(privateKey, passphrase) {
+        const pocket = await this.getPocketInstance()
+        const accountOrError = await pocket.keybase.importAccount(
+            Buffer.from(privateKey, "hex"),
+            passphrase
+        )
+
+        if (typeGuard(accountOrError, Error)) {
+            return undefined
+        } else {
+            return accountOrError
+        }
+    }
+    /**
+     * @returns {object}
+     */
+    async exportPPK(privateKey, passphrase) {
+        const pocket = await this.getPocketInstance()
+        const ppkOrError = await pocket.keybase.exportPPK(
+            Buffer.from(privateKey, "hex"),
+            passphrase,
+            "pocket wallet"
+        )
+
+        if (typeGuard(ppkOrError, Error)) {
+            return undefined
+        } else {
+            return ppkOrError
+        }
+    }
+
+    /**
      * @returns {BigInt}
      */
     async getBalance(address) {
@@ -88,4 +141,17 @@ export class DataSource {
             return Number(balanceResponseOrError.balance.toString())
         }
     }
-} 
+
+    /**
+     * @returns {boolean}
+     */
+    validateAddress(address) {
+        return Hex.validateAddress(address)
+    }
+    /**
+     * @returns {boolean}
+     */
+    validatePrivateKey(ppk) {
+        return Hex.isHex(ppk) && ppk.length === 128
+    }
+}
