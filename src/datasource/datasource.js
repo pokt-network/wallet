@@ -1,3 +1,4 @@
+/* global BigInt */
 import {
     Pocket,
     PocketRpcProvider,
@@ -24,18 +25,18 @@ export class DataSource {
             const clientPrivateKey = "c86b5424ab1d73da92522d21adbd48b217a66b61f78fa8e2c93e9ea47afa55716220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b"
             const clientAccount = await rpcProviderPocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), "test123")
             await rpcProviderPocket.keybase.unlockAccount(clientAccount.addressHex, "test123", 0)
-            const clientPubKeyHex =
+            const clientPubKeyHex = "6220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b"
                 clientAccount.publicKey.toString("hex")
-            const appPubKeyHex =
-                "3895f3a84afb824d7e2e63c5042a93ccdb13e0f891d5d61d10289df50d6c251d"
-            const appPrivateKey =
-                "7ae62c4d807a85fb5e60ffd80d30b3132b836fd3506cc0d4cef87d9dd118db0d3895f3a84afb824d7e2e63c5042a93ccdb13e0f891d5d61d10289df50d6c251d"
-            const aat = await PocketAAT.from(
+            const appPubKeyHex = "a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"                
+            const appSignature = "7949373c02eff36a87a2b847319a804eaed5f664c8333a3cb6c3ad14dbe98380ef1c53bee321e95670b123a1c4993ce02f130a98ec00ea6cac926a410b5f920f"
+
+            const aat = new PocketAAT(
                 "0.0.1",
                 clientPubKeyHex,
                 appPubKeyHex,
-                appPrivateKey
+                appSignature
             )
+
             const blockchain = "0002"
             const pocketRpcProvider = new PocketRpcProvider(
                 rpcProviderPocket,
@@ -134,11 +135,12 @@ export class DataSource {
     async getBalance(address) {
         const pocket = await this.getPocketInstance()
 
-        const balanceResponseOrError = await pocket.rpc().query.getBalance(address)
+        const balanceResponseOrError = await pocket.rpc().query.getBalance(address, BigInt(0))
         if (typeGuard(balanceResponseOrError, RpcError)) {
             return 0
         } else {
-            return Number(balanceResponseOrError.balance.toString())
+            const uPOKT = Number(balanceResponseOrError.balance.toString())
+            return uPOKT / 1000000
         }
     }
 

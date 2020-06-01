@@ -6,6 +6,10 @@ const CreatePKContent = styled.section`
   position: relative;
   max-width: 800px;
   margin: 80px auto;
+  .download-btn {
+    margin-top: 10px;
+    display: inline-block;
+  }
   ${maxPhone(css`
     max-width: 100%;
   `)};
