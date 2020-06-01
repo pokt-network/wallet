@@ -1,5 +1,5 @@
 import React from 'react';
-import EmptyWrapper from '../../components/EmptyWrapper';
+import EmptyWrapper from '../../components/emptywrapper';
 
 function BuyPocket (){
     return (
