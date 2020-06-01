@@ -105,7 +105,7 @@ class Import extends Component {
                 }
                 // Set current account and push
                 this.props.history.push({
-                    pathname: '/createprivatekey',
+                    pathname: '/account',
                     data: accountObj
                 })
             }
@@ -134,9 +134,8 @@ class Import extends Component {
                     publicKeyHex: account.publicKey.toString("hex"),
                     ppk: ppk
                 }
-                // Set current account and push to createprivatekey view
                 this.props.history.push({
-                    pathname: '/createprivatekey',
+                    pathname: '/account',
                     data: accountObj
                 })
             }else {

@@ -19,25 +19,30 @@ export class DataSource {
     async getPocketInstance() {
         if (!this.pocket) {
             //
-            const configuration = new Configuration(5, 1000, undefined, 40000)
-            const rpcProviderPocket = new Pocket(this.dispatchers, undefined, configuration)
+            //const configuration = new Configuration(5, 1000, undefined, 40000)
+            const rpcProviderPocket = new Pocket([new URL("http://localhost:8081")])
             // Import client PubKey and unlock account
             const clientPrivateKey = "c86b5424ab1d73da92522d21adbd48b217a66b61f78fa8e2c93e9ea47afa55716220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b"
             const clientAccount = await rpcProviderPocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), "test123")
             await rpcProviderPocket.keybase.unlockAccount(clientAccount.addressHex, "test123", 0)
             const clientPubKeyHex = "6220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b"
                 clientAccount.publicKey.toString("hex")
-            const appPubKeyHex = "a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"                
-            const appSignature = "7949373c02eff36a87a2b847319a804eaed5f664c8333a3cb6c3ad14dbe98380ef1c53bee321e95670b123a1c4993ce02f130a98ec00ea6cac926a410b5f920f"
+            const appPrivateKey =
+                "762f20a7860a285fd40d27c7445a4cf498f0ef5e7d24150b50ec84ea16e142864fd90da5ff3ddb6e2e3c1851a4164b26c5caf85265775d1664d6f4df2d664753"
+            const appPublicKey = "4fd90da5ff3ddb6e2e3c1851a4164b26c5caf85265775d1664d6f4df2d664753"
 
-            const aat = new PocketAAT(
-                "0.0.1",
-                clientPubKeyHex,
-                appPubKeyHex,
-                appSignature
-            )
+            const aat = PocketAAT.from("0.0.1", clientPubKeyHex, appPublicKey, appPrivateKey)
+            // const appPubKeyHex = "a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"                
+            // const appSignature = "7949373c02eff36a87a2b847319a804eaed5f664c8333a3cb6c3ad14dbe98380ef1c53bee321e95670b123a1c4993ce02f130a98ec00ea6cac926a410b5f920f"
 
-            const blockchain = "0002"
+            // const aat = new PocketAAT(
+            //     "0.0.1",
+            //     clientPubKeyHex,
+            //     appPubKeyHex,
+            //     appSignature
+            // )
+
+            const blockchain = "0001"
             const pocketRpcProvider = new PocketRpcProvider(
                 rpcProviderPocket,
                 aat,
@@ -153,7 +158,7 @@ export class DataSource {
     /**
      * @returns {boolean}
      */
-    validatePrivateKey(ppk) {
-        return Hex.isHex(ppk) && ppk.length === 128
+    validatePrivateKey(privateKey) {
+        return Hex.isHex(privateKey) && privateKey.length === 128
     }
 }
