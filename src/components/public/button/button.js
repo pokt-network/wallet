@@ -6,6 +6,7 @@ const Button = styled.a`
   background: ${props => props.dark ? colors.darkGray : colors.blue};
   color: ${colors.white};
   font-size: 12px;
+  cursor: pointer;
   margin: 0 35px;
   padding: 9px 50px;
   text-decoration: none;
