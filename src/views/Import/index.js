@@ -90,12 +90,10 @@ class Import extends Component {
     handleImportKeyFile = async (passphrase) => {
         try {
             const jsonStr = this.state.jsonStr
-            // Clean some variables from the state
-            this.setState({jsonStr: ""})
             // Import the PPK
             const account = await this.dataSource.importPortablePrivateKey(passphrase, jsonStr, passphrase)
             if (account === undefined) {
-                const errorMessage = document.getElementById("error-message-pk-import")
+                const errorMessage = document.getElementById("error-message-ppk-import")
                 errorMessage.style.display = "block"
                 errorMessage.innerText = "Failed to validate the portable private key"
 
@@ -112,7 +110,11 @@ class Import extends Component {
                 })
             }
         } catch (error) {
-            const errorMessage = document.getElementById("ppk-passphrase-error")
+            let id = "error-message-pk-import"
+            if (this.state.isKeyFile) {
+                id = "error-message-ppk-import"
+            }
+            const errorMessage = document.getElementById(id)
             errorMessage.style.display = "block"
             errorMessage.innerText = "Invalid Private Key"
         }

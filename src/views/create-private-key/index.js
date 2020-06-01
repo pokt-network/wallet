@@ -16,16 +16,19 @@ class CreatePrivateKey extends Component {
             this.dataSource = new DataSource(undefined, [new URL("http://localhost:8081")])
             // Bind functions
             this.getBalance = this.getBalance.bind(this)
+            this.handleDownload = this.handleDownload.bind(this)
             // Set current Account
             this.currentAccount = this.props.location.data
         }
-
+        // Handle the download button action
+            handleDownload = async (e) => {
+                document.getElementById("upload-button").click()   
+        }
         // Retrieves the account balance
         getBalance = async (address) => {
             const balance = await this.dataSource.getBalance(address)
             // Update balance value
-            // TODO: Convert the UPOKT to POKT values
-            document.getElementById('balance').text = balance + ""
+            document.getElementById('balance').innerText = balance + " POKT"
         }
 
         render () {
@@ -64,7 +67,7 @@ class CreatePrivateKey extends Component {
                             <div className="cont-input">
                                 <label htmlFor="prk">PRIVATE KEY</label>
                                 <Input type="password" name="privateKey" id="prk" defaultValue={this.currentAccount.encryptedPrivateKeyHex || ""} />
-                                <Button >Download</Button>
+                                <Button className="download-btn" onClick={this.handleDownload} >Download</Button>
                             </div>
                             <div className="alert">
                                 <img src={altertT} alt="alert" />
