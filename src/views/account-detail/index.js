@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Wrapper from '../../components/wrapper';
-import AccountLContent from './account-latest';
+import AccountLContent from './account-detail';
 import Input from '../../components/public/input/input';
 import Button from '../../components/public/button/button';
 import ToggleBtn from '../../components/public/toggle/toggle-btn';

@@ -6,6 +6,21 @@ const CreateContent = styled.section`
   position: relative;
   max-width: 800px;
   margin: 80px auto;
+  .account-details {
+    text-align: center;
+    margin-top: 2em;
+  }
+  .account-info-label {
+    color: white;
+    margin: 14px 0px 10px 0px;
+    display: block;
+  }
+  .account-info {
+    max-width: 535px;
+    display: block;
+    margin: auto;
+    margin-top: 20px;
+  }
   ${maxPhone(css`
     max-width: 100%;
   `)};

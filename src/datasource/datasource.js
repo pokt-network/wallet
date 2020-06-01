@@ -5,7 +5,6 @@ import {
     typeGuard,
     RpcError,
     PocketAAT,
-    Configuration,
     Hex
 } from "@pokt-network/pocket-js/dist/web.js"
 
@@ -53,20 +52,16 @@ export class DataSource {
         return this.pocket
     }
 
-    // /**
-    //  * @returns {Account}
-    //  */
-    // async unlockAccount(publicKey, passphrase) {
-    //     const pocket = await this.getPocketInstance()
-    //     const addressHex = addressFromPublickey(publicKey)
+    /**
+     * @returns {Account}
+     */
+    async exportPPKFromAccount(account, passphrase) {
+        const pocket = await this.getPocketInstance()
 
-    //     const unlockOrError = await pocket.keybase.unlockAccount(addressHex, passphrase, 0)
-    //     if (typeGuard(unlockOrError, Error)) {
-    //         return false
-    //     } else {
-    //         return true
-    //     }
-    // }
+        const ppkOrError = await pocket.keybase.exportPPKfromAccount(account, passphrase, "pocket wallet", passphrase)
+        
+        return ppkOrError
+    }
 
     /**
      * @returns {Account}
@@ -160,5 +155,14 @@ export class DataSource {
      */
     validatePrivateKey(privateKey) {
         return Hex.isHex(privateKey) && privateKey.length === 128
+    }
+    /**
+     * @returns {boolean}
+     */
+    typeGuard(object, type) {
+        if (typeGuard(object, type)) {
+            return true
+        }
+        return false
     }
 }
