@@ -90,8 +90,10 @@ class Create extends Component {
                 document.getElementById("pub-key").value = this.state.publicKeyHex
 
                 // Scroll to the account information section
-                var element = document.querySelector("#address");
-                element.scrollIntoView();
+                var element = document.querySelector("#download-key-file");
+                element.scrollIntoView({
+                    behavior: 'smooth'
+                })
             }
         }else {
             this.toggleError(true, "The passphrase does not fit the requirements")
@@ -117,7 +119,7 @@ class Create extends Component {
                         </form>
                         <div style={{display: "inline", maxWidth: "500px"}} className="cont-input">
                             <label style={{fontWeight: "bold"}} htmlFor="prk">PRIVATE KEY</label>
-                            <Button className="download-btn" onClick={this.handleDownload} >Download Key File</Button>
+                            <Button id="download-key-file" className="download-btn" onClick={this.handleDownload} >Download Key File</Button>
                         </div>
                         <a style={{display: "block", marginTop: "26px"}} 
                         href="/import" className="account">Already have an account? Access my Pocket account</a>

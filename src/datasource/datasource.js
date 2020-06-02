@@ -27,10 +27,10 @@ export class DataSource {
             const clientPubKeyHex = "6220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b"
                 clientAccount.publicKey.toString("hex")
             const appPrivateKey =
-                "762f20a7860a285fd40d27c7445a4cf498f0ef5e7d24150b50ec84ea16e142864fd90da5ff3ddb6e2e3c1851a4164b26c5caf85265775d1664d6f4df2d664753"
-            const appPublicKey = "4fd90da5ff3ddb6e2e3c1851a4164b26c5caf85265775d1664d6f4df2d664753"
+                "cc295ffce930181ed01d38ce2934988c17787bdbfb53e6d6d6bbc3a71e4bf537a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"
+            const appPublicKey = "a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"
 
-            const aat = PocketAAT.from("0.0.1", clientPubKeyHex, appPublicKey, appPrivateKey)
+            const aat = await PocketAAT.from("0.0.1", clientPubKeyHex, appPublicKey, appPrivateKey)
             // const appPubKeyHex = "a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"                
             // const appSignature = "7949373c02eff36a87a2b847319a804eaed5f664c8333a3cb6c3ad14dbe98380ef1c53bee321e95670b123a1c4993ce02f130a98ec00ea6cac926a410b5f920f"
 
@@ -41,7 +41,7 @@ export class DataSource {
             //     appSignature
             // )
 
-            const blockchain = "0001"
+            const blockchain = "0002"
             const pocketRpcProvider = new PocketRpcProvider(
                 rpcProviderPocket,
                 aat,
@@ -141,6 +141,36 @@ export class DataSource {
         } else {
             const uPOKT = Number(balanceResponseOrError.balance.toString())
             return uPOKT / 1000000
+        }
+    }
+
+    /**
+     * @returns {Object | undefined}
+     */
+    async getApp(address) {
+        const pocket = await this.getPocketInstance()
+
+        const appOrError = await pocket.rpc().query.getApp(address, BigInt(0))
+        
+        if (typeGuard(appOrError, RpcError)) {
+            return undefined
+        } else {
+            return appOrError
+        }
+    }
+
+    /**
+     * @returns {Object | undefined}
+     */
+    async getNode(address) {
+        const pocket = await this.getPocketInstance()
+
+        const nodeOrError = await pocket.rpc().query.getNode(address, BigInt(0))
+
+        if (typeGuard(nodeOrError, RpcError)) {
+            return undefined
+        } else {
+            return nodeOrError
         }
     }
 
