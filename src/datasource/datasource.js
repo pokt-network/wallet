@@ -7,6 +7,10 @@ import {
     PocketAAT,
     Hex
 } from "@pokt-network/pocket-js/dist/web.js"
+import base from "../config/config.json"
+
+// Assign the base to the config constant
+const config = base
 
 export class DataSource {
     constructor(pocketAAT, dispatchers) {
@@ -17,31 +21,29 @@ export class DataSource {
     // Retrieve or set a pocket instance
     async getPocketInstance() {
         if (!this.pocket) {
-            //
-            //const configuration = new Configuration(5, 1000, undefined, 40000)
-            const rpcProviderPocket = new Pocket([new URL("http://localhost:8081")])
+            const clientPrivateKey = config.clientPrivateKey
+            const appPublicKey = config.walletAppPublicKey
+            const appPrivateKey = "cc295ffce930181ed01d38ce2934988c17787bdbfb53e6d6d6bbc3a71e4bf537a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"
+            // const rpcProviderPocket = new Pocket(new URL(this.dispatchers[0]))
+            const rpcProviderPocket = new Pocket([new URL(this.dispatchers[0])])
+            const appSignature = config.walletAppAATSignature
+            const passphrase = config.clientPassphrase
+            const version = "0.0.1"
+            const blockchain = "0002"
             // Import client PubKey and unlock account
-            const clientPrivateKey = "c86b5424ab1d73da92522d21adbd48b217a66b61f78fa8e2c93e9ea47afa55716220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b"
-            const clientAccount = await rpcProviderPocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), "test123")
-            await rpcProviderPocket.keybase.unlockAccount(clientAccount.addressHex, "test123", 0)
-            const clientPubKeyHex = "6220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b"
-                clientAccount.publicKey.toString("hex")
-            const appPrivateKey =
-                "cc295ffce930181ed01d38ce2934988c17787bdbfb53e6d6d6bbc3a71e4bf537a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"
-            const appPublicKey = "a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"
-
-            const aat = await PocketAAT.from("0.0.1", clientPubKeyHex, appPublicKey, appPrivateKey)
-            // const appPubKeyHex = "a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"                
-            // const appSignature = "7949373c02eff36a87a2b847319a804eaed5f664c8333a3cb6c3ad14dbe98380ef1c53bee321e95670b123a1c4993ce02f130a98ec00ea6cac926a410b5f920f"
-
+            const clientAccount = await rpcProviderPocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), passphrase)
+            await rpcProviderPocket.keybase.unlockAccount(clientAccount.addressHex, passphrase, 0)
+            const clientPubKeyHex = clientAccount.publicKey.toString("hex")
+            // Generate the AAT
+            const aat = await PocketAAT.from(version, clientPubKeyHex, appPublicKey, appPrivateKey)
+            // const aat = await PocketAAT.fromSignature(version, clientPubKeyHex, appPublicKey, appSignature)
             // const aat = new PocketAAT(
-            //     "0.0.1",
+            //     version,
             //     clientPubKeyHex,
-            //     appPubKeyHex,
+            //     appPublicKey,
             //     appSignature
             // )
 
-            const blockchain = "0002"
             const pocketRpcProvider = new PocketRpcProvider(
                 rpcProviderPocket,
                 aat,
@@ -201,28 +203,33 @@ export class DataSource {
         const pocket = await this.getPocketInstance()
         let receivedTxs
         let sentTxs
+        try {
+            // Retrieve received transactions
+            const receivedTxsOrError = await this.getTxs(pocket, address, true)
 
-        // Retrieve received transactions
-        const receivedTxsOrError = await this.getTxs(pocket, address, true)
+            if (!typeGuard(receivedTxsOrError, RpcError) && receivedTxsOrError !== undefined) {
+                receivedTxs = receivedTxsOrError.toJSON()
+            }
 
-        if (!typeGuard(receivedTxsOrError, RpcError) && receivedTxsOrError !== undefined) {
-            receivedTxs = receivedTxsOrError.toJSON()
-        }
+            // Retrieve sent transactions
+            const sentTxsOrError = await this.getTxs(pocket, address, false)
 
-        // Retrieve sent transactions
-        const sentTxsOrError = await this.getTxs(pocket, address, false)
+            if (!typeGuard(sentTxsOrError, RpcError) && sentTxsOrError !== undefined) {
+                sentTxs = sentTxsOrError.toJSON()
+            }
 
-        if (!typeGuard(sentTxsOrError, RpcError) && sentTxsOrError !== undefined) {
-            sentTxs = sentTxsOrError.toJSON()
-        }
-        // Check if both arrays are not empty
-        if (receivedTxs.txs.length > 0 && sentTxs.txs.length > 0) {
-            return this.mergeTxs(receivedTxs, sentTxs)
-        }else if (receivedTxs.length > 0) {
-            return receivedTxs
-        }else if (sentTxs.length > 0) {
-            return sentTxs
-        }else {
+            // Check if both arrays are not empty
+            if (receivedTxs.txs.length > 0 && sentTxs.txs.length > 0) {
+                return this.mergeTxs(receivedTxs, sentTxs)
+            }else if (receivedTxs.length > 0) {
+                return receivedTxs
+            }else if (sentTxs.length > 0) {
+                return sentTxs
+            }else {
+                return undefined
+            }
+        } catch (error) {
+            console.log(error)
             return undefined
         }
     }

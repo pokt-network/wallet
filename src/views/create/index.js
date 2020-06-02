@@ -7,6 +7,7 @@ import Button from '../../components/public/button/button';
 import altertR from '../../utils/images/alert-circle-red.png';
 import altertT from '../../utils/images/alert-triangle.png';
 import { DataSource } from "../../datasource"
+import config from "../../config/config.json"
 
 class Create extends Component {
     constructor(props) {
@@ -17,7 +18,7 @@ class Create extends Component {
             ppk: undefined,
         }
         // Set up locals
-        this.dataSource = new DataSource(undefined, [new URL("http://localhost:8081")])
+        this.dataSource = new DataSource(undefined, [config.baseUrl])
         // Bind functions
         this.handleCreateAccount = this.handleCreateAccount.bind(this)
         this.handleDownload = this.handleDownload.bind(this)
