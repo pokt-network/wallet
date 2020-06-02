@@ -9,6 +9,7 @@ import token from '../../utils/images/token.png';
 import unstaking from '../../utils/images/unstaking.png';
 import node from '../../utils/images/node.png';
 import sent from '../../utils/images/sent.png';
+import received from '../../utils/images/received.png';
 import load from '../../utils/images/load.png';
 import reload from '../../utils/images/reload.png'; 
 import arrowUp from '../../utils/images/arrow-up.png';
@@ -20,6 +21,9 @@ import THead from '../../components/public/table/THead';
 import TBody from '../../components/public/table/TBody';
 import TFooter from '../../components/public/table/TFooter';
 import { DataSource } from "../../datasource"
+import base from "../../config/config.json"
+//
+const config = base
 
 class AccountLatest extends Component {
     constructor(props) {
@@ -32,7 +36,7 @@ class AccountLatest extends Component {
             publicKeyHex: ""
         }
         // Set up locals
-        this.dataSource = new DataSource(undefined, [new URL("http://localhost:8081")])
+        this.dataSource = new DataSource(undefined, [config.baseUrl])
         // Binds
         this.onToggleBtn = this.onToggleBtn.bind(this)
         this.getBalance = this.getBalance.bind(this)
@@ -52,18 +56,35 @@ class AccountLatest extends Component {
     }
     updateTransactionList(txs) {
         try {
-            txs.forEach(tx => {
+            // Invert the list
+            const rTxs = txs.reverse()
+            // Images src paths
+            const sentImgSrc = sent
+            const receivedImgSrc = received
+
+            rTxs.forEach(tx => {
                 var d1 = document.getElementById('transation-list-section');
-                console.log(tx)
-                const value = JSON.parse(tx.tx_result.log)[0].events[1].attributes[1].value.replace("upokt","")
-                const txHash = tx.hash
-                const txTemplate = '<Tr>\n' +
-                    '<Td> <img src={'+ tx.type.toLowerCase() +'} alt="'+ tx.type.toLowerCase() +'" /> </Td>\n' +
-                    '<Td> <div className="qty">'+ value / 1000000 +' <span>POKT</span></div> <div className="status">'+ value / 1000000 +'</div> </Td>\n' +
-                    '<Td>34 sec ago</Td>\n' +
-                    '<Td> <a href="http://example.com"> '+txHash+' </a> </Td>\n' +
-                '</Tr>'
-                d1.insertAdjacentHTML('afterend', txTemplate);
+                const events = JSON.parse(tx.tx_result.log)[0].events
+                //
+                if (events[1].type === "transfer") {
+                    const attributes = events[1].attributes
+                    if (attributes[1].key === "amount") {
+                        const value = attributes[1].value.replace("upokt","")
+    
+                        const txHash = tx.hash
+                        const imageSrc = tx.type.toLowerCase() === "sent" ? sentImgSrc : receivedImgSrc
+        
+                        const txTemplate = '<Tr class="sc-fzqBZW ilrPoA">\n' +
+                            '<Td class="sc-fzokOt hITMcq"> <img src='+ imageSrc +' alt="'+ tx.type.toLowerCase() +'" /> </Td>\n' +
+                            '<Td class="sc-fzokOt hITMcq"> <div class="qty">'+ value / 1000000 +' <span>POKT</span></div> <div class="status">'+ tx.type.toLowerCase() +'</div> </Td>\n' +
+                            '<Td class="sc-fzokOt hITMcq">'+tx.height+'</Td>\n' +
+                            '<Td class="sc-fzokOt hITMcq"> <a href="http://example.com"> '+txHash.slice(0, txHash.length / 2)+' </a> </Td>\n' +
+                        '</Tr>'
+                        d1.insertAdjacentHTML('beforeend', txTemplate);
+                    }else {
+                        console.dir(attributes, {depth: null})
+                    }
+                }
             })
         } catch (error) {
             console.log(error)
@@ -253,17 +274,18 @@ class AccountLatest extends Component {
                                 <Tr>
                                 <Th> </Th>
                                 <Th>STATUS</Th>
-                                <Th>TIMESTAMP</Th>
+                                <Th>BLOCK HEIGHT</Th>
                                 <Th> TX HASH</Th>
                                 </Tr>
                             </THead>
                             <TBody id="transation-list-section" className="l-tx">
-                                {/* <Tr>
+                                 <Tr style={{display: "none"}}>
                                     <Td> <img src={load} alt="loading" /> </Td>
-                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sending</div> </Td>
+                                    <Td> <div className="qty">0.00 <span>POKT</span></div> <div className="status">Sending</div> </Td>
                                     <Td>34 sec ago</Td>
                                     <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
                                 </Tr>
+                                {/*
                                 <Tr>
                                     <Td> <img src={sent} alt="sent" /> </Td>
                                     <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sent</div> </Td>

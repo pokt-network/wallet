@@ -3,10 +3,16 @@ import Wrapper from '../../components/wrapper';
 import SendContent from './send';
 import Title from '../../components/public/title/title';
 import Input from '../../components/public/input/input';
-import PopupPW from './popup';
+import Popup from "reactjs-popup";
+import Button from '../../components/public/button/button';
+import exit from '../../utils/images/exit.png';
+import PopupContent from './popup-content';
 import altertR from '../../utils/images/alert-circle-red.png';
 import { DataSource } from "../../datasource"
-
+import base from "../../config/config.json"
+//
+const config = base
+//
 class Send extends Component {
     constructor(props) {
         super(props)
@@ -14,18 +20,52 @@ class Send extends Component {
             addressHex: undefined,
             publicKeyHex: undefined,
             ppk: undefined,
-            visibility: false
+            visibility: false,
+            currentBalance: 0,
+            amountToSend: 0,
+            amountToSendLabel: "0.00",
+            destinationAddress: ""
         }
         // Set up locals
-        this.dataSource = new DataSource(undefined, [new URL("http://localhost:8081")])
+        this.dataSource = new DataSource(undefined, [config.baseUrl])
         this.getBalance = this.getBalance.bind(this)
         this.toggleNotBalanceError = this.toggleNotBalanceError.bind(this)
         this.toggleAddressError = this.toggleAddressError.bind(this)
-
+        this.updateAmountValue = this.updateAmountValue.bind(this)
+        this.updateDestinationAddress = this.updateDestinationAddress.bind(this)
+        this.updateValues = this.updateValues.bind(this)
         this.currentAccount = {
             addressHex: "19c0551853f19ce1b7a4a1ede775c6e3db431b0f"
         }
     }
+    // Update
+    updateValues() {
+        setTimeout(this.updateAmountValue(), 2000)
+        setTimeout(this.updateDestinationAddress(), 2000)
+    }
+    // Update amount
+    updateAmountValue(){
+        const amountElement = document.getElementById("pokt-amount")
+        const amountElementText = document.getElementById("modal-amount-to-send")
+
+        if (amountElement && amountElementText) {
+            const value = amountElement.value * 1000000
+            const valueText = amountElement.value + " POKT"
+            this.setState({amountToSend: value, amountToSendLabel: valueText}) 
+        }
+        
+    }
+    // Update destination address
+    updateDestinationAddress(){
+        const destinationAddress = document.getElementById("destination-address")
+        const destinationAddressLabel = document.getElementById("modal-destination-adress")
+
+        if (destinationAddress && destinationAddressLabel) {
+            destinationAddressLabel.value = destinationAddress.value
+            this.setState({destinationAddress: destinationAddress.value}) 
+        }
+    }
+    // Component did mount
     componentDidMount() {
         this.getBalance();
     }
@@ -46,15 +86,8 @@ class Send extends Component {
     // Retrieves the account balance
     async getBalance() {
         const balance = await this.dataSource.getBalance(this.currentAccount.addressHex)
-        // Scroll to the account information section
-        // var element = document.querySelector("#pokt-balance");
-        // element.scrollIntoView({
-        //     behavior: 'smooth'
-        // })
-        // // Update account detail values
-        // document.getElementById('pokt-balance').innerText = balance + " POKT"
-        // document.getElementById('address').value = this.currentAccount.addressHex
-        // document.getElementById('public-key').value = this.currentAccount.publicKeyHex
+        // Update the state with the account balance
+        this.setState({currentBalance: balance})
     }
     // Render
     render() {
@@ -74,7 +107,7 @@ class Send extends Component {
                             <form className="quantity-form">
                                 <div className="row">
                                     <div className="container">
-                                        <input style={{color: "black"}} type="number" name="quantity" step="0.01" id="pokt" placeholder="0.00" />
+                                        <input style={{color: "black"}} type="number" name="quantity" step="0.01" id="pokt-amount" placeholder="0.00" />
                                         <label htmlFor="pokt">POKT</label>
                                     </div>
                                 </div>
@@ -85,18 +118,50 @@ class Send extends Component {
                                     </div>
                                 </div> */}
                             </form>
-                            <form className="send-form">
+                            <div className="send-form">
                                 <div className="container">
                                     <label htmlFor="adrs">To address</label>
-                                    <Input type="text" name="address" id="adrs" placeholder="Pocket account address" />
+                                    <Input type="text" name="address" id="destination-address" placeholder="Pocket account address" />
                                     <span id="address-error" className="error"> <img src={altertR} alt="alert" /> Please enter an address</span>
-                                    <label>TX Fee 100,000POKT</label>
+                                    <label>TX Fee 100,000 uPOKT</label>
                                     <div className="btn-subm">
-                                        <PopupPW />
+                                    <Popup onOpen={() => {
+                                        setTimeout(this.updateValues(), 2000)
+                                        }} trigger={<Button className="button" >Send</Button>} modal>
+                                        {close => (
+                                        <PopupContent className="modal">
+                                            <a className="close" onClick={close}>
+                                                <img src={exit} alt="exit icon close"/>
+                                            </a>
+                                            <h2> Are you sure you want to send from  your Balance: </h2>
+                                            <div className="content">
+                                                <div className="qty">
+                                                    <div id="modal-amount-to-send" className="pokt" disabled>
+                                                        {this.state.amountToSendLabel | "0.00 POKT"}
+                                                    </div>
+                                                    {/* <div className="usd">
+                                                        0,00USD
+                                                    </div> */}
+                                                </div>
+                                                <form className="pass-pk">
+                                                    <div className="cont-input">
+                                                        <label htmlFor="toadd">To Address</label>
+                                                        <Input type="text" name="toaddress" id="modal-destination-address" 
+                                                            value={this.state.destinationAddress || ""} disabled
+                                                        />
+                                                    </div>
+                                                    <div className="btn-subm">
+                                                        <Button href="http://example.com">Send</Button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </PopupContent>
+                                        )}
+                                    </Popup>
                                         <span id="balance-error" style={{ display: "none" }} className="error"> <img src={altertR} alt="alert" /> Not Enough Balance</span>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </Wrapper>
                 </SendContent>
