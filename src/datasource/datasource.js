@@ -173,6 +173,88 @@ export class DataSource {
             return nodeOrError
         }
     }
+    /**
+     * @returns {Object}
+     */
+    mergeTxs(received, sent) {
+        //
+        received.txs.forEach(tx => {
+            tx.type = "Received"
+        })
+        //
+        sent.txs.forEach(tx => {
+            tx.type = "Sent"
+        })
+        //
+        const mergedTxs = received.txs.concat(sent.txs)
+        const filterByBlockHeight = mergedTxs.sort(function(a, b){
+            return a.height-b.height
+        })
+        
+        return filterByBlockHeight
+    }
+
+    /**
+     * @returns {Object | undefined}
+     */
+    async getAllTransactions(address) {
+        const pocket = await this.getPocketInstance()
+        let receivedTxs
+        let sentTxs
+
+        // Retrieve received transactions
+        const receivedTxsOrError = await this.getTxs(pocket, address, true)
+
+        if (!typeGuard(receivedTxsOrError, RpcError) && receivedTxsOrError !== undefined) {
+            receivedTxs = receivedTxsOrError.toJSON()
+        }
+
+        // Retrieve sent transactions
+        const sentTxsOrError = await this.getTxs(pocket, address, false)
+
+        if (!typeGuard(sentTxsOrError, RpcError) && sentTxsOrError !== undefined) {
+            sentTxs = sentTxsOrError.toJSON()
+        }
+        // Check if both arrays are not empty
+        if (receivedTxs.txs.length > 0 && sentTxs.txs.length > 0) {
+            return this.mergeTxs(receivedTxs, sentTxs)
+        }else if (receivedTxs.length > 0) {
+            return receivedTxs
+        }else if (sentTxs.length > 0) {
+            return sentTxs
+        }else {
+            return undefined
+        }
+    }
+    /**
+     * @returns {}
+     */
+    async getTxs(pocket, address, received){
+        // Retrieve received transactions
+        const receivedTxsOrError = await pocket.rpc().query.getAccountTxs(address, received, false, 1, 10)
+        // 
+        if (!typeGuard(receivedTxsOrError, RpcError)) {
+            const txs = receivedTxsOrError
+            // Check the amount of total records
+            let page = receivedTxsOrError.totalCount / 10
+            // Check if the page is decimal
+            if (page % 1 !== 0) {
+                page = Math.round(page)
+                if (page === 1 || page === 0) {
+                    return txs
+                }
+            }
+            // Call the last page
+            const txsOrError = await pocket.rpc().query.getAccountTxs(address, received, false, page, 10)
+            // 
+            if (!typeGuard(txsOrError, RpcError)) {
+                return txsOrError
+            }
+            return undefined
+        }else {
+            return undefined
+        }
+    }
 
     /**
      * @returns {boolean}

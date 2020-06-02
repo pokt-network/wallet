@@ -39,8 +39,35 @@ class AccountLatest extends Component {
         this.getAccountType = this.getAccountType.bind(this)
         this.addApp = this.addApp.bind(this)
         this.addNode = this.addNode.bind(this)
+        this.getTransactions = this.getTransactions.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
+    }
+    // Retrieve the latest transactions
+    async getTransactions() {
+        const allTxs = await this.dataSource.getAllTransactions(this.currentAccount.addressHex)
+        if (allTxs !== undefined) {
+            this.updateTransactionList(allTxs)
+        }
+    }
+    updateTransactionList(txs) {
+        try {
+            txs.forEach(tx => {
+                var d1 = document.getElementById('transation-list-section');
+                console.log(tx)
+                const value = JSON.parse(tx.tx_result.log)[0].events[1].attributes[1].value.replace("upokt","")
+                const txHash = tx.hash
+                const txTemplate = '<Tr>\n' +
+                    '<Td> <img src={'+ tx.type.toLowerCase() +'} alt="'+ tx.type.toLowerCase() +'" /> </Td>\n' +
+                    '<Td> <div className="qty">'+ value / 1000000 +' <span>POKT</span></div> <div className="status">'+ value / 1000000 +'</div> </Td>\n' +
+                    '<Td>34 sec ago</Td>\n' +
+                    '<Td> <a href="http://example.com"> '+txHash+' </a> </Td>\n' +
+                '</Tr>'
+                d1.insertAdjacentHTML('afterend', txTemplate);
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
     // Account type, amount staked and staking status
     async addApp() {
@@ -127,6 +154,7 @@ class AccountLatest extends Component {
         if (this.currentAccount !== undefined) {
             this.getBalance()
             this.getAccountType()
+            this.getTransactions()
         }
     }
     // Render
@@ -229,8 +257,8 @@ class AccountLatest extends Component {
                                 <Th> TX HASH</Th>
                                 </Tr>
                             </THead>
-                            <TBody className="l-tx">
-                                <Tr>
+                            <TBody id="transation-list-section" className="l-tx">
+                                {/* <Tr>
                                     <Td> <img src={load} alt="loading" /> </Td>
                                     <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sending</div> </Td>
                                     <Td>34 sec ago</Td>
@@ -283,15 +311,8 @@ class AccountLatest extends Component {
                                     <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Received</div> </Td>
                                     <Td>34 sec ago</Td>
                                     <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
-                                </Tr>
+                                </Tr> */}
                             </TBody>
-                            <TFooter>
-                                <Tr>
-                                <Td colSpan={6}> 
-                                    <a href="http://example.com" className="button button-1"> Load More </a> 
-                                </Td>
-                                </Tr>
-                            </TFooter>
                         </T>
                     </ContainerToggle>
                 </Wrapper>
