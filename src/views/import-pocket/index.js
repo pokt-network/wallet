@@ -322,7 +322,7 @@ class ImportPocket extends React.Component {
                                 </span>
                             </div>
                         </form>
-                        <a href="http://example.com" className="account">
+                        <a href="/create" className="account">
                             Don’t have an account? Create a new Pocket account
                         </a>
                     </div>
