@@ -44,6 +44,7 @@ class AccountLatest extends Component {
         this.addApp = this.addApp.bind(this)
         this.addNode = this.addNode.bind(this)
         this.getTransactions = this.getTransactions.bind(this)
+        this.pushToSend = this.pushToSend.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
     }
@@ -165,8 +166,27 @@ class AccountLatest extends Component {
             publicKeyHex: this.currentAccount.publicKeyHex
         })
     }
+    pushToSend() {
+        // Check the account info before pushing
+        if (this.currentAccount.addressHex === undefined ||
+            this.currentAccount.publicKeyHex === undefined ||
+            this.currentAccount.ppk === undefined) {
+            this.toggleError(true, "No account available, please create an account")
+            return
+        }
+        const accountObj = {
+            addressHex: this.currentAccount.addressHex,
+            publicKeyHex: this.currentAccount.publicKeyHex,
+            ppk: this.currentAccount.ppk,
+        }
+        // Move to the account detail
+        this.props.history.push({
+            pathname: "/send",
+            data: accountObj,
+        })
+    }
     // Transaction list toggle
-    onToggleBtn = () => {
+    onToggleBtn() {
         this.setState((prevState) => {
             return { visibility: !prevState.visibility };
         })
@@ -249,8 +269,8 @@ class AccountLatest extends Component {
                         </div>
                         {/* / APP Section */}
                         <div className="btn-subm">
-                            <Button href="http://example.com" dark>Buy POKT</Button>
-                            <Button id="send-pokt" href="/send">Send</Button>
+                            <Button href="https://dashboard.pokt.network/" dark>Buy POKT</Button>
+                            <Button id="send-pokt" onClick={this.pushToSend}>Send</Button>
                         </div> 
                     </div>
                     <form className="pass-pk">
@@ -283,57 +303,8 @@ class AccountLatest extends Component {
                                     <Td> <img src={load} alt="loading" /> </Td>
                                     <Td> <div className="qty">0.00 <span>POKT</span></div> <div className="status">Sending</div> </Td>
                                     <Td>34 sec ago</Td>
-                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
+                                    <Td> <a href=""> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
                                 </Tr>
-                                {/*
-                                <Tr>
-                                    <Td> <img src={sent} alt="sent" /> </Td>
-                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sent</div> </Td>
-                                    <Td>34 sec ago</Td>
-                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
-                                </Tr>
-                                <Tr>
-                                    <Td> <img src={sent} alt="sent" /> </Td>
-                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Received</div> </Td>
-                                    <Td>34 sec ago</Td>
-                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
-                                </Tr>
-                                <Tr>
-                                    <Td> <img src={sent} alt="sent" /> </Td>
-                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sending</div> </Td>
-                                    <Td>34 sec ago</Td>
-                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
-                                </Tr>
-                                <Tr>
-                                    <Td> <img src={sent} alt="sent" /> </Td>
-                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sent</div> </Td>
-                                    <Td>34 sec ago</Td>
-                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
-                                </Tr>
-                                <Tr>
-                                    <Td> <img src={sent} alt="sent" /> </Td>
-                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Received</div> </Td>
-                                    <Td>34 sec ago</Td>
-                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
-                                </Tr>
-                                <Tr>
-                                    <Td> <img src={sent} alt="sent" /> </Td>
-                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sending</div> </Td>
-                                    <Td>34 sec ago</Td>
-                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
-                                </Tr>
-                                <Tr>
-                                    <Td> <img src={sent} alt="sent" /> </Td>
-                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Sent</div> </Td>
-                                    <Td>34 sec ago</Td>
-                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
-                                </Tr>
-                                <Tr>
-                                    <Td> <img src={sent} alt="sent" /> </Td>
-                                    <Td> <div className="qty">246,576.058 <span>POKT</span></div> <div className="status">Received</div> </Td>
-                                    <Td>34 sec ago</Td>
-                                    <Td> <a href="http://example.com"> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
-                                </Tr> */}
                             </TBody>
                         </T>
                     </ContainerToggle>

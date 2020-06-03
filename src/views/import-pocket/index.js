@@ -361,7 +361,8 @@ class ImportPocket extends React.Component {
                             Invalid Passphrase
                         </span>
                         <Button
-                            style={{ padding: "9px 29px 8px 24px", width: "10px", display: "block" }}
+                            style={{ padding: "9px 9px 8px 24px", width: "33px", display: "block",
+                                margin: "10px 0px auto auto" }}
                             onClick={this.importAccount.bind(this)}
                         >
                             OK

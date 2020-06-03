@@ -6,7 +6,7 @@ const SendContent = styled.section`
   .popup {
     position: fixed;
     display: block;
-    z-index: 999999;
+    z-index: 777777;
     overflow-y: auto;
     background: rgba(0,0,0,0.5);
     top: 0;
