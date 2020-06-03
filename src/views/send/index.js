@@ -17,14 +17,13 @@ class Send extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            isModalVisible: false,
             addressHex: undefined,
             publicKeyHex: undefined,
             ppk: undefined,
             visibility: false,
             currentBalance: 0,
-            amountToSend: 0,
-            amountToSendLabel: "0.00",
-            destinationAddress: ""
+            amountToSend: 0
         }
         // Set up locals
         this.dataSource = new DataSource(undefined, [config.baseUrl])
@@ -34,35 +33,62 @@ class Send extends Component {
         this.updateAmountValue = this.updateAmountValue.bind(this)
         this.updateDestinationAddress = this.updateDestinationAddress.bind(this)
         this.updateValues = this.updateValues.bind(this)
+        this.closeModal = this.closeModal.bind(this)
+        this.showModal = this.showModal.bind(this)
+
         this.currentAccount = {
             addressHex: "19c0551853f19ce1b7a4a1ede775c6e3db431b0f"
         }
     }
+    showModal() {
+        const modal = document.getElementById("popup")
+        if (modal) {
+            modal.style.display = "block"
+        }
+    }
+
+    closeModal() {
+        const modal = document.getElementById("popup")
+        if (modal) {
+            modal.style.display = "none"
+        }
+    }
     // Update
     updateValues() {
-        setTimeout(this.updateAmountValue(), 2000)
-        setTimeout(this.updateDestinationAddress(), 2000)
+        this.updateAmountValue()
+        this.updateDestinationAddress()
+        this.showModal()
     }
     // Update amount
     updateAmountValue(){
+        // Retrieve current amount value set element
         const amountElement = document.getElementById("pokt-amount")
+        // Retrieve modal amount value element
         const amountElementText = document.getElementById("modal-amount-to-send")
-
+        // Check if both element exists
         if (amountElement && amountElementText) {
+            // Convert the decimals to upokt to use the value for the send-tx
             const value = amountElement.value * 1000000
+            // Add the amount to send element value for the modal label
             const valueText = amountElement.value + " POKT"
-            this.setState({amountToSend: value, amountToSendLabel: valueText}) 
+            // Update the modal amount element value
+            amountElementText.innerText = valueText
+            // Save the amount in uPOKT to send in the state
+            this.setState({amountToSend: value}) 
+            console.log("update amount value= "+valueText)
         }
-        
     }
     // Update destination address
     updateDestinationAddress(){
+        // Retrieve the current destination address element
         const destinationAddress = document.getElementById("destination-address")
-        const destinationAddressLabel = document.getElementById("modal-destination-adress")
-
-        if (destinationAddress && destinationAddressLabel) {
-            destinationAddressLabel.value = destinationAddress.value
-            this.setState({destinationAddress: destinationAddress.value}) 
+        // Retrieve modal destination adress element
+        const destinationModal = document.getElementById("modal-destination-address")
+        // Check if both element exists
+        if (destinationAddress && destinationModal) {
+            // Add the destination address to the modal element
+            destinationModal.value = destinationAddress.value
+            console.log("update adress value= "+destinationAddress.value)
         }
     }
     // Component did mount
@@ -124,20 +150,18 @@ class Send extends Component {
                                     <Input type="text" name="address" id="destination-address" placeholder="Pocket account address" />
                                     <span id="address-error" className="error"> <img src={altertR} alt="alert" /> Please enter an address</span>
                                     <label>TX Fee 100,000 uPOKT</label>
-                                    <div className="btn-subm">
-                                    <Popup onOpen={() => {
-                                        setTimeout(this.updateValues(), 2000)
-                                        }} trigger={<Button className="button" >Send</Button>} modal>
-                                        {close => (
-                                        <PopupContent className="modal">
-                                            <a className="close" onClick={close}>
+                                    <Button style={{display: "inline-block", marginTop: "20px"}} 
+                                        onClick={this.updateValues} className="button" >Send</Button>
+                                    <div style={{ display: "none" }} id="popup" className="container popup">
+                                        <PopupContent className="modal popup-child">
+                                            <a className="close" onClick={this.closeModal}>
                                                 <img src={exit} alt="exit icon close"/>
                                             </a>
                                             <h2> Are you sure you want to send from  your Balance: </h2>
                                             <div className="content">
-                                                <div className="qty">
+                                                <div style={{display: "inline-flex", marginBottom: "10px"}} className="qty">
                                                     <div id="modal-amount-to-send" className="pokt" disabled>
-                                                        {this.state.amountToSendLabel | "0.00 POKT"}
+                                                        0.00 POKT
                                                     </div>
                                                     {/* <div className="usd">
                                                         0,00USD
@@ -147,7 +171,7 @@ class Send extends Component {
                                                     <div className="cont-input">
                                                         <label htmlFor="toadd">To Address</label>
                                                         <Input type="text" name="toaddress" id="modal-destination-address" 
-                                                            value={this.state.destinationAddress || ""} disabled
+                                                            disabled
                                                         />
                                                     </div>
                                                     <div className="btn-subm">
@@ -156,10 +180,8 @@ class Send extends Component {
                                                 </form>
                                             </div>
                                         </PopupContent>
-                                        )}
-                                    </Popup>
-                                        <span id="balance-error" style={{ display: "none" }} className="error"> <img src={altertR} alt="alert" /> Not Enough Balance</span>
-                                    </div>
+                                    <span id="balance-error" style={{ display: "none" }} className="error"> <img src={altertR} alt="alert" /> Not Enough Balance</span>
+                                </div>
                                 </div>
                             </div>
                         </div>
