@@ -5,7 +5,8 @@ import {
     typeGuard,
     RpcError,
     PocketAAT,
-    Hex
+    Hex,
+    CoinDenom
 } from "@pokt-network/pocket-js/dist/web.js"
 import base from "../config/config.json"
 
@@ -145,7 +146,27 @@ export class DataSource {
             return uPOKT / 1000000
         }
     }
+    /**
+     * @returns {BigInt}
+     */
+    async sendTransaction(ppk, passphrase, toAddress) {
+        const pocket = await this.getPocketInstance()
+        const accountOrError = await this.importPortablePrivateKey(passphrase, ppk, passphrase)
+        if (typeGuard(accountOrError, RpcError)) {
+            return accountOrError
+        }
 
+        const transactionSenderOrError = await pocket.withImportedAccount(accountOrError.address, passphrase)
+        if (typeGuard(transactionSenderOrError, RpcError)) {
+            return transactionSenderOrError
+        }
+
+        let rawTxResponse = await transactionSenderOrError
+        .send(accountOrError.addressHex, toAddress, "100000")
+        .submit("pocket-test", "100000", CoinDenom.Upokt, "From the Pocket Wallet")
+        
+        return rawTxResponse
+    }
     /**
      * @returns {Object | undefined}
      */
