@@ -3,6 +3,24 @@ import { maxPhone } from "../../utils/media";
 import { colors } from '../../utils/colors';
 
 const SendContent = styled.section`
+  .popup {
+    position: fixed;
+    display: block;
+    z-index: 999999;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.5);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  .popup-child {
+    max-width: 536px;
+    margin: 10% auto;
+    background: white;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 43px 39px -40px;
+    border-radius: 12px;
+  }
   position: relative;
   max-width: 800px;
   margin: 80px auto;
