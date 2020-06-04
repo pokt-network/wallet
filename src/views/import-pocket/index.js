@@ -8,7 +8,6 @@ import altertR from "../../utils/images/alert-circle-red.png"
 import { DataSource } from "../../datasource"
 import Modal, { closeStyle } from "simple-react-modal"
 import { typeGuard } from "@pokt-network/pocket-js/dist/web.js"
-import config from "../../config/config.json"
 
 class ImportPocket extends React.Component {
     constructor(props) {
@@ -19,7 +18,23 @@ class ImportPocket extends React.Component {
             isModalVisible: false,
         }
         // Set up locals
-        this.dataSource = new DataSource(undefined, [config.baseUrl])
+        this.dataSource = DataSource.instance
+
+        this.isFileInput = this.isFileInput.bind(this)
+        this.isTextInput = this.isTextInput.bind(this)
+        this.parseFileInputContent = this.parseFileInputContent.bind(this)
+        this.setUploaderText = this.setUploaderText.bind(this)
+        this.privKeyInputChange = this.privKeyInputChange.bind(this)
+        this.showModal = this.showModal.bind(this)
+        this.closeModal = this.closeModal.bind(this)
+        this.hideAllErrors = this.hideAllErrors.bind(this)
+        this.togglePassphraseError = this.togglePassphraseError.bind(this)
+        this.toggleButtonError = this.toggleButtonError.bind(this)
+        this.togglePPKError = this.togglePPKError.bind(this)
+        this.togglePrivateKeyError = this.togglePrivateKeyError.bind(this)
+        this.importAccount = this.importAccount.bind(this)
+        this.importAccountFromPPK = this.importAccountFromPPK.bind(this)
+        this.importAccountFromPrivateKey = this.importAccountFromPrivateKey.bind(this)
     }
 
     isFileInput(input) {
@@ -30,7 +45,7 @@ class ImportPocket extends React.Component {
         return input.type === "password"
     }
 
-    parseFileInputContent = async (input) => {
+    async parseFileInputContent(input) {
         if (input && input.files.length > 0) {
             const reader = new FileReader()
             const file = input.files[0]
@@ -54,7 +69,7 @@ class ImportPocket extends React.Component {
     }
 
     // Private key inputs handler
-    privKeyInputChange = async (e) => {
+    async privKeyInputChange(e) {
         // Clear all errors whenever the users tries to input a private key
         this.hideAllErrors()
 

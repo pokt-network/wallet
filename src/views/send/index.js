@@ -9,11 +9,8 @@ import exit from '../../utils/images/exit.png';
 import PopupContent from './popup-content';
 import altertR from '../../utils/images/alert-circle-red.png';
 import { DataSource } from "../../datasource"
-import base from "../../config/config.json"
 import {RpcError, typeGuard} from "@pokt-network/pocket-js/dist/web.js"
 
-//
-const config = base
 //
 class Send extends Component {
     constructor(props) {
@@ -28,7 +25,8 @@ class Send extends Component {
             amountToSend: 0
         }
         // Set up locals
-        this.dataSource = new DataSource(undefined, [config.baseUrl])
+        this.dataSource = DataSource.instance
+
         this.toggleNotBalanceError = this.toggleNotBalanceError.bind(this)
         this.toggleAddressError = this.toggleAddressError.bind(this)
         this.updateAmountValue = this.updateAmountValue.bind(this)
@@ -78,9 +76,17 @@ class Send extends Component {
         const ppk = this.currentAccount.ppk
         const passphrase = document.getElementById("modal-passphrase")
         const destinationAddress = document.getElementById("destination-address")
-        if (passphrase && destinationAddress) {
-            const txResponse = await this.dataSource.sendTransaction(ppk, passphrase.value, destinationAddress.value)
-
+        const amountToSend = this.state.amountToSend
+        
+        if (passphrase && destinationAddress && ppk && amountToSend > 0) {
+            
+            const txResponse = await this.dataSource.sendTransaction(
+                ppk,
+                passphrase.value,
+                destinationAddress.value,
+                amountToSend
+            )
+            passphrase.value = ""
             if (typeGuard(txResponse, RpcError)) {
                 this.closeModal()
                 this.closePassModal()

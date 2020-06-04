@@ -13,7 +13,8 @@
     "react-scripts": "3.4.1",
     "reactjs-popup": "^1.5.0",
     "simple-react-modal": "^0.5.1",
-    "styled-components": "^5.1.0"
+    "styled-components": "^5.1.0",
+    "big-integer": "^1.6.48"
   },
   "scripts": {
     "start": "react-scripts start --max_old_space_size=4096",
