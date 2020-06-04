@@ -21,9 +21,6 @@ import THead from '../../components/public/table/THead';
 import TBody from '../../components/public/table/TBody';
 import TFooter from '../../components/public/table/TFooter';
 import { DataSource } from "../../datasource"
-import base from "../../config/config.json"
-//
-const config = base
 
 class AccountLatest extends Component {
     constructor(props) {
@@ -36,7 +33,7 @@ class AccountLatest extends Component {
             publicKeyHex: ""
         }
         // Set up locals
-        this.dataSource = new DataSource(undefined, [config.baseUrl])
+        this.dataSource = DataSource.instance
         // Binds
         this.onToggleBtn = this.onToggleBtn.bind(this)
         this.getBalance = this.getBalance.bind(this)
@@ -79,7 +76,7 @@ class AccountLatest extends Component {
                             '<Td class="sc-fzokOt hITMcq"> <img src='+ imageSrc +' alt="'+ tx.type.toLowerCase() +'" /> </Td>\n' +
                             '<Td class="sc-fzokOt hITMcq"> <div class="qty">'+ value / 1000000 +' <span>POKT</span></div> <div class="status">'+ tx.type.toLowerCase() +'</div> </Td>\n' +
                             '<Td class="sc-fzokOt hITMcq">'+tx.height+'</Td>\n' +
-                            '<Td class="sc-fzokOt hITMcq"> <a href="http://example.com"> '+txHash.slice(0, txHash.length / 2)+' </a> </Td>\n' +
+                            '<Td class="sc-fzokOt hITMcq"> <a href="http://example.com"> '+txHash+' </a> </Td>\n' +
                         '</Tr>'
                         d1.insertAdjacentHTML('beforeend', txTemplate);
                     }else {

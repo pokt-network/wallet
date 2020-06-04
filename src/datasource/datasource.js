@@ -14,8 +14,10 @@ import base from "../config/config.json"
 const config = base
 
 export class DataSource {
-    constructor(pocketAAT, dispatchers) {
-        this.pocketAAT = pocketAAT
+    static instance = DataSource.instance || new DataSource([new URL(config.baseUrl)])
+    static AATVersion = "0.0.1"
+
+    constructor(dispatchers) {
         this.dispatchers = dispatchers
     }
 
@@ -23,34 +25,37 @@ export class DataSource {
     async getPocketInstance() {
         if (!this.pocket) {
             const clientPrivateKey = config.clientPrivateKey
-            const appPublicKey = config.walletAppPublicKey
-            const appPrivateKey = "cc295ffce930181ed01d38ce2934988c17787bdbfb53e6d6d6bbc3a71e4bf537a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"
-            // const rpcProviderPocket = new Pocket(new URL(this.dispatchers[0]))
-            const rpcProviderPocket = new Pocket([new URL(this.dispatchers[0])])
-            const appSignature = config.walletAppAATSignature
-            const passphrase = config.clientPassphrase
-            const version = "0.0.1"
-            const blockchain = "0002"
-            // Import client PubKey and unlock account
-            const clientAccount = await rpcProviderPocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), passphrase)
-            await rpcProviderPocket.keybase.unlockAccount(clientAccount.addressHex, passphrase, 0)
-            const clientPubKeyHex = clientAccount.publicKey.toString("hex")
+            const clientPassphrase = config.clientPassphrase
+            const walletAppPublicKey = config.walletAppPublicKey
+            const walletAppSignature = config.walletAppAATSignature
+
+            // Pocket instance
+            this.pocket = new Pocket(this.dispatchers)
+            const blockchain = config.chain
+
+            // Import client Account
+            const clientAccountOrError = await this.pocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), clientPassphrase)
+            if (typeGuard(clientAccountOrError, Error)) {
+                throw clientAccountOrError
+            }
+            // Unlock the client account
+            await this.pocket.keybase.unlockAccount(clientAccountOrError.addressHex, clientPassphrase, 0)
+            const clientPubKeyHex = clientAccountOrError.publicKey.toString("hex")
+
             // Generate the AAT
-            const aat = await PocketAAT.from(version, clientPubKeyHex, appPublicKey, appPrivateKey)
-            // const aat = await PocketAAT.fromSignature(version, clientPubKeyHex, appPublicKey, appSignature)
-            // const aat = new PocketAAT(
-            //     version,
-            //     clientPubKeyHex,
-            //     appPublicKey,
-            //     appSignature
-            // )
+            const aat = new PocketAAT(
+                DataSource.AATVersion,
+                clientPubKeyHex,
+                walletAppPublicKey,
+                walletAppSignature
+            )
 
             const pocketRpcProvider = new PocketRpcProvider(
-                rpcProviderPocket,
+                this.pocket,
                 aat,
                 blockchain
             )
-            this.pocket = new Pocket(this.dispatchers, pocketRpcProvider)
+            this.pocket.rpc(pocketRpcProvider)
         }
         return this.pocket
     }
@@ -120,7 +125,7 @@ export class DataSource {
     async exportPPK(privateKey, passphrase) {
         const pocket = await this.getPocketInstance()
         const ppkOrError = await pocket.keybase.exportPPK(
-            Buffer.from(privateKey, "hex"),
+            privateKey,
             passphrase,
             "pocket wallet"
         )
@@ -149,7 +154,10 @@ export class DataSource {
     /**
      * @returns {BigInt}
      */
-    async sendTransaction(ppk, passphrase, toAddress) {
+    async sendTransaction(ppk, passphrase, toAddress, amount) {
+        // uPOKT
+        const defaultFee = "10000000"
+        this.pocket = undefined
         const pocket = await this.getPocketInstance()
         const accountOrError = await this.importPortablePrivateKey(passphrase, ppk, passphrase)
         if (typeGuard(accountOrError, RpcError)) {
@@ -162,9 +170,9 @@ export class DataSource {
         }
 
         let rawTxResponse = await transactionSenderOrError
-        .send(accountOrError.addressHex, toAddress, "100000")
-        .submit("pocket-test", "100000", CoinDenom.Upokt, "From the Pocket Wallet")
-        
+        .send(accountOrError.addressHex, toAddress, amount.toString())
+        .submit("pocket-test", defaultFee, CoinDenom.Upokt, "Pocket Wallet")
+        console.dir(rawTxResponse, {depth: false})
         return rawTxResponse
     }
     /**
@@ -221,19 +229,18 @@ export class DataSource {
      * @returns {Object | undefined}
      */
     async getAllTransactions(address) {
-        const pocket = await this.getPocketInstance()
         let receivedTxs
         let sentTxs
         try {
             // Retrieve received transactions
-            const receivedTxsOrError = await this.getTxs(pocket, address, true)
+            const receivedTxsOrError = await this.getTxs(address, true)
 
             if (!typeGuard(receivedTxsOrError, RpcError) && receivedTxsOrError !== undefined) {
                 receivedTxs = receivedTxsOrError.toJSON()
             }
 
             // Retrieve sent transactions
-            const sentTxsOrError = await this.getTxs(pocket, address, false)
+            const sentTxsOrError = await this.getTxs(address, false)
 
             if (!typeGuard(sentTxsOrError, RpcError) && sentTxsOrError !== undefined) {
                 sentTxs = sentTxsOrError.toJSON()
@@ -257,9 +264,9 @@ export class DataSource {
     /**
      * @returns {}
      */
-    async getTxs(pocket, address, received){
+    async getTxs(address, received){
         // Retrieve received transactions
-        const receivedTxsOrError = await pocket.rpc().query.getAccountTxs(address, received, false, 1, 10)
+        const receivedTxsOrError = await this.pocket.rpc().query.getAccountTxs(address, received, false, 1, 10)
         // 
         if (!typeGuard(receivedTxsOrError, RpcError)) {
             const txs = receivedTxsOrError
@@ -273,7 +280,7 @@ export class DataSource {
                 }
             }
             // Call the last page
-            const txsOrError = await pocket.rpc().query.getAccountTxs(address, received, false, page, 10)
+            const txsOrError = await this.pocket.rpc().query.getAccountTxs(address, received, false, page, 10)
             // 
             if (!typeGuard(txsOrError, RpcError)) {
                 return txsOrError
