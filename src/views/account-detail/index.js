@@ -7,7 +7,10 @@ import ToggleBtn from '../../components/public/toggle/toggle-btn';
 import ContainerToggle from '../../components/public/toggle/container-toggle';
 import token from '../../utils/images/token.png';
 import unstaking from '../../utils/images/unstaking.png';
+import stake from '../../utils/images/stake.png';
 import node from '../../utils/images/node.png';
+import app from '../../utils/images/app.png';
+import na from '../../utils/images/NA.png';
 import sent from '../../utils/images/sent.png';
 import received from '../../utils/images/received.png';
 import load from '../../utils/images/load.png';
@@ -26,11 +29,14 @@ class AccountLatest extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            normal: undefined,
             app: undefined,
             node: undefined,
             visibility: false,
             addressHex: "",
-            publicKeyHex: ""
+            publicKeyHex: "",
+            unstakingImgSrc: unstaking,
+            stakeImgSrc: stake
         }
         // Set up locals
         this.dataSource = DataSource.instance
@@ -99,10 +105,16 @@ class AccountLatest extends Component {
             }
             // Update the unstaking status
             const appStakingStatusLabel = document.getElementById("app-staking-status")
-            if (this.state.app.status === 1) {
-                appStakingStatusLabel.innerText = "UNSTAKING"
-            }else {
-                appStakingStatusLabel.innerText = "STAKED"
+            // Update the status img
+            const appStakeStatusImg = document.getElementById("app-stake-status-img")
+            if (appStakeStatusImg && appStakingStatusLabel) {
+                if (this.state.app.status === 1) {
+                    appStakingStatusLabel.innerText = "UNSTAKING"
+                    appStakeStatusImg.src = this.state.unstakingImgSrc
+                }else {
+                    appStakingStatusLabel.innerText = "STAKED"
+                    appStakeStatusImg.src = this.state.stakeImgSrc
+                }
             }
             // Show the app section
             const appTypeSection = document.getElementById("app-type-section")
@@ -113,24 +125,41 @@ class AccountLatest extends Component {
     }
     // Account type, amount staked and staking status
     async addNode() {
-        if (this.state.app !== undefined) {
+        if (this.state.node !== undefined) {
             // Update the staked amount
-            const appStakedTokensLabel = document.getElementById("node-staked-tokens-amount")
-            if (appStakedTokensLabel) {
-                const POKT = Number(this.state.app.stakedTokens.toString()) / 1000000
-                appStakedTokensLabel.innerText = POKT + " POKT"
+            const nodeStakedTokensLabel = document.getElementById("node-staked-tokens-amount")
+            if (nodeStakedTokensLabel) {
+                const POKT = Number(this.state.node.stakedTokens.toString()) / 1000000
+                nodeStakedTokensLabel.innerText = POKT + " POKT"
             }
             // Update the unstaking status
-            const appStakingStatusLabel = document.getElementById("node-staking-status")
-            if (this.state.app.status === 1) {
-                appStakingStatusLabel.innerText = "UNSTAKING"
-            }else {
-                appStakingStatusLabel.innerText = "STAKED"
+            const nodeStakingStatusLabel = document.getElementById("node-staking-status")
+            // Update the status img
+            const nodeStakeStatusImg = document.getElementById("node-stake-status-img")
+            if (nodeStakeStatusImg && nodeStakingStatusLabel) {
+                if (this.state.node.status === 1) {
+                    nodeStakeStatusImg.src = this.state.unstakingImgSrc
+                    nodeStakingStatusLabel.innerText = "UNSTAKING"
+                }else {
+                    nodeStakeStatusImg.src = this.state.stakeImgSrc
+                    nodeStakingStatusLabel.innerText = "STAKED"
+                }
             }
+            
             // Show the app section
             const nodeTypeSection = document.getElementById("node-type-section")
             if (nodeTypeSection) {
                 nodeTypeSection.style.display = "flex"
+            }
+        }
+    }
+    // Account type, amount staked and staking status
+    async addNormalAccount() {
+        if (this.state.normal !== undefined) {
+            // Show the app section
+            const accountTypeSection = document.getElementById("normal-type-section")
+            if (accountTypeSection) {
+                accountTypeSection.style.display = "flex"
             }
         }
     }
@@ -143,8 +172,13 @@ class AccountLatest extends Component {
         }
         const nodeOrError = await this.dataSource.getNode(this.currentAccount.addressHex)
         if (nodeOrError !== undefined) {
-            this.setState({app: nodeOrError.node})
+            this.setState({node: nodeOrError.node})
             this.addNode()
+        }
+
+        if (appOrError === undefined && nodeOrError === undefined) {
+            this.setState({normal: true})
+            this.addNormalAccount()
         }
     }
     
@@ -221,17 +255,39 @@ class AccountLatest extends Component {
                         </div>
                     </div>
                     <div className="pokt-options">
-                        {/* NODE Section */}
-                        <div style={{ display: "none" }} id="node-type-section" className="container">
+                        {/* Normal Account Section */}
+                        <div style={{ display: "none" }} id="normal-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <h2 id="node-staked-tokens-amount" > <img src={token} alt="staked tokens"/> 1900 <span>POKT</span></h2>
+                                    <h2 id="node-staked-tokens-amount" > <img src={token} alt="staked tokens"/> 0 <span>POKT</span></h2>
                                 </div>
                                 <span className="title">Staked Tokens</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2 id="node-staking-status"> <img src={unstaking} alt="staked tokens"/> UNSTAKING </h2>
+                                    <h2 id="node-staking-status"> <img id="normal-stake-status-img" src={unstaking} alt="staked tokens"/> NA </h2>
+                                </div>
+                                <span className="title">Staking Status</span>
+                            </div>
+                            <div className="option">
+                                <div className="heading">
+                                    <h2> <img src={na} alt="staked tokens"/> NA</h2>
+                                </div>
+                                <span className="title">Account Type</span>
+                            </div>
+                        </div>
+                        {/* / Normal Account Section */}
+                        {/* NODE Section */}
+                        <div style={{ display: "none" }} id="node-type-section" className="container">
+                            <div className="option">
+                                <div className="heading">
+                                    <h2 id="node-staked-tokens-amount" > <img src={token} alt="staked tokens"/> 0 <span>POKT</span></h2>
+                                </div>
+                                <span className="title">Staked Tokens</span>
+                            </div>
+                            <div className="option">
+                                <div className="heading">
+                                    <h2 id="node-staking-status"> <img id="node-stake-status-img" src={unstaking} alt="staked tokens"/> UNSTAKING </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
@@ -247,19 +303,19 @@ class AccountLatest extends Component {
                         <div style={{ display: "none", marginTop: "16px" }} id="app-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <h2 id="app-staked-tokens-amount"> <img src={token} alt="staked tokens"/> 1900 <span>POKT</span></h2>
+                                    <h2 id="app-staked-tokens-amount"> <img src={token} alt="staked tokens"/> 0 <span>POKT</span></h2>
                                 </div>
                                 <span className="title">Staked Tokens</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2 id="app-staking-status"> <img src={unstaking} alt="staked tokens"/> UNSTAKING </h2>
+                                    <h2 id="app-staking-status"> <img id="app-stake-status-img" src={unstaking} alt="staked tokens"/> UNSTAKING </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2> <img src={node} alt="staked tokens"/> APP</h2>
+                                    <h2> <img src={app} alt="staked tokens"/> APP</h2>
                                 </div>
                                 <span className="title">Account Type</span>
                             </div>
