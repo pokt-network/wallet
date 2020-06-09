@@ -14,7 +14,7 @@ class Landing extends Component {
             <div className="top">
               <div className="title">
                 <h1><span> Welcome to </span>
-                Pocket <img src={logoPW} alt="logo pocket" /> Wallet
+                Pocket Wallet
                 </h1>
               </div>
               <Description>

@@ -21,7 +21,6 @@ class Send extends Component {
             publicKeyHex: undefined,
             ppk: undefined,
             visibility: false,
-            currentBalance: 0,
             amountToSend: 0
         }
         // Set up locals
@@ -38,7 +37,8 @@ class Send extends Component {
         this.requestPassphrase = this.requestPassphrase.bind(this)
         this.closePassModal = this.closePassModal.bind(this)
         this.showPassModal = this.showPassModal.bind(this)
-
+        this.finishSendTransaction = this.finishSendTransaction.bind(this)
+        this.pushToTxDetail = this.pushToTxDetail.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
     }
@@ -86,17 +86,43 @@ class Send extends Component {
                 destinationAddress.value,
                 amountToSend
             )
-            passphrase.value = ""
+            this.finishSendTransaction()
             if (typeGuard(txResponse, RpcError)) {
-                this.closeModal()
-                this.closePassModal()
                 this.toggleAddressError(true, "Failed to send the transaction")
                 console.log(RpcError)
             }else {
-                alert(txResponse)
+                const obj = {
+                    sentAmount: amountToSend,
+                    txHash: txResponse.hash,
+                    txFee: 10000000,
+                    txType: "TokenTransfer",
+                    fromAddress: this.state.addressHex,
+                    toAddress: destinationAddress.value
+                }
+                this.pushToTxDetail(obj)
             }
         }
         
+    }
+    pushToTxDetail(obj) {
+        // Check the account info before pushing
+        if (!obj) {
+            this.toggleError(true, "No transaction detail available.")
+            return
+        }
+        // Move to the transaction detail
+        this.props.history.push({
+            pathname: "/transaction-detail",
+            data: obj,
+        })
+    }
+    // Close and clean after sending a transaction
+    finishSendTransaction() {
+        this.setState({amountToSend: 0})
+        document.getElementById("modal-passphrase").value = ""
+        document.getElementById("destination-address").value = ""
+        this.closeModal()
+        this.closePassModal()
     }
     // Update
     updateValues() {

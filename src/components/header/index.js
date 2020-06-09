@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 import Wrapper from '../wrapper';
 import Menu from "./menu";
@@ -10,16 +10,24 @@ import StyledLi from "./li";
 import HeaderContainer from "./header";
 import logo from '../../utils/images/logo-white.png';
 import arrow from '../../utils/images/right-arrow.png';
+import base from "../../config/config.json"
+// Assign the base to the config constant
+const config = base
 
 class Header extends Component {
   state = {
     isMenuHidden: true
   };
 
-  onToggleMenu = () => {
+  onToggleMenu() {
     this.setState((prevState) => {
       return { isMenuHidden: !prevState.isMenuHidden };
     });
+  };
+
+  onLogOut() {
+    // Refresh the page to delete any state information related to the account
+    window.location.reload();
   };
 
   render() {
@@ -34,12 +42,13 @@ class Header extends Component {
                 <NavLink exact activeClassName="active" to="/send" onClick={this.onToggleMenu}>Send</NavLink>
               </StyledLi>
               <StyledLi>
-                <NavLink activeClassName="active" to="/buypokt" onClick={this.onToggleMenu}>Buy POKT</NavLink>
+                <a href={config.dashboardBaseUrl}>Buy POKT</a>
               </StyledLi>
               <StyledLi className="sub_menu">
                 <a href={hrefLink}> Account <img src={arrow} alt="greater than" /> </a>
                 <ul>
-                  <li><NavLink activeClassName="active" to="/logout" onClick={this.onToggleMenu}>Log out</NavLink></li>
+                  
+                  <li><a style={{cursor: "pointer"}} onClick={this.onLogOut} >Log out</a></li>
               </ul>
               </StyledLi>
             </StyledUl>

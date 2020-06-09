@@ -6,5 +6,6 @@
     "walletAppAATSignature": "7949373c02eff36a87a2b847319a804eaed5f664c8333a3cb6c3ad14dbe98380ef1c53bee321e95670b123a1c4993ce02f130a98ec00ea6cac926a410b5f920f",
     "chain": "0002",
     "address": "",
-    "blockExplorerBaseUrl": "http://localhost:3000"
+    "blockExplorerBaseUrl": "http://localhost:3000",
+    "dashboardBaseUrl": "http://dashboard.testnet.pokt.network"
 }

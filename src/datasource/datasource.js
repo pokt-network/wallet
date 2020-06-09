@@ -156,7 +156,7 @@ export class DataSource {
      */
     async sendTransaction(ppk, passphrase, toAddress, amount) {
         // uPOKT
-        const defaultFee = "10000000"
+        const defaultFee = "100000"
         this.pocket = undefined
         const pocket = await this.getPocketInstance()
         const accountOrError = await this.importPortablePrivateKey(passphrase, ppk, passphrase)
@@ -246,6 +246,7 @@ export class DataSource {
                 sentTxs = sentTxsOrError.toJSON()
             }
 
+            if(receivedTxs === undefined) return undefined
             // Check if both arrays are not empty
             if (receivedTxs.txs.length > 0 && sentTxs.txs.length > 0) {
                 return this.mergeTxs(receivedTxs, sentTxs)

@@ -12,7 +12,32 @@ import none from '../../utils/images/none.png';
 
 
 class TransactionDetail extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            transaction: undefined
+        }
+        const obj = {
+            sentAmount: 1000000,
+            txHash: "97F4EF40FE47574F414CE22BA73A08EEAE23931BC5D1C902AB5CE913AC530B1B",
+            txFee: 10000000,
+            txType: "TokenTransfer",
+            fromAddress: "19c0551853f19ce1b7a4a1ede775c6e3db431b0f",
+            toAddress: "802fddec29f99cae7a601cf648eafced1c062d39"
+        }
+        // Set current transaction detail object
+        // this.txDetail = this.props.location.data
+        this.txDetail = obj
+    }
     render() {
+        // Check if current transaction is set
+        if (this.txDetail === undefined) {
+            // Redirect to the home page
+            this.props.history.push({
+                pathname: '/'
+            })
+            return null
+        }
         return (
             <DetailContent>
                 <Wrapper className="wide-block-wr">
@@ -21,7 +46,7 @@ class TransactionDetail extends Component {
                         <TBody className="details-t">
                             <Tr>
                                 <Th>TRANSACTION HASH</Th>
-                                <Td> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </Td>
+                                <Td style={{wordBreak: "break-word"}}> {this.txDetail.txHash} </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
@@ -35,36 +60,20 @@ class TransactionDetail extends Component {
                                 </table>
                             </Tr>
                             <Tr>
-                                <Th>TIMESTAMP</Th>
-                                <Td>34 sec ago</Td>
-                            </Tr>
-                            <Tr>
                                 <Th>AMOUNT</Th>
-                                <Td>246,576.058 <span>POKT</span></Td>
+                                <Td>{this.txDetail.sentAmount / 1000000} <span>POKT</span></Td>
                             </Tr>
                             <Tr>
                                 <Th>TX FEE</Th>
-                                <Td>100,000 POKT</Td>
+                                <Td>100,000 uPOKT</Td>
                             </Tr>
                             <Tr>
                                 <Th>Tx Type</Th>
-                                <Td>DAOTransfer</Td>
+                                <Td>{this.txDetail.txType}</Td>
                             </Tr>
                             <Tr>
                                 <Th>TO ADDRESS</Th>
-                                <Td>9L69144c864bd87a92e9a969144c864bd87a92e9</Td>
-                            </Tr>
-                            <Tr>
-                                <Th>BALANCE Before</Th>
-                                <Td>454,758.987 POKT</Td>
-                            </Tr>
-                            <Tr>
-                                <Th>BALANCE AFTER</Th>
-                                <Td>100,000 POKT</Td>
-                            </Tr>
-                            <Tr>
-                                <Th>BLOCK #</Th>
-                                <Td>343T5</Td>
+                                <Td>{this.txDetail.toAddress}</Td>
                             </Tr>
                         </TBody>
                     </T>
@@ -74,7 +83,7 @@ class TransactionDetail extends Component {
                                 <Th>TRANSACTION HASH</Th>
                             </Tr>
                             <Tr>
-                                <Td> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </Td>
+                                <Td> {this.txDetail.txHash} </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
@@ -90,52 +99,28 @@ class TransactionDetail extends Component {
                                 </table>
                             </Tr>
                             <Tr>
-                                <Th>TIMESTAMP</Th>
-                            </Tr>
-                            <Tr>
-                                <Td>34 sec ago</Td>
-                            </Tr>
-                            <Tr>
                                 <Th>AMOUNT</Th>
                             </Tr>
                             <Tr>
-                                <Td>246,576.058 <span>POKT</span></Td>
+                                <Td>{this.txDetail.sentAmount / 1000000} <span>POKT</span></Td>
                             </Tr>
                             <Tr>
                                 <Th>TX FEE</Th>
                             </Tr>
                             <Tr>
-                                <Td>100,000 POKT</Td>
+                                <Td>100,000 uPOKT</Td>
                             </Tr>
                             <Tr>
                                 <Th>Tx Type</Th>
                             </Tr>
                             <Tr>
-                                <Td>DAOTransfer</Td>
+                                <Td>{this.txDetail.txType}</Td>
                             </Tr>
                             <Tr>
                                 <Th>TO ADDRESS</Th>
                             </Tr>
                             <Tr>
-                                <Td>9L69144c864bd87a92e9a969144c864bd87a92e9</Td>
-                            </Tr>
-                            <Tr>
-                                <Th>BALANCE Before</Th>
-                            </Tr>
-                            <Tr>
-                                <Td>454,758.987 POKT</Td>
-                            </Tr>
-                            <Tr>
-                                <Th>BALANCE AFTER</Th>
-                            </Tr>
-                            <Tr>
-                                <Td>100,000 POKT</Td>
-                            </Tr>
-                            <Tr>
-                                <Th>BLOCK #</Th>
-                            </Tr>
-                            <Tr>
-                                <Td>343T5</Td>
+                                <Td>{this.txDetail.toAddress}</Td>
                             </Tr>
                         </TBody>
                     </T>
