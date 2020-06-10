@@ -18,7 +18,6 @@ import './normalize.css';
 
 class App extends Component {
   render() {
-    console.log("Rendering app")
     return (
         <Router>
             <div className="page-container">
