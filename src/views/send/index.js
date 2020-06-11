@@ -9,28 +9,33 @@ import exit from '../../utils/images/exit.png';
 import PopupContent from './popup-content';
 import altertR from '../../utils/images/alert-circle-red.png';
 import { DataSource } from "../../datasource"
-import {RpcError, typeGuard} from "@pokt-network/pocket-js/dist/web.js"
-
+import base from "../../config/config.json"
+// Assign the base to the config constant
+const config = base
 //
 class Send extends Component {
     constructor(props) {
         super(props)
         this.state = {
             isModalVisible: false,
-            addressHex: undefined,
+            fromAddressHex: undefined,
+            destinationAdressHex: undefined,
             publicKeyHex: undefined,
             ppk: undefined,
             visibility: false,
-            amountToSend: 0
+            amountToSend: 0,
+            isAmountValid: false,
+            isAddressValid: false,
+            txFee: config.txFee
         }
         // Set up locals
-        this.dataSource = DataSource.instance
+        this.dataSource = new DataSource([new URL(config.baseUrl)])
 
         this.toggleNotBalanceError = this.toggleNotBalanceError.bind(this)
         this.toggleAddressError = this.toggleAddressError.bind(this)
+        this.toggleAmountError = this.toggleAmountError.bind(this)
         this.updateAmountValue = this.updateAmountValue.bind(this)
         this.updateDestinationAddress = this.updateDestinationAddress.bind(this)
-        this.updateValues = this.updateValues.bind(this)
         this.closeModal = this.closeModal.bind(this)
         this.showModal = this.showModal.bind(this)
         this.sendTransaction = this.sendTransaction.bind(this)
@@ -39,12 +44,13 @@ class Send extends Component {
         this.showPassModal = this.showPassModal.bind(this)
         this.finishSendTransaction = this.finishSendTransaction.bind(this)
         this.pushToTxDetail = this.pushToTxDetail.bind(this)
+        this.updateValues = this.updateValues.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
     }
     showModal() {
         const modal = document.getElementById("popup")
-        if (modal) {
+        if (modal && this.state.isAmountValid && this.state.isAddressValid) {
             modal.style.display = "block"
         }
     }
@@ -79,7 +85,12 @@ class Send extends Component {
         const amountToSend = this.state.amountToSend
         
         if (passphrase && destinationAddress && ppk && amountToSend > 0) {
-            
+            // Update the state values for the addresses
+            this.setState({
+                fromAddressHex: this.currentAccount.addressHex, 
+                destinationAdressHex: destinationAddress.value
+            })
+
             const txResponse = await this.dataSource.sendTransaction(
                 ppk,
                 passphrase.value,
@@ -87,22 +98,22 @@ class Send extends Component {
                 amountToSend
             )
             this.finishSendTransaction()
-            if (typeGuard(txResponse, RpcError)) {
-                this.toggleAddressError(true, "Failed to send the transaction")
-                console.log(RpcError)
+            if (txResponse === undefined) {
+                this.toggleAddressError(true, "Failed to send the transaction, please check the information.")
+                console.log(txResponse)
             }else {
                 const obj = {
                     sentAmount: amountToSend,
                     txHash: txResponse.hash,
-                    txFee: 10000000,
-                    txType: "TokenTransfer",
-                    fromAddress: this.state.addressHex,
-                    toAddress: destinationAddress.value
+                    txFee: this.state.txFee / 1000000,
+                    fromAddress: this.state.fromAddressHex,
+                    toAddress: this.state.destinationAdressHex,
+                    status: "Pending",
+                    sentStatus: "Sending"
                 }
                 this.pushToTxDetail(obj)
             }
         }
-        
     }
     pushToTxDetail(obj) {
         // Check the account info before pushing
@@ -119,13 +130,13 @@ class Send extends Component {
     // Close and clean after sending a transaction
     finishSendTransaction() {
         this.setState({amountToSend: 0})
+        document.getElementById("pokt-amount").value = 0.00
         document.getElementById("modal-passphrase").value = ""
         document.getElementById("destination-address").value = ""
         this.closeModal()
         this.closePassModal()
     }
-    // Update
-    updateValues() {
+    updateValues(){
         this.updateAmountValue()
         this.updateDestinationAddress()
     }
@@ -138,8 +149,9 @@ class Send extends Component {
         // Check if both element exists
         if (amountElement && amountElementText) {
             // Validate the address
-            if(amountElement.value <= 0) {
-                this.toggleAddressError(true, "Amount to send is invalid.")
+            if(amountElement.value <= 0 || amountElement.value === "") {
+                this.toggleAmountError(true, "Amount to send is invalid.")
+                this.setState({isAmountValid: false})
                 return
             }
             // Convert the decimals to upokt to use the value for the send-tx
@@ -149,9 +161,8 @@ class Send extends Component {
             // Update the modal amount element value
             amountElementText.innerText = valueText
             // Save the amount in uPOKT to send in the state
-            this.setState({amountToSend: value}) 
-            // Show modal
-            this.showModal()
+            this.setState({amountToSend: value, isAmountValid: true})
+            this.toggleAmountError(false, "Amount to send is invalid.")
         }
     }
     // Update destination address
@@ -166,8 +177,11 @@ class Send extends Component {
             if(this.dataSource.validateAddress(destinationAddress.value)) {
                 // Add the destination address to the modal element
                 destinationModal.value = destinationAddress.value
+                this.setState({isAddressValid: true})
+                this.toggleAddressError(false, "Address is invalid")
             }else {
                 this.toggleAddressError(true, "Address is invalid")
+                this.setState({isAddressValid: false})
             }
         }
     }
@@ -182,8 +196,16 @@ class Send extends Component {
             errorSpan.innerText = msg
         }
     }
+    
     toggleAddressError(show, msg) {
         const errorSpan = document.getElementById("address-error")
+        if (errorSpan) {
+            errorSpan.style.display = show === true ? "block" : "none"
+            errorSpan.innerText = msg
+        }
+    }
+    toggleAmountError(show, msg) {
+        const errorSpan = document.getElementById("amount-error")
         if (errorSpan) {
             errorSpan.style.display = show === true ? "block" : "none"
             errorSpan.innerText = msg
@@ -208,7 +230,7 @@ class Send extends Component {
                             <form className="quantity-form">
                                 <div className="row">
                                     <div className="container">
-                                        <input style={{color: "black"}} type="number" name="quantity" step="0.01" id="pokt-amount" placeholder="0.00" />
+                                        <input style={{color: "black"}} onChange={this.updateValues} type="number" name="quantity" step="0.01" id="pokt-amount" placeholder="0.00" />
                                         <label htmlFor="pokt">POKT</label>
                                     </div>
                                 </div>
@@ -222,11 +244,12 @@ class Send extends Component {
                             <div className="send-form">
                                 <div className="container">
                                     <label htmlFor="adrs">To address</label>
-                                    <Input type="text" name="address" id="destination-address" placeholder="Pocket account address" />
+                                    <Input type="text" name="address" id="destination-address" onChange={this.updateValues} placeholder="Pocket account address" />
                                     <span style={{display: "none"}} id="address-error" className="error"> <img src={altertR} alt="alert" /> Please enter an address</span>
-                                    <label>TX Fee 100,000 uPOKT</label>
+                                    <span style={{display: "none"}} id="amount-error" className="error"> <img src={altertR} alt="alert" /> Invalid amount</span>
+                                    <label>TX Fee {this.state.txFee / 1000000} POKT</label>
                                     <Button style={{display: "inline-block", marginTop: "20px"}} 
-                                        onClick={this.updateValues} className="button" >Send</Button>
+                                        onClick={this.showModal} className="button" >Send</Button>
                                     <div style={{ display: "none" }} id="popup" className="container popup">
                                         <PopupContent className="modal popup-child">
                                             <a className="close" onClick={this.closeModal}>

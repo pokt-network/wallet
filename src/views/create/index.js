@@ -7,6 +7,9 @@ import Button from '../../components/public/button/button';
 import altertR from '../../utils/images/alert-circle-red.png';
 import altertT from '../../utils/images/alert-triangle.png';
 import { DataSource } from "../../datasource"
+import base from "../../config/config.json"
+// Assign the base to the config constant
+const config = base
 
 class Create extends Component {
     constructor(props) {
@@ -17,7 +20,7 @@ class Create extends Component {
             ppk: undefined,
         }
         // Set up locals
-        this.dataSource = DataSource.instance
+        this.dataSource = new DataSource([new URL(config.baseUrl)])
         // Bind functions
         this.handleCreateAccount = this.handleCreateAccount.bind(this)
         this.handleDownload = this.handleDownload.bind(this)

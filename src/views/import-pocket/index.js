@@ -8,6 +8,9 @@ import altertR from "../../utils/images/alert-circle-red.png"
 import { DataSource } from "../../datasource"
 import Modal, { closeStyle } from "simple-react-modal"
 import { typeGuard } from "@pokt-network/pocket-js/dist/web.js"
+import base from "../../config/config.json"
+// Assign the base to the config constant
+const config = base
 
 class ImportPocket extends React.Component {
     constructor(props) {
@@ -18,7 +21,7 @@ class ImportPocket extends React.Component {
             isModalVisible: false,
         }
         // Set up locals
-        this.dataSource = DataSource.instance
+        this.dataSource = new DataSource([new URL(config.baseUrl)])
 
         this.isFileInput = this.isFileInput.bind(this)
         this.isTextInput = this.isTextInput.bind(this)
@@ -357,12 +360,20 @@ class ImportPocket extends React.Component {
                         show={this.state.isModalVisible}
                         onClose={this.closeModal.bind(this)}
                     >
-                        <div className="cont-input">
-                            <label style={{ maginTop: "10px" }} htmlFor="private">
+                        <div className="cont-input" style={{textAlign: "center"}}>
+                            <label style={{ 
+                                    maginTop: "10px",
+                                    color: "#06202e",
+                                    fontSize: "20px",
+                                    fontWeight: "700",
+                                    textTransform: "uppercase",
+                                    marginTop: "10px",
+                                    display: "block" 
+                                }} htmlFor="private">
                                 Passphrase
                             </label>
                             <Input
-                                style={{ maginTop: "10px" }}
+                                style={{ marginTop: "20px" }}
                                 type="password"
                                 name="import-pk-passphrase"
                                 id="import-pk-passphrase"

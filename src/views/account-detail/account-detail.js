@@ -6,6 +6,17 @@ const AccountLContent = styled.section`
   position: relative;
   max-width: 800px;
   margin: 80px auto;
+  tr {
+    display: block;
+  }
+  .block-align {
+    text-align: center;
+  }
+  .table-scroll {
+    overflow: scroll;
+    display: block;
+    height: 482px;
+  }
   ${maxPhone(css`
     max-width: 100%;
   `)};
