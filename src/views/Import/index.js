@@ -7,6 +7,9 @@ import Button from '../../components/public/button/button';
 import altertR from '../../utils/images/alert-circle-red.png';
 import { DataSource } from "../../datasource"
 import Modal, {closeStyle} from 'simple-react-modal'
+import base from "../../config/config.json"
+// Assign the base to the config constant
+const config = base
 
 class Import extends Component {
     
@@ -19,7 +22,7 @@ class Import extends Component {
             isKeyFile: false
         }
         // Set up locals
-        this.dataSource = new DataSource(undefined, [new URL("http://localhost:8081")])
+        this.dataSource = new DataSource([new URL(config.baseUrl)])
         // Bind functions
         this.handleImports = this.handleImports.bind(this)
         this.handleImportKeyFile = this.handleImportKeyFile.bind(this)

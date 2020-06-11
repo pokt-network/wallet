@@ -24,6 +24,9 @@ import THead from '../../components/public/table/THead';
 import TBody from '../../components/public/table/TBody';
 import TFooter from '../../components/public/table/TFooter';
 import { DataSource } from "../../datasource"
+import base from "../../config/config.json"
+// Assign the base to the config constant
+const config = base
 
 class AccountLatest extends Component {
     constructor(props) {
@@ -32,14 +35,14 @@ class AccountLatest extends Component {
             normal: undefined,
             app: undefined,
             node: undefined,
-            visibility: false,
+            visibility: true,
             addressHex: "",
             publicKeyHex: "",
             unstakingImgSrc: unstaking,
             stakeImgSrc: stake
         }
         // Set up locals
-        this.dataSource = DataSource.instance
+        this.dataSource = new DataSource([new URL(config.baseUrl)])
         // Binds
         this.onToggleBtn = this.onToggleBtn.bind(this)
         this.getBalance = this.getBalance.bind(this)
@@ -81,8 +84,8 @@ class AccountLatest extends Component {
                         const txTemplate = '<Tr class="sc-fzqBZW ilrPoA">\n' +
                             '<Td class="sc-fzokOt hITMcq"> <img src='+ imageSrc +' alt="'+ tx.type.toLowerCase() +'" /> </Td>\n' +
                             '<Td class="sc-fzokOt hITMcq"> <div class="qty">'+ value / 1000000 +' <span>POKT</span></div> <div class="status">'+ tx.type.toLowerCase() +'</div> </Td>\n' +
-                            '<Td class="sc-fzokOt hITMcq">'+tx.height+'</Td>\n' +
-                            '<Td class="sc-fzokOt hITMcq"> <a href="http://example.com"> '+txHash+' </a> </Td>\n' +
+                            '<Td class="sc-fzokOt hITMcq block-align">'+tx.height+'</Td>\n' +
+                            '<Td class="sc-fzokOt hITMcq"> <a href="/transaction-detail?txHash='+txHash+'"> '+txHash+' </a> </Td>\n' +
                         '</Tr>'
                         d1.insertAdjacentHTML('beforeend', txTemplate);
                     }else {
@@ -185,17 +188,23 @@ class AccountLatest extends Component {
     // Retrieves the account balance
     async getBalance() {
         const balance = await this.dataSource.getBalance(this.currentAccount.addressHex)
-        // Scroll to the account information section
-        var element = document.querySelector("#pokt-balance");
-        element.scrollIntoView({
-            behavior: 'smooth'
-        })
-        // Update account detail values
-        document.getElementById('pokt-balance').innerText = balance + " POKT"
-        this.setState({
-            addressHex: this.currentAccount.addressHex,
-            publicKeyHex: this.currentAccount.publicKeyHex
-        })
+
+        const poktBalanceElement = document.getElementById('pokt-balance')
+        const poktUsdBalanceElement = document.getElementById('pokt-balance-usd')
+
+        if (poktBalanceElement && poktUsdBalanceElement) {
+            // Update account detail values
+            poktBalanceElement.innerText = balance.toFixed(2) + " POKT"
+            poktUsdBalanceElement.innerText = "$ " + (balance * config.poktUsdValue).toFixed(2) + " USD"
+            this.setState({
+                addressHex: this.currentAccount.addressHex,
+                publicKeyHex: this.currentAccount.publicKeyHex
+            })
+            // Scroll to the account information section
+            poktBalanceElement.scrollIntoView({
+                behavior: 'smooth'
+            })
+        }
     }
     pushToSend() {
         // Check the account info before pushing
@@ -248,8 +257,8 @@ class AccountLatest extends Component {
                             <h1 id="pokt-balance" >0.00 POKT</h1>
                             <div style={{flexDirection: "column"}} className="stats">
                                 <div className="stat">
-                                    <span>$ 0 USD</span>
-                                    <img src={reload} alt="reload" />
+                                    <span id="pokt-balance-usd">$ 0 USD</span>
+                                    <img style={{cursor: "pointer"}} onClick={this.getBalance} src={reload} alt="reload" />
                                 </div>
                             </div>
                         </div>
@@ -259,13 +268,13 @@ class AccountLatest extends Component {
                         <div style={{ display: "none" }} id="normal-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <h2 id="node-staked-tokens-amount" > <img src={token} alt="staked tokens"/> 0 <span>POKT</span></h2>
+                                    <h2 > <img src={token} alt="staked tokens"/> 0 <span>POKT</span></h2>
                                 </div>
                                 <span className="title">Staked Tokens</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2 id="node-staking-status"> <img id="normal-stake-status-img" src={unstaking} alt="staked tokens"/> NA </h2>
+                                    <h2> <img id="normal-stake-status-img" src={unstaking} alt="staked tokens"/> NA </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
@@ -351,7 +360,7 @@ class AccountLatest extends Component {
                                 <Th> TX HASH</Th>
                                 </Tr>
                             </THead>
-                            <TBody id="transation-list-section" className="l-tx">
+                            <TBody id="transation-list-section" className="l-tx table-scroll">
                                  <Tr style={{display: "none"}}>
                                     <Td> <img src={load} alt="loading" /> </Td>
                                     <Td> <div className="qty">0.00 <span>POKT</span></div> <div className="status">Sending</div> </Td>
