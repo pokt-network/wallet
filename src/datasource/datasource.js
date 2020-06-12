@@ -31,24 +31,26 @@ export class DataSource {
             const clientPassphrase = config.clientPassphrase
             const walletAppPublicKey = config.walletAppPublicKey
             const walletAppSignature = config.walletAppAATSignature
+            const walletPrivateKey = config.walletPrivateKey
 
             // Pocket instance
             const pocket = new Pocket(this.dispatchers, undefined, configuration)
             const blockchain = config.chain
 
             // Generate the AAT
-            const aat = new PocketAAT(
-                DataSource.AATVersion,
-                clientPubKeyHex,
-                walletAppPublicKey,
-                walletAppSignature
-            )
-            const pocketRpcProvider = new HttpRpcProvider(this.dispatchers)
-            // const pocketRpcProvider = new PocketRpcProvider(
-            //     pocket,
-            //     aat,
-            //     blockchain
+            // const aat = new PocketAAT(
+            //     DataSource.AATVersion,
+            //     clientPubKeyHex,
+            //     walletAppPublicKey,
+            //     walletAppSignature
             // )
+            const aat = await PocketAAT.from(DataSource.AATVersion, clientPubKeyHex, walletAppPublicKey, walletPrivateKey)
+            // const pocketRpcProvider = new HttpRpcProvider(this.dispatchers)
+            const pocketRpcProvider = new PocketRpcProvider(
+                pocket,
+                aat,
+                blockchain
+            )
             
             this.pocket = new Pocket(this.dispatchers, pocketRpcProvider, configuration)
             // Import client Account
@@ -57,9 +59,19 @@ export class DataSource {
                 throw clientAccountOrError
             }
             // Unlock the client account
-            await this.pocket.keybase.unlockAccount(clientAccountOrError.addressHex, clientPassphrase, 0)
+            const unlockOrError = await this.pocket.keybase.unlockAccount(clientAccountOrError.addressHex, clientPassphrase)
+            // TODO: Remove this section, for test purposes only
+            const isUnlocked = await this.pocket.keybase.isUnlocked(clientAccountOrError.addressHex)
+            if (isUnlocked) {
+                const address = "19c0551853f19ce1b7a4a1ede775c6e3db431b0f"
+                const balance = await this.pocket.rpc().query.getBalance(address, BigInt(0))
+                console.log(balance)
+            }
+            // End
+            return this.pocket
+        }else {
+            return this.pocket
         }
-        return this.pocket
     }
 
     /**
