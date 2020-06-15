@@ -12,11 +12,8 @@ import none from '../../utils/images/none.png';
 import success from '../../utils/images/check_green.png';
 import failed from '../../utils/images/wrong_red.png';
 import { DataSource } from "../../datasource"
-import base from "../../config/config.json"
+import Config from "../../config/config.json"
 import queryString from 'query-string';
-
-// Assign the base to the config constant
-const config = base
 
 class TransactionDetail extends Component {
     constructor(props) {
@@ -29,7 +26,7 @@ class TransactionDetail extends Component {
 
         }
         // Set up locals
-        this.dataSource = new DataSource([new URL(config.baseUrl)])
+        this.dataSource = new DataSource([new URL(Config.baseUrl)])
         this.getTx = this.getTx.bind(this)
         this.updateTxInformation = this.updateTxInformation.bind(this)
         // Set current transaction detail object
@@ -37,24 +34,34 @@ class TransactionDetail extends Component {
     }
     updateTxInformation(txObj){
         document.getElementById("txHash").innerHTML = txObj.txHash
+        document.getElementById("txHashMobile").innerHTML = txObj.txHash
         document.getElementById("sentStatus").innerHTML = txObj.sentStatus
+        document.getElementById("sentStatusMobile").innerHTML = txObj.sentStatus
         document.getElementById("status").innerHTML = txObj.status
+        document.getElementById("statusMobile").innerHTML = txObj.status
         // Update the status img
         switch (txObj.status) {
             case "Success":
                 document.getElementById("statusImg").src = this.state.successImgSrc
+                document.getElementById("statusImgMobile").src = this.state.successImgSrc
                 break;
             case "Failed":
                 document.getElementById("statusImg").src = this.state.failedImgSrc
+                document.getElementById("statusImgMobile").src = this.state.failedImgSrc
                 break;
             default:
                 document.getElementById("statusImg").src = this.state.pendingImgSrc
+                document.getElementById("statusImgMobile").src = this.state.pendingImgSrc
                 break;
         }
         document.getElementById("sentAmount").innerHTML = txObj.sentAmount + " POKT"
+        document.getElementById("sentAmountMobile").innerHTML = txObj.sentAmount + " POKT"
         document.getElementById("txFee").innerHTML = txObj.txFee + " POKT"
+        document.getElementById("txFeeMobile").innerHTML = txObj.txFee + " POKT"
         document.getElementById("fromAddress").innerHTML = txObj.fromAddress
+        document.getElementById("fromAddressMobile").innerHTML = txObj.fromAddress
         document.getElementById("toAddress").innerHTML = txObj.toAddress
+        document.getElementById("toAddressMobile").innerHTML = txObj.toAddress
     }
     async getTx(txHash){
         try {
@@ -95,7 +102,7 @@ class TransactionDetail extends Component {
                 const txObj = {
                     sentAmount: sentAmount,
                     txHash: txResponse.transaction.hash,
-                    txFee: config.txFee / 1000000,
+                    txFee: Config.txFee / 1000000,
                     txType: "TokenTransfer",
                     fromAddress: senderAddress,
                     toAddress: recipientAdress,
@@ -171,7 +178,7 @@ class TransactionDetail extends Component {
                                 <Td id="txFee">{this.txDetail.txFee} POKT</Td>
                             </Tr>
                             <Tr>
-                                <Th>Tx Type</Th>
+                                <Th>TX TYPE</Th>
                                 <Td>TokenTransfer</Td>
                             </Tr>
                             <Tr>
@@ -190,7 +197,7 @@ class TransactionDetail extends Component {
                                 <Th>TRANSACTION HASH</Th>
                             </Tr>
                             <Tr>
-                                <Td> {this.txDetail.txHash} </Td>
+                                <Td id="txHashMobile" style={{wordBreak: "break-word"}}> {this.txDetail.txHash} </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
@@ -199,8 +206,8 @@ class TransactionDetail extends Component {
                                 <table className="states">
                                     <TBody> 
                                         <Tr>
-                                            <Td> <img src={load} alt="loading state"/> <span>Sending</span> </Td>
-                                            <Td> <span>Pending</span> <img src={none} alt="none state"/> </Td>
+                                        <Td> <img src={load} alt="loading state"/> <span id="sentStatusMobile" >Sending</span> </Td>
+                                            <Td> <span id="statusMobile">Pending</span> <img id="statusImgMobile" src={none} alt="none state"/> </Td>
                                         </Tr>
                                     </TBody>
                                 </table>
@@ -209,31 +216,31 @@ class TransactionDetail extends Component {
                                 <Th>AMOUNT</Th>
                             </Tr>
                             <Tr>
-                                <Td>{this.txDetail.sentAmount / 1000000} <span>POKT</span></Td>
+                            <Td id="sentAmountMobile">{this.txDetail.sentAmount / 1000000} <span>POKT</span></Td>
                             </Tr>
                             <Tr>
                                 <Th>TX FEE</Th>
                             </Tr>
                             <Tr>
-                                <Td>{this.txDetail.txFee} POKT</Td>
+                                <Td id="txFeeMobile">{this.txDetail.txFee} POKT</Td>
                             </Tr>
                             <Tr>
-                                <Th>Tx Type</Th>
+                                <Th>TX TYPE</Th>
                             </Tr>
                             <Tr>
-                                <Td>{this.txDetail.txType}</Td>
+                                <Td>TokenTransfer</Td>
                             </Tr>
                             <Tr>
                                 <Th>FROM ADDRESS</Th>
                             </Tr>
                             <Tr>
-                                <Td>{this.txDetail.fromAddress}</Td>
+                                <Td id="fromAddressMobile">{this.txDetail.fromAddress}</Td>
                             </Tr>
                             <Tr>
                                 <Th>TO ADDRESS</Th>
                             </Tr>
                             <Tr>
-                                <Td>{this.txDetail.toAddress}</Td>
+                                <Td id="toAddressMobile">{this.txDetail.toAddress}</Td>
                             </Tr>
                         </TBody>
                     </T>

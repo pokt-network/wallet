@@ -10,9 +10,7 @@ import StyledLi from "./li";
 import HeaderContainer from "./header";
 import logo from '../../utils/images/logo-white.png';
 import arrow from '../../utils/images/right-arrow.png';
-import base from "../../config/config.json"
-// Assign the base to the config constant
-const config = base
+import Config from "../../config/config.json"
 
 class Header extends Component {
   state = {
@@ -42,7 +40,7 @@ class Header extends Component {
                 <NavLink exact activeClassName="active" to="/send" onClick={this.onToggleMenu}>Send</NavLink>
               </StyledLi>
               <StyledLi>
-                <a href={config.dashboardBaseUrl}>Buy POKT</a>
+                <a href={Config.dashboardBaseUrl}>Buy POKT</a>
               </StyledLi>
               <StyledLi className="sub_menu">
                 <a href={hrefLink}> Account <img src={arrow} alt="greater than" /> </a>

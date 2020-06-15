@@ -24,9 +24,7 @@ import THead from '../../components/public/table/THead';
 import TBody from '../../components/public/table/TBody';
 import TFooter from '../../components/public/table/TFooter';
 import { DataSource } from "../../datasource"
-import base from "../../config/config.json"
-// Assign the base to the config constant
-const config = base
+import Config from "../../config/config.json"
 
 class AccountLatest extends Component {
     constructor(props) {
@@ -42,7 +40,7 @@ class AccountLatest extends Component {
             stakeImgSrc: stake
         }
         // Set up locals
-        this.dataSource = new DataSource([new URL(config.baseUrl)])
+        this.dataSource = new DataSource([new URL(Config.baseUrl)])
         // Binds
         this.onToggleBtn = this.onToggleBtn.bind(this)
         this.getBalance = this.getBalance.bind(this)
@@ -195,7 +193,7 @@ class AccountLatest extends Component {
         if (poktBalanceElement && poktUsdBalanceElement) {
             // Update account detail values
             poktBalanceElement.innerText = balance.toFixed(2) + " POKT"
-            poktUsdBalanceElement.innerText = "$ " + (balance * config.poktUsdValue).toFixed(2) + " USD"
+            poktUsdBalanceElement.innerText = "$ " + (balance * Config.poktUsdValue).toFixed(2) + " USD"
             this.setState({
                 addressHex: this.currentAccount.addressHex,
                 publicKeyHex: this.currentAccount.publicKeyHex
