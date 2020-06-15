@@ -6,6 +6,11 @@ const CreateContent = styled.section`
   position: relative;
   max-width: 800px;
   margin: 80px auto;
+  .download-btn {
+    display: inline-block;
+    position: relative;
+    margin-left: 0px;
+  }
   .account-details {
     text-align: center;
     margin-top: 2em;
