@@ -283,13 +283,14 @@ export class DataSource {
      */
     async getTxs(address, received){
         const pocket = await this.getPocketInstance()
+        const maxTxs = Config.maxTransactionListCount
         // Retrieve received transactions
-        const receivedTxsOrError = await pocket.rpc().query.getAccountTxs(address, received, false, 1, 10)
+        const receivedTxsOrError = await pocket.rpc().query.getAccountTxs(address, received, false, 1, maxTxs)
         // 
         if (!typeGuard(receivedTxsOrError, RpcError)) {
             const txs = receivedTxsOrError
             // Check the amount of total records
-            let page = receivedTxsOrError.totalCount / 10
+            let page = receivedTxsOrError.totalCount / maxTxs
             // Check if the page is decimal
             if (page % 1 !== 0) {
                 page = Math.round(page)
@@ -298,7 +299,7 @@ export class DataSource {
                 }
             }
             // Call the last page
-            const txsOrError = await this.pocket.rpc().query.getAccountTxs(address, received, false, page, 10)
+            const txsOrError = await this.pocket.rpc().query.getAccountTxs(address, received, false, page, maxTxs)
             // 
             if (!typeGuard(txsOrError, RpcError)) {
                 return txsOrError

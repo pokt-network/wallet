@@ -103,7 +103,12 @@ class Send extends Component {
                 this.toggleAddressError(true, "Failed to send the transaction, please check the information.")
                 console.log(txResponse)
             }else {
-                const obj = {
+                const accountObj = {
+                    addressHex: this.currentAccount.addressHex,
+                    publicKeyHex: this.currentAccount.publicKeyHex,
+                    ppk: this.currentAccount.ppk,
+                }
+                const tx = {
                     sentAmount: amountToSend,
                     txHash: txResponse.hash,
                     txFee: this.state.txFee / 1000000,
@@ -112,20 +117,26 @@ class Send extends Component {
                     status: "Pending",
                     sentStatus: "Sending"
                 }
+                const obj = {
+                    tx: tx,
+                    txHash: undefined,
+                    account: accountObj
+                }
+
                 this.pushToTxDetail(obj)
             }
         }
     }
-    pushToTxDetail(obj) {
-        // Check the account info before pushing
-        if (!obj) {
+    pushToTxDetail(tx) {
+        // Check the tx information before pushing
+        if (!tx) {
             this.toggleError(true, "No transaction detail available.")
             return
         }
         // Move to the transaction detail
         this.props.history.push({
             pathname: "/transaction-detail",
-            data: obj,
+            data: tx,
         })
     }
     // Close and clean after sending a transaction
