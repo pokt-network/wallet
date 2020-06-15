@@ -15,14 +15,12 @@ import sent from '../../utils/images/sent.png';
 import received from '../../utils/images/received.png';
 import load from '../../utils/images/load.png';
 import reload from '../../utils/images/reload.png'; 
-import arrowUp from '../../utils/images/arrow-up.png';
 import T from '../../components/public/table/Table';
 import Th from '../../components/public/table/Th';
 import Td from '../../components/public/table/Td';
 import Tr from '../../components/public/table/Tr';
 import THead from '../../components/public/table/THead';
 import TBody from '../../components/public/table/TBody';
-import TFooter from '../../components/public/table/TFooter';
 import { DataSource } from "../../datasource"
 import Config from "../../config/config.json"
 
@@ -49,6 +47,7 @@ class AccountLatest extends Component {
         this.addNode = this.addNode.bind(this)
         this.getTransactions = this.getTransactions.bind(this)
         this.pushToSend = this.pushToSend.bind(this)
+        this.pushToTxDetail = this.pushToTxDetail.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
     }
@@ -61,16 +60,17 @@ class AccountLatest extends Component {
     }
     updateTransactionList(txs) {
         try {
+            // Transaction list section
+            const section = document.getElementById('transation-list-section')
             // Invert the list
             const rTxs = txs.reverse()
             // Images src paths
             const sentImgSrc = sent
             const receivedImgSrc = received
-
+            let idCounter = 1
             rTxs.forEach(tx => {
-                var d1 = document.getElementById('transation-list-section');
                 const events = JSON.parse(tx.tx_result.log)[0].events
-                //
+
                 if (events[1].type === "transfer") {
                     const attributes = events[1].attributes
                     if (attributes[1].key === "amount") {
@@ -78,19 +78,27 @@ class AccountLatest extends Component {
     
                         const txHash = tx.hash
                         const imageSrc = tx.type.toLowerCase() === "sent" ? sentImgSrc : receivedImgSrc
-        
+                        
                         const txTemplate = '<Tr class="sc-fzqBZW ilrPoA">\n' +
                             '<Td class="sc-fzokOt hITMcq"> <img src='+ imageSrc +' alt="'+ tx.type.toLowerCase() +'" /> </Td>\n' +
                             '<Td class="sc-fzokOt hITMcq"> <div class="qty">'+ value / 1000000 +' <span>POKT</span></div> <div class="status">'+ tx.type.toLowerCase() +'</div> </Td>\n' +
                             '<Td class="sc-fzokOt hITMcq block-align">'+tx.height+'</Td>\n' +
-                            '<Td class="sc-fzokOt hITMcq"> <a href="/transaction-detail?txHash='+txHash+'"> '+txHash+' </a> </Td>\n' +
+                            '<Td class="sc-fzokOt hITMcq"> <a id="txHashElement'+idCounter+'"> '+txHash+' </a> </Td>\n' +
                         '</Tr>'
-                        d1.insertAdjacentHTML('beforeend', txTemplate);
+                        section.insertAdjacentHTML('beforeend', txTemplate)
+                        // Add onClick event to the clickable element
+                        const toTxDetail = document.getElementById("txHashElement"+idCounter)
+                        if (toTxDetail) {
+                            toTxDetail.addEventListener("click", () => { this.pushToTxDetail(txHash) })
+                        }
+                        idCounter++
                     }else {
                         console.dir(attributes, {depth: null})
                     }
                 }
             })
+            // Display the table
+            section.style.display = "block"
         } catch (error) {
             console.log(error)
         }
@@ -201,6 +209,32 @@ class AccountLatest extends Component {
             // Scroll to the account information section
             poktBalanceElement.scrollIntoView({
                 behavior: 'smooth'
+            })
+        }
+    }
+    pushToTxDetail(txHash) {
+        // Check the account info before pushing
+        if (this.currentAccount.addressHex === undefined ||
+            this.currentAccount.publicKeyHex === undefined ||
+            this.currentAccount.ppk === undefined) {
+            this.toggleError(true, "No account available, please create an account")
+            return
+        }
+        if (txHash) {
+            const accountObj = {
+                addressHex: this.currentAccount.addressHex,
+                publicKeyHex: this.currentAccount.publicKeyHex,
+                ppk: this.currentAccount.ppk,
+            }
+            const obj = {
+                tx: undefined,
+                txHash: txHash,
+                account: accountObj
+            }
+            // Move to the account detail
+            this.props.history.push({
+                pathname: "/transaction-detail",
+                data: obj,
             })
         }
     }
@@ -358,12 +392,12 @@ class AccountLatest extends Component {
                                 <Th> TX HASH</Th>
                                 </Tr>
                             </THead>
-                            <TBody id="transation-list-section" className="l-tx table-scroll">
+                            <TBody style={{display: "none"}} id="transation-list-section" className="l-tx table-scroll">
                                  <Tr style={{display: "none"}}>
                                     <Td> <img src={load} alt="loading" /> </Td>
                                     <Td> <div className="qty">0.00 <span>POKT</span></div> <div className="status">Sending</div> </Td>
                                     <Td>34 sec ago</Td>
-                                    <Td> <a href=""> 94691343T5cbd87abd8864bd87abd87a9974f1R34 </a> </Td>
+                                    <Td> <a href="">  </a> </Td>
                                 </Tr>
                             </TBody>
                         </T>

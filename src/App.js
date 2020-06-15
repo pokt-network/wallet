@@ -31,7 +31,6 @@ class App extends Component {
                 <Route exact path="/import" component={ImportPocket}></Route>
                 <Route exact path="/account" component={AccountLatest}></Route>
                 <Route exact path="/transaction-detail" component={TransactionDetail}></Route>
-                <Route exact path="/transaction-detail:txHash" component={TransactionDetail}></Route>
                 <Footer />
             </div>
         </Router>
