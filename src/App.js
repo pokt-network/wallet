@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import GlobalStyles from './components/global-style';
 
 import Home from './views/home/index';
-import BuyPokt from './views/buy-pokt/index';
 import Send from './views/send/index';
 import Create from './views/create/index';
 import LogOut from './views/log-out/index';
@@ -24,7 +23,6 @@ class App extends Component {
                 <GlobalStyles />
                 <Header />
                 <Route exact path="/" component={Home}></Route>
-                <Route exact path="/buypokt" component={BuyPokt}></Route>
                 <Route exact path="/send" component={Send}></Route>
                 <Route exact path="/create" component={Create}></Route>
                 <Route exact path="/logout" component={LogOut}></Route>

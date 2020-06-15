@@ -10,5 +10,6 @@
     "txFee": 100000,
     "poktUsdValue": 0.06,
     "blockExplorerBaseUrl": "https://explorer.testnet.pokt.network",
-    "dashboardBaseUrl": "https://dashboard.testnet.pokt.network"
+    "dashboardBaseUrl": "https://dashboard.testnet.pokt.network",
+    "maxTransactionListCount": 100
 }

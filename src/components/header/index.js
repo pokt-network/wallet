@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import { NavLink } from 'react-router-dom';
-
 import Wrapper from '../wrapper';
 import Menu from "./menu";
 import MobileButton from "./mobile-button";
@@ -13,9 +11,12 @@ import arrow from '../../utils/images/right-arrow.png';
 import Config from "../../config/config.json"
 
 class Header extends Component {
-  state = {
-    isMenuHidden: true
-  };
+  constructor(props) {
+    super(props)
+    this.state = {
+      isMenuHidden: true
+    }
+  }
 
   onToggleMenu() {
     this.setState((prevState) => {
@@ -37,15 +38,11 @@ class Header extends Component {
           <Menu isHidden={this.state.isMenuHidden}>
             <StyledUl>
               <StyledLi>
-                <NavLink exact activeClassName="active" to="/send" onClick={this.onToggleMenu}>Send</NavLink>
-              </StyledLi>
-              <StyledLi>
                 <a href={Config.dashboardBaseUrl}>Buy POKT</a>
               </StyledLi>
-              <StyledLi className="sub_menu">
+              <StyledLi style={{display: "none"}} id="navAccount" className="sub_menu">
                 <a href={hrefLink}> Account <img src={arrow} alt="greater than" /> </a>
                 <ul>
-                  
                   <li><a style={{cursor: "pointer"}} onClick={this.onLogOut} >Log out</a></li>
               </ul>
               </StyledLi>

@@ -146,6 +146,16 @@ class TransactionDetail extends Component {
             console.log("Failed to retrieve the transaction information.")
         }
     }
+
+    componentDidMount(){
+        // Navigation Item
+        const navAccount = document.getElementById("navAccount")
+        
+        if (navAccount) {
+            navAccount.style.display = "inline"
+        }
+    }
+
     render() {
         if (this.data !== undefined){
             if (this.data.account !== undefined) {
