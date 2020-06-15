@@ -10,5 +10,6 @@
     "txFee": 100000,
     "poktUsdValue": 0.06,
     "blockExplorerBaseUrl": "http://localhost:3000",
-    "dashboardBaseUrl": "http://dashboard.testnet.pokt.network"
+    "dashboardBaseUrl": "http://dashboard.testnet.pokt.network",
+    "maxTransactionListCount": 100
 }

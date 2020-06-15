@@ -269,6 +269,14 @@ class AccountLatest extends Component {
             this.getAccountType()
             this.getTransactions()
         }
+
+        // Navigation Item
+        const navAccount = document.getElementById("navAccount")
+        
+        if (navAccount) {
+            navAccount.style.display = "inline"
+        }
+        
     }
     // Render
     render() {

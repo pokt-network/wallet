@@ -43,6 +43,7 @@ class Send extends Component {
         this.finishSendTransaction = this.finishSendTransaction.bind(this)
         this.pushToTxDetail = this.pushToTxDetail.bind(this)
         this.updateValues = this.updateValues.bind(this)
+        this.backToAccountDetail = this.backToAccountDetail.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
     }
@@ -125,6 +126,22 @@ class Send extends Component {
 
                 this.pushToTxDetail(obj)
             }
+        }
+    }
+    backToAccountDetail() {
+        if (this.currentAccount !== undefined) {
+            const accountObj = {
+                addressHex: this.currentAccount.addressHex,
+                publicKeyHex: this.currentAccount.publicKeyHex,
+                ppk: this.currentAccount.ppk,
+            }
+            // Move to the transaction detail
+            this.props.history.push({
+                pathname: "/account",
+                data: accountObj,
+            })
+        }else {
+            console.log("No account vailable.")
         }
     }
     pushToTxDetail(tx) {
@@ -316,6 +333,10 @@ class Send extends Component {
                             </div>
                         </div>
                     </Wrapper>
+                    <div style={{textAlign: "center"}} className="row">
+                        <Button style={{display: "inline-block", marginTop: "20px", width: "176px"}}
+                                        onClick={this.backToAccountDetail} className="button" >Back to Account Detail</Button>
+                    </div>
                 </SendContent>
         );
     }
