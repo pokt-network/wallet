@@ -24,6 +24,24 @@ class Create extends Component {
         this.handleDownload = this.handleDownload.bind(this)
         this.pushToAccountDetail = this.pushToAccountDetail.bind(this)
         this.toggleError = this.toggleError.bind(this)
+        this.handlePassphraseChange = this.handlePassphraseChange.bind(this)
+    }
+
+    handlePassphraseChange() {
+        const passphrase = document.getElementById("passphrase").value
+        const confirmPassphrase = document.getElementById("confirmPassphrase").value
+        const passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})")
+
+        if (passphrase && passphrase) {
+            // TODO: add "!" before committing
+            if (passwordRegex.test(passphrase)) {
+                this.toggleError(true, "Passphrase must be minimum 16 characters, 1 min uppercase letter and 1 special character.")
+            }else if (passphrase !== confirmPassphrase) {
+                this.toggleError(true, "Passphrase and Confirm passphrase are not identical")
+            }else{
+                this.toggleError(false, "")
+            }
+        }
     }
 
     // Handle the download button action
@@ -43,7 +61,7 @@ class Create extends Component {
     }
     
     toggleError(show, msg) {
-        const errorSpan = document.getElementById("error-label")
+        const errorSpan = document.getElementById("passphraseError")
         if (errorSpan) {
             errorSpan.style.display = show === true ? "block" : "none"
             errorSpan.innerText = msg
@@ -71,7 +89,8 @@ class Create extends Component {
     // Create account function
     async handleCreateAccount() {
         // Retrieve the passphrase value
-        const passphrase = document.getElementById('passp').value
+        const passphrase = document.getElementById("passphrase").value
+
         // Verify the passphrase length
         if (passphrase.length > 0) {
             const account = await this.dataSource.createAccount(passphrase)
@@ -86,12 +105,21 @@ class Create extends Component {
                     publicKeyHex: account.publicKey.toString("hex"),
                     ppk: ppkOrError,
                 })
-                // Update the address and public key values
-                document.getElementById("address").value = this.state.addressHex
-                document.getElementById("pub-key").value = this.state.publicKeyHex
+                // Update the UI elements
+                const addressLabel = document.getElementById("address")
+                const publicKeyLabel = document.getElementById("publicKey")
+                const createAccountButton = document.getElementById("createAccountButton")
+                const downloadKeyFileButton = document.getElementById("downloadKeyFile")
 
+                if (addressLabel && publicKeyLabel && createAccountButton && downloadKeyFileButton) {
+                    addressLabel.value = this.state.addressHex
+                    publicKeyLabel.value = this.state.publicKeyHex
+
+                    createAccountButton.style.display = "none"
+                    downloadKeyFileButton.style.display = "inline-block"
+                }
                 // Scroll to the account information section
-                var element = document.querySelector("#download-key-file");
+                var element = document.querySelector("#downloadKeyFile");
                 element.scrollIntoView({
                     behavior: 'smooth'
                 })
@@ -111,17 +139,15 @@ class Create extends Component {
                         <p>Write down a Passphrase to protect your key file. This should have: minimun 15 alphanumeric symbols, one capital letter, one lowercase, one special characters and one number.</p>
                         <form className="pass-form">
                             <div className="cont-input">
-                                <Input type="password" name="passphrase" id="passp" placeholder="•••••••••••••••••" />
-                                <span id="error-label" className="error passphrase-error"> <img src={altertR} alt="alert" /></span>
+                                <Input onChange={this.handlePassphraseChange} type="password" name="passphrase" id="passphrase" placeholder="Passphrase" />
+                                <span id="passphraseError" className="error passphrase-error"> <img src={altertR} alt="alert" /></span>
+                                <Input style={{marginTop: "30px"}} onChange={this.handlePassphraseChange} type="password" name="confirmPassphrase" id="confirmPassphrase" placeholder="Confirm Passphrase" />
                             </div>
                             <div className="btn-subm">
-                                <Button onClick={this.handleCreateAccount} >Create</Button>
+                                <Button id="createAccountButton" onClick={this.handleCreateAccount} >Create</Button>
+                                <Button id="downloadKeyFile" className="download-btn" style={{display: "none", position: "relative", margin: "0px", left: "0px"}} onClick={this.handleDownload} >Download Key File</Button>
                             </div>
                         </form>
-                        <div style={{display: "inline", maxWidth: "500px"}} className="cont-input">
-                            <label style={{fontWeight: "bold"}} htmlFor="prk">PRIVATE KEY</label>
-                            <Button id="download-key-file" className="download-btn" onClick={this.handleDownload} >Download Key File</Button>
-                        </div>
                         <a style={{display: "block", marginTop: "26px"}} 
                         href="/import" className="account">Already have an account? Access my Pocket account</a>
                     </div>
@@ -143,7 +169,7 @@ class Create extends Component {
                         </div>
                         <div className="cont-input">
                             <label className="account-info-label" htmlFor="puk">PUBLIC KEY</label>
-                            <Input style={{ backgroundColor: "#f5f5f5"}} type="text" name="public-k" id="pub-key" defaultValue={""} disabled />
+                            <Input style={{ backgroundColor: "#f5f5f5"}} type="text" name="public-k" id="publicKey" defaultValue={""} disabled />
                         </div>
                         <div className="btn-subm account-details">
                             
