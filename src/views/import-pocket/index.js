@@ -8,9 +8,7 @@ import altertR from "../../utils/images/alert-circle-red.png"
 import { DataSource } from "../../datasource"
 import Modal, { closeStyle } from "simple-react-modal"
 import { typeGuard } from "@pokt-network/pocket-js/dist/web.js"
-import base from "../../config/config.json"
-// Assign the base to the config constant
-const config = base
+import Config from "../../config/config.json"
 
 class ImportPocket extends React.Component {
     constructor(props) {
@@ -21,7 +19,7 @@ class ImportPocket extends React.Component {
             isModalVisible: false,
         }
         // Set up locals
-        this.dataSource = new DataSource([new URL(config.baseUrl)])
+        this.dataSource = new DataSource([new URL(Config.baseUrl)])
 
         this.isFileInput = this.isFileInput.bind(this)
         this.isTextInput = this.isTextInput.bind(this)

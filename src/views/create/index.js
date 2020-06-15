@@ -7,9 +7,7 @@ import Button from '../../components/public/button/button';
 import altertR from '../../utils/images/alert-circle-red.png';
 import altertT from '../../utils/images/alert-triangle.png';
 import { DataSource } from "../../datasource"
-import base from "../../config/config.json"
-// Assign the base to the config constant
-const config = base
+import Config from "../../config/config.json"
 
 class Create extends Component {
     constructor(props) {
@@ -20,7 +18,7 @@ class Create extends Component {
             ppk: undefined,
         }
         // Set up locals
-        this.dataSource = new DataSource([new URL(config.baseUrl)])
+        this.dataSource = new DataSource([new URL(Config.baseUrl)])
         // Bind functions
         this.handleCreateAccount = this.handleCreateAccount.bind(this)
         this.handleDownload = this.handleDownload.bind(this)
@@ -134,7 +132,7 @@ class Create extends Component {
                                 <h3>STORE SAVE YOUR PRIVATE KEY!</h3>
                             </div>
                             <p>
-                            You wont be able see it again or change it, make a back up, store it save  preferably offline. You’ll need it to acces your account again.
+                            You won't be able see it again or change it -- make a back up and store it safely, preferably offline. You’ll need it to access your account again.
                             </p>
                         </div>
                     </div>

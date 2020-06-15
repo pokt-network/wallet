@@ -9,10 +9,8 @@ import exit from '../../utils/images/exit.png';
 import PopupContent from './popup-content';
 import altertR from '../../utils/images/alert-circle-red.png';
 import { DataSource } from "../../datasource"
-import base from "../../config/config.json"
-// Assign the base to the config constant
-const config = base
-//
+import Config from "../../config/config.json"
+
 class Send extends Component {
     constructor(props) {
         super(props)
@@ -26,10 +24,10 @@ class Send extends Component {
             amountToSend: 0,
             isAmountValid: false,
             isAddressValid: false,
-            txFee: config.txFee
+            txFee: Config.txFee
         }
         // Set up locals
-        this.dataSource = new DataSource([new URL(config.baseUrl)])
+        this.dataSource = new DataSource([new URL(Config.baseUrl)])
 
         this.toggleNotBalanceError = this.toggleNotBalanceError.bind(this)
         this.toggleAddressError = this.toggleAddressError.bind(this)
@@ -64,6 +62,7 @@ class Send extends Component {
     showPassModal() {
         const modal = document.getElementById("popup-passphrase")
         if (modal) {
+            document.getElementById("sendButton").disabled = false
             modal.style.display = "block"
         }
     }
@@ -79,6 +78,8 @@ class Send extends Component {
         this.showPassModal()
     }
     async sendTransaction(){
+        // Disable the send button
+        document.getElementById("sendButton").disabled = true
         const ppk = this.currentAccount.ppk
         const passphrase = document.getElementById("modal-passphrase")
         const destinationAddress = document.getElementById("destination-address")
@@ -293,7 +294,7 @@ class Send extends Component {
                                                         />
                                                     </div>
                                                     <div className="btn-subm">
-                                                        <Button onClick={this.sendTransaction} >Send</Button>
+                                                        <Button id="sendButton" onClick={this.sendTransaction} >Send</Button>
                                                     </div>
                                                 </form>
                                             </div>
