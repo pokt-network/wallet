@@ -33,8 +33,7 @@ class Create extends Component {
         const passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})")
 
         if (passphrase && passphrase) {
-            // TODO: add "!" before committing
-            if (passwordRegex.test(passphrase)) {
+            if (!passwordRegex.test(passphrase)) {
                 this.toggleError(true, "Passphrase must be minimum 16 characters, 1 min uppercase letter and 1 special character.")
             }else if (passphrase !== confirmPassphrase) {
                 this.toggleError(true, "Passphrase and Confirm passphrase are not identical")
