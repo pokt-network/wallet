@@ -39,6 +39,9 @@ export class DataSource {
             }
             // Unlock the client account
             const unlockOrError = await pocket.keybase.unlockAccount(clientAccountOrError.addressHex, clientPassphrase, 0)
+            if (typeGuard(unlockOrError, Error)) {
+                throw clientAccountOrError
+            }
 
             // Generate the AAT
             const aat = new PocketAAT(
