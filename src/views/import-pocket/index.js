@@ -9,6 +9,9 @@ import { DataSource } from "../../datasource"
 import Modal, { closeStyle } from "simple-react-modal"
 import { typeGuard } from "@pokt-network/pocket-js/dist/web.js"
 import Config from "../../config/config.json"
+import {
+    withRouter
+} from 'react-router-dom'
 
 class ImportPocket extends React.Component {
     constructor(props) {
@@ -401,4 +404,4 @@ class ImportPocket extends React.Component {
     }
 }
 
-export default ImportPocket
+export default withRouter(ImportPocket)

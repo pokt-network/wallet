@@ -1,5 +1,8 @@
 import React from 'react';
 import EmptyWrapper from '../../components/emptywrapper';
+import {
+    withRouter
+} from 'react-router-dom'
 
 function LogOut (){
     return (
@@ -9,4 +12,4 @@ function LogOut (){
     );
 }
 
-export default LogOut;
+export default withRouter(LogOut);

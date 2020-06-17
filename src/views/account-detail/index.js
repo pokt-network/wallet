@@ -23,6 +23,9 @@ import THead from '../../components/public/table/thead';
 import TBody from '../../components/public/table/tbody';
 import { DataSource } from "../../datasource"
 import Config from "../../config/config.json"
+import {
+    withRouter
+} from 'react-router-dom'
 
 class AccountLatest extends Component {
     constructor(props) {
@@ -416,4 +419,4 @@ class AccountLatest extends Component {
     }
 }
 
-export default AccountLatest;
+export default withRouter(AccountLatest);
