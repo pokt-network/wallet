@@ -55,7 +55,7 @@ export class DataSource {
                 pocket,
                 aat,
                 blockchain,
-                true
+                false
             )
             
             this.pocket = new Pocket(this.dispatchers, pocketRpcProvider, configuration)
@@ -246,6 +246,21 @@ export class DataSource {
     }
 
     /**
+     * @returns {Object}
+     */
+    sortTxs(object, sentOrReceived) {
+        object.txs.forEach(tx => {
+            tx.type = sentOrReceived
+        })
+
+        const filterByBlockHeight = object.txs.sort(function(a, b){
+            return a.height-b.height
+        })
+        
+        return filterByBlockHeight
+    }
+
+    /**
      * @returns {Object | undefined}
      */
     async getAllTransactions(address) {
@@ -266,14 +281,14 @@ export class DataSource {
                 sentTxs = sentTxsOrError.toJSON()
             }
 
-            if(receivedTxs === undefined) return undefined
+            if(receivedTxs === undefined && sentTxs === undefined) return undefined
             // Check if both arrays are not empty
-            if (receivedTxs.txs.length > 0 && sentTxs.txs.length > 0) {
+            if (receivedTxs.txs && receivedTxs.txs.length > 0 && sentTxs.txs && sentTxs.txs.length > 0) {
                 return this.mergeTxs(receivedTxs, sentTxs)
-            }else if (receivedTxs.length > 0) {
-                return receivedTxs
-            }else if (sentTxs.length > 0) {
-                return sentTxs
+            }else if (receivedTxs.txs.length > 0) {
+                return this.sortTxs(receivedTxs, "Received") 
+            }else if (sentTxs.txs.length > 0) {
+                return this.sortTxs(sentTxs, "Sent") 
             }else {
                 return undefined
             }
