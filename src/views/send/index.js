@@ -9,6 +9,9 @@ import PopupContent from './popup-content';
 import altertR from '../../utils/images/alert-circle-red.png';
 import { DataSource } from "../../datasource"
 import Config from "../../config/config.json"
+import {
+    withRouter
+} from 'react-router-dom'
 
 class Send extends Component {
     constructor(props) {
@@ -341,4 +344,4 @@ class Send extends Component {
     }
 }
 
-export default Send;
+export default withRouter(Send);

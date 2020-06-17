@@ -8,6 +8,9 @@ import altertR from '../../utils/images/alert-circle-red.png';
 import altertT from '../../utils/images/alert-triangle.png';
 import { DataSource } from "../../datasource"
 import Config from "../../config/config.json"
+import {
+    withRouter
+} from 'react-router-dom'
 
 class Create extends Component {
     constructor(props) {
@@ -182,4 +185,4 @@ class Create extends Component {
         );
     }
 }
-export default Create;
+export default withRouter(Create);

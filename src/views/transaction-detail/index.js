@@ -14,6 +14,9 @@ import success from '../../utils/images/check_green.png';
 import failed from '../../utils/images/wrong_red.png';
 import { DataSource } from "../../datasource"
 import Config from "../../config/config.json"
+import {
+    withRouter
+} from 'react-router-dom'
 
 class TransactionDetail extends Component {
     constructor(props) {
@@ -296,4 +299,4 @@ class TransactionDetail extends Component {
     }
 }
 
-export default TransactionDetail;
+export default withRouter(TransactionDetail);

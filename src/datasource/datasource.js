@@ -8,7 +8,7 @@ import {
     PocketAAT,
     Hex,
     CoinDenom
-} from "@pokt-network/pocket-js/dist/web.js"
+} from "@pokt-network/pocket-js"
 import Config from "../config/config.json"
 
 export class DataSource {
@@ -21,7 +21,7 @@ export class DataSource {
     // Retrieve or set a pocket instance
     async getPocketInstance() {
         if (!this.pocket || !this.pocket.rpc()) {
-            const configuration = new Configuration(5, 1000, undefined, 40000, true, undefined, undefined, undefined, undefined, false)
+            const configuration = new Configuration(5, 1000, 5, 40000, true, undefined, undefined, undefined, undefined, false)
             const clientPubKeyHex = Config.clientPublicKey
             const clientPrivateKey = Config.clientPrivateKey
             const clientPassphrase = Config.clientPassphrase
@@ -54,7 +54,8 @@ export class DataSource {
             const pocketRpcProvider = new PocketRpcProvider(
                 pocket,
                 aat,
-                blockchain
+                blockchain,
+                true
             )
             
             this.pocket = new Pocket(this.dispatchers, pocketRpcProvider, configuration)
@@ -149,7 +150,7 @@ export class DataSource {
 
         const balanceResponseOrError = await pocket.rpc().query.getBalance(address, BigInt(0))
         if (typeGuard(balanceResponseOrError, RpcError)) {
-            console.log(RpcError)
+            console.log(balanceResponseOrError)
             return 0
         } else {
             const uPOKT = Number(balanceResponseOrError.balance.toString())

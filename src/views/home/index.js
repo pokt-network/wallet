@@ -1,6 +1,9 @@
 import React from 'react';
 import HomeContent from './home';
 import Landing from '../../components/landing';
+import {
+    withRouter
+} from 'react-router-dom'
 
 function Home (){
     return (
@@ -10,4 +13,4 @@ function Home (){
     );
 }
 
-export default Home;
+export default withRouter(Home);
