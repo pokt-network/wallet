@@ -1,5 +1,5 @@
 {
-    "baseUrl": "https://node6.testnet.pokt.network",
+    "baseUrl": "https://node1.testnet.pokt.network",
     "clientPassphrase": "pocketnetwork",
     "clientPublicKey": "5ad3c2acb46626b1c5e1283e26a966177b7c6f1e04a63e0350567529b42187c5",
     "clientPrivateKey": "14e83883b88c54a56420ef4af0a6cfcf7ec992735341bbf0a70dcdd7444e5a675ad3c2acb46626b1c5e1283e26a966177b7c6f1e04a63e0350567529b42187c5",
