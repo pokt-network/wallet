@@ -12,13 +12,14 @@ import ImportPocket from './views/import-pocket/index';
 import TransactionDetail from './views/transaction-detail/index';
 import Header from "./components/header";
 import Footer from "./components/footer/footer";
+import history from './history';
 
 import './normalize.css';
 
 class App extends Component {
   render() {
     return (
-        <Router>
+        <Router history={history}>
             <div className="page-container">
                 <GlobalStyles />
                 <Header />
