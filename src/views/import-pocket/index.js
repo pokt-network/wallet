@@ -84,7 +84,7 @@ class ImportPocket extends React.Component {
         })
 
         // Reset the file uploader text
-        this.setUploaderText(`Choose your Key File`)
+        this.setUploaderText(`Access by Key File`)
 
         // Get the private key from the input
         const input = e.target
@@ -363,7 +363,7 @@ class ImportPocket extends React.Component {
                     >
                         <div className="cont-input" style={{textAlign: "center"}}>
                             <label style={{ 
-                                    maginTop: "10px",
+                                    maginTop: "20px",
                                     color: "#06202e",
                                     fontSize: "20px",
                                     fontWeight: "700",
@@ -388,13 +388,16 @@ class ImportPocket extends React.Component {
                             Invalid Passphrase
                         </span>
                         <Button
-                            style={{ padding: "9px 9px 8px 24px", width: "33px", display: "block",
-                                margin: "10px 0px auto auto" }}
+                            style={{
+                                textAlign: "center",
+                                width: "100px", 
+                                display: "block",
+                                margin: "20px auto 10px auto" }}
                             onClick={this.importAccount.bind(this)}
                         >
                             OK
                         </Button>
-                        <a style={closeStyle} onClick={this.closeModal.bind(this)}>
+                        <a href style={closeStyle} onClick={this.closeModal.bind(this)}>
                             X
                         </a>
                     </Modal>

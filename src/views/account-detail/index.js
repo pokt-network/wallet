@@ -7,7 +7,8 @@ import ToggleBtn from '../../components/public/toggle/toggle-btn';
 import ContainerToggle from '../../components/public/toggle/container-toggle';
 import token from '../../utils/images/token.png';
 import unstaking from '../../utils/images/unstaking.png';
-import stake from '../../utils/images/stake.png';
+import unstaked from '../../utils/images/unstaked.png';
+import staked from '../../utils/images/staked.png';
 import node from '../../utils/images/node.png';
 import app from '../../utils/images/app.png';
 import na from '../../utils/images/NA.png';
@@ -38,7 +39,8 @@ class AccountLatest extends Component {
             addressHex: "",
             publicKeyHex: "",
             unstakingImgSrc: unstaking,
-            stakeImgSrc: stake
+            stakedImgSrc: staked,
+            unstakedImgSrc: unstaked
         }
         // Set up locals
         this.dataSource = new DataSource([new URL(Config.baseUrl)])
@@ -123,9 +125,12 @@ class AccountLatest extends Component {
                 if (this.state.app.status === 1) {
                     appStakingStatusLabel.innerText = "UNSTAKING"
                     appStakeStatusImg.src = this.state.unstakingImgSrc
-                }else {
+                }else if(this.state.app.status === 2){
                     appStakingStatusLabel.innerText = "STAKED"
-                    appStakeStatusImg.src = this.state.stakeImgSrc
+                    appStakeStatusImg.src = this.state.stakedImgSrc
+                }else {
+                    appStakingStatusLabel.innerText = "UNSTAKED"
+                    appStakeStatusImg.src = this.state.unstakedImgSrc
                 }
             }
             // Show the app section
@@ -152,9 +157,12 @@ class AccountLatest extends Component {
                 if (this.state.node.status === 1) {
                     nodeStakeStatusImg.src = this.state.unstakingImgSrc
                     nodeStakingStatusLabel.innerText = "UNSTAKING"
-                }else {
-                    nodeStakeStatusImg.src = this.state.stakeImgSrc
+                }else if(this.state.app.status === 2){
                     nodeStakingStatusLabel.innerText = "STAKED"
+                    nodeStakeStatusImg.src = this.state.stakedImgSrc
+                }else {
+                    nodeStakingStatusLabel.innerText = "UNSTAKED"
+                    nodeStakeStatusImg.src = this.state.unstakedImgSrc
                 }
             }
             
@@ -208,10 +216,6 @@ class AccountLatest extends Component {
             this.setState({
                 addressHex: this.currentAccount.addressHex,
                 publicKeyHex: this.currentAccount.publicKeyHex
-            })
-            // Scroll to the account information section
-            poktBalanceElement.scrollIntoView({
-                behavior: 'smooth'
             })
         }
     }
@@ -317,7 +321,7 @@ class AccountLatest extends Component {
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2> <img id="normal-stake-status-img" src={unstaking} alt="staked tokens"/> NA </h2>
+                                    <h2> <img id="normal-stake-status-img" src={unstaked} alt="staked tokens"/> UNSTAKED </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
@@ -339,7 +343,8 @@ class AccountLatest extends Component {
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2 id="node-staking-status"> <img id="node-stake-status-img" src={unstaking} alt="staked tokens"/> UNSTAKING </h2>
+                                    <img style={{display: "inline-block"}} id="node-stake-status-img" src={unstaking} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block"}} id="node-staking-status"> UNSTAKING </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
@@ -361,7 +366,8 @@ class AccountLatest extends Component {
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2 id="app-staking-status"> <img id="app-stake-status-img" src={unstaking} alt="staked tokens"/> UNSTAKING </h2>
+                                    <img style={{display: "inline-block"}} id="app-stake-status-img" src={unstaking} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block"}} id="app-staking-status"> UNSTAKING </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
@@ -408,7 +414,7 @@ class AccountLatest extends Component {
                                     <Td> <img src={load} alt="loading" /> </Td>
                                     <Td> <div className="qty">0.00 <span>POKT</span></div> <div className="status">Sending</div> </Td>
                                     <Td>34 sec ago</Td>
-                                    <Td> <a href="">  </a> </Td>
+                                    <Td> <a href>  </a> </Td>
                                 </Tr>
                             </TBody>
                         </T>

@@ -46,6 +46,8 @@ class Send extends Component {
         this.pushToTxDetail = this.pushToTxDetail.bind(this)
         this.updateValues = this.updateValues.bind(this)
         this.backToAccountDetail = this.backToAccountDetail.bind(this)
+        this.handlePoktValueChange = this.handlePoktValueChange.bind(this)
+        this.handleUsdValueChange = this.handleUsdValueChange.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
     }
@@ -171,14 +173,85 @@ class Send extends Component {
         this.updateAmountValue()
         this.updateDestinationAddress()
     }
-    // Update amount
-    updateAmountValue(){
+    handlePoktValueChange(){
         // Retrieve current amount value set element
         const amountElement = document.getElementById("pokt-amount")
         // Retrieve modal amount value element
         const amountElementText = document.getElementById("modal-amount-to-send")
-        // Check if both element exists
+        // Check
         if (amountElement && amountElementText) {
+            if(amountElement.value <= 0 || amountElement.value === "") {
+                this.toggleAmountError(true, "Amount to send is invalid.")
+                this.setState({isAmountValid: false})
+                return
+            }
+            // Update the USD value element
+            const usdAmountElement = document.getElementById("pokt-amount-usd")
+            const usdAmountElementText = document.getElementById("modal-usd-amount-to-send")
+            // Check
+            if (usdAmountElement && usdAmountElementText) {
+                // Convert the decimals to upokt to use the value for the send-tx
+                const value = amountElement.value * 1000000
+                // Add the amount to send element value for the modal label
+                const valueText = amountElement.value + " POKT"
+                // Update the modal amount element value
+                amountElementText.innerText = valueText
+                // Update the usd amount elements too
+                const usdValue = Config.poktUsdValue * amountElement.value
+                usdAmountElement.value = usdValue.toFixed(2)
+                usdAmountElementText.innerText = usdAmountElement.value + " USD"
+                // Save the amount in uPOKT to send in the state
+                this.setState({amountToSend: Math.round(value), isAmountValid: true})
+                this.toggleAmountError(false, "")
+                console.log(this.state.amountToSend)
+            }
+        }
+    }
+    handleUsdValueChange(){
+        // Retrieve current amount value set element
+        const usdAmountElement = document.getElementById("pokt-amount-usd")
+        // Retrieve modal amount value element
+        const usdAmountElementText = document.getElementById("modal-usd-amount-to-send")
+        // Check
+        if (usdAmountElement && usdAmountElementText) {
+            if(usdAmountElement.value <= 0 || usdAmountElementText.value === "") {
+                this.toggleAmountError(true, "Amount to send is invalid.")
+                this.setState({isAmountValid: false})
+                return
+            }
+            // Update the POKT value element
+            const amountElement = document.getElementById("pokt-amount")
+            const amountElementText = document.getElementById("modal-amount-to-send")
+            // Check
+            if (amountElement && amountElementText) {
+                // Convert the decimals to upokt to use the value for the send-tx
+                const value = usdAmountElement.value / Config.poktUsdValue
+                // Add the amount to send element value for the modal label
+                const valueText = usdAmountElement.value + " USD"
+                // Update the modal amount element value
+                usdAmountElementText.innerText = valueText
+                // Update the pokt amount elements too
+                const poktValue = value * 1000000
+                amountElement.value = value.toFixed(2)
+                amountElementText.innerText = amountElement.value + " POKT"
+                // Save the amount in uPOKT to send in the state
+                this.setState({amountToSend: Math.round(poktValue), isAmountValid: true})
+                this.toggleAmountError(false, "")
+                console.log(this.state.amountToSend)
+            }
+        }
+    }
+    // Update amount
+    updateAmountValue(){
+        // Retrieve current amount value set elements
+        const amountElement = document.getElementById("pokt-amount")
+        const usdAmountElement = document.getElementById("pokt-amount-usd")
+        
+        // Retrieve modal amount value elements
+        const amountElementText = document.getElementById("modal-amount-to-send")
+        const usdAmountElementText = document.getElementById("modal-usd-amount-to-send")
+        // Check if both element exists
+        if (amountElement && amountElementText && usdAmountElement && usdAmountElementText) {
             // Validate the address
             if(amountElement.value <= 0 || amountElement.value === "") {
                 this.toggleAmountError(true, "Amount to send is invalid.")
@@ -261,16 +334,16 @@ class Send extends Component {
                             <form className="quantity-form">
                                 <div className="row">
                                     <div className="container">
-                                        <input style={{color: "black"}} onChange={this.updateValues} type="number" name="quantity" step="0.01" id="pokt-amount" placeholder="0.00" />
+                                        <input style={{color: "black"}} onChange={this.handlePoktValueChange} type="number" name="quantity" step="0.01" id="pokt-amount" placeholder="0.00" />
                                         <label htmlFor="pokt">POKT</label>
                                     </div>
                                 </div>
-                                {/* <div className="row">
+                                <div className="row">
                                     <div className="container">
-                                        <input type="number" name="quantity" id="usd" placeholder="0,00" />
+                                        <input onChange={this.handleUsdValueChange} type="number" name="quantity" id="pokt-amount-usd" placeholder="0.00" />
                                         <label htmlFor="usd">USD</label>
                                     </div>
-                                </div> */}
+                                </div>
                             </form>
                             <div className="send-form">
                                 <div className="container">
@@ -283,18 +356,18 @@ class Send extends Component {
                                         onClick={this.showModal} className="button" >Send</Button>
                                     <div style={{ display: "none" }} id="popup" className="container popup">
                                         <PopupContent className="modal popup-child">
-                                            <a className="close" onClick={this.closeModal}>
+                                            <a href className="close" onClick={this.closeModal}>
                                                 <img src={exit} alt="exit icon close"/>
                                             </a>
                                             <h2> Are you sure you want to send from  your Balance: </h2>
                                             <div className="content">
-                                                <div style={{display: "inline-flex", marginBottom: "10px"}} className="qty">
+                                                <div style={{marginBottom: "10px"}} className="qty">
                                                     <div id="modal-amount-to-send" className="pokt" disabled>
                                                         0.00 POKT
                                                     </div>
-                                                    {/* <div className="usd">
-                                                        0,00USD
-                                                    </div> */}
+                                                    <div id="modal-usd-amount-to-send" className="usd">
+                                                        0.00USD
+                                                    </div>
                                                 </div>
                                                 <form className="pass-pk">
                                                     <div className="cont-input">
@@ -313,7 +386,7 @@ class Send extends Component {
                                     </div>
                                     <div style={{ display: "none" }} id="popup-passphrase" className="container popup">
                                         <PopupContent className="modal popup-child">
-                                            <a className="close" onClick={this.closePassModal}>
+                                            <a href className="close" onClick={this.closePassModal}>
                                                 <img src={exit} alt="exit icon close"/>
                                             </a>
                                             <h2> Enter your passphrase: </h2>

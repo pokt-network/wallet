@@ -34,7 +34,7 @@ class Create extends Component {
     handlePassphraseChange() {
         const passphrase = document.getElementById("passphrase").value
         const confirmPassphrase = document.getElementById("confirmPassphrase").value
-        const passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})")
+        const passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})")
 
         if (passphrase && passphrase) {
             if (!passwordRegex.test(passphrase)) {
@@ -140,7 +140,7 @@ class Create extends Component {
                     <Title>CREATE a pocket account</Title>
                     <div className="passphrase">
                         <h2>PROTECT YOUR PRIVATE KEY<br /> WITH a passphrase</h2>
-                        <p>Write down a Passphrase to protect your key file. This should have: minimun 15 alphanumeric symbols, one capital letter, one lowercase, one special characters and one number.</p>
+                        <p>Write down a Passphrase to protect your key file. This should have: minimun 16 alphanumeric symbols, one capital letter, one lowercase, one special characters and one number.</p>
                         <form className="pass-form">
                             <div className="cont-input">
                                 <Input onChange={this.handlePassphraseChange} type="password" name="passphrase" id="passphrase" placeholder="Passphrase" />
