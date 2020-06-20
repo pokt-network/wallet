@@ -84,7 +84,7 @@ class ImportPocket extends React.Component {
         })
 
         // Reset the file uploader text
-        this.setUploaderText(`Access by Key File`)
+        this.setUploaderText("Access by Key File")
 
         // Get the private key from the input
         const input = e.target

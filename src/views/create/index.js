@@ -159,7 +159,7 @@ class Create extends Component {
                         <img src={altertT} alt="alert" />
                         <div className="cont-alert">
                             <div className="title">
-                                <h3>STORE SAVE YOUR PRIVATE KEY!</h3>
+                                <h3>SAVE YOUR PRIVATE KEY!</h3>
                             </div>
                             <p>
                             You won't be able see it again or change it -- make a back up and store it safely, preferably offline. You’ll need it to access your account again.
