@@ -3,7 +3,6 @@ name: Production Deployment
 on:
   push:
     branches: [ staging ]
-  pull_request:
 
 jobs:
   build:
