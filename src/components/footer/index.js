@@ -47,24 +47,25 @@ class Footer extends Component {
                 <li className="mainli"> 
                   <div className="title-sm">PRODUCT</div>
                   <ul className="sub-menu">
-                    <li className="menu-item"><a href="http://example.com">Overview</a></li>
-                    <li className="menu-item"><a href="http://example.com">How to use Pocket</a></li>
-                    <li className="menu-item"><a href="http://example.com">Documentation</a></li>
+                    <li className="menu-item"><a href="https://docs.pokt.network/docs/what-is-pocket-network">What is Pocket Network</a></li>
+                    <li className="menu-item"><a href="https://www.pokt.network/">Website</a></li>
+                    {/* <li className="menu-item"><a href="http://example.com">Dashboard</a></li>
+                    <li className="menu-item"><a href="http://example.com">Gateway</a></li> */}
                   </ul>
                 </li>
                 <li className="mainli">
                   <div className="title-sm">RESOURCES</div>
                   <ul className="sub-menu">
-                    <li className="menu-item"><a href="http://example.com">WhitePaper</a></li>
-                    <li className="menu-item"><a href="http://example.com">Economic One Pager</a></li>
-                    <li className="menu-item"><a href="http://example.com">DAO</a></li>
+                    <li className="menu-item"><a href="https://pokt.network/wp-content/uploads/2020/03/POCKET-NETWORK-WHITEPAPER-V0.3.0.pdf">WhitePaper</a></li>
+                    <li className="menu-item"><a href="https://pokt.network/wp-content/uploads/2020/06/Pocket-Network-Economic-Papeper-v1.0.2.pdf">Economic One Pager</a></li>
+                    {/* <li className="menu-item"><a href="http://example.com">DAO</a></li> */}
                   </ul>
                 </li>
                 <li className="mainli">
                   <div className="title-sm">COMMUNITY</div>
                   <ul className="sub-menu">
-                    <li className="menu-item"><a href="http://example.com">Blog</a></li>
-                    <li className="menu-item"><a href="http://example.com">Forum</a></li>
+                    <li className="menu-item"><a href="https://pokt.network/blog/">Blog</a></li>
+                    <li className="menu-item"><a href="https://research.pokt.network/">Forum</a></li>
                   </ul>
                 </li>
               </ul>				

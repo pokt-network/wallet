@@ -22,6 +22,8 @@ const PopupContent = styled.div`
     `)}
   }
   .close {
+    background-color: transparent;
+    border-style: none;
     position: absolute;
     display: block;
     right: 10px;

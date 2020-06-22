@@ -43,7 +43,7 @@ class Header extends Component {
               <StyledLi style={{display: "none"}} id="navAccount" className="sub_menu">
                 <a href={hrefLink}> Account <img src={arrow} alt="greater than" /> </a>
                 <ul>
-                  <li><a href style={{cursor: "pointer"}} onClick={this.onLogOut} >Log out</a></li>
+                  <li><button style={{cursor: "pointer", borderStyle: "none", backgroundColor: "transparent"}} onClick={this.onLogOut} >Log out</button></li>
               </ul>
               </StyledLi>
             </StyledUl>
