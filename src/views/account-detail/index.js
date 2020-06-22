@@ -413,7 +413,6 @@ class AccountLatest extends Component {
                                  <Tr style={{display: "none"}}>
                                     <Td> <img src={load} alt="loading" /> </Td>
                                     <Td> <div className="qty">0.00 <span>POKT</span></div> <div className="status">Sending</div> </Td>
-                                    <Td>34 sec ago</Td>
                                     <Td> <a href>  </a> </Td>
                                 </Tr>
                             </TBody>
