@@ -203,7 +203,6 @@ class Send extends Component {
                 // Save the amount in uPOKT to send in the state
                 this.setState({amountToSend: Math.round(value), isAmountValid: true})
                 this.toggleAmountError(false, "")
-                console.log(this.state.amountToSend)
             }
         }
     }
@@ -237,7 +236,6 @@ class Send extends Component {
                 // Save the amount in uPOKT to send in the state
                 this.setState({amountToSend: Math.round(poktValue), isAmountValid: true})
                 this.toggleAmountError(false, "")
-                console.log(this.state.amountToSend)
             }
         }
     }
@@ -356,9 +354,9 @@ class Send extends Component {
                                         onClick={this.showModal} className="button" >Send</Button>
                                     <div style={{ display: "none" }} id="popup" className="container popup">
                                         <PopupContent className="modal popup-child">
-                                            <a href className="close" onClick={this.closeModal}>
+                                            <button className="close" onClick={this.closeModal}>
                                                 <img src={exit} alt="exit icon close"/>
-                                            </a>
+                                            </button>
                                             <h2> Are you sure you want to send from  your Balance: </h2>
                                             <div className="content">
                                                 <div style={{marginBottom: "10px"}} className="qty">
@@ -386,9 +384,9 @@ class Send extends Component {
                                     </div>
                                     <div style={{ display: "none" }} id="popup-passphrase" className="container popup">
                                         <PopupContent className="modal popup-child">
-                                            <a href className="close" onClick={this.closePassModal}>
+                                            <button className="close" onClick={this.closePassModal}>
                                                 <img src={exit} alt="exit icon close"/>
-                                            </a>
+                                            </button>
                                             <h2> Enter your passphrase: </h2>
                                             <div className="content">
                                                 <form className="passphrase">
