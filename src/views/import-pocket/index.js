@@ -84,7 +84,7 @@ class ImportPocket extends React.Component {
         })
 
         // Reset the file uploader text
-        this.setUploaderText("Access by Key File")
+        this.setUploaderText("Choose your Key File")
 
         // Get the private key from the input
         const input = e.target
@@ -296,8 +296,8 @@ class ImportPocket extends React.Component {
                         <form className="import-p-form">
                             <div className="container">
                                 <div className="cont-input">
-                                    <label htmlFor="keyf">Key File</label>
-                                    <div id="cont-file" className="cont-file" data-text="Access by Key File">
+                                    <label htmlFor="keyf">Access by Key File</label>
+                                    <div id="cont-file" className="cont-file" data-text="Choose your Key File">
                                         <div className="upload"></div>
                                         <Input
                                             onChange={this.privKeyInputChange}
@@ -315,6 +315,7 @@ class ImportPocket extends React.Component {
                                 <div className="cont-input">
                                     <label htmlFor="import-privatekey">Access by Private Key</label>
                                     <Input
+                                        style={{color: "black"}}
                                         type="password"
                                         name="privatekey"
                                         id="import-privatekey"

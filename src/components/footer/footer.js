@@ -5,7 +5,7 @@ import { colors } from '../../utils/colors';
 const FooterContent = styled.footer`
   width: 100%;
   position: relative;
-  bottom: 0;
+  bottom: -40px;
   left: 0;
   height: 173px;
   display: flex;

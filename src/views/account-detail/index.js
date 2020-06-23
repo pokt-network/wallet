@@ -53,6 +53,7 @@ class AccountLatest extends Component {
         this.getTransactions = this.getTransactions.bind(this)
         this.pushToSend = this.pushToSend.bind(this)
         this.pushToTxDetail = this.pushToTxDetail.bind(this)
+        this.refreshView = this.refreshView.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
     }
@@ -86,7 +87,7 @@ class AccountLatest extends Component {
                         
                         const txTemplate = '<Tr class="sc-fzqBZW ilrPoA">\n' +
                             '<Td class="sc-fzokOt hITMcq"> <img src='+ imageSrc +' alt="'+ tx.type.toLowerCase() +'" /> </Td>\n' +
-                            '<Td class="sc-fzokOt hITMcq"> <div class="qty">'+ value / 1000000 +'</div> <div class="status">'+ tx.type.toLowerCase() +'</div> </Td>\n' +
+                            '<Td class="sc-fzokOt hITMcq"> <div class="qty">'+ value / 1000000 +' <span>POKT</span></div> <div class="status">'+ tx.type.toLowerCase() +'</div> </Td>\n' +
                             '<Td class="sc-fzokOt hITMcq block-align">'+tx.height+'</Td>\n' +
                             '<Td class="sc-fzokOt hITMcq"> <a id="txHashElement'+idCounter+'"> '+txHash+' </a> </Td>\n' +
                         '</Tr>'
@@ -270,11 +271,14 @@ class AccountLatest extends Component {
             return { visibility: !prevState.visibility };
         })
     }
+    refreshView() {
+        this.getBalance()
+        this.getAccountType()
+        this.getTransactions()
+    }
     componentDidMount() {
         if (this.currentAccount !== undefined) {
-            this.getBalance()
-            this.getAccountType()
-            this.getTransactions()
+            this.refreshView()
         }
 
         // Navigation Item
@@ -305,7 +309,7 @@ class AccountLatest extends Component {
                             <div style={{flexDirection: "column"}} className="stats">
                                 <div className="stat">
                                     <span id="pokt-balance-usd">$ 0 USD</span>
-                                    <img style={{cursor: "pointer"}} onClick={this.getBalance} src={reload} alt="reload" />
+                                    <img style={{cursor: "pointer"}} onClick={this.refreshView} src={reload} alt="reload" />
                                 </div>
                             </div>
                         </div>
@@ -315,19 +319,22 @@ class AccountLatest extends Component {
                         <div style={{ display: "none" }} id="normal-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <h2 > <img src={token} alt="staked tokens"/> 0 </h2>
+                                    <img style={{display: "inline-block"}} src={token} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}}>  0 </h2>
                                 </div>
                                 <span className="title">Staked POKT</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2> <img id="normal-stake-status-img" src={unstaked} alt="staked tokens"/> UNSTAKED </h2>
+                                    <img style={{display: "inline-block"}} id="normal-stake-status-img" src={unstaked} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}}>  UNSTAKED </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2> <img src={na} alt="staked tokens"/> NA</h2>
+                                    <img style={{display: "inline-block", marginBottom: "4px"}} src={na} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}}> NA</h2>
                                 </div>
                                 <span className="title">Account Type</span>
                             </div>
@@ -337,20 +344,22 @@ class AccountLatest extends Component {
                         <div style={{ display: "none" }} id="node-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <h2 id="node-staked-tokens-amount" > <img src={token} alt="staked tokens"/> 0</h2>
+                                    <img style={{display: "inline-block"}} src={token} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="node-staked-tokens-amount" >  0</h2>
                                 </div>
                                 <span className="title">Staked POKT</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
                                     <img style={{display: "inline-block"}} id="node-stake-status-img" src={unstaking} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block"}} id="node-staking-status"> UNSTAKING </h2>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="node-staking-status"> UNSTAKING </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2> <img src={node} alt="staked tokens"/> NODE</h2>
+                                    <img style={{display: "inline-block"}} src={node} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}}>  NODE</h2>
                                 </div>
                                 <span className="title">Account Type</span>
                             </div>
@@ -360,20 +369,22 @@ class AccountLatest extends Component {
                         <div style={{ display: "none", marginTop: "16px" }} id="app-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <h2 id="app-staked-tokens-amount"> <img src={token} alt="staked tokens"/> 0 </h2>
+                                    <img style={{display: "inline-block"}} src={token} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="app-staked-tokens-amount">  0 </h2>
                                 </div>
                                 <span className="title">Staked POKT</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
                                     <img style={{display: "inline-block"}} id="app-stake-status-img" src={unstaking} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block"}} id="app-staking-status"> UNSTAKING </h2>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="app-staking-status"> UNSTAKING </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <h2> <img src={app} alt="staked tokens"/> APP</h2>
+                                    <img style={{display: "inline-block"}} src={app} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}}>  APP</h2>
                                 </div>
                                 <span className="title">Account Type</span>
                             </div>

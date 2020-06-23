@@ -8,8 +8,6 @@ const GlobalStyles = createGlobalStyle`
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap');
     font-family: 'Lato', sans-serif;
   }
-  #root {
-  }
   .page-container {
     background-image: linear-gradient(126deg, #27a9e0 19%, #092e40 94%, #06202e 100%);
     ${maxPhone(css`
