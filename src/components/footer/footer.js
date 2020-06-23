@@ -4,6 +4,8 @@ import { colors } from '../../utils/colors';
 
 const FooterContent = styled.footer`
   width: 100%;
+  position: absolute;
+  bottom: 0px;
   display: flex;
   flex-direction: row;
   align-items: center;
