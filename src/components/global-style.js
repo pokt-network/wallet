@@ -10,6 +10,7 @@ const GlobalStyles = createGlobalStyle`
   }
   .page-container {
     background-image: linear-gradient(126deg, #27a9e0 19%, #092e40 94%, #06202e 100%);
+    height: 100vh;
     ${maxPhone(css`
       background-image: linear-gradient(161deg, #27a9e0 -3%, #092e40 93%, #06202e 100%);
     `)};
