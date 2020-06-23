@@ -38,7 +38,7 @@ class Create extends Component {
 
         if (passphrase && passphrase) {
             if (!passwordRegex.test(passphrase)) {
-                this.toggleError(true, "Passphrase must be minimum 16 characters, 1 min uppercase letter and 1 special character.")
+                this.toggleError(true, "Passphrase must be minimum 15 characters, 1 min uppercase letter and 1 special character.")
             }else if (passphrase !== confirmPassphrase) {
                 this.toggleError(true, "Passphrase and Confirm passphrase are not identical")
             }else{
@@ -140,7 +140,7 @@ class Create extends Component {
                     <Title>CREATE a pocket account</Title>
                     <div className="passphrase">
                         <h2>PROTECT YOUR PRIVATE KEY<br /> WITH a passphrase</h2>
-                        <p>Write down a Passphrase to protect your key file. This should have: minimun 16 alphanumeric symbols, one capital letter, one lowercase, one special characters and one number.</p>
+                        <p>Write down a Passphrase to protect your key file. This should have: minimun 15 alphanumeric symbols, one capital letter, one lowercase, one special characters and one number.</p>
                         <form className="pass-form">
                             <div className="cont-input">
                                 <Input onChange={this.handlePassphraseChange} type="password" name="passphrase" id="passphrase" placeholder="Passphrase" />
