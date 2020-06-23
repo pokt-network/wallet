@@ -86,7 +86,7 @@ class AccountLatest extends Component {
                         
                         const txTemplate = '<Tr class="sc-fzqBZW ilrPoA">\n' +
                             '<Td class="sc-fzokOt hITMcq"> <img src='+ imageSrc +' alt="'+ tx.type.toLowerCase() +'" /> </Td>\n' +
-                            '<Td class="sc-fzokOt hITMcq"> <div class="qty">'+ value / 1000000 +' <span>POKT</span></div> <div class="status">'+ tx.type.toLowerCase() +'</div> </Td>\n' +
+                            '<Td class="sc-fzokOt hITMcq"> <div class="qty">'+ value / 1000000 +'</div> <div class="status">'+ tx.type.toLowerCase() +'</div> </Td>\n' +
                             '<Td class="sc-fzokOt hITMcq block-align">'+tx.height+'</Td>\n' +
                             '<Td class="sc-fzokOt hITMcq"> <a id="txHashElement'+idCounter+'"> '+txHash+' </a> </Td>\n' +
                         '</Tr>'
@@ -115,7 +115,7 @@ class AccountLatest extends Component {
             const appStakedTokensLabel = document.getElementById("app-staked-tokens-amount")
             if (appStakedTokensLabel) {
                 const POKT = Number(this.state.app.stakedTokens.toString()) / 1000000
-                appStakedTokensLabel.innerText = POKT + " POKT"
+                appStakedTokensLabel.innerText = POKT
             }
             // Update the unstaking status
             const appStakingStatusLabel = document.getElementById("app-staking-status")
@@ -147,7 +147,7 @@ class AccountLatest extends Component {
             const nodeStakedTokensLabel = document.getElementById("node-staked-tokens-amount")
             if (nodeStakedTokensLabel) {
                 const POKT = Number(this.state.node.stakedTokens.toString()) / 1000000
-                nodeStakedTokensLabel.innerText = POKT + " POKT"
+                nodeStakedTokensLabel.innerText = POKT
             }
             // Update the unstaking status
             const nodeStakingStatusLabel = document.getElementById("node-staking-status")
@@ -315,9 +315,9 @@ class AccountLatest extends Component {
                         <div style={{ display: "none" }} id="normal-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <h2 > <img src={token} alt="staked tokens"/> 0 <span>POKT</span></h2>
+                                    <h2 > <img src={token} alt="staked tokens"/> 0 </h2>
                                 </div>
-                                <span className="title">Staked Tokens</span>
+                                <span className="title">Staked POKT</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
@@ -337,9 +337,9 @@ class AccountLatest extends Component {
                         <div style={{ display: "none" }} id="node-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <h2 id="node-staked-tokens-amount" > <img src={token} alt="staked tokens"/> 0 <span>POKT</span></h2>
+                                    <h2 id="node-staked-tokens-amount" > <img src={token} alt="staked tokens"/> 0</h2>
                                 </div>
-                                <span className="title">Staked Tokens</span>
+                                <span className="title">Staked POKT</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
@@ -360,9 +360,9 @@ class AccountLatest extends Component {
                         <div style={{ display: "none", marginTop: "16px" }} id="app-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <h2 id="app-staked-tokens-amount"> <img src={token} alt="staked tokens"/> 0 <span>POKT</span></h2>
+                                    <h2 id="app-staked-tokens-amount"> <img src={token} alt="staked tokens"/> 0 </h2>
                                 </div>
-                                <span className="title">Staked Tokens</span>
+                                <span className="title">Staked POKT</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
