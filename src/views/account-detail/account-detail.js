@@ -109,14 +109,14 @@ const AccountLContent = styled.section`
             margin: 0;
             font-family: 'Open Sans', sans-serif;
             font-weight: 800;
-            font-size: 28px;
+            font-size: 20px;
             color: ${colors.darkBlue};
             letter-spacing: -0.5px;
             ${maxPhone(css`
               font-size: 20px;
             `)};
             img {
-              margin-right: -8px;
+              margin-right: 0px;
               ${maxPhone(css`
                 margin-right: -5px;
               `)};

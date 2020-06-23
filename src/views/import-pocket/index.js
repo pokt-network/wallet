@@ -297,7 +297,7 @@ class ImportPocket extends React.Component {
                             <div className="container">
                                 <div className="cont-input">
                                     <label htmlFor="keyf">Key File</label>
-                                    <div id="cont-file" className="cont-file" data-text="Choose your Key File">
+                                    <div id="cont-file" className="cont-file" data-text="Access by Key File">
                                         <div className="upload"></div>
                                         <Input
                                             onChange={this.privKeyInputChange}
