@@ -25,13 +25,27 @@ const GlobalStyles = createGlobalStyle`
   .loader {
     position: absolute;
     top: 30%;
-    left: 45%;
+    left: calc(50% - 50px);
     border: 16px solid #f3f3f3; /* Light grey */
     border-top: 16px solid #27A9E0; /* Blue */
     border-radius: 50%;
     width: 90px;
     height: 90px;
     animation: spin 2s linear infinite;
+  }
+  .copy-button {
+    background-color: #F5F5F5;
+    display: inline-block;
+    position: absolute;
+    margin-left: -40px;
+    padding: 0px 0px 0px 4px;
+    margin-top: 9px;
+    cursor: pointer;
+    img {
+      display: inline-block;
+      height: 22px;
+      width: 22px;
+    }
   }
   
   @keyframes spin {

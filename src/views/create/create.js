@@ -19,7 +19,7 @@ const CreateContent = styled.section`
   }
   .account-details {
     text-align: center;
-    margin-top: 2em;
+    margin-top: 60px;
   }
   .account-info-label {
     color: white;

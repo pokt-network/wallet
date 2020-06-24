@@ -6,6 +6,7 @@ import Input from '../../components/public/input/input';
 import Button from '../../components/public/button/button';
 import altertR from '../../utils/images/alert-circle-red.png';
 import altertT from '../../utils/images/alert-triangle.png';
+import copy from '../../utils/images/copy.png'
 import { DataSource } from "../../datasource"
 import {
     withRouter
@@ -29,6 +30,28 @@ class Create extends Component {
         this.pushToAccountDetail = this.pushToAccountDetail.bind(this)
         this.toggleError = this.toggleError.bind(this)
         this.handlePassphraseChange = this.handlePassphraseChange.bind(this)
+        this.copyAddress = this.copyAddress.bind(this)
+        this.copyPublicKey = this.copyPublicKey.bind(this)
+    }
+    copyAddress(){
+        const address = document.getElementById("address")
+        if (address) {
+            address.select();
+            address.setSelectionRange(0, 99999); /*For mobile devices*/
+
+            document.execCommand("copy");
+            console.log("Copied the text "+ address.value)
+        }
+    }
+    copyPublicKey(){
+        const publicKey = document.getElementById("publicKey")
+        if (publicKey) {
+            publicKey.select();
+            publicKey.setSelectionRange(0, 99999); /*For mobile devices*/
+
+            document.execCommand("copy");
+            console.log("Copied the text "+ publicKey.value)
+        }
     }
 
     handlePassphraseChange() {
@@ -178,14 +201,15 @@ class Create extends Component {
                     <div className="container account-info">
                         <div className="cont-input second">
                             <label className="account-info-label" htmlFor="add">ADDRESS</label>
-                            <Input style={{ backgroundColor: "#f5f5f5"}} type="text" name="address" id="address" defaultValue={""} disabled />
+                            <Input style={{ backgroundColor: "#f5f5f5", height: "20px"}} type="text" name="address" id="address" defaultValue={""} disabled />
+                            <span className="copy-button" onClick={this.copyAddress}> <img src={copy} alt="copy" /></span>
                         </div>
                         <div className="cont-input">
-                            <label className="account-info-label" htmlFor="puk">PUBLIC KEY</label>
-                            <Input style={{ backgroundColor: "#f5f5f5"}} type="text" name="public-k" id="publicKey" defaultValue={""} disabled />
+                            <label style={{height: "20px"}} className="account-info-label" htmlFor="puk">PUBLIC KEY</label>
+                            <Input style={{ backgroundColor: "#f5f5f5", height: "20px"}} type="text" name="public-k" id="publicKey" defaultValue={""} disabled />
+                            <span className="copy-button" onClick={this.copyPublicKey}> <img src={copy} alt="copy" /></span>
                         </div>
                         <div className="btn-subm account-details">
-                            
                             <Button id="push-to-account" className="isDisabled" onClick={this.pushToAccountDetail}>Account Details</Button>
                         </div>
                     </div>
