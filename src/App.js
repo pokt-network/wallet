@@ -13,13 +13,24 @@ import TransactionDetail from './views/transaction-detail/index';
 import Header from "./components/header";
 import Footer from "./components/footer";
 import history from './history';
-
+import {DataSource} from "./datasource";
 import './normalize.css';
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+
+    this.dataSource = DataSource.instance
+    this.dataSource.getPocketInstance()
+
+  }
+
   render() {
     return (
         <Router history={history}>
+            <div className="loader-container" id="loader">
+                <div className="loader"></div>
+            </div>
             <div className="page-container">
                 <GlobalStyles />
                 <Header />

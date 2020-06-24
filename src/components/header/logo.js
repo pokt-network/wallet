@@ -8,7 +8,7 @@ const Brand = styled(StyledLink)`
   margin-right: auto;
   padding: 11px 14px 11px 0;
   text-decoration: none;
-  z-index: 9999999999999;
+  z-index: 999999;
   ${tablet(css`
     padding: 0 14px;
   `)};

@@ -7,7 +7,6 @@ import Button from '../../components/public/button/button';
 import altertR from '../../utils/images/alert-circle-red.png';
 import altertT from '../../utils/images/alert-triangle.png';
 import { DataSource } from "../../datasource"
-import Config from "../../config/config.json"
 import {
     withRouter
 } from 'react-router-dom'
@@ -19,10 +18,11 @@ class Create extends Component {
             addressHex: undefined,
             publicKeyHex: undefined,
             ppk: undefined,
-            validPassphrase: false
+            validPassphrase: false,
+            keyFileDownloaded: false
         }
         // Set up locals
-        this.dataSource = new DataSource([new URL(Config.baseUrl)])
+        this.dataSource = DataSource.instance
         // Bind functions
         this.handleCreateAccount = this.handleCreateAccount.bind(this)
         this.handleDownload = this.handleDownload.bind(this)
@@ -55,13 +55,18 @@ class Create extends Component {
             return
         }
         const ppkJsonStr = this.state.ppk
-        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(ppkJsonStr);
-        var downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href",     dataStr);
-        downloadAnchorNode.setAttribute("download", "keyfile.json");
-        document.body.appendChild(downloadAnchorNode); // required for firefox
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();   
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(ppkJsonStr)
+        var downloadAnchorNode = document.createElement('a')
+        downloadAnchorNode.setAttribute("href",     dataStr)
+        downloadAnchorNode.setAttribute("download", "keyfile.json")
+        document.body.appendChild(downloadAnchorNode) // required for firefox
+        downloadAnchorNode.click()
+        downloadAnchorNode.remove()
+        // Update the state
+        this.setState({keyFileDownloaded: true})
+        // Remove the class from the account detail button
+        const element = document.getElementById("push-to-account")
+        element.classList.remove("isDisabled")
     }
     
     toggleError(show, msg) {
@@ -72,6 +77,10 @@ class Create extends Component {
         }
     }
     pushToAccountDetail() {
+        if (!this.state.keyFileDownloaded) {
+            this.toggleError(true, "Please download your key file before proceeding")
+            return
+        }
         // Check the account info before pushing
         if (this.state.addressHex === undefined ||
             this.state.publicKeyHex === undefined ||
@@ -123,7 +132,7 @@ class Create extends Component {
                     downloadKeyFileButton.style.display = "inline-block"
                 }
                 // Scroll to the account information section
-                var element = document.querySelector("#downloadKeyFile");
+                const element = document.querySelector("#top");
                 element.scrollIntoView({
                     behavior: 'smooth'
                 })
@@ -139,8 +148,8 @@ class Create extends Component {
                 <Wrapper className="wide-block-wr">
                     <Title>CREATE a pocket account</Title>
                     <div className="passphrase">
-                        <h2>PROTECT YOUR PRIVATE KEY<br /> WITH a passphrase</h2>
-                        <p>Write down a Passphrase to protect your key file. This should have: minimun 15 alphanumeric symbols, one capital letter, one lowercase, one special characters and one number.</p>
+                        <h2 id="top" >PROTECT YOUR PRIVATE KEY<br /> WITH a passphrase</h2>
+                        <p>Write down a Passphrase to protect your key file. This should have: minimum 15 alphanumeric symbols, one capital letter, one lowercase, one special characters and one number.</p>
                         <form className="pass-form">
                             <div className="cont-input">
                                 <Input onChange={this.handlePassphraseChange} type="password" name="passphrase" id="passphrase" placeholder="Passphrase" />
@@ -177,12 +186,12 @@ class Create extends Component {
                         </div>
                         <div className="btn-subm account-details">
                             
-                            <Button onClick={this.pushToAccountDetail}>Account Details</Button>
+                            <Button id="push-to-account" className="isDisabled" onClick={this.pushToAccountDetail}>Account Details</Button>
                         </div>
                     </div>
                 </Wrapper>
             </CreateContent>
-        );
+        )
     }
 }
 export default withRouter(Create);

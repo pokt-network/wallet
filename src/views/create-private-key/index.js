@@ -13,7 +13,7 @@ class CreatePrivateKey extends Component {
         constructor(props) {
             super(props)
             // Setup locals
-            this.dataSource = new DataSource(undefined, [new URL("http://localhost:8081")])
+            this.dataSource = DataSource.instance
             // Bind functions
             this.getBalance = this.getBalance.bind(this)
             this.handleDownload = this.handleDownload.bind(this)

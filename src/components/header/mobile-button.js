@@ -25,7 +25,7 @@ import StyledLink from "./link";
     right: 5%;
     top: 28px;
     color: ${colors.white};
-    z-index: 9999999999999;
+    z-index: 999999;
   `)};
 `;
 

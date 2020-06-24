@@ -12,6 +12,7 @@ import {
 import Config from "../config/config.json"
 
 export class DataSource {
+    static instance = DataSource.instance || new DataSource([new URL(Config.baseUrl)])
     static AATVersion = "0.0.1"
 
     constructor(dispatchers) {
@@ -50,7 +51,7 @@ export class DataSource {
                 walletAppPublicKey,
                 walletAppSignature
             )
-            // const pocketRpcProvider = new HttpRpcProvider(this.dispatchers)
+            // Pocket Rpc Instance
             const pocketRpcProvider = new PocketRpcProvider(
                 pocket,
                 aat,
@@ -59,10 +60,8 @@ export class DataSource {
             )
             
             this.pocket = new Pocket(this.dispatchers, pocketRpcProvider, configuration)
-            return this.pocket
-        }else {
-            return this.pocket
         }
+        return this.pocket
     }
 
     /**

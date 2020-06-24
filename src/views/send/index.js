@@ -29,7 +29,7 @@ class Send extends Component {
             txFee: Config.txFee
         }
         // Set up locals
-        this.dataSource = new DataSource([new URL(Config.baseUrl)])
+        this.dataSource = DataSource.instance
 
         this.toggleNotBalanceError = this.toggleNotBalanceError.bind(this)
         this.toggleAddressError = this.toggleAddressError.bind(this)

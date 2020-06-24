@@ -6,6 +6,12 @@ const CreateContent = styled.section`
   position: relative;
   max-width: 800px;
   margin: 80px auto;
+  .isDisabled {
+    color: currentColor;
+    cursor: not-allowed;
+    opacity: 0.5;
+    text-decoration: none;
+  }
   .download-btn {
     display: inline-block;
     position: relative;
