@@ -8,7 +8,7 @@ import altertR from "../../utils/images/alert-circle-red.png"
 import { DataSource } from "../../datasource"
 import Modal, { closeStyle } from "simple-react-modal"
 import { typeGuard } from "@pokt-network/pocket-js/dist/web.js"
-import Config from "../../config/config.json"
+
 import {
     withRouter
 } from 'react-router-dom'
@@ -22,7 +22,7 @@ class ImportPocket extends React.Component {
             isModalVisible: false,
         }
         // Set up locals
-        this.dataSource = new DataSource([new URL(Config.baseUrl)])
+        this.dataSource = DataSource.instance
 
         this.isFileInput = this.isFileInput.bind(this)
         this.isTextInput = this.isTextInput.bind(this)
@@ -398,7 +398,7 @@ class ImportPocket extends React.Component {
                         >
                             OK
                         </Button>
-                        <a href style={closeStyle} onClick={this.closeModal.bind(this)}>
+                        <a href="/" style={closeStyle} onClick={this.closeModal.bind(this)}>
                             X
                         </a>
                     </Modal>

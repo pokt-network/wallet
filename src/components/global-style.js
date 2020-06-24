@@ -14,6 +14,30 @@ const GlobalStyles = createGlobalStyle`
       background-image: linear-gradient(161deg, #27a9e0 -3%, #092e40 93%, #06202e 100%);
     `)};
   }
+  .loader-container {
+    position: fixed;
+    display: none; 
+    width: 100%; 
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 99999999;
+  }
+  .loader {
+    position: absolute;
+    top: 30%;
+    left: 45%;
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #27A9E0; /* Blue */
+    border-radius: 50%;
+    width: 90px;
+    height: 90px;
+    animation: spin 2s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
   .error {
     display: block;
     margin-top: 1px;

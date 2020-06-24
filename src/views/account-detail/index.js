@@ -43,7 +43,7 @@ class AccountLatest extends Component {
             unstakedImgSrc: unstaked
         }
         // Set up locals
-        this.dataSource = new DataSource([new URL(Config.baseUrl)])
+        this.dataSource = DataSource.instance
         // Binds
         this.onToggleBtn = this.onToggleBtn.bind(this)
         this.getBalance = this.getBalance.bind(this)
@@ -54,6 +54,8 @@ class AccountLatest extends Component {
         this.pushToSend = this.pushToSend.bind(this)
         this.pushToTxDetail = this.pushToTxDetail.bind(this)
         this.refreshView = this.refreshView.bind(this)
+        this.enableLoaderIndicatory = this.enableLoaderIndicatory.bind(this)
+        this.updateAccountDetails = this.updateAccountDetails.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
     }
@@ -62,6 +64,15 @@ class AccountLatest extends Component {
         const allTxs = await this.dataSource.getAllTransactions(this.currentAccount.addressHex)
         if (allTxs !== undefined) {
             this.updateTransactionList(allTxs)
+        }else {
+            const section = document.getElementById("noTransactions")
+            const toogleBtn = document.getElementById("tooglebtn")
+            if (section && toogleBtn) {
+                section.style.display = "block"
+                toogleBtn.style.display = "none"
+            }
+            this.setState({visibility: false})
+            this.enableLoaderIndicatory(false)
         }
     }
     updateTransactionList(txs) {
@@ -105,8 +116,10 @@ class AccountLatest extends Component {
             })
             // Display the table
             section.style.display = "block"
+            this.enableLoaderIndicatory(false)
         } catch (error) {
             console.log(error)
+            this.enableLoaderIndicatory(false)
         }
     }
     // Account type, amount staked and staking status
@@ -271,7 +284,23 @@ class AccountLatest extends Component {
             return { visibility: !prevState.visibility };
         })
     }
+    enableLoaderIndicatory(show){
+        const loaderElement = document.getElementById("loader")
+        if (loaderElement) {
+            loaderElement.style.display = show === true ? "block" : "none"
+        }
+    }
+    updateAccountDetails(){
+        const addressElement = document.getElementById("address")
+        const publicElement = document.getElementById("public-key")
+        if (addressElement && publicElement) {
+            addressElement.value = this.currentAccount.addressHex
+            publicElement.value = this.currentAccount.publicKeyHex
+        }
+    }
     refreshView() {
+        this.enableLoaderIndicatory(true)
+        this.updateAccountDetails()
         this.getBalance()
         this.getAccountType()
         this.getTransactions()
@@ -399,15 +428,16 @@ class AccountLatest extends Component {
                         <div className="container">
                             <div className="cont-input">
                                 <label htmlFor="add">Address</label>
-                                <Input type="text" name="address" id="address" value={this.state.addressHex} disabled />
+                                <Input type="text" name="address" id="address" />
                             </div>
                             <div className="cont-input second">
                                 <label htmlFor="puk">Public Key</label>
-                                <Input type="text" name="public-k" id="public-key" value={this.state.publicKeyHex} disabled />
+                                <Input type="text" name="public-k" id="public-key" />
                             </div>
                         </div>
                     </form>
                     <div className="toggle-btn">
+                        <ToggleBtn style={{display: "none"}} id="noTransactions">No Transactions</ToggleBtn>
                         <ToggleBtn id="tooglebtn" onClick={this.onToggleBtn}>Latest Transactions</ToggleBtn>
                     </div>
                     <ContainerToggle isVisible={this.state.visibility}>

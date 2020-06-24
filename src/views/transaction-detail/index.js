@@ -29,7 +29,7 @@ class TransactionDetail extends Component {
 
         }
         // Set up locals
-        this.dataSource = new DataSource([new URL(Config.baseUrl)])
+        this.dataSource = DataSource.instance
         this.getTx = this.getTx.bind(this)
         this.updateTxInformation = this.updateTxInformation.bind(this)
         this.backToAccountDetail = this.backToAccountDetail.bind(this)
