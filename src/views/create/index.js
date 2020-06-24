@@ -191,10 +191,10 @@ class Create extends Component {
                         <img src={altertT} alt="alert" />
                         <div className="cont-alert">
                             <div className="title">
-                                <h3>DOWNLOAD YOUR KEYSTORE FILEY!</h3>
+                                <h3>DOWNLOAD YOUR KEYSTORE FILE!</h3>
                             </div>
                             <p>
-                            You won't be able see it again or change it, make a back up and store it safely, preferably offline. You’ll need it to access your account again.
+                            You won't be able see it again or change it; make a back up and store it safely, preferably offline. You’ll need it to access your account again.
                             </p>
                         </div>
                     </div>
