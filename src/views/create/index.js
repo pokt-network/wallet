@@ -148,7 +148,7 @@ class Create extends Component {
                 <Wrapper className="wide-block-wr">
                     <Title>CREATE a pocket account</Title>
                     <div className="passphrase">
-                        <h2 id="top" >PROTECT YOUR PRIVATE KEY<br /> WITH a passphrase</h2>
+                        <h2 id="top" >PROTECT YOUR POCKET ACCOUNT<br /> WITH a passphrase</h2>
                         <p>Write down a Passphrase to protect your key file. This should have: minimum 15 alphanumeric symbols, one capital letter, one lowercase, one special characters and one number.</p>
                         <form className="pass-form">
                             <div className="cont-input">
@@ -168,10 +168,10 @@ class Create extends Component {
                         <img src={altertT} alt="alert" />
                         <div className="cont-alert">
                             <div className="title">
-                                <h3>SAVE YOUR PRIVATE KEY!</h3>
+                                <h3>DOWNLOAD YOUR KEYSTORE FILEY!</h3>
                             </div>
                             <p>
-                            You won't be able see it again or change it -- make a back up and store it safely, preferably offline. You’ll need it to access your account again.
+                            You won't be able see it again or change it, make a back up and store it safely, preferably offline. You’ll need it to access your account again.
                             </p>
                         </div>
                     </div>

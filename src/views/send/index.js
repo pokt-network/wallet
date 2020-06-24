@@ -407,7 +407,7 @@ class Send extends Component {
                         </div>
                     </Wrapper>
                     <div style={{textAlign: "center"}} className="row">
-                        <Button style={{display: "inline-block", marginTop: "20px", width: "176px"}}
+                        <Button style={{display: "inline-block", marginTop: "60px", width: "176px", backgroundColor: "#474747" }}
                                         onClick={this.backToAccountDetail} className="button" >Back to Account Detail</Button>
                     </div>
                 </SendContent>
