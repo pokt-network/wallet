@@ -201,12 +201,12 @@ class Create extends Component {
                     <div className="container account-info">
                         <div className="cont-input second">
                             <label className="account-info-label" htmlFor="add">ADDRESS</label>
-                            <Input style={{ backgroundColor: "#f5f5f5", height: "20px"}} type="text" name="address" id="address" defaultValue={""} disabled />
+                            <Input style={{ backgroundColor: "#f5f5f5", height: "20px"}} type="text" name="address" id="address" defaultValue={""} readonly />
                             <span className="copy-button" onClick={this.copyAddress}> <img src={copy} alt="copy" /></span>
                         </div>
                         <div className="cont-input">
                             <label style={{height: "20px"}} className="account-info-label" htmlFor="puk">PUBLIC KEY</label>
-                            <Input style={{ backgroundColor: "#f5f5f5", height: "20px"}} type="text" name="public-k" id="publicKey" defaultValue={""} disabled />
+                            <Input style={{ backgroundColor: "#f5f5f5", height: "20px"}} type="text" name="public-k" id="publicKey" defaultValue={""} readonly />
                             <span className="copy-button" onClick={this.copyPublicKey}> <img src={copy} alt="copy" /></span>
                         </div>
                         <div className="btn-subm account-details">
