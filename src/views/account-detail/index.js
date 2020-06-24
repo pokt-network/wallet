@@ -451,12 +451,12 @@ class AccountLatest extends Component {
                         <div className="container">
                             <div className="cont-input">
                                 <label htmlFor="add">Address</label>
-                                <Input style={{height: "11px"}} type="text" name="address" id="address" />
+                                <Input style={{height: "11px"}} type="text" name="address" id="address" readonly/>
                                 <span className="copy-button" onClick={this.copyAddress}> <img src={copy} alt="copy" /></span>
                             </div>
                             <div className="cont-input second">
                                 <label htmlFor="puk">Public Key</label>
-                                <Input style={{height: "11px"}} type="text" name="public-k" id="public-key" />
+                                <Input style={{height: "11px"}} type="text" name="public-k" id="public-key" readonly/>
                                 <span className="copy-button" onClick={this.copyPublicKey}> <img src={copy} alt="copy" /></span>
                             </div>
                         </div>

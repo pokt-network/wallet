@@ -21,7 +21,7 @@ class Footer extends Component {
               <div className="title">
                 <h3>POCKET NETWORK</h3>
               </div>
-              <div class="description">
+              <div className="description">
                 <p>
                   Come and help us grow the POKT community alongside the protocol. 
                   Join our social media channels.
