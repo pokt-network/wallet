@@ -22,6 +22,7 @@ import Td from '../../components/public/table/td';
 import Tr from '../../components/public/table/tr';
 import THead from '../../components/public/table/thead';
 import TBody from '../../components/public/table/tbody';
+import copy from '../../utils/images/copy.png'
 import { DataSource } from "../../datasource"
 import Config from "../../config/config.json"
 import {
@@ -56,8 +57,30 @@ class AccountLatest extends Component {
         this.refreshView = this.refreshView.bind(this)
         this.enableLoaderIndicatory = this.enableLoaderIndicatory.bind(this)
         this.updateAccountDetails = this.updateAccountDetails.bind(this)
+        this.copyAddress = this.copyAddress.bind(this)
+        this.copyPublicKey = this.copyPublicKey.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
+    }
+    copyAddress(){
+        const address = document.getElementById("address")
+        if (address) {
+            address.select();
+            address.setSelectionRange(0, 99999); /*For mobile devices*/
+
+            document.execCommand("copy");
+            console.log("Copied the text "+ address.value)
+        }
+    }
+    copyPublicKey(){
+        const publicKey = document.getElementById("public-key")
+        if (publicKey) {
+            publicKey.select();
+            publicKey.setSelectionRange(0, 99999); /*For mobile devices*/
+
+            document.execCommand("copy");
+            console.log("Copied the text "+ publicKey.value)
+        }
     }
     // Retrieve the latest transactions
     async getTransactions() {
@@ -428,11 +451,13 @@ class AccountLatest extends Component {
                         <div className="container">
                             <div className="cont-input">
                                 <label htmlFor="add">Address</label>
-                                <Input type="text" name="address" id="address" />
+                                <Input style={{height: "11px"}} type="text" name="address" id="address" />
+                                <span className="copy-button" onClick={this.copyAddress}> <img src={copy} alt="copy" /></span>
                             </div>
                             <div className="cont-input second">
                                 <label htmlFor="puk">Public Key</label>
-                                <Input type="text" name="public-k" id="public-key" />
+                                <Input style={{height: "11px"}} type="text" name="public-k" id="public-key" />
+                                <span className="copy-button" onClick={this.copyPublicKey}> <img src={copy} alt="copy" /></span>
                             </div>
                         </div>
                     </form>
