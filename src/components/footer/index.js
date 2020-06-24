@@ -24,7 +24,7 @@ class Footer extends Component {
               <div class="description">
                 <p>
                   Come and help us grow the POKT community alongside the protocol. 
-                  Join our social media cannels.
+                  Join our social media channels.
                 </p>
               </div>
             </div>
@@ -63,10 +63,10 @@ class Footer extends Component {
                 <li className="mainli">
                   <div className="title-sm">RESOURCES</div>
                   <ul className="sub-menu">
-                    <li className="menu-item"><a href="https://pokt.network/wp-content/uploads/2020/03/POCKET-NETWORK-WHITEPAPER-V0.3.0.pdf">WhitePaper</a></li>
-                    <li className="menu-item"><a href="https://pokt.network/wp-content/uploads/2020/06/Pocket-Network-Economic-Papeper-v1.0.2.pdf">Economic One Pager</a></li>
-                    <li className="menu-item"><a href="https://docs.pokt.network/">Dev portal</a></li>
-                    <li className="menu-item"><a href="https://pokt.network/site-terms-of-use/">Site Terms Of Use</a></li>
+                    <li className="menu-item"><a href="https://pocket-network-assets.s3-us-west-2.amazonaws.com/pdfs/Pocket-Network-Whitepaper-v0.3.0.pdf">WhitePaper</a></li>
+                    <li className="menu-item"><a href="https://pocket-network-assets.s3-us-west-2.amazonaws.com/pdfs/Pocket-Network-Economic-Paper-v1.0.2.pdf">Economic One Pager</a></li>
+                    <li className="menu-item"><a href="https://docs.pokt.network/">Dev Portal</a></li>
+                    <li className="menu-item"><a href="https://pokt.network/site-terms-of-use/">Terms Of Use</a></li>
                     <li className="menu-item"><a href="https://pokt.network/privacy-policy/">Privacy Policy</a></li>
                   </ul>
                 </li>
