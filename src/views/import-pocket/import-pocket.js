@@ -6,6 +6,27 @@ const ImportPocketContent = styled.section`
     position: relative;
     max-width: 800px;
     margin: 80px auto;
+    .import-pk-passphrase {
+        width: 350px;
+        margin-top: 8px;
+    }
+    .close {
+        background-color: transparent;
+        border-style: none;
+        position: absolute;
+        display: block;
+        right: 10px;
+        top: 10px;
+        padding: 0 !important;
+        margin-top: 0 !important;
+        ${maxPhone(css`
+          width: initial !important;
+        `)}
+        img {
+          max-width: 16px;
+          width: 16px;
+        }
+      }
     ${maxPhone(css`
         max-width: 100%;
     `)};

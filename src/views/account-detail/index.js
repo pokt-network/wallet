@@ -118,12 +118,14 @@ class AccountLatest extends Component {
     
                         const txHash = tx.hash
                         const imageSrc = tx.type.toLowerCase() === "sent" ? sentImgSrc : receivedImgSrc
+                        const TrClass = document.getElementById("tr-element").className
+                        const TdClass = document.getElementById("td-element").className
                         
-                        const txTemplate = '<Tr class="sc-fzqBZW ilrPoA">\n' +
-                            '<Td class="sc-fzokOt hITMcq"> <img src='+ imageSrc +' alt="'+ tx.type.toLowerCase() +'" /> </Td>\n' +
-                            '<Td class="sc-fzokOt hITMcq"> <div class="qty">'+ value / 1000000 +' <span>POKT</span></div> <div class="status">'+ tx.type.toLowerCase() +'</div> </Td>\n' +
-                            '<Td class="sc-fzokOt hITMcq block-align">'+tx.height+'</Td>\n' +
-                            '<Td class="sc-fzokOt hITMcq"> <a id="txHashElement'+idCounter+'"> '+txHash+' </a> </Td>\n' +
+                        const txTemplate = '<Tr class="'+TrClass+'">\n' +
+                            '<Td class="'+TdClass+'"> <img src='+ imageSrc +' alt="'+ tx.type.toLowerCase() +'" /> </Td>\n' +
+                            '<Td class="'+TdClass+'"> <div class="qty">'+ value / 1000000 +' <span>POKT</span></div> <div class="status">'+ tx.type.toLowerCase() +'</div> </Td>\n' +
+                            '<Td class="'+TdClass+' block-align">'+tx.height+'</Td>\n' +
+                            '<Td class="'+TdClass+'"> <a id="txHashElement'+idCounter+'"> '+txHash+' </a> </Td>\n' +
                         '</Tr>'
                         section.insertAdjacentHTML('beforeend', txTemplate)
                         // Add onClick event to the clickable element
@@ -476,8 +478,8 @@ class AccountLatest extends Component {
                                 </Tr>
                             </THead>
                             <TBody style={{display: "none"}} id="transation-list-section" className="l-tx table-scroll">
-                                 <Tr style={{display: "none"}}>
-                                    <Td> <img src={load} alt="loading" /> </Td>
+                                 <Tr id="tr-element" style={{display: "none"}}>
+                                    <Td id="td-element"> <img src={load} alt="loading" /> </Td>
                                     <Td> <div className="qty">0.00 <span>POKT</span></div> <div className="status">Sending</div> </Td>
                                 </Tr>
                             </TBody>
