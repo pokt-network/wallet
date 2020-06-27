@@ -56,7 +56,7 @@ export class DataSource {
                 pocket,
                 aat,
                 blockchain,
-                false
+                true
             )
             
             this.pocket = new Pocket(this.dispatchers, pocketRpcProvider, configuration)

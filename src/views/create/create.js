@@ -9,7 +9,7 @@ const CreateContent = styled.section`
   .isDisabled {
     color: currentColor;
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.2;
     text-decoration: none;
   }
   .download-btn {

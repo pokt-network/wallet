@@ -5,8 +5,9 @@ import Title from "../../components/public/title/title"
 import Input from "../../components/public/input/input"
 import Button from "../../components/public/button/button"
 import altertR from "../../utils/images/alert-circle-red.png"
+import exit from '../../utils/images/exit.png';
 import { DataSource } from "../../datasource"
-import Modal, { closeStyle } from "simple-react-modal"
+import Modal from "simple-react-modal"
 import { typeGuard } from "@pokt-network/pocket-js/dist/web.js"
 
 import {
@@ -353,6 +354,7 @@ class ImportPocket extends React.Component {
                     <Modal
                         style={{ background: "rgba(0, 0, 0, 0.5)" }} //overwrites the default background
                         containerStyle={{
+                            width: "534px",
                             background: "white",
                             boxShadow: "0 43px 39px -40px rgba(0,0,0,0.5)",
                             borderRadius: "12px",
@@ -364,22 +366,23 @@ class ImportPocket extends React.Component {
                     >
                         <div className="cont-input" style={{textAlign: "center"}}>
                             <label style={{ 
-                                    maginTop: "20px",
+                                    textAlign: "left",
+                                    margin: "31px 0px 0px 87px",
                                     color: "#06202e",
                                     fontSize: "20px",
                                     fontWeight: "700",
                                     textTransform: "uppercase",
-                                    marginTop: "10px",
                                     display: "block" 
                                 }} htmlFor="private">
-                                Passphrase
+                                ENTER PASSPHRASE
                             </label>
                             <Input
-                                style={{ marginTop: "20px" }}
+                                className="import-pk-passphrase"
+                                style={{ marginTop: "8px" }}
                                 type="password"
                                 name="import-pk-passphrase"
                                 id="import-pk-passphrase"
-                                placeholder="•••••••••••••••••"
+                                placeholder="Passphrase"
                                 minLength="1"
                             />
                         </div>
@@ -391,16 +394,17 @@ class ImportPocket extends React.Component {
                         <Button
                             style={{
                                 textAlign: "center",
-                                width: "100px", 
+                                width: "119px", 
                                 display: "block",
-                                margin: "20px auto 10px auto" }}
+                                padding: "9px 6px",
+                                margin: "26px auto 10px auto" }}
                             onClick={this.importAccount.bind(this)}
                         >
-                            OK
+                            Import
                         </Button>
-                        <a href="/" style={closeStyle} onClick={this.closeModal.bind(this)}>
-                            X
-                        </a>
+                        <button className="close" onClick={this.closeModal.bind(this)}>
+                            <img src={exit} alt="exit icon close"/>
+                        </button>
                     </Modal>
                 </div>
             </ImportPocketContent>
