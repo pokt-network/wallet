@@ -14,8 +14,9 @@ import app from '../../utils/images/app.png';
 import na from '../../utils/images/NA.png';
 import sent from '../../utils/images/sent.png';
 import received from '../../utils/images/received.png';
-import load from '../../utils/images/load.png';
-import reload from '../../utils/images/reload.png'; 
+import load from '../../utils/images/load.png'; 
+import reload from '../../utils/images/reload.png';
+import reloadActive from '../../utils/images/refresh-active.png'
 import T from '../../components/public/table/table';
 import Th from '../../components/public/table/th';
 import Td from '../../components/public/table/td';
@@ -41,7 +42,9 @@ class AccountLatest extends Component {
             publicKeyHex: "",
             unstakingImgSrc: unstaking,
             stakedImgSrc: staked,
-            unstakedImgSrc: unstaked
+            unstakedImgSrc: unstaked,
+            reloadImgSrc: reload,
+            reloadActiveImgSrc: reloadActive
         }
         // Set up locals
         this.dataSource = DataSource.instance
@@ -59,6 +62,7 @@ class AccountLatest extends Component {
         this.updateAccountDetails = this.updateAccountDetails.bind(this)
         this.copyAddress = this.copyAddress.bind(this)
         this.copyPublicKey = this.copyPublicKey.bind(this)
+        this.reloadBtnState = this.reloadBtnState.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
     }
@@ -303,6 +307,13 @@ class AccountLatest extends Component {
             data: accountObj,
         })
     }
+    reloadBtnState(boolean){
+        const reloadBtn = document.getElementById("reload-btn")
+        if (reloadBtn) {
+            reloadBtn.src = boolean ? this.state.reloadActiveImgSrc : this.state.reloadImgSrc
+        }
+    }
+
     // Transaction list toggle
     onToggleBtn() {
         this.setState((prevState) => {
@@ -363,7 +374,19 @@ class AccountLatest extends Component {
                             <div style={{flexDirection: "column"}} className="stats">
                                 <div className="stat">
                                     <span id="pokt-balance-usd">$ 0 USD</span>
-                                    <img style={{cursor: "pointer"}} onClick={this.refreshView} src={reload} alt="reload" />
+                                    <img 
+                                    id="reload-btn"
+                                    src={reload}
+                                    className="refresh-btn" 
+                                    onMouseOut={() => this.reloadBtnState(false)}
+                                    onMouseOver={() => this.reloadBtnState(true)}
+                                    style={{
+                                        src: `${this.state.hovered ? reloadActive : reload}`,
+                                        cursor: "pointer"
+                                    }}
+                                    onClick={this.refreshView} 
+                                    alt="reload" 
+                                    />
                                 </div>
                             </div>
                         </div>

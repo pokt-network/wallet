@@ -190,7 +190,7 @@ export class DataSource {
 
         let rawTxResponse = await transactionSenderOrError
         .send(accountOrUndefined.addressHex, toAddress, amount.toString())
-        .submit("pocket-test", defaultFee, CoinDenom.Upokt, "Pocket Wallet")
+        .submit(Config.chainId, defaultFee, CoinDenom.Upokt, "Pocket Wallet")
         
         return rawTxResponse
     }
