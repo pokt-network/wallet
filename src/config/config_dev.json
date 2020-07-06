@@ -11,5 +11,6 @@
     "blockExplorerBaseUrl": "http://localhost:3000",
     "dashboardBaseUrl": "http://dashboard.testnet.pokt.network",
     "maxTransactionListCount": 100,
+    "blockTime": 900000,
     "chainId": "pocket-test"
 }
