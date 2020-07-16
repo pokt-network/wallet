@@ -12,5 +12,5 @@
     "dashboardBaseUrl": "https://dashboard.testnet.pokt.network",
     "maxTransactionListCount": 100,
     "blockTime": 900000,
-    "chainId": "testnet-r1"
+    "chainId": "testnet-r2"
 }
