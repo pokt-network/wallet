@@ -20,7 +20,7 @@ class ImportPocket extends React.Component {
         this.state = {
             ppk: undefined,
             privateKey: undefined,
-            isModalVisible: false,
+            isModalVisible: false
         }
         // Set up locals
         this.dataSource = DataSource.instance

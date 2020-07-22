@@ -107,7 +107,7 @@ export class DataSource {
         }
     }
 
-     /**
+    /**
      * @returns {Account}
      */
     async importAccount(privateKey, passphrase) {
@@ -123,6 +123,21 @@ export class DataSource {
             return accountOrError
         }
     }
+
+    /**
+     * @returns {UnlockedAccount}
+     */
+    async getUnlockedAccount(addressHex, passphrase) {
+        const pocket = await this.getPocketInstance()
+        const unlockedOrError = await pocket.keybase.getUnlockedAccount(addressHex, passphrase)
+
+        if (typeGuard(unlockedOrError, Error)) {
+            return undefined
+        } else {
+            return unlockedOrError
+        }
+    }
+
     /**
      * @returns {object}
      */

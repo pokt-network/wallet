@@ -23,12 +23,16 @@ import Td from '../../components/public/table/td';
 import Tr from '../../components/public/table/tr';
 import THead from '../../components/public/table/thead';
 import TBody from '../../components/public/table/tbody';
-import copy from '../../utils/images/copy.png'
-import { DataSource } from "../../datasource"
-import Config from "../../config/config.json"
+import copy from '../../utils/images/copy.png';
+import { DataSource } from "../../datasource";
+import Config from "../../config/config.json";
 import {
     withRouter
-} from 'react-router-dom'
+} from 'react-router-dom';
+import Modal from "simple-react-modal";
+import altertR from "../../utils/images/alert-circle-red.png";
+import exit from '../../utils/images/exit.png';
+import altertT from '../../utils/images/alert-triangle.png';
 
 class AccountLatest extends Component {
     constructor(props) {
@@ -44,7 +48,8 @@ class AccountLatest extends Component {
             stakedImgSrc: staked,
             unstakedImgSrc: unstaked,
             reloadImgSrc: reload,
-            reloadActiveImgSrc: reloadActive
+            reloadActiveImgSrc: reloadActive,
+            isModalVisible: false
         }
         // Set up locals
         this.dataSource = DataSource.instance
@@ -63,9 +68,93 @@ class AccountLatest extends Component {
         this.copyAddress = this.copyAddress.bind(this)
         this.copyPublicKey = this.copyPublicKey.bind(this)
         this.reloadBtnState = this.reloadBtnState.bind(this)
+        this.revealPrivateKey = this.revealPrivateKey.bind(this)
+        this.showModal = this.showModal.bind(this)
+        this.closeModal = this.closeModal.bind(this)
+        this.copyPrivateKey = this.copyPrivateKey.bind(this)
+        this.togglePassphraseView = this.togglePassphraseView.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
     }
+
+    showModal() {
+        this.setState({
+            isModalVisible: true,
+        })
+    }
+
+    closeModal() {
+        this.setState({
+            isModalVisible: false,
+        })
+        this.togglePassphraseView(true)
+    }
+    togglePassphraseError(show, msg) {
+        const errorSpan = document.getElementById("passphrase-invalid")
+        if (errorSpan) {
+            errorSpan.style.display = show === true ? "block" : "none"
+            errorSpan.innerText = msg
+        }
+    }
+    togglePassphraseView(show) {
+        const passphraseLabel = document.getElementById("passphrase-label");
+        const privateKeyContainer = document.getElementById("private-key-container");
+        const revealPkPassphrase = document.getElementById("reveal-pk-passphrase");
+        const privateKeyInput = document.getElementById("private-key-input");
+
+        if (passphraseLabel && privateKeyContainer && revealPkPassphrase && privateKeyInput) {
+            passphraseLabel.style.display = show === true ? "block" : "none";
+            revealPkPassphrase.style.display = show === true ? "block" : "none";
+            privateKeyContainer.style.display = show === true ? "none" : "block";
+            //
+            if(show){
+                privateKeyInput.value = ""
+            }
+        }
+    }
+    
+    copyPrivateKey(){
+        const privateKey = document.getElementById("private-key-input");
+        if (privateKey) {
+            privateKey.select();
+            privateKey.setSelectionRange(0, 99999); /*For mobile devices*/
+
+            document.execCommand("copy");
+            console.log("Copied the text "+ privateKey.value);
+        }
+    }
+    async revealPrivateKey(){
+        // passphrase-invalid
+        const passphraseInput = document.getElementById("reveal-pk-passphrase");
+        const privateKeyInput = document.getElementById("private-key-input");
+
+        // Check for ppk and the element
+        if (this.currentAccount.ppk && passphraseInput && privateKeyInput) {
+
+            const account = await this.dataSource.importPortablePrivateKey(
+                passphraseInput.value,
+                this.currentAccount.ppk,
+                passphraseInput.value
+            );
+
+            if (account === undefined) {
+                this.togglePassphraseError(true, "Invalid passphrase.");
+                return;
+            }
+
+            const unlockedAccount = await this.dataSource.getUnlockedAccount(account.addressHex, passphraseInput.value);
+
+            if (unlockedAccount === undefined) {
+                this.togglePassphraseError(true, "Invalid passphrase.");
+                return;
+            }
+            // Show the private key information
+            privateKeyInput.value = unlockedAccount.privateKey.toString("hex");
+            this.togglePassphraseView(false);
+        }
+
+    }
+
     copyAddress(){
         const address = document.getElementById("address")
         if (address) {
@@ -484,6 +573,9 @@ class AccountLatest extends Component {
                                 <Input style={{height: "11px"}} type="text" name="public-k" id="public-key" readonly/>
                                 <span className="copy-button" onClick={this.copyPublicKey}> <img src={copy} alt="copy" /></span>
                             </div>
+                            <div className="cont-input third">
+                                <Button id="reveal-pk" onClick={this.showModal}>Reveal Private Key</Button>
+                            </div>
                         </div>
                     </form>
                     <div className="toggle-btn">
@@ -509,6 +601,77 @@ class AccountLatest extends Component {
                         </T>
                     </ContainerToggle>
                 </Wrapper>
+                <Modal
+                        style={{ background: "rgba(0, 0, 0, 0.5)" }} //overwrites the default background
+                        containerStyle={{
+                            width: "534px",
+                            background: "white",
+                            boxShadow: "0 43px 39px -40px rgba(0,0,0,0.5)",
+                            borderRadius: "12px",
+                            padding: "5px 0px 13px"
+                        }} //changes styling on the inner content area
+                        containerClassName="pocket-modal"
+                        closeOnOuterClick={true}
+                        show={this.state.isModalVisible}
+                        onClose={this.closeModal.bind(this)}
+                    >
+                        <div className="cont-input" style={{textAlign: "center"}}>
+                            <label id="passphrase-label" className="passphrase-label" htmlFor="private">
+                                PASSPHRASE
+                            </label>
+                            <Input
+                                className="reveal-pk-passphrase"
+                                style={{ marginTop: "8px", width: "350px" }}
+                                type="password"
+                                name="reveal-pk-passphrase"
+                                id="reveal-pk-passphrase"
+                                placeholder="Passphrase"
+                                minLength="1"
+                            />
+                            <div id="private-key-container" style={{display: "none"}}>
+                                <label id="private-key-label" className="passphrase-label" htmlFor="private">
+                                    PRIVATE KEY
+                                </label>
+                                <Input style={{ 
+                                    backgroundColor: "#f5f5f5", 
+                                    height: "20px",
+                                    width: "350px",
+                                    marginTop: "9px"
+                                    }} type="text" name="private-k" id="private-key-input" defaultValue={""} readonly />
+                                <span style={{marginTop: "18px"}} className="copy-button" onClick={this.copyPrivateKey}> <img src={copy} alt="copy" /></span>
+                            </div>
+                        </div>
+                        <span id="passphrase-invalid" className="error" style={{ display: "none" }}>
+                            {" "}
+                            <img src={altertR} alt="alert" />
+                            Invalid Passphrase
+                        </span>
+                        <Button
+                            style={{
+                                textAlign: "center",
+                                width: "119px", 
+                                display: "block",
+                                padding: "9px 6px",
+                                margin: "24px auto 10px auto" }}
+                            onClick={this.revealPrivateKey.bind(this)}
+                        >
+                            Reveal
+                        </Button>
+                        <button className="close" onClick={this.closeModal.bind(this)}>
+                            <img src={exit} alt="exit icon close"/>
+                        </button>
+                        <div className="alert">
+                                <img src={altertT} alt="alert" />
+                                <div className="cont-alert">
+                                    <div className="title">
+                                        <h3>SAVE YOUR PRIVATE KEY!</h3>
+                                    </div>
+                                    <p>
+                                        You wont be able to reveal it again or restore it. Make a back up, store it save  preferably offline. You’ll need it to acces your account.
+                                    </p>
+                                </div>
+                            </div>
+                    </Modal>
             </AccountLContent>
         );
     }
