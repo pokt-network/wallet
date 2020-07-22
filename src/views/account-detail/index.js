@@ -106,7 +106,7 @@ class AccountLatest extends Component {
             passphraseLabel.style.display = show === true ? "block" : "none";
             revealPkPassphrase.style.display = show === true ? "block" : "none";
             privateKeyContainer.style.display = show === true ? "none" : "block";
-            //
+            // Delete private key value from the input
             if(show){
                 privateKeyInput.value = ""
             }
@@ -150,6 +150,8 @@ class AccountLatest extends Component {
             }
             // Show the private key information
             privateKeyInput.value = unlockedAccount.privateKey.toString("hex");
+            // Clear the passphrase input
+            passphraseInput.value = "";
             this.togglePassphraseView(false);
         }
 
@@ -667,7 +669,7 @@ class AccountLatest extends Component {
                                         <h3>SAVE YOUR PRIVATE KEY!</h3>
                                     </div>
                                     <p>
-                                        You wont be able to reveal it again or restore it. Make a back up, store it save  preferably offline. You’ll need it to acces your account.
+                                        You wont be able to reveal it again or restore it. Make a back up and store it safely, preferably offline. You’ll need it to access your account.
                                     </p>
                                 </div>
                             </div>
