@@ -6,6 +6,67 @@ const AccountLContent = styled.section`
   position: relative;
   max-width: 800px;
   margin: 80px auto;
+  .passphrase-label {
+    text-align: left;
+    margin: 31px 0px 0px 87px;
+    color: #06202e;
+    font-size: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: block;
+  }
+  .alert {
+    position: relative;
+    max-width: 100%;
+    margin: 30px 0px -13px 0px;
+    background-color: ${colors.footerBg};
+    border-radius: 10px;
+    box-shadow: 0 6px 25px -8px rgba(6, 32, 46, 0.1);
+    .cont-alert {
+      padding: 30px 20px 30px 60px;
+      text-align: left;
+      .title {
+        h3 {
+          margin-top: 0;
+          text-transform: uppercase;
+          color: ${colors.alert};
+          font-size: 18px;
+          font-weight: 800;
+        }
+      }
+      p {
+        color: ${colors.white};
+        font-size: 14px;
+        margin-bottom: 0;
+      }
+    }
+    img {
+      position: absolute;
+      max-width: 36px;
+      left: 15px;
+      top: 26px;
+      ${maxPhone(css`
+        top: 34px;
+      `)};
+    }
+  }
+  .close {
+    background-color: transparent;
+    border-style: none;
+    position: absolute;
+    display: block;
+    right: 10px;
+    top: 10px;
+    padding: 0 !important;
+    margin-top: 0 !important;
+    ${maxPhone(css`
+      width: initial !important;
+    `)}
+    img {
+      max-width: 16px;
+      width: 16px;
+    }
+  }
   tr {
     display: block;
   }
@@ -200,6 +261,9 @@ const AccountLContent = styled.section`
     .cont-input {
       &.second {
         margin-top: 22px;
+      }
+      &.third {
+        margin-top: 34px;
       }
       input {
         background-color: #f5f5f5;
