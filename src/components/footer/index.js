@@ -8,6 +8,7 @@ import github from '../../utils/images/github.png';
 import discord from '../../utils/images/discord.png';
 import telegram from '../../utils/images/telegram.png';
 import cent from '../../utils/images/cent.png';
+import Config from "../../config/config.json";
 
 class Footer extends Component {
   
@@ -55,9 +56,8 @@ class Footer extends Component {
                   <ul className="sub-menu">
                     <li className="menu-item"><a href="https://docs.pokt.network/docs/what-is-pocket-network">What is Pocket Network</a></li>
                     <li className="menu-item"><a href="https://www.pokt.network/">Website</a></li>
-                    <li className="menu-item"><a href="https://explorer.testnet.pokt.network/">Block Explorer</a></li>
-                    <li className="menu-item"><a href="https://www.pokt.network/">Dashboard</a></li>
-                    <li className="menu-item"><a href="https://www.pokt.network/">Gateway</a></li>
+                    <li className="menu-item"><a href={Config.BLOCK_EXPLORER_BASE_URL}>Block Explorer</a></li>
+                    <li className="menu-item"><a href={Config.DASHBOARD_BASE_URL}>Dashboard</a></li>
                   </ul>
                 </li>
                 <li className="mainli">
@@ -75,7 +75,7 @@ class Footer extends Component {
                   <ul className="sub-menu">
                     <li className="menu-item"><a href="https://pokt.network/contact/">Contact Us</a></li>
                     <li className="menu-item"><a href="https://pokt.network/blog/">Blog</a></li>
-                    <li className="menu-item"><a href="https://research.pokt.network/">Forum</a></li>
+                    <li className="menu-item"><a href="https://forum.pokt.network/">Forum</a></li>
                     <li className="menu-item"><a href="https://discord.com/invite/WRh7fMJ">Join Discord</a></li>
                   </ul>
                 </li>

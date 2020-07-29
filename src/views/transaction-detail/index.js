@@ -126,7 +126,7 @@ class TransactionDetail extends Component {
                 const txObj = {
                     sentAmount: sentAmount,
                     txHash: txResponse.transaction.hash,
-                    txFee: Config.txFee / 1000000,
+                    txFee: Number(Config.TX_FEE) / 1000000,
                     txType: "TokenTransfer",
                     fromAddress: senderAddress,
                     toAddress: recipientAdress,
