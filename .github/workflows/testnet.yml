@@ -1,0 +1,58 @@
+name: Testnet Deployment
+
+on:
+  push:
+    branches: [ staging ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 12.15.0 ]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Write config
+      uses: schdck/create-env-json@v1
+      with:
+        file-name: 'src/config/config.json'
+        CLIENT_PASSPHRASE: ${{ secrets.WALLET_TESTNET_CLIENT_PASSPHRASE }}
+        CLIENT_PUBLIC_KEY: ${{ secrets.WALLET_TESTNET_CLIENT_PUBLIC_KEY }}
+        CLIENT_PRIVATE_KEY: ${{ secrets.WALLET_TESTNET_CLIENT_PRIVATE_KEY }}
+        WALLET_APP_PUBLIC_KEY: ${{ secrets.WALLET_TESTNET_APP_PUBLIC_KEY }}
+        WALLET_APP_AAT_SIGNATURE: ${{ secrets.WALLET_TESTNET_APP_AAT_SIGNATURE }}
+        BASE_URL: "https://node1.testnet.pokt.network"
+        BLOCK_EXPLORER_BASE_URL: "https://explorer.testnet.pokt.network"
+        DASHBOARD_BASE_URL: "https://dashboard.testnet.pokt.network"
+        CHAIN: "0002"
+        CHAIN_ID: "testnet-r2"
+        BLOCK_TIME: "900000"
+        MAX_TRANSACTION_LIST_COUNT: "100"
+        POKT_USD_VALUE: "0.06"
+        TX_FEE: "100000"
+    - name: NPM install
+      run: npm install
+    - name: Production build
+      run: npm run build
+    - name: Deploy to S3
+      uses: jakejarvis/s3-sync-action@master
+      with:
+        args: --acl public-read --delete
+      env:
+        AWS_S3_BUCKET: ${{ secrets.AWS_TESTNET_BUCKET_NAME }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        SOURCE_DIR: "build"
+    - name: Clear CloudFront Cache
+      uses: awact/cloudfront-action@master
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        DISTRIBUTION_ID: ${{ secrets.AWS_TESTNET_DISTRIBUTION_ID }}
+    
