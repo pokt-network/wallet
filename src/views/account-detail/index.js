@@ -346,7 +346,7 @@ class AccountLatest extends Component {
         if (poktBalanceElement && poktUsdBalanceElement) {
             // Update account detail values
             poktBalanceElement.innerText = balance.toFixed(2) + " POKT"
-            poktUsdBalanceElement.innerText = "$ " + (balance * Config.poktUsdValue).toFixed(2) + " USD"
+            poktUsdBalanceElement.innerText = "$ " + (balance * Number(Config.POKT_USD_VALUE)).toFixed(2) + " USD"
             this.setState({
                 addressHex: this.currentAccount.addressHex,
                 publicKeyHex: this.currentAccount.publicKeyHex

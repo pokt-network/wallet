@@ -26,7 +26,7 @@ class Send extends Component {
             amountToSend: 0,
             isAmountValid: false,
             isAddressValid: false,
-            txFee: Config.txFee
+            txFee: Number(Config.TX_FEE)
         }
         // Set up locals
         this.dataSource = DataSource.instance
@@ -197,7 +197,7 @@ class Send extends Component {
                 // Update the modal amount element value
                 amountElementText.innerText = valueText
                 // Update the usd amount elements too
-                const usdValue = Config.poktUsdValue * amountElement.value
+                const usdValue = Number(Config.POKT_USD_VALUE) * amountElement.value
                 usdAmountElement.value = usdValue.toFixed(2)
                 usdAmountElementText.innerText = usdAmountElement.value + " USD"
                 // Save the amount in uPOKT to send in the state
@@ -224,7 +224,7 @@ class Send extends Component {
             // Check
             if (amountElement && amountElementText) {
                 // Convert the decimals to upokt to use the value for the send-tx
-                const value = usdAmountElement.value / Config.poktUsdValue
+                const value = usdAmountElement.value / Number(Config.POKT_USD_VALUE)
                 // Add the amount to send element value for the modal label
                 const valueText = usdAmountElement.value + " USD"
                 // Update the modal amount element value

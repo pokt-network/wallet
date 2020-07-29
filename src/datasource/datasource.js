@@ -12,7 +12,7 @@ import {
 import Config from "../config/config.json"
 
 export class DataSource {
-    static instance = DataSource.instance || new DataSource([new URL(Config.baseUrl)])
+    static instance = DataSource.instance || new DataSource([new URL(Config.BASE_URL)])
     static AATVersion = "0.0.1"
 
     constructor(dispatchers) {
@@ -22,16 +22,16 @@ export class DataSource {
     // Retrieve or set a pocket instance
     async getPocketInstance() {
         if (!this.pocket || !this.pocket.rpc()) {
-            const configuration = new Configuration(5, 1000, 5, 40000, true, undefined, Config.blockTime, undefined, undefined, false)
-            const clientPubKeyHex = Config.clientPublicKey
-            const clientPrivateKey = Config.clientPrivateKey
-            const clientPassphrase = Config.clientPassphrase
-            const walletAppPublicKey = Config.walletAppPublicKey
-            const walletAppSignature = Config.walletAppAATSignature
+            const configuration = new Configuration(5, 1000, 5, 40000, true, undefined, Number(Config.BLOCK_TIME), undefined, undefined, false)
+            const clientPubKeyHex = Config.CLIENT_PUBLIC_KEY
+            const clientPrivateKey = Config.CLIENT_PRIVATE_KEY
+            const clientPassphrase = Config.CLIENT_PASSPHRASE
+            const walletAppPublicKey = Config.WALLET_APP_PUBLIC_KEY
+            const walletAppSignature = Config.WALLET_APP_AAT_SIGNATURE
 
             // Pocket instance
             const pocket = new Pocket(this.dispatchers, undefined, configuration)
-            const blockchain = Config.chain
+            const blockchain = Config.CHAIN
 
             // Import client Account
             const clientAccountOrError = await pocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), clientPassphrase)
@@ -205,7 +205,7 @@ export class DataSource {
 
         let rawTxResponse = await transactionSenderOrError
         .send(accountOrUndefined.addressHex, toAddress, amount.toString())
-        .submit(Config.chainId, defaultFee, CoinDenom.Upokt, "Pocket Wallet")
+        .submit(Config.CHAIN_ID, defaultFee, CoinDenom.Upokt, "Pocket Wallet")
         
         return rawTxResponse
     }
@@ -316,7 +316,7 @@ export class DataSource {
      */
     async getTxs(address, received){
         const pocket = await this.getPocketInstance()
-        const maxTxs = Config.maxTransactionListCount
+        const maxTxs = Number(Config.MAX_TRANSACTION_LIST_COUNT)
         // Retrieve received transactions
         const receivedTxsOrError = await pocket.rpc().query.getAccountTxs(address, received, false, 1, maxTxs)
         // 

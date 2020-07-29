@@ -8,7 +8,7 @@ import StyledLi from "./li";
 import HeaderContainer from "./header";
 import logo from '../../utils/images/logo-white.png';
 import arrow from '../../utils/images/right-arrow.png';
-import Config from "../../config/config.json"
+import Config from "../../config/config.json";
 
 class Header extends Component {
   constructor(props) {
@@ -38,7 +38,7 @@ class Header extends Component {
           <Menu isHidden={this.state.isMenuHidden}>
             <StyledUl>
               <StyledLi>
-                <a href={Config.dashboardBaseUrl}>Buy POKT</a>
+                <a href={Config.DASHBOARD_BASE_URL}>Buy POKT</a>
               </StyledLi>
               <StyledLi style={{display: "none"}} id="navAccount" className="sub_menu">
                 <a href={hrefLink}> Account <img src={arrow} alt="greater than" /> </a>
