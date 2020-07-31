@@ -25,6 +25,7 @@ jobs:
         CLIENT_PRIVATE_KEY: ${{ secrets.WALLET_PRODUCTION_CLIENT_PRIVATE_KEY }}
         WALLET_APP_PUBLIC_KEY: ${{ secrets.WALLET_PRODUCTION_APP_PUBLIC_KEY }}
         WALLET_APP_AAT_SIGNATURE: ${{ secrets.WALLET_PRODUCTION_APP_AAT_SIGNATURE }}
+        POKT_USD_VALUE: ${{ secrets.POKT_USD_MARKET_PRICE }}
         BASE_URL: "https://node1.mainnet.pokt.network"
         BLOCK_EXPLORER_BASE_URL: "https://explorer.pokt.network"
         DASHBOARD_BASE_URL: "https://dashboard.pokt.network"
@@ -32,7 +33,6 @@ jobs:
         CHAIN_ID: "mainnet"
         BLOCK_TIME: "900000"
         MAX_TRANSACTION_LIST_COUNT: "100"
-        POKT_USD_VALUE: "0.06"
         TX_FEE: "100000"
     - name: NPM install
       run: npm install
