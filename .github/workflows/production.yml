@@ -29,6 +29,7 @@ jobs:
         BASE_URL: "https://node1.mainnet.pokt.network"
         BLOCK_EXPLORER_BASE_URL: "https://explorer.pokt.network"
         DASHBOARD_BASE_URL: "https://dashboard.pokt.network"
+        BUY_POKT_BASE_URL: "https://pokt.network/pokt-sale/"
         CHAIN: "0001"
         CHAIN_ID: "mainnet"
         BLOCK_TIME: "900000"

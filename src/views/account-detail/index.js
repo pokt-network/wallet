@@ -559,7 +559,7 @@ class AccountLatest extends Component {
                         </div>
                         {/* / APP Section */}
                         <div className="btn-subm">
-                            <Button href="https://dashboard.pokt.network/" dark>Buy POKT</Button>
+                            <Button href={Config.BUY_POKT_BASE_URL} dark>Buy POKT</Button>
                             <Button id="send-pokt" onClick={this.pushToSend}>Send</Button>
                         </div> 
                     </div>
