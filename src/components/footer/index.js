@@ -57,7 +57,6 @@ class Footer extends Component {
                     <li className="menu-item"><a href="https://docs.pokt.network/docs/what-is-pocket-network">What is Pocket Network</a></li>
                     <li className="menu-item"><a href="https://www.pokt.network/">Website</a></li>
                     <li className="menu-item"><a href={Config.BLOCK_EXPLORER_BASE_URL}>Block Explorer</a></li>
-                    <li className="menu-item"><a href={Config.DASHBOARD_BASE_URL}>Dashboard</a></li>
                   </ul>
                 </li>
                 <li className="mainli">

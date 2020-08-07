@@ -38,7 +38,7 @@ class Header extends Component {
           <Menu isHidden={this.state.isMenuHidden}>
             <StyledUl>
               <StyledLi>
-                <a href={Config.DASHBOARD_BASE_URL}>Buy POKT</a>
+                <a href={Config.BUY_POKT_BASE_URL}>Buy POKT</a>
               </StyledLi>
               <StyledLi style={{display: "none"}} id="navAccount" className="sub_menu">
                 <a href={hrefLink}> Account <img src={arrow} alt="greater than" /> </a>

@@ -29,6 +29,7 @@ jobs:
         BASE_URL: "https://node1.testnet.pokt.network"
         BLOCK_EXPLORER_BASE_URL: "https://explorer.testnet.pokt.network"
         DASHBOARD_BASE_URL: "https://dashboard.testnet.pokt.network"
+        BUY_POKT_BASE_URL: "https://pokt.network/pokt-sale/"
         CHAIN: "0002"
         CHAIN_ID: "testnet-r2"
         BLOCK_TIME: "900000"
