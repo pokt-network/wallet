@@ -33,7 +33,7 @@ jobs:
         CHAIN_ID: "mainnet"
         BLOCK_TIME: "900000"
         MAX_TRANSACTION_LIST_COUNT: "100"
-        TX_FEE: "100000"
+        TX_FEE: "10000"
     - name: NPM install
       run: npm install
     - name: Production build

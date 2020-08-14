@@ -30,10 +30,10 @@ jobs:
         BLOCK_EXPLORER_BASE_URL: "https://explorer.testnet.pokt.network"
         DASHBOARD_BASE_URL: "https://dashboard.testnet.pokt.network"
         CHAIN: "0002"
-        CHAIN_ID: "testnet-r2"
+        CHAIN_ID: "testnet"
         BLOCK_TIME: "900000"
         MAX_TRANSACTION_LIST_COUNT: "100"
-        TX_FEE: "100000"
+        TX_FEE: "10000"
     - name: NPM install
       run: npm install
     - name: Production build
