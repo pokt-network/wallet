@@ -26,7 +26,8 @@ class Send extends Component {
             amountToSend: 0,
             isAmountValid: false,
             isAddressValid: false,
-            txFee: Number(Config.TX_FEE)
+            txFee: Number(Config.TX_FEE),
+            disableSendBtn: false
         }
         // Set up locals
         this.dataSource = DataSource.instance
@@ -48,9 +49,18 @@ class Send extends Component {
         this.backToAccountDetail = this.backToAccountDetail.bind(this)
         this.handlePoktValueChange = this.handlePoktValueChange.bind(this)
         this.handleUsdValueChange = this.handleUsdValueChange.bind(this)
+        this.enableLoaderIndicatory = this.enableLoaderIndicatory.bind(this)
         // Set current Account
         this.currentAccount = this.props.location.data
     }
+
+    enableLoaderIndicatory(show){
+        const loaderElement = document.getElementById("loader")
+        if (loaderElement) {
+            loaderElement.style.display = show === true ? "block" : "none"
+        }
+    }
+    
     showModal() {
         const modal = document.getElementById("popup")
         if (modal && this.state.isAmountValid && this.state.isAddressValid) {
@@ -67,7 +77,7 @@ class Send extends Component {
     showPassModal() {
         const modal = document.getElementById("popup-passphrase")
         if (modal) {
-            document.getElementById("sendButton").disabled = false
+            this.setState({disableSendBtn: false})
             modal.style.display = "block"
         }
     }
@@ -84,7 +94,10 @@ class Send extends Component {
     }
     async sendTransaction(){
         // Disable the send button
-        document.getElementById("sendButton").disabled = true
+        this.setState({disableSendBtn: true})
+        // Enable loader indicator
+        this.enableLoaderIndicatory(true)
+
         const ppk = this.currentAccount.ppk
         const passphrase = document.getElementById("modal-passphrase")
         const destinationAddress = document.getElementById("destination-address")
@@ -103,8 +116,13 @@ class Send extends Component {
                 destinationAddress.value,
                 amountToSend
             )
+
             this.finishSendTransaction()
+
             if (txResponse === undefined) {
+                // Disable loader indicator
+                this.enableLoaderIndicatory(false)
+                // Show error message
                 this.toggleAddressError(true, "Failed to send the transaction, please check the information.")
                 console.log(txResponse)
             }else {
@@ -127,7 +145,9 @@ class Send extends Component {
                     txHash: undefined,
                     account: accountObj
                 }
-
+                // Disable loader indicator
+                this.enableLoaderIndicatory(false)
+                // Push to transaction detail page
                 this.pushToTxDetail(obj)
             }
         }
@@ -357,7 +377,7 @@ class Send extends Component {
                                             <button className="close" onClick={this.closeModal}>
                                                 <img src={exit} alt="exit icon close"/>
                                             </button>
-                                            <h2> Are you sure you want to send from  your Balance: </h2>
+                                            <h2> Are you sure you want to send from your Balance: </h2>
                                             <div className="content">
                                                 <div style={{marginBottom: "10px"}} className="qty">
                                                     <div id="modal-amount-to-send" className="pokt" disabled>
@@ -375,7 +395,7 @@ class Send extends Component {
                                                         />
                                                     </div>
                                                     <div className="btn-subm">
-                                                        <Button onClick={this.requestPassphrase} >Send</Button>
+                                                        <Button onClick={this.requestPassphrase} >Confirm</Button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -395,7 +415,7 @@ class Send extends Component {
                                                         />
                                                     </div>
                                                     <div className="btn-subm">
-                                                        <Button id="sendButton" onClick={this.sendTransaction} >Send</Button>
+                                                        <Button id="sendButton" disabled={!this.state.disableSendBtn} onClick={this.sendTransaction} >Send</Button>
                                                     </div>
                                                 </form>
                                             </div>
