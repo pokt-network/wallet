@@ -26,7 +26,7 @@ jobs:
         WALLET_APP_PUBLIC_KEY: ${{ secrets.WALLET_PRODUCTION_APP_PUBLIC_KEY }}
         WALLET_APP_AAT_SIGNATURE: ${{ secrets.WALLET_PRODUCTION_APP_AAT_SIGNATURE }}
         POKT_USD_VALUE: ${{ secrets.POKT_USD_MARKET_PRICE }}
-        BASE_URL: "https://node1.mainnet.pokt.network"
+        DISPATCHERS: "https://node1.mainnet.pokt.network,https://node2.mainnet.pokt.network,https://node3.mainnet.pokt.network,https://node4.mainnet.pokt.network,https://node5.mainnet.pokt.network,https://node6.mainnet.pokt.network,https://node7.mainnet.pokt.network,https://node8.mainnet.pokt.network,https://node9.mainnet.pokt.network,https://node10.mainnet.pokt.network,https://node11.mainnet.pokt.network,https://node12.mainnet.pokt.network,https://node13.mainnet.pokt.network,https://node14.mainnet.pokt.network,https://node15.mainnet.pokt.network,https://node16.mainnet.pokt.network,https://node17.mainnet.pokt.network,https://node18.mainnet.pokt.network,https://node19.mainnet.pokt.network,https://node20.mainnet.pokt.network"
         BLOCK_EXPLORER_BASE_URL: "https://explorer.pokt.network"
         DASHBOARD_BASE_URL: "https://dashboard.pokt.network"
         BUY_POKT_BASE_URL: "https://pokt.network/pokt-sale/"

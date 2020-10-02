@@ -1,5 +1,5 @@
 {
-    "baseUrl": "http://localhost:8081",
+    "DISPATCHERS": "http://localhost:8081",
     "clientPassphrase": "test123",
     "clientPublicKey": "6220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b",
     "clientPrivateKey": "c86b5424ab1d73da92522d21adbd48b217a66b61f78fa8e2c93e9ea47afa55716220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b",
