@@ -26,7 +26,7 @@ jobs:
         WALLET_APP_PUBLIC_KEY: ${{ secrets.WALLET_TESTNET_APP_PUBLIC_KEY }}
         WALLET_APP_AAT_SIGNATURE: ${{ secrets.WALLET_TESTNET_APP_AAT_SIGNATURE }}
         POKT_USD_VALUE: ${{ secrets.POKT_USD_MARKET_PRICE }}
-        BASE_URL: "https://node1.testnet.pokt.network"
+        DISPATCHERS: "https://node1.testnet.pokt.network,https://node2.testnet.pokt.network,https://node3.testnet.pokt.network,https://node4.testnet.pokt.network,https://node5.testnet.pokt.network"
         BLOCK_EXPLORER_BASE_URL: "https://explorer.testnet.pokt.network"
         DASHBOARD_BASE_URL: "https://dashboard.testnet.pokt.network"
         BUY_POKT_BASE_URL: "https://pokt.network/pokt-sale/"

@@ -12,54 +12,67 @@ import {
 import Config from "../config/config.json"
 
 export class DataSource {
-    static instance = DataSource.instance || new DataSource([new URL(Config.BASE_URL)])
-    static AATVersion = "0.0.1"
+    static instance = DataSource.instance || new DataSource(Config.DISPATCHERS);
+    static AATVersion = "0.0.1";
 
     constructor(dispatchers) {
-        this.dispatchers = dispatchers
+        let dispatchersURL = [];
+        const dispatchersList = dispatchers.split(",");
+
+        if (dispatchersList.length > 0) {
+            dispatchersList.forEach(dispatcher => {
+                dispatchersURL.push(new URL(dispatcher));
+            });
+        }
+        
+        this.dispatchers = dispatchersURL;
     }
 
     // Retrieve or set a pocket instance
     async getPocketInstance() {
         if (!this.pocket || !this.pocket.rpc()) {
-            const configuration = new Configuration(5, 1000, 5, 40000, true, undefined, Number(Config.BLOCK_TIME), undefined, undefined, false)
-            const clientPubKeyHex = Config.CLIENT_PUBLIC_KEY
-            const clientPrivateKey = Config.CLIENT_PRIVATE_KEY
-            const clientPassphrase = Config.CLIENT_PASSPHRASE
-            const walletAppPublicKey = Config.WALLET_APP_PUBLIC_KEY
-            const walletAppSignature = Config.WALLET_APP_AAT_SIGNATURE
+            const configuration = new Configuration(30, 1000, 5, 40000, true, undefined, Number(Config.BLOCK_TIME), undefined, undefined, false);
+            const clientPubKeyHex = Config.CLIENT_PUBLIC_KEY;
+            const clientPrivateKey = Config.CLIENT_PRIVATE_KEY;
+            const clientPassphrase = Config.CLIENT_PASSPHRASE;
+            const walletAppPublicKey = Config.WALLET_APP_PUBLIC_KEY;
+            const walletAppSignature = Config.WALLET_APP_AAT_SIGNATURE;
 
-            // Pocket instance
-            const pocket = new Pocket(this.dispatchers, undefined, configuration)
-            const blockchain = Config.CHAIN
+            if (clientPubKeyHex && clientPrivateKey && clientPassphrase && walletAppPublicKey && walletAppSignature) {
+                            // Pocket instance
+                const pocket = new Pocket(this.dispatchers, undefined, configuration)
+                const blockchain = Config.CHAIN
 
-            // Import client Account
-            const clientAccountOrError = await pocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), clientPassphrase)
-            if (typeGuard(clientAccountOrError, Error)) {
-                throw clientAccountOrError
+                // Import client Account
+                const clientAccountOrError = await pocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), clientPassphrase)
+                if (typeGuard(clientAccountOrError, Error)) {
+                    throw clientAccountOrError
+                }
+                // Unlock the client account
+                const unlockOrError = await pocket.keybase.unlockAccount(clientAccountOrError.addressHex, clientPassphrase, 0)
+                if (typeGuard(unlockOrError, Error)) {
+                    throw clientAccountOrError
+                }
+
+                // Generate the AAT
+                const aat = new PocketAAT(
+                    DataSource.AATVersion,
+                    clientPubKeyHex,
+                    walletAppPublicKey,
+                    walletAppSignature
+                )
+                // Pocket Rpc Instance
+                const pocketRpcProvider = new PocketRpcProvider(
+                    pocket,
+                    aat,
+                    blockchain,
+                    true
+                )
+                
+                this.pocket = new Pocket(this.dispatchers, pocketRpcProvider, configuration)
+            } else {
+                throw new Error(`One of the environment variables are missing: CLIENT_PUBLIC_KEY=${Config.CLIENT_PUBLIC_KEY}, CLIENT_PRIVATE_KEY=${Config.CLIENT_PRIVATE_KEY}, CLIENT_PASSPHRASE=${Config.CLIENT_PASSPHRASE}, WALLET_APP_PUBLIC_KEY=${Config.WALLET_APP_PUBLIC_KEY}, WALLET_APP_AAT_SIGNATURE=${Config.WALLET_APP_AAT_SIGNATURE}`);
             }
-            // Unlock the client account
-            const unlockOrError = await pocket.keybase.unlockAccount(clientAccountOrError.addressHex, clientPassphrase, 0)
-            if (typeGuard(unlockOrError, Error)) {
-                throw clientAccountOrError
-            }
-
-            // Generate the AAT
-            const aat = new PocketAAT(
-                DataSource.AATVersion,
-                clientPubKeyHex,
-                walletAppPublicKey,
-                walletAppSignature
-            )
-            // Pocket Rpc Instance
-            const pocketRpcProvider = new PocketRpcProvider(
-                pocket,
-                aat,
-                blockchain,
-                true
-            )
-            
-            this.pocket = new Pocket(this.dispatchers, pocketRpcProvider, configuration)
         }
         return this.pocket
     }
