@@ -31,7 +31,8 @@ export class DataSource {
     // Retrieve or set a pocket instance
     async getPocketInstance() {
         if (!this.pocket || !this.pocket.rpc()) {
-            const configuration = new Configuration(30, 1000, 5, 40000, true, undefined, Number(Config.BLOCK_TIME), undefined, undefined, false);
+            const configuration = new Configuration(0, 1000, 5, 40000, true, undefined, Number(Config.BLOCK_TIME), undefined, undefined, false);
+
             const clientPubKeyHex = Config.CLIENT_PUBLIC_KEY;
             const clientPrivateKey = Config.CLIENT_PRIVATE_KEY;
             const clientPassphrase = Config.CLIENT_PASSPHRASE;
