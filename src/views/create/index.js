@@ -6,33 +6,40 @@ import Input from '../../components/public/input/input';
 import Button from '../../components/public/button/button';
 import altertR from '../../utils/images/alert-circle-red.png';
 import altertT from '../../utils/images/alert-triangle.png';
-import copy from '../../utils/images/copy.png'
-import { DataSource } from "../../datasource"
+import copy from '../../utils/images/copy.png';
+import { DataSource } from "../../datasource";
 import {
     withRouter
-} from 'react-router-dom'
+} from 'react-router-dom';
+import PocketUserService from "../../core/services/pocket-user-service";
 
 class Create extends Component {
-    constructor(props) {
-        super(props)
+    constructor() {
+        super();
+        // Set up defaults
         this.state = {
-            addressHex: undefined,
-            publicKeyHex: undefined,
-            ppk: undefined,
+            addressHex: "",
+            publicKeyHex: "",
+            ppk: "",
             validPassphrase: false,
-            keyFileDownloaded: false
-        }
+            keyFileDownloaded: false,
+            createBtnEnabled: true,
+            downloadKeyFileBtnEnabled: false,
+            errorLabelEnabled: false,
+            errorLabelMessage: "",
+            pushToAccountDetail: false
+        };
         // Set up locals
-        this.dataSource = DataSource.instance
+        this.dataSource = DataSource.instance;
         // Bind functions
-        this.handleCreateAccount = this.handleCreateAccount.bind(this)
-        this.handleDownload = this.handleDownload.bind(this)
-        this.pushToAccountDetail = this.pushToAccountDetail.bind(this)
-        this.toggleError = this.toggleError.bind(this)
-        this.handlePassphraseChange = this.handlePassphraseChange.bind(this)
-        this.copyAddress = this.copyAddress.bind(this)
-        this.copyPublicKey = this.copyPublicKey.bind(this)
+        this.handleCreateAccount = this.handleCreateAccount.bind(this);
+        this.handleDownload = this.handleDownload.bind(this);
+        this.pushToAccountDetail = this.pushToAccountDetail.bind(this);
+        this.handlePassphraseChange = this.handlePassphraseChange.bind(this);
+        this.copyAddress = this.copyAddress.bind(this);
+        this.copyPublicKey = this.copyPublicKey.bind(this);
     }
+
     copyAddress(){
         const address = document.getElementById("address")
         if (address) {
@@ -43,6 +50,7 @@ class Create extends Component {
             console.log("Copied the text "+ address.value)
         }
     }
+
     copyPublicKey(){
         const publicKey = document.getElementById("publicKey")
         if (publicKey) {
@@ -50,110 +58,127 @@ class Create extends Component {
             publicKey.setSelectionRange(0, 99999); /*For mobile devices*/
 
             document.execCommand("copy");
-            console.log("Copied the text "+ publicKey.value)
+            console.log("Copied the text "+ publicKey.value);
         }
     }
 
     handlePassphraseChange() {
-        const passphrase = document.getElementById("passphrase").value
-        const confirmPassphrase = document.getElementById("confirmPassphrase").value
-        const passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})")
+        const passphrase = document.getElementById("passphrase").value;
+        const confirmPassphrase = document.getElementById("confirmPassphrase").value;
+        const passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})");
 
         if (passphrase && passphrase) {
             if (!passwordRegex.test(passphrase)) {
-                this.toggleError(true, "Passphrase must be minimum 15 characters, 1 min uppercase letter and 1 special character.")
-            }else if (passphrase !== confirmPassphrase) {
-                this.toggleError(true, "Passphrase and Confirm passphrase are not identical")
-            }else{
-                this.setState({validPassphrase: true})
-                this.toggleError(false, "")
+                this.setState({
+                    errorLabelEnabled: true,
+                    errorLabelMessage: "Passphrase must be minimum 15 characters, 1 min uppercase letter and 1 special character."
+                });
+            } else if (passphrase !== confirmPassphrase) {
+                this.setState({
+                    errorLabelEnabled: true,
+                    errorLabelMessage: "Passphrase and Confirm passphrase are not identical."
+                });
+            } else {
+                this.setState({
+                    errorLabelEnabled: false,
+                    errorLabelMessage: "",
+                    validPassphrase: true
+                });
             }
         }
     }
 
     // Handle the download button action
-    async handleDownload(e) {
-        if (this.state.ppk === undefined) {
-            console.log("Can't download if no account was created.")
-            return
+    async handleDownload() {
+
+        const {ppk} = this.state;
+
+        if (ppk === undefined) {
+            this.setState({
+                errorLabelEnabled: true,
+                errorLabelMessage: "Can't download if no account was created."
+            });
+            return;
         }
-        const ppkJsonStr = this.state.ppk
-        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(ppkJsonStr)
-        var downloadAnchorNode = document.createElement('a')
-        downloadAnchorNode.setAttribute("href",     dataStr)
-        downloadAnchorNode.setAttribute("download", "keyfile.json")
-        document.body.appendChild(downloadAnchorNode) // required for firefox
-        downloadAnchorNode.click()
-        downloadAnchorNode.remove()
+
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(ppk);
+        const downloadAnchorNode = document.createElement('a');
+
+        downloadAnchorNode.setAttribute("href",     dataStr);
+        downloadAnchorNode.setAttribute("download", "keyfile.json");
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+        
         // Update the state
-        this.setState({keyFileDownloaded: true})
-        // Remove the class from the account detail button
-        const element = document.getElementById("push-to-account")
-        element.classList.remove("isDisabled")
+        this.setState({
+            pushToAccountDetail: true, 
+            keyFileDownloaded: true
+        })
     }
     
-    toggleError(show, msg) {
-        const errorSpan = document.getElementById("passphraseError")
-        if (errorSpan) {
-            errorSpan.style.display = show === true ? "block" : "none"
-            errorSpan.innerText = msg
-        }
-    }
     pushToAccountDetail() {
-        if (!this.state.keyFileDownloaded) {
-            this.toggleError(true, "Please download your key file before proceeding")
-            return
+        const {keyFileDownloaded, addressHex, publicKeyHex, ppk} = this.state;
+
+        // Check if the key file was downloaded
+        if (!keyFileDownloaded) {
+            this.setState({
+                errorLabelEnabled: true,
+                errorLabelMessage: "Please download your key file before proceeding."
+            });
+
+            return;
         }
+
         // Check the account info before pushing
-        if (this.state.addressHex === undefined ||
-            this.state.publicKeyHex === undefined ||
-            this.state.ppk === undefined) {
-            this.toggleError(true, "No account available, please create an account")
-            return
+        if (addressHex.length === 0 ||
+            publicKeyHex.length === 0 ||
+            ppk.length === 0
+            ) {
+
+            this.toggleError(true, "No account available, please create an account");
+            
+            return;
         }
-        const accountObj = {
-            addressHex: this.state.addressHex,
-            publicKeyHex: this.state.publicKeyHex,
-            ppk: this.state.ppk,
-        }
+
         // Move to the account detail
         this.props.history.push({
-            pathname: "/account",
-            data: accountObj,
+            pathname: "/account"
         })
     }
     // Create account function
     async handleCreateAccount() {
         // Retrieve the passphrase value
-        const passphrase = document.getElementById("passphrase").value
-        const confirmPassphrase = document.getElementById("confirmPassphrase").value
+        const passphrase = document.getElementById("passphrase").value;
+        const confirmPassphrase = document.getElementById("confirmPassphrase").value;
+
         // Verify the passphrase length
         if (passphrase === confirmPassphrase && this.state.validPassphrase) {
-            const account = await this.dataSource.createAccount(passphrase)
-            const ppkOrError = await this.dataSource.exportPPKFromAccount(account, passphrase)
+            const account = await this.dataSource.createAccount(passphrase);
+            const ppkOrError = await this.dataSource.exportPPKFromAccount(account, passphrase);
 
             if (this.dataSource.typeGuard(ppkOrError, Error)) {
-                console.log(ppkOrError)
-                this.toggleError(true, "Failed to create an account")
+                // Log and show error message
+                console.log(ppkOrError);
+
+                this.setState({
+                    errorLabelEnabled: true,
+                    errorLabelMessage: "Failed to create an account"
+                });
             }else {
+                // Save the account information in the state
                 this.setState({
                     addressHex: account.addressHex,
                     publicKeyHex: account.publicKey.toString("hex"),
-                    ppk: ppkOrError,
+                    ppk: ppkOrError.toString(),
+                    createBtnEnabled: false,
+                    downloadKeyFileBtnEnabled: true
                 })
-                // Update the UI elements
-                const addressLabel = document.getElementById("address")
-                const publicKeyLabel = document.getElementById("publicKey")
-                const createAccountButton = document.getElementById("createAccountButton")
-                const downloadKeyFileButton = document.getElementById("downloadKeyFile")
-
-                if (addressLabel && publicKeyLabel && createAccountButton && downloadKeyFileButton) {
-                    addressLabel.value = this.state.addressHex
-                    publicKeyLabel.value = this.state.publicKeyHex
-
-                    createAccountButton.style.display = "none"
-                    downloadKeyFileButton.style.display = "inline-block"
-                }
+                console.log("PPK =");
+                console.log(ppkOrError);
+                // Save the user account information
+                PocketUserService.saveUserInCache(account.addressHex, account.publicKey.toString("hex"), ppkOrError.toString(), passphrase);
+                
                 // Scroll to the account information section
                 const element = document.querySelector("#top");
                 element.scrollIntoView({
@@ -161,11 +186,24 @@ class Create extends Component {
                 })
             }
         }else {
-            this.toggleError(true, "The passphrase does not fit the requirements")
+            this.setState({
+                errorLabelEnabled: true,
+                errorLabelMessage: "The passphrase does not fit the requirements"
+            });
         }
     }
         // Render
         render () {
+            const {
+                addressHex, 
+                publicKeyHex, 
+                errorLabelEnabled, 
+                errorLabelMessage, 
+                createBtnEnabled, 
+                downloadKeyFileBtnEnabled,
+                pushToAccountDetail
+            } = this.state;
+
             return (
             <CreateContent>
                 <Wrapper className="wide-block-wr">
@@ -176,12 +214,21 @@ class Create extends Component {
                         <form className="pass-form">
                             <div className="cont-input">
                                 <Input onChange={this.handlePassphraseChange} type="password" name="passphrase" id="passphrase" placeholder="Passphrase" />
-                                <span id="passphraseError" className="error passphrase-error"> <img src={altertR} alt="alert" /></span>
+                                <span style={{
+                                    display: `${errorLabelEnabled === true ? "block" : "none"}`
+                                }} id="passphraseError" className="error passphrase-error"> <img src={altertR} alt="alert" />{errorLabelMessage}</span>
                                 <Input style={{marginTop: "30px"}} onChange={this.handlePassphraseChange} type="password" name="confirmPassphrase" id="confirmPassphrase" placeholder="Confirm Passphrase" />
                             </div>
                             <div className="btn-subm">
-                                <Button id="createAccountButton" onClick={this.handleCreateAccount} >Create</Button>
-                                <Button id="downloadKeyFile" className="download-btn" style={{display: "none", position: "relative", margin: "0px", left: "0px"}} onClick={this.handleDownload} >Download Key File</Button>
+                                <Button style={{
+                                    display: `${createBtnEnabled === true ? "inline-block" : "none"}`
+                                }} id="createAccountButton" onClick={this.handleCreateAccount} >Create</Button>
+                                <Button style={{
+                                    display: `${downloadKeyFileBtnEnabled === true ? "inline-block" : "none"}`,
+                                    position: "relative", 
+                                    margin: "0px", 
+                                    left: "0px"
+                                }} id="downloadKeyFile" className="download-btn" onClick={this.handleDownload} >Download Key File</Button>
                             </div>
                         </form>
                         <a style={{display: "block", marginTop: "26px"}} 
@@ -201,16 +248,20 @@ class Create extends Component {
                     <div className="container account-info">
                         <div className="cont-input second">
                             <label className="account-info-label" htmlFor="add">ADDRESS</label>
-                            <Input style={{ backgroundColor: "#f5f5f5", height: "20px"}} type="text" name="address" id="address" defaultValue={""} readonly />
+                            <Input style={{ backgroundColor: "#f5f5f5", height: "20px"}} type="text" name="address" id="address" defaultValue={addressHex} readOnly={true} />
                             <span className="copy-button" onClick={this.copyAddress}> <img src={copy} alt="copy" /></span>
                         </div>
                         <div className="cont-input">
                             <label style={{height: "20px"}} className="account-info-label" htmlFor="puk">PUBLIC KEY</label>
-                            <Input style={{ backgroundColor: "#f5f5f5", height: "20px"}} type="text" name="public-k" id="publicKey" defaultValue={""} readonly />
+                            <Input style={{ backgroundColor: "#f5f5f5", height: "20px"}} type="text" name="public-k" id="publicKey" defaultValue={publicKeyHex} readOnly={true} />
                             <span className="copy-button" onClick={this.copyPublicKey}> <img src={copy} alt="copy" /></span>
                         </div>
                         <div className="btn-subm account-details">
-                            <Button id="push-to-account" className="isDisabled" onClick={this.pushToAccountDetail}>Account Details</Button>
+                            <Button 
+                            style={{
+                                display: `${pushToAccountDetail === true ? "inline-block" : "none"}`
+                            }}
+                            id="push-to-account" className={pushToAccountDetail === true ? "" : "isDisabled"} onClick={this.pushToAccountDetail}>Account Details</Button>
                         </div>
                     </div>
                 </Wrapper>

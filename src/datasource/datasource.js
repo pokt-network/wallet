@@ -81,11 +81,11 @@ export class DataSource {
      * @returns {Account}
      */
     async exportPPKFromAccount(account, passphrase) {
-        const pocket = await this.getPocketInstance()
+        const pocket = await this.getPocketInstance();
 
-        const ppkOrError = await pocket.keybase.exportPPKfromAccount(account.addressHex, passphrase, "pocket wallet", passphrase)
+        const ppkOrError = await pocket.keybase.exportPPKfromAccount(account.addressHex, passphrase, "pocket wallet", passphrase);
         
-        return ppkOrError
+        return ppkOrError;
     }
 
     /**
