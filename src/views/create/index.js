@@ -7,11 +7,13 @@ import Button from '../../components/public/button/button';
 import altertR from '../../utils/images/alert-circle-red.png';
 import altertT from '../../utils/images/alert-triangle.png';
 import copy from '../../utils/images/copy.png';
-import { DataSource } from "../../datasource";
 import {
     withRouter
 } from 'react-router-dom';
-import PocketUserService from "../../core/services/pocket-user-service";
+import PocketService from "../../core/services/pocket-service";
+import {DataSource} from "../../datasource/datasource";
+
+const dataSource = new DataSource();
 
 class Create extends Component {
     constructor() {
@@ -29,8 +31,7 @@ class Create extends Component {
             errorLabelMessage: "",
             pushToAccountDetail: false
         };
-        // Set up locals
-        this.dataSource = DataSource.instance;
+
         // Bind functions
         this.handleCreateAccount = this.handleCreateAccount.bind(this);
         this.handleDownload = this.handleDownload.bind(this);
@@ -154,10 +155,10 @@ class Create extends Component {
 
         // Verify the passphrase length
         if (passphrase === confirmPassphrase && this.state.validPassphrase) {
-            const account = await this.dataSource.createAccount(passphrase);
-            const ppkOrError = await this.dataSource.exportPPKFromAccount(account, passphrase);
+            const account = await dataSource.createAccount(passphrase);
+            const ppkOrError = await dataSource.exportPPKFromAccount(account, passphrase);
 
-            if (this.dataSource.typeGuard(ppkOrError, Error)) {
+            if (dataSource.typeGuard(ppkOrError, Error)) {
                 // Log and show error message
                 console.log(ppkOrError);
 
@@ -174,10 +175,9 @@ class Create extends Component {
                     createBtnEnabled: false,
                     downloadKeyFileBtnEnabled: true
                 })
-                console.log("PPK =");
-                console.log(ppkOrError);
+
                 // Save the user account information
-                PocketUserService.saveUserInCache(account.addressHex, account.publicKey.toString("hex"), ppkOrError.toString(), passphrase);
+                PocketService.saveUserInCache(account.addressHex, account.publicKey.toString("hex"), ppkOrError.toString());
                 
                 // Scroll to the account information section
                 const element = document.querySelector("#top");
