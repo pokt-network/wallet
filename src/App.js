@@ -13,7 +13,6 @@ import TransactionDetail from './views/transaction-detail/index';
 import Header from "./components/header";
 import Footer from "./components/footer";
 import history from './history';
-import {DataSource} from "./datasource";
 import './normalize.css';
 import JSBI from 'jsbi';
 
@@ -23,12 +22,8 @@ class App extends Component {
 
     // BigInt polyfill for iOS devices
     if (window.BigInt === undefined) {
-      window.BigInt = JSBI.BigInt
+      window.BigInt = JSBI.BigInt;
     }
-
-    this.dataSource = DataSource.instance
-    this.dataSource.getPocketInstance()
-
   }
 
   render() {

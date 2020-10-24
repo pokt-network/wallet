@@ -9,6 +9,7 @@ import HeaderContainer from "./header";
 import logo from '../../utils/images/logo-white.png';
 import arrow from '../../utils/images/right-arrow.png';
 import Config from "../../config/config.json";
+import PocketService from "../../core/services/pocket-service";
 
 class Header extends Component {
   constructor(props) {
@@ -25,7 +26,10 @@ class Header extends Component {
   };
 
   onLogOut() {
-    // Refresh the page to delete any state information related to the account
+    // Remove any information related to the account
+    PocketService.removeUserFromCached();
+
+    // Refresh the page
     window.location.reload();
   };
 
@@ -38,7 +42,7 @@ class Header extends Component {
           <Menu isHidden={this.state.isMenuHidden}>
             <StyledUl>
               <StyledLi>
-                <a href={Config.BUY_POKT_BASE_URL}>Buy POKT</a>
+                <a tartget="_target" href={Config.BUY_POKT_BASE_URL}>Buy POKT</a>
               </StyledLi>
               <StyledLi style={{display: "none"}} id="navAccount" className="sub_menu">
                 <a href={hrefLink}> Account <img src={arrow} alt="greater than" /> </a>
