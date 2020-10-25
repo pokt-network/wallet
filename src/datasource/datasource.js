@@ -290,18 +290,22 @@ export class DataSource {
      * @returns {Object}
      */
     async sendTransaction(ppk, passphrase, toAddress, amount) {
+        const provider = await getRPCProvider();
+        this.__pocket.rpc(provider);
+
         // uPOKT
         const defaultFee = "100000";
 
-        const accountOrUndefined = await this.importPortablePrivateKey(
+        const accountOrUndefined = await this.__pocket.keybase.importPPKFromJSON(
             passphrase,
             ppk,
             passphrase
         );
+
         if (accountOrUndefined === undefined) {
             console.log("Failed to import account due to wrong passphrase provided");
             return accountOrUndefined;
-        }
+        };
         
         const transactionSenderOrError = await this.__pocket.withImportedAccount(
             accountOrUndefined.address,
@@ -311,12 +315,17 @@ export class DataSource {
         if (typeGuard(transactionSenderOrError, RpcError)) {
             console.log(transactionSenderOrError);
             return undefined;
-        }
+        };
 
         const rawTxResponse = await transactionSenderOrError
             .send(accountOrUndefined.addressHex, toAddress, amount.toString())
             .submit(Config.CHAIN_ID, defaultFee, CoinDenom.Upokt, "Pocket Wallet");
-
+        
+        if (typeGuard(rawTxResponse, RpcError)) {
+            console.log(`Failed to send transaction with error: ${rawTxResponse}`);
+            return undefined;
+        } 
+        
         return rawTxResponse;
     }
     /**

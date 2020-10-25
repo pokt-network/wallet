@@ -310,66 +310,68 @@ class AccountLatest extends Component {
     }
 
     pushToTxDetail(txHash) {
+        const {addressHex, publicKeyHex, ppk} = this.state;
+
         // Check the account info before pushing
-        if (this.currentAccount.addressHex === undefined ||
-            this.currentAccount.publicKeyHex === undefined ||
-            this.currentAccount.ppk === undefined) {
-            this.toggleError(true, "No account available, please create an account")
-            return
-        }
+        if (!addressHex ||
+            !publicKeyHex ||
+            !ppk
+        ) {
+            this.setState({
+                errorMessage: "No account available, please create or import an account",
+                displayError: true
+            });
+            return;
+        };
+
         if (txHash) {
-            const accountObj = {
-                addressHex: this.currentAccount.addressHex,
-                publicKeyHex: this.currentAccount.publicKeyHex,
-                ppk: this.currentAccount.ppk,
-            }
-            const obj = {
-                tx: undefined,
-                txHash: txHash,
-                account: accountObj
-            }
             // Move to the account detail
             this.props.history.push({
                 pathname: "/transaction-detail",
-                data: obj,
-            })
-        }
+                data: {txHash}
+            });
+        };
     }
+
     pushToSend() {
+        const {addressHex, publicKeyHex, ppk} = this.state;
         // Check the account info before pushing
-        if (this.currentAccount.addressHex === undefined ||
-            this.currentAccount.publicKeyHex === undefined ||
-            this.currentAccount.ppk === undefined) {
-            this.toggleError(true, "No account available, please create an account")
-            return
+        if (!addressHex ||
+            !publicKeyHex ||
+            !ppk
+        ) {
+            this.setState({
+                errorMessage: "No account available, please create an account",
+                displayError: true
+            });
+
+            return;
         }
-        const accountObj = {
-            addressHex: this.currentAccount.addressHex,
-            publicKeyHex: this.currentAccount.publicKeyHex,
-            ppk: this.currentAccount.ppk,
-        }
-        // Move to the account detail
+
+        // Move to the send transaction view
         this.props.history.push({
-            pathname: "/send",
-            data: accountObj,
-        })
+            pathname: "/send"
+        });
     }
+
     reloadBtnState(boolean){
-        const reloadBtn = document.getElementById("reload-btn")
+        const {reloadActiveImgSrc, reloadImgSrc} = this.state;
+        const reloadBtn = document.getElementById("reload-btn");
+
         if (reloadBtn) {
-            reloadBtn.src = boolean ? this.state.reloadActiveImgSrc : this.state.reloadImgSrc
-        }
+            reloadBtn.src = boolean ? reloadActiveImgSrc : reloadImgSrc;
+        };
     }
 
     // Transaction list toggle
     onToggleBtn() {
         this.setState((prevState) => {
             return { visibility: !prevState.visibility };
-        })
+        });
     }
 
     enableLoaderIndicatory(show){
-        const loaderElement = document.getElementById("loader")
+        const loaderElement = document.getElementById("loader");
         if (loaderElement) {
             loaderElement.style.display = show === true ? "block" : "none"
         }
@@ -431,7 +433,8 @@ class AccountLatest extends Component {
             displayTxListSection,
             isModalVisible,
             displayNormalAccount,
-            displayPkReveal
+            displayPkReveal,
+            hovered
         } = this.state;
 
         if (addressHex === undefined || publicKeyHex === undefined) {
@@ -458,10 +461,11 @@ class AccountLatest extends Component {
                                     onMouseOut={() => this.reloadBtnState(false)}
                                     onMouseOver={() => this.reloadBtnState(true)}
                                     style={{
-                                        src: `${this.state.hovered ? reloadActive : reload}`,
-                                        cursor: "pointer"
+                                        src: `${hovered ? reloadActive : reload}`,
+                                        cursor: "pointer",
+                                        display: "none"
                                     }}
-                                    onClick={this.refreshView} 
+                                    // onClick={this.refreshView(addressHex)} 
                                     alt="reload" 
                                     />
                                 </div>
