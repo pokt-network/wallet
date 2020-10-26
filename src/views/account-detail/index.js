@@ -24,7 +24,6 @@ import Tr from '../../components/public/table/tr';
 import THead from '../../components/public/table/thead';
 import TBody from '../../components/public/table/tbody';
 import copy from '../../utils/images/copy.png';
-import { DataSource } from "../../datasource";
 import Config from "../../config/config.json";
 import {
     withRouter
@@ -33,10 +32,15 @@ import Modal from "simple-react-modal";
 import altertR from "../../utils/images/alert-circle-red.png";
 import exit from '../../utils/images/exit.png';
 import altertT from '../../utils/images/alert-triangle.png';
+import PocketService from "../../core/services/pocket-service";
+import {DataSource} from "../../datasource/datasource";
+
+const dataSource = new DataSource();
 
 class AccountLatest extends Component {
-    constructor(props) {
-        super(props)
+    constructor() {
+        super();
+        
         this.state = {
             normal: undefined,
             app: undefined,
@@ -44,416 +48,401 @@ class AccountLatest extends Component {
             visibility: true,
             addressHex: "",
             publicKeyHex: "",
+            ppk: "",
+            poktBalance: 0,
+            usdBalance: 0,
+            noTransactions: true,
+            stakedTokens: 0,
+            stakingStatus: "UNSTAKED",
+            stakingStatusImg: unstaked,
+            displayApp: false,
+            displayNode: false,
+            privateKey: undefined,
+            displayError: false,
+            errorMessage: "",
+            displayTxListSection: false,
             unstakingImgSrc: unstaking,
             stakedImgSrc: staked,
             unstakedImgSrc: unstaked,
             reloadImgSrc: reload,
             reloadActiveImgSrc: reloadActive,
-            isModalVisible: false
-        }
-        // Set up locals
-        this.dataSource = DataSource.instance
+            isModalVisible: false,
+            displayPkReveal: <i class="fas fa-less    "></i>
+        };
+
         // Binds
-        this.onToggleBtn = this.onToggleBtn.bind(this)
-        this.getBalance = this.getBalance.bind(this)
-        this.getAccountType = this.getAccountType.bind(this)
-        this.addApp = this.addApp.bind(this)
-        this.addNode = this.addNode.bind(this)
-        this.getTransactions = this.getTransactions.bind(this)
-        this.pushToSend = this.pushToSend.bind(this)
-        this.pushToTxDetail = this.pushToTxDetail.bind(this)
-        this.refreshView = this.refreshView.bind(this)
-        this.enableLoaderIndicatory = this.enableLoaderIndicatory.bind(this)
-        this.updateAccountDetails = this.updateAccountDetails.bind(this)
-        this.copyAddress = this.copyAddress.bind(this)
-        this.copyPublicKey = this.copyPublicKey.bind(this)
-        this.reloadBtnState = this.reloadBtnState.bind(this)
-        this.revealPrivateKey = this.revealPrivateKey.bind(this)
-        this.showModal = this.showModal.bind(this)
-        this.closeModal = this.closeModal.bind(this)
-        this.copyPrivateKey = this.copyPrivateKey.bind(this)
-        this.togglePassphraseView = this.togglePassphraseView.bind(this)
-        // Set current Account
-        this.currentAccount = this.props.location.data
+        this.onToggleBtn = this.onToggleBtn.bind(this);
+        this.getBalance = this.getBalance.bind(this);
+        this.getAccountType = this.getAccountType.bind(this);
+        this.addAppOrNode = this.addAppOrNode.bind(this);
+        this.getTransactions = this.getTransactions.bind(this);
+        this.pushToSend = this.pushToSend.bind(this);
+        this.pushToTxDetail = this.pushToTxDetail.bind(this);
+        this.refreshView = this.refreshView.bind(this);
+        this.enableLoaderIndicatory = this.enableLoaderIndicatory.bind(this);
+        this.reloadBtnState = this.reloadBtnState.bind(this);
+        this.revealPrivateKey = this.revealPrivateKey.bind(this);
+        this.showModal = this.showModal.bind(this);
+        this.closeModal = this.closeModal.bind(this);
+        this.togglePkReveal = this.togglePkReveal.bind(this);
     }
 
     showModal() {
         this.setState({
             isModalVisible: true,
-        })
+        });
     }
 
     closeModal() {
         this.setState({
             isModalVisible: false,
-        })
-        this.togglePassphraseView(true)
-    }
-    togglePassphraseError(show, msg) {
-        const errorSpan = document.getElementById("passphrase-invalid")
-        if (errorSpan) {
-            errorSpan.style.display = show === true ? "block" : "none"
-            errorSpan.innerText = msg
-        }
-    }
-    togglePassphraseView(show) {
-        const passphraseLabel = document.getElementById("passphrase-label");
-        const privateKeyContainer = document.getElementById("private-key-container");
-        const revealPkPassphrase = document.getElementById("reveal-pk-passphrase");
-        const privateKeyInput = document.getElementById("private-key-input");
+        });
 
-        if (passphraseLabel && privateKeyContainer && revealPkPassphrase && privateKeyInput) {
-            passphraseLabel.style.display = show === true ? "block" : "none";
-            revealPkPassphrase.style.display = show === true ? "block" : "none";
-            privateKeyContainer.style.display = show === true ? "none" : "block";
-            // Delete private key value from the input
-            if(show){
-                privateKeyInput.value = ""
-            }
-        }
+        this.togglePkReveal(false);
     }
     
-    copyPrivateKey(){
-        const privateKey = document.getElementById("private-key-input");
-        if (privateKey) {
-            privateKey.select();
-            privateKey.setSelectionRange(0, 99999); /*For mobile devices*/
+    togglePkReveal(show) {
 
-            document.execCommand("copy");
-            console.log("Copied the text "+ privateKey.value);
-        }
+        this.setState({
+            displayPkReveal: show
+        })
     }
-    async revealPrivateKey(){
+    
+    async revealPrivateKey() {
+        const {ppk} = this.state;
+
         // passphrase-invalid
         const passphraseInput = document.getElementById("reveal-pk-passphrase");
-        const privateKeyInput = document.getElementById("private-key-input");
 
         // Check for ppk and the element
-        if (this.currentAccount.ppk && passphraseInput && privateKeyInput) {
-
-            const account = await this.dataSource.importPortablePrivateKey(
+        if (ppk && passphraseInput) {
+            
+            const account = await dataSource.importPortablePrivateKey(
                 passphraseInput.value,
-                this.currentAccount.ppk,
+                ppk,
                 passphraseInput.value
             );
 
             if (account === undefined) {
-                this.togglePassphraseError(true, "Invalid passphrase.");
+                this.setState({
+                    displayError: true,
+                    errorMessage: "Invalid passphrase."
+                });
+
                 return;
             }
 
-            const unlockedAccount = await this.dataSource.getUnlockedAccount(account.addressHex, passphraseInput.value);
+            const unlockedAccount = await dataSource.getUnlockedAccount(account.addressHex, passphraseInput.value);
 
             if (unlockedAccount === undefined) {
-                this.togglePassphraseError(true, "Invalid passphrase.");
+                this.setState({
+                    displayError: true,
+                    errorMessage: "Invalid passphrase."
+                });
                 return;
             }
+
             // Show the private key information
-            privateKeyInput.value = unlockedAccount.privateKey.toString("hex");
+            this.setState({
+                privateKey: unlockedAccount.privateKey.toString("hex")
+            });
+
             // Clear the passphrase input
             passphraseInput.value = "";
-            this.togglePassphraseView(false);
+
+            // Toggle the passphrase view off
+            this.togglePkReveal(true);
         }
 
     }
 
-    copyAddress(){
-        const address = document.getElementById("address")
-        if (address) {
-            address.select();
-            address.setSelectionRange(0, 99999); /*For mobile devices*/
-
-            document.execCommand("copy");
-            console.log("Copied the text "+ address.value)
-        }
-    }
-    copyPublicKey(){
-        const publicKey = document.getElementById("public-key")
-        if (publicKey) {
-            publicKey.select();
-            publicKey.setSelectionRange(0, 99999); /*For mobile devices*/
-
-            document.execCommand("copy");
-            console.log("Copied the text "+ publicKey.value)
-        }
-    }
     // Retrieve the latest transactions
-    async getTransactions() {
-        const allTxs = await this.dataSource.getAllTransactions(this.currentAccount.addressHex)
+    async getTransactions(addressHex) {
+
+        const allTxs = await dataSource.getAllTransactions(addressHex);
+
         if (allTxs !== undefined) {
-            this.updateTransactionList(allTxs)
+            this.setState({
+                visibility: true,
+                noTransactions: false
+            });
+            this.updateTransactionList(allTxs);
         }else {
-            const section = document.getElementById("noTransactions")
-            const toogleBtn = document.getElementById("tooglebtn")
-            if (section && toogleBtn) {
-                section.style.display = "block"
-                toogleBtn.style.display = "none"
-            }
-            this.setState({visibility: false})
-            this.enableLoaderIndicatory(false)
+            this.setState({
+                visibility: false, 
+                noTransactions: true
+            });
+            
+            this.enableLoaderIndicatory(false);
         }
     }
+
     updateTransactionList(txs) {
         try {
             // Transaction list section
-            const section = document.getElementById('transation-list-section')
+            const section = document.getElementById('transation-list-section');
             // Invert the list
-            const rTxs = txs.reverse()
+            const rTxs = txs.reverse();
             // Images src paths
-            const sentImgSrc = sent
-            const receivedImgSrc = received
-            let idCounter = 1
+            const sentImgSrc = sent;
+            const receivedImgSrc = received;
+
+            let idCounter = 1;
+
             rTxs.forEach(tx => {
-                const events = JSON.parse(tx.tx_result.log)[0].events
+                const events = JSON.parse(tx.tx_result.log)[0].events;
 
                 if (events[1].type === "transfer") {
-                    const attributes = events[1].attributes
+                    const attributes = events[1].attributes;
                     if (attributes[1].key === "amount") {
-                        const value = attributes[1].value.replace("upokt","")
+                        const value = attributes[1].value.replace("upokt","");
     
-                        const txHash = tx.hash
-                        const imageSrc = tx.type.toLowerCase() === "sent" ? sentImgSrc : receivedImgSrc
-                        const TrClass = document.getElementById("tr-element").className
-                        const TdClass = document.getElementById("td-element").className
+                        const txHash = tx.hash;
+                        const imageSrc = tx.type.toLowerCase() === "sent" ? sentImgSrc : receivedImgSrc;
+                        const TrClass = document.getElementById("tr-element").className;
+                        const TdClass = document.getElementById("td-element").className;
                         
                         const txTemplate = '<Tr class="'+TrClass+'">\n' +
                             '<Td class="'+TdClass+'"> <img src='+ imageSrc +' alt="'+ tx.type.toLowerCase() +'" /> </Td>\n' +
                             '<Td class="'+TdClass+'"> <div class="qty">'+ value / 1000000 +' <span>POKT</span></div> <div class="status">'+ tx.type.toLowerCase() +'</div> </Td>\n' +
                             '<Td class="'+TdClass+' block-align">'+tx.height+'</Td>\n' +
                             '<Td class="'+TdClass+'"> <a id="txHashElement'+idCounter+'"> '+txHash+' </a> </Td>\n' +
-                        '</Tr>'
-                        section.insertAdjacentHTML('beforeend', txTemplate)
+                        '</Tr>';
+
+                        section.insertAdjacentHTML('beforeend', txTemplate);
                         // Add onClick event to the clickable element
-                        const toTxDetail = document.getElementById("txHashElement"+idCounter)
+                        const toTxDetail = document.getElementById(`txHashElement${idCounter}`);
+
                         if (toTxDetail) {
-                            toTxDetail.addEventListener("click", () => { this.pushToTxDetail(txHash) })
+                            toTxDetail.addEventListener("click", () => { this.pushToTxDetail(txHash) });
                         }
-                        idCounter++
+                        idCounter++;
                     }else {
-                        console.dir(attributes, {depth: null})
+                        console.dir(attributes, {depth: null});
                     }
                 }
             })
             // Display the table
-            section.style.display = "block"
-            this.enableLoaderIndicatory(false)
+            this.setState({displayTxListSection: true});
+
+            this.enableLoaderIndicatory(false);
         } catch (error) {
-            console.log(error)
-            this.enableLoaderIndicatory(false)
+            console.log(error);
+            this.enableLoaderIndicatory(false);
         }
     }
-    // Account type, amount staked and staking status
-    async addApp() {
-        if (this.state.app !== undefined) {
-            // Update the staked amount
-            const appStakedTokensLabel = document.getElementById("app-staked-tokens-amount")
-            if (appStakedTokensLabel) {
-                const POKT = Number(this.state.app.stakedTokens.toString()) / 1000000
-                appStakedTokensLabel.innerText = POKT
-            }
-            // Update the unstaking status
-            const appStakingStatusLabel = document.getElementById("app-staking-status")
-            // Update the status img
-            const appStakeStatusImg = document.getElementById("app-stake-status-img")
-            if (appStakeStatusImg && appStakingStatusLabel) {
-                if (this.state.app.status === 1) {
-                    appStakingStatusLabel.innerText = "UNSTAKING"
-                    appStakeStatusImg.src = this.state.unstakingImgSrc
-                }else if(this.state.app.status === 2){
-                    appStakingStatusLabel.innerText = "STAKED"
-                    appStakeStatusImg.src = this.state.stakedImgSrc
-                }else {
-                    appStakingStatusLabel.innerText = "UNSTAKED"
-                    appStakeStatusImg.src = this.state.unstakedImgSrc
-                }
-            }
-            // Show the app section
-            const appTypeSection = document.getElementById("app-type-section")
-            if (appTypeSection) {
-                appTypeSection.style.display = "flex"
-            }
-        }
-    }
-    // Account type, amount staked and staking status
-    async addNode() {
-        if (this.state.node !== undefined) {
-            // Update the staked amount
-            const nodeStakedTokensLabel = document.getElementById("node-staked-tokens-amount")
-            if (nodeStakedTokensLabel) {
-                const POKT = Number(this.state.node.stakedTokens.toString()) / 1000000
-                nodeStakedTokensLabel.innerText = POKT
-            }
-            // Update the unstaking status
-            const nodeStakingStatusLabel = document.getElementById("node-staking-status")
-            // Update the status img
-            const nodeStakeStatusImg = document.getElementById("node-stake-status-img")
-            if (nodeStakeStatusImg && nodeStakingStatusLabel) {
-                if (this.state.node.status === 1) {
-                    nodeStakeStatusImg.src = this.state.unstakingImgSrc
-                    nodeStakingStatusLabel.innerText = "UNSTAKING"
-                }else if(this.state.app.status === 2){
-                    nodeStakingStatusLabel.innerText = "STAKED"
-                    nodeStakeStatusImg.src = this.state.stakedImgSrc
-                }else {
-                    nodeStakingStatusLabel.innerText = "UNSTAKED"
-                    nodeStakeStatusImg.src = this.state.unstakedImgSrc
-                }
-            }
-            
-            // Show the app section
-            const nodeTypeSection = document.getElementById("node-type-section")
-            if (nodeTypeSection) {
-                nodeTypeSection.style.display = "flex"
-            }
-        }
-    }
-    // Account type, amount staked and staking status
-    async addNormalAccount() {
-        if (this.state.normal !== undefined) {
-            // Show the app section
-            const accountTypeSection = document.getElementById("normal-type-section")
-            if (accountTypeSection) {
-                accountTypeSection.style.display = "flex"
-            }
-        }
-    }
-    // Account type, amount staked and staking status
-    async getAccountType() {
-        const appOrError = await this.dataSource.getApp(this.currentAccount.addressHex)
-        if (appOrError !== undefined) {
-            this.setState({app: appOrError.application})
-            this.addApp()
-        }
-        const nodeOrError = await this.dataSource.getNode(this.currentAccount.addressHex)
-        if (nodeOrError !== undefined) {
-            this.setState({node: nodeOrError.node})
-            this.addNode()
+    async addAppOrNode(type = "app") {
+        const {node, app, stakedImgSrc, unstakingImgSrc, unstakedImgSrc} = this.state;
+        let account = app;
+
+        if (type === "node") {
+            account = node
         }
 
+        if (account !== undefined) {
+            // Update the staked amount
+            
+            const stakedTokens = Number(account.stakedTokens.toString()) / 1000000;
+
+            let stakingStatus = "UNSTAKED";
+            let stakingStatusImg = unstakedImgSrc;
+
+            if (account.status === 1) {
+                stakingStatus = "UNSTAKING";
+                stakingStatusImg = unstakingImgSrc;
+            }else if(account.status === 2){
+                stakingStatus = "STAKED";
+                stakingStatusImg = stakedImgSrc;
+            }
+
+            // Update the state
+            this.setState({
+                stakedTokens,
+                displayApp: type === "app" ? true : false,
+                displayNode: type === "node" ? true : false,
+                stakingStatus,
+                stakingStatusImg,
+            });
+        }
+    }
+
+    // Account type, amount staked and staking status
+    async getAccountType(addressHex) {
+
+        // Try to get the app information
+        const appOrError = await dataSource.getApp(addressHex);
+
+        if (appOrError !== undefined) {
+            this.setState({app: appOrError.application});
+            this.addAppOrNode();
+        }
+        // Try to get the node information
+        const nodeOrError = await dataSource.getNode(addressHex);
+
+        if (nodeOrError !== undefined) {
+            this.setState({node: nodeOrError.node});
+            this.addAppOrNode("node");
+        }
+
+        // If not and app or node, load normal account
         if (appOrError === undefined && nodeOrError === undefined) {
-            this.setState({normal: true})
-            this.addNormalAccount()
+            // Account type, amount staked and staking status
+            this.setState({displayNormalAccount: true});
         }
     }
     
     // Retrieves the account balance
-    async getBalance() {
-        const balance = await this.dataSource.getBalance(this.currentAccount.addressHex)
-
-        const poktBalanceElement = document.getElementById('pokt-balance')
-        const poktUsdBalanceElement = document.getElementById('pokt-balance-usd')
-
-        if (poktBalanceElement && poktUsdBalanceElement) {
+    async getBalance(addressHex) {
+        
+        if (addressHex) {
+            const balance = await dataSource.getBalance(addressHex);
+            
             // Update account detail values
-            poktBalanceElement.innerText = balance.toFixed(2) + " POKT"
-            poktUsdBalanceElement.innerText = "$ " + (balance * Number(Config.POKT_USD_VALUE)).toFixed(2) + " USD"
+            const poktBalance = balance.toFixed(2);
+            const usdBalance = (balance * Number(Config.POKT_USD_VALUE)).toFixed(2);
+    
+            // Save balance to the state
             this.setState({
-                addressHex: this.currentAccount.addressHex,
-                publicKeyHex: this.currentAccount.publicKeyHex
+                poktBalance,
+                usdBalance
             })
         }
     }
+
     pushToTxDetail(txHash) {
+        const {addressHex, publicKeyHex, ppk} = this.state;
+
         // Check the account info before pushing
-        if (this.currentAccount.addressHex === undefined ||
-            this.currentAccount.publicKeyHex === undefined ||
-            this.currentAccount.ppk === undefined) {
-            this.toggleError(true, "No account available, please create an account")
-            return
-        }
+        if (!addressHex ||
+            !publicKeyHex ||
+            !ppk
+        ) {
+            this.setState({
+                errorMessage: "No account available, please create or import an account",
+                displayError: true
+            });
+            return;
+        };
+
         if (txHash) {
-            const accountObj = {
-                addressHex: this.currentAccount.addressHex,
-                publicKeyHex: this.currentAccount.publicKeyHex,
-                ppk: this.currentAccount.ppk,
-            }
-            const obj = {
-                tx: undefined,
-                txHash: txHash,
-                account: accountObj
-            }
             // Move to the account detail
             this.props.history.push({
                 pathname: "/transaction-detail",
-                data: obj,
-            })
-        }
+                data: {txHash}
+            });
+        };
     }
+
     pushToSend() {
+        const {addressHex, publicKeyHex, ppk} = this.state;
         // Check the account info before pushing
-        if (this.currentAccount.addressHex === undefined ||
-            this.currentAccount.publicKeyHex === undefined ||
-            this.currentAccount.ppk === undefined) {
-            this.toggleError(true, "No account available, please create an account")
-            return
+        if (!addressHex ||
+            !publicKeyHex ||
+            !ppk
+        ) {
+            this.setState({
+                errorMessage: "No account available, please create an account",
+                displayError: true
+            });
+
+            return;
         }
-        const accountObj = {
-            addressHex: this.currentAccount.addressHex,
-            publicKeyHex: this.currentAccount.publicKeyHex,
-            ppk: this.currentAccount.ppk,
-        }
-        // Move to the account detail
+
+        // Move to the send transaction view
         this.props.history.push({
-            pathname: "/send",
-            data: accountObj,
-        })
+            pathname: "/send"
+        });
     }
+
     reloadBtnState(boolean){
-        const reloadBtn = document.getElementById("reload-btn")
+        const {reloadActiveImgSrc, reloadImgSrc} = this.state;
+        const reloadBtn = document.getElementById("reload-btn");
+
         if (reloadBtn) {
-            reloadBtn.src = boolean ? this.state.reloadActiveImgSrc : this.state.reloadImgSrc
-        }
+            reloadBtn.src = boolean ? reloadActiveImgSrc : reloadImgSrc;
+        };
     }
 
     // Transaction list toggle
     onToggleBtn() {
         this.setState((prevState) => {
             return { visibility: !prevState.visibility };
-        })
+        });
     }
+
     enableLoaderIndicatory(show){
-        const loaderElement = document.getElementById("loader")
+        const loaderElement = document.getElementById("loader");
         if (loaderElement) {
             loaderElement.style.display = show === true ? "block" : "none"
         }
     }
-    updateAccountDetails(){
-        const addressElement = document.getElementById("address")
-        const publicElement = document.getElementById("public-key")
-        if (addressElement && publicElement) {
-            addressElement.value = this.currentAccount.addressHex
-            publicElement.value = this.currentAccount.publicKeyHex
-        }
+
+    refreshView(addressHex) {
+        this.enableLoaderIndicatory(true);
+        this.getBalance(addressHex);
+        this.getAccountType(addressHex);
+        this.getTransactions(addressHex);
     }
-    refreshView() {
-        this.enableLoaderIndicatory(true)
-        this.updateAccountDetails()
-        this.getBalance()
-        this.getAccountType()
-        this.getTransactions()
-    }
+
     componentDidMount() {
-        if (this.currentAccount !== undefined) {
-            this.refreshView()
+
+        const {addressHex, publicKeyHex, ppk} = PocketService.getUserInfo();
+
+        if (addressHex && publicKeyHex && ppk) {
+            // Save information to the state
+            this.setState({
+                addressHex, 
+                publicKeyHex, 
+                ppk
+            });
+            // Load the account balance, type and transaction list
+            this.refreshView(addressHex);
+        } else {
+            // Redirect to the home page
+            this.props.history.push({
+                pathname: '/'
+            });
         }
 
         // Navigation Item
-        const navAccount = document.getElementById("navAccount")
+        const navAccount = document.getElementById("navAccount");
         
         if (navAccount) {
-            navAccount.style.display = "inline"
+            navAccount.style.display = "inline";
         }
-        
     }
+    
     // Render
     render() {
-        // Check if current account is set
-        if (this.currentAccount === undefined) {
+        // Check if current account information is set
+        const {
+            addressHex, 
+            publicKeyHex, 
+            privateKey,
+            poktBalance, 
+            usdBalance, 
+            visibility, 
+            noTransactions,
+            stakedTokens,
+            stakingStatus,
+            stakingStatusImg,
+            displayApp,
+            displayNode,
+            displayError,
+            errorMessage,
+            displayTxListSection,
+            isModalVisible,
+            displayNormalAccount,
+            displayPkReveal,
+            hovered
+        } = this.state;
+
+        if (addressHex === undefined || publicKeyHex === undefined) {
             // Redirect to the home page
             this.props.history.push({
                 pathname: '/'
             })
-            return null
+            return null;
         }
         
         return (
@@ -461,10 +450,10 @@ class AccountLatest extends Component {
                 <Wrapper className="wide-block-wr">
                     <div className="quantitypokt">
                         <div className="container">
-                            <h1 id="pokt-balance" >0.00 POKT</h1>
+                            <h1 >{poktBalance} POKT</h1>
                             <div style={{flexDirection: "column"}} className="stats">
                                 <div className="stat">
-                                    <span id="pokt-balance-usd">$ 0 USD</span>
+                                    <span>$ {usdBalance} USD</span>
                                     <img 
                                     id="reload-btn"
                                     src={reload}
@@ -472,10 +461,11 @@ class AccountLatest extends Component {
                                     onMouseOut={() => this.reloadBtnState(false)}
                                     onMouseOver={() => this.reloadBtnState(true)}
                                     style={{
-                                        src: `${this.state.hovered ? reloadActive : reload}`,
-                                        cursor: "pointer"
+                                        src: `${hovered ? reloadActive : reload}`,
+                                        cursor: "pointer",
+                                        display: "none"
                                     }}
-                                    onClick={this.refreshView} 
+                                    // onClick={this.refreshView(addressHex)} 
                                     alt="reload" 
                                     />
                                 </div>
@@ -484,7 +474,9 @@ class AccountLatest extends Component {
                     </div>
                     <div className="pokt-options">
                         {/* Normal Account Section */}
-                        <div style={{ display: "none" }} id="normal-type-section" className="container">
+                        <div style={{ 
+                            display: displayNormalAccount === true ? "flex" : "none"
+                            }} id="normal-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
                                     <img style={{display: "inline-block"}} src={token} alt="staked tokens"/>
@@ -509,18 +501,20 @@ class AccountLatest extends Component {
                         </div>
                         {/* / Normal Account Section */}
                         {/* NODE Section */}
-                        <div style={{ display: "none" }} id="node-type-section" className="container">
+                        <div style={{ 
+                            display: displayNode === true ? "flex" : "none"
+                            }} id="node-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
                                     <img style={{display: "inline-block"}} src={token} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="node-staked-tokens-amount" >  0</h2>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="node-staked-tokens-amount" > {stakedTokens} </h2>
                                 </div>
                                 <span className="title">Staked POKT</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block"}} id="node-stake-status-img" src={unstaking} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="node-staking-status"> UNSTAKING </h2>
+                                    <img style={{display: "inline-block"}} id="node-stake-status-img" src={stakingStatusImg} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="node-staking-status"> {stakingStatus} </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
@@ -534,18 +528,21 @@ class AccountLatest extends Component {
                         </div>
                         {/* / NODE Section */}
                         {/* APP Section */}
-                        <div style={{ display: "none", marginTop: "16px" }} id="app-type-section" className="container">
+                        <div style={{ 
+                            display: displayApp === true ? "flex" : "none", 
+                            marginTop: "16px" 
+                            }} id="app-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
                                     <img style={{display: "inline-block"}} src={token} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="app-staked-tokens-amount">  0 </h2>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="app-staked-tokens-amount">  {stakedTokens} </h2>
                                 </div>
                                 <span className="title">Staked POKT</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block"}} id="app-stake-status-img" src={unstaking} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="app-staking-status"> UNSTAKING </h2>
+                                    <img style={{display: "inline-block"}} id="app-stake-status-img" src={stakingStatusImg} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="app-staking-status"> {stakingStatus} </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
@@ -559,7 +556,7 @@ class AccountLatest extends Component {
                         </div>
                         {/* / APP Section */}
                         <div className="btn-subm">
-                            <Button href={Config.BUY_POKT_BASE_URL} dark>Buy POKT</Button>
+                            <Button target="_target" href={Config.BUY_POKT_BASE_URL} dark>Buy POKT</Button>
                             <Button id="send-pokt" onClick={this.pushToSend}>Send</Button>
                         </div> 
                     </div>
@@ -567,13 +564,13 @@ class AccountLatest extends Component {
                         <div className="container">
                             <div className="cont-input">
                                 <label htmlFor="add">Address</label>
-                                <Input style={{height: "11px"}} type="text" name="address" id="address" readonly/>
-                                <span className="copy-button" onClick={this.copyAddress}> <img src={copy} alt="copy" /></span>
+                                <Input style={{height: "11px"}} type="text" name="address" id="address" defaultValue={addressHex} readOnly={true}/>
+                                <span className="copy-button" onClick={() => {navigator.clipboard.writeText(addressHex)}}> <img src={copy} alt="copy" /></span>
                             </div>
                             <div className="cont-input second">
                                 <label htmlFor="puk">Public Key</label>
-                                <Input style={{height: "11px"}} type="text" name="public-k" id="public-key" readonly/>
-                                <span className="copy-button" onClick={this.copyPublicKey}> <img src={copy} alt="copy" /></span>
+                                <Input style={{height: "11px"}} type="text" name="public-k" id="public-key" defaultValue={publicKeyHex} readOnly={true}/>
+                                <span className="copy-button" onClick={() => {navigator.clipboard.writeText(publicKeyHex)}}> <img src={copy} alt="copy" /></span>
                             </div>
                             <div className="cont-input third">
                                 <Button id="reveal-pk" onClick={this.showModal}>Reveal Private Key</Button>
@@ -581,10 +578,14 @@ class AccountLatest extends Component {
                         </div>
                     </form>
                     <div className="toggle-btn">
-                        <ToggleBtn style={{display: "none"}} id="noTransactions">No Transactions</ToggleBtn>
-                        <ToggleBtn id="tooglebtn" onClick={this.onToggleBtn}>Latest Transactions</ToggleBtn>
+                        <ToggleBtn style={{
+                            display: noTransactions === true ? "block" : "none"
+                        }} >No Transactions</ToggleBtn>
+                        <ToggleBtn style={{
+                            display: noTransactions === true ? "none" : "block"
+                        }} id="tooglebtn" onClick={this.onToggleBtn}>Latest Transactions</ToggleBtn>
                     </div>
-                    <ContainerToggle isVisible={this.state.visibility}>
+                    <ContainerToggle isVisible={visibility}>
                         <T>
                             <THead className="latest-tx">
                                 <Tr>
@@ -594,7 +595,9 @@ class AccountLatest extends Component {
                                 <Th> TX HASH</Th>
                                 </Tr>
                             </THead>
-                            <TBody style={{display: "none"}} id="transation-list-section" className="l-tx table-scroll">
+                            <TBody style={{
+                                display: displayTxListSection === true ? "block" : "none"
+                                }} id="transation-list-section" className="l-tx table-scroll">
                                  <Tr id="tr-element" style={{display: "none"}}>
                                     <Td id="td-element"> <img src={load} alt="loading" /> </Td>
                                     <Td> <div className="qty">0.00 <span>POKT</span></div> <div className="status">Sending</div> </Td>
@@ -614,23 +617,26 @@ class AccountLatest extends Component {
                         }} //changes styling on the inner content area
                         containerClassName="pocket-modal"
                         closeOnOuterClick={true}
-                        show={this.state.isModalVisible}
+                        show={isModalVisible}
                         onClose={this.closeModal.bind(this)}
                     >
                         <div className="cont-input" style={{textAlign: "center"}}>
-                            <label id="passphrase-label" className="passphrase-label" htmlFor="private">
+                            <label style={{display: isModalVisible === true ? "block" : "none"}} id="passphrase-label" className="passphrase-label" htmlFor="private">
                                 PASSPHRASE
                             </label>
                             <Input
                                 className="reveal-pk-passphrase"
-                                style={{ marginTop: "8px", width: "350px" }}
+                                style={{ 
+                                    display: isModalVisible === true ? "block" : "none",
+                                    margin: "8px auto auto auto", 
+                                    width: "350px" }}
                                 type="password"
                                 name="reveal-pk-passphrase"
                                 id="reveal-pk-passphrase"
                                 placeholder="Passphrase"
                                 minLength="1"
                             />
-                            <div id="private-key-container" style={{display: "none"}}>
+                            <div id="private-key-container" style={{display: displayPkReveal === true ? "block" : "none"}}>
                                 <label id="private-key-label" className="passphrase-label" htmlFor="private">
                                     PRIVATE KEY
                                 </label>
@@ -639,12 +645,12 @@ class AccountLatest extends Component {
                                     height: "20px",
                                     width: "350px",
                                     marginTop: "9px"
-                                    }} type="text" name="private-k" id="private-key-input" defaultValue={""} readonly />
-                                <span style={{marginTop: "18px"}} className="copy-button" onClick={this.copyPrivateKey}> <img src={copy} alt="copy" /></span>
+                                    }} type="text" name="private-k" id="private-key-input" defaultValue={privateKey ? privateKey : ""} readonly />
+                                <span style={{marginTop: "18px"}} className="copy-button" onClick={() => {navigator.clipboard.writeText(privateKey)}}> <img src={copy} alt="copy" /></span>
                             </div>
                         </div>
-                        <span id="passphrase-invalid" className="error" style={{ display: "none" }}>
-                            {" "}
+                        <span id="passphrase-invalid" className="error" style={{ display: displayError === true ? "block" : "none" }}>
+                            {errorMessage}
                             <img src={altertR} alt="alert" />
                             Invalid Passphrase
                         </span>
@@ -652,7 +658,7 @@ class AccountLatest extends Component {
                             style={{
                                 textAlign: "center",
                                 width: "119px", 
-                                display: "block",
+                                display: displayPkReveal === true ? "none" : "block",
                                 padding: "9px 6px",
                                 margin: "24px auto 10px auto" }}
                             onClick={this.revealPrivateKey.bind(this)}

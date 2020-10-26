@@ -1,30 +1,35 @@
-import React from "react"
-import Wrapper from "../../components/wrapper"
-import ImportPocketContent from "./import-pocket"
-import Title from "../../components/public/title/title"
-import Input from "../../components/public/input/input"
-import Button from "../../components/public/button/button"
-import altertR from "../../utils/images/alert-circle-red.png"
+import React from "react";
+import Wrapper from "../../components/wrapper";
+import ImportPocketContent from "./import-pocket";
+import Title from "../../components/public/title/title";
+import Input from "../../components/public/input/input";
+import Button from "../../components/public/button/button";
+import altertR from "../../utils/images/alert-circle-red.png";
 import exit from '../../utils/images/exit.png';
-import { DataSource } from "../../datasource"
-import Modal from "simple-react-modal"
-import { typeGuard } from "@pokt-network/pocket-js/dist/web.js"
-
+import Modal from "simple-react-modal";
 import {
     withRouter
-} from 'react-router-dom'
+} from 'react-router-dom';
+import PocketService from "../../core/services/pocket-service";
+import {DataSource} from "../../datasource/datasource";
+
+const dataSource = new DataSource();
 
 class ImportPocket extends React.Component {
-    constructor(props) {
-        super(props)
+    constructor() {
+        super();
+
         this.state = {
             ppk: undefined,
             privateKey: undefined,
-            isModalVisible: false
-        }
-        // Set up locals
-        this.dataSource = DataSource.instance
+            isModalVisible: false,
+            uploaderText: undefined,
+            ppkError: undefined,
+            privateKeyError: undefined,
+            buttonError: undefined
+        };
 
+        // Binds
         this.isFileInput = this.isFileInput.bind(this)
         this.isTextInput = this.isTextInput.bind(this)
         this.parseFileInputContent = this.parseFileInputContent.bind(this)
@@ -43,97 +48,106 @@ class ImportPocket extends React.Component {
     }
 
     isFileInput(input) {
-        return input.type === "file"
+        return input.type === "file";
     }
 
     isTextInput(input) {
-        return input.type === "password"
+        return input.type === "password";
     }
 
     async parseFileInputContent(input) {
+
         if (input && input.files.length > 0) {
-            const reader = new FileReader()
-            const file = input.files[0]
+            const reader = new FileReader();
+            const file = input.files[0];
+
             return new Promise(function (resolve, reject) {
                 reader.onloadend = () => {
-                    resolve(reader.result)
+                    resolve(reader.result);
                 }
                 reader.onerror = (error) => {
-                    console.error(error)
-                    resolve(undefined)
+                    console.error(error);
+                    resolve(undefined);
                 }
-                reader.readAsText(file)
-            })
+                reader.readAsText(file);
+            });
         } else {
-            return
+            return;
         }
+
     }
 
     setUploaderText(msg) {
-        document.getElementById("cont-file").setAttribute("data-text", msg)
+        this.setState({uploaderText: msg});
     }
 
     // Private key inputs handler
     async privKeyInputChange(e) {
         // Clear all errors whenever the users tries to input a private key
-        this.hideAllErrors()
+        this.hideAllErrors();
 
         // Clear state
         this.setState({
             ppk: undefined,
             privateKey: undefined,
+            uploaderText: undefined
         })
 
         // Reset the file uploader text
-        this.setUploaderText("Choose your Key File")
+        this.setUploaderText("Choose your Key File");
 
         // Get the private key from the input
-        const input = e.target
+        const input = e.target;
+
         if (this.isFileInput(input)) {
             // Reset the private key text input
-            document.getElementById("import-privatekey").value = ""
+            document.getElementById("import-privatekey").value = "";
 
             // Clean private key text input
-            const fileInputValue = await this.parseFileInputContent(input)
+            const fileInputValue = await this.parseFileInputContent(input);
 
             // Read file and load it's contents
             if (!fileInputValue) {
-                console.error("Error parsing file")
-                this.togglePPKError(true, "Error parsing PPK contents.")
-                return
+                
+                console.error("Error parsing file");
+                this.togglePPKError("Error parsing PPK contents.");
+
+                return;
             }
 
             try {
-                const ppkObj = JSON.parse(fileInputValue)
-                this.setUploaderText(`${`Hint: ${ppkObj.hint}` || "Key File Uploaded Succesfully"}`)
+                const ppkObj = JSON.parse(fileInputValue);
+                this.setUploaderText(`${`Hint: ${ppkObj.hint}` || "Key File Uploaded Succesfully"}`);
             } catch(e) {
-                console.error(e)
-                this.togglePPKError(true, "Invalid Key File format, must be a JSON file")
+                console.error(e);
+                this.togglePPKError("Invalid Key File format, must be a JSON file");
             }
 
             this.setState({
                 ppk: fileInputValue,
-            })
+            });
+
         } else if (this.isTextInput(input)) {
             // Clear the file uploader
-            document.getElementById("import-ppk").value = ""
+            document.getElementById("import-ppk").value = "";
 
             // Get the private key from the input
-            const privateKey = input.value
+            const privateKey = input.value;
 
             // Check if it's a valid private key
-            const isValidPrivateKey = this.dataSource.validatePrivateKey(privateKey)
+            const isValidPrivateKey = dataSource.validatePrivateKey(privateKey);
 
             if (!isValidPrivateKey) {
-                this.togglePrivateKeyError(true, "Invalid Private Key format.")
-                return
+                this.togglePrivateKeyError("Invalid Private Key format.");
+                
+                return;
             }
 
             this.setState({
                 privateKey: privateKey,
             })
         } else {
-            this.toggleButtonError(true, "Invalid private key input")
+            this.toggleButtonError("Invalid private key input");
         }
     }
 
@@ -150,64 +164,63 @@ class ImportPocket extends React.Component {
     }
 
     hideAllErrors() {
-        this.togglePassphraseError(false)
-        this.toggleButtonError(false, "")
-        this.togglePPKError(false, "")
-        this.togglePrivateKeyError(false, "")
+        this.togglePassphraseError(undefined);
+        this.toggleButtonError(undefined);
+        this.togglePPKError(undefined);
+        this.togglePrivateKeyError(undefined);
     }
 
-    togglePassphraseError(show) {
-        const errorSpan = document.getElementById("passphrase-invalid")
-        if (errorSpan) {
-            errorSpan.style.display = show === true ? "block" : "none"
-        }
+    togglePassphraseError(msg) {
+
+        this.setState({
+            passphraseError: msg === undefined ? msg : "Invalid Passphrase"
+        });
     }
 
-    toggleButtonError(show, msg) {
-        const errorSpan = document.getElementById("button-error")
-        if (errorSpan) {
-            errorSpan.style.display = show === true ? "block" : "none"
-            errorSpan.innerText = msg
-        }
+    toggleButtonError(msg) {
+        this.setState({
+            buttonError: msg
+        });
     }
 
-    togglePPKError(show, msg) {
-        const errorSpan = document.getElementById("ppk-error")
-        if (errorSpan) {
-            errorSpan.style.display = show === true ? "block" : "none"
-            errorSpan.innerText = msg
-        }
+    togglePPKError(msg) {
+        this.setState({
+            ppkError: msg
+        });
     }
 
-    togglePrivateKeyError(show, msg) {
-        const errorSpan = document.getElementById("private-key-error")
-        if (errorSpan) {
-            errorSpan.style.display = show === true ? "block" : "none"
-            errorSpan.innerText = msg
-        }
+    togglePrivateKeyError(msg) {
+        this.setState({
+            privateKeyError: msg
+        });
     }
 
     async importAccount() {
+        // Retrieve the ppk or privateKey values
+        const {ppk, privateKey} = this.state;
+
         // Hide the passphrase error
-        this.togglePassphraseError(false)
+        this.togglePassphraseError(undefined);
 
         // Get the passphrase input and passphrase value
-        const passphraseInput = document.getElementById("import-pk-passphrase")
-        const passphrase = passphraseInput.value
+        const passphraseInput = document.getElementById("import-pk-passphrase");
+        const passphrase = passphraseInput.value;
+
         if (passphrase.length === 0) {
             // Show the passphrase error and return
-            this.togglePassphraseError(true)
-            return
+            this.togglePassphraseError(true);
+            return;
         }
 
         // Clean passphrase input
-        passphraseInput.value = ""
+        passphraseInput.value = "";
         // Handle imports
-        let accountObj
-        if (this.state.ppk) {
-            accountObj = await this.importAccountFromPPK(this.state.ppk, passphrase)
-        } else if (this.state.privateKey) {
-            accountObj = await this.importAccountFromPrivateKey(this.state.privateKey, passphrase)
+        let accountObj;
+        
+        if (ppk) {
+            accountObj = await this.importAccountFromPPK(ppk, passphrase);
+        } else if (privateKey) {
+            accountObj = await this.importAccountFromPrivateKey(privateKey, passphrase);
         }
 
         if (!accountObj) {
@@ -229,186 +242,249 @@ class ImportPocket extends React.Component {
     async importAccountFromPPK(ppk, passphrase) {
         try {
             // Import the PPK
-            const account = await this.dataSource.importPortablePrivateKey(passphrase, ppk, passphrase)
+            const account = await dataSource.importPortablePrivateKey(passphrase, ppk, passphrase);
+            
             if (!account) {
                 this.togglePPKError(
                     true,
                     "Failed to decrypt your Key File, please check your passphrase and try again."
-                )
-                return
+                );
+                return false;
             }
+            
+            PocketService.saveUserInCache(account.addressHex, account.publicKey.toString("hex"), ppk.toString());
 
-            const accountObj = {
-                addressHex: account.addressHex,
-                publicKeyHex: account.publicKey.toString("hex"),
-                ppk: ppk,
-            }
-            return accountObj
+            return true;
         } catch (error) {
-            console.error(error)
-            this.togglePPKError(true, "There was an error importing your Key File, please try again.")
+            console.error(error);
+            this.togglePPKError("There was an error importing your Key File, please try again.");
+
+            return false;
         }
-        return
+        
     }
 
     // Import an account using a raw private key
     async importAccountFromPrivateKey(privateKey, passphrase) {
         try {
             // Validate private key
-            if (!this.dataSource.validatePrivateKey(privateKey)) {
-                this.togglePrivateKeyError(true, "Your private key is invalid, please try again.")
-                return
+            if (!dataSource.validatePrivateKey(privateKey)) {
+                this.togglePrivateKeyError("Your private key is invalid, please try again.");
+
+                return false;
             }
 
             // Create an account by importing the private key
-            const accountOrError = await this.dataSource.importAccount(privateKey, passphrase)
-            if (typeGuard(accountOrError, Error)) {
-                this.togglePrivateKeyError(true, "There was an error decoding your private key, please try again.")
-                return
+            const accountOrError = await dataSource.importAccount(privateKey, passphrase);
+
+            if (!accountOrError) {
+                this.togglePrivateKeyError("There was an error decoding your private key, please try again.");
+                console.error(accountOrError);
+                return false;
             }
-            const account = accountOrError
+
+            const account = accountOrError;
 
             // Create a PPK from the account
-            const ppk = await this.dataSource.exportPPK(privateKey, passphrase)
+            const ppk = await dataSource.exportPPK(privateKey, passphrase);
+
             if (!ppk) {
-                this.togglePrivateKeyError(true, "There was an error decoding your private key, please try again.")
-                return
+                this.togglePrivateKeyError("There was an error decoding your private key, please try again.");
+                console.error(accountOrError);
+                return false;
             }
 
-            const accountObj = {
-                addressHex: account.addressHex,
-                publicKeyHex: account.publicKey.toString("hex"),
-                ppk: ppk,
-            }
-            return accountObj
+            PocketService.saveUserInCache(account.addressHex, account.publicKey.toString("hex"), ppk.toString());
+
+            return true;
         } catch (error) {
-            console.error(error)
-            this.togglePrivateKeyError(true, "There was an error decoding your private key, please try again.")
+            console.error(error);
+            this.togglePrivateKeyError("There was an error decoding your private key, please try again.");
+            
+            return false;
         }
-        return
     }
 
     render() {
+        const {
+            ppk, 
+            uploaderText, 
+            privateKey, 
+            ppkError, 
+            privateKeyError, 
+            buttonError, 
+            passphraseError
+        } = this.state;
+
         return (
-            <ImportPocketContent>
-                <Wrapper className="wide-block-wr">
-                    <Title>Import a pocket account</Title>
-                    <div className="quantity">
-                        <form className="import-p-form">
-                            <div className="container">
-                                <div className="cont-input">
-                                    <label htmlFor="keyf">Access by Key File</label>
-                                    <div id="cont-file" className="cont-file" data-text="Choose your Key File">
-                                        <div className="upload"></div>
-                                        <Input
-                                            onChange={this.privKeyInputChange}
-                                            type="file"
-                                            name="key-file"
-                                            id="import-ppk"
-                                        />
-                                    </div>
-                                    <span id="ppk-error" className="error" style={{ display: "none" }}>
-                                        {" "}
-                                        <img src={altertR} alt="alert" />
-                                        Incorrect file
-                                    </span>
-                                </div>
-                                <div className="cont-input">
-                                    <label htmlFor="import-privatekey">Access by Private Key</label>
-                                    <Input
-                                        style={{color: "black"}}
-                                        type="password"
-                                        name="privatekey"
-                                        id="import-privatekey"
-                                        placeholder="Enter Private Key"
-                                        onChange={this.privKeyInputChange}
-                                    />
-                                    <span id="private-key-error" className="error" style={{ display: "none" }}>
-                                        {" "}
-                                        <img src={altertR} alt="alert" />
-                                        Incorrect private key
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="btn-subm">
-                                <Button
-                                    disabled={this.state.ppk !== undefined || this.state.privateKey !== undefined}
-                                    id="import-ppk"
-                                    onClick={this.showModal.bind(this)}
-                                >
-                                    Import Account
-                                </Button>
-                                <span id="button-error" className="error" style={{ display: "none" }}>
-                                    {" "}
-                                    <img src={altertR} alt="alert" /> Please enter Private key
-                                </span>
-                            </div>
-                        </form>
-                        <a href="/create" className="account">
-                            Don’t have an account? Create a new Pocket account
-                        </a>
+          <ImportPocketContent>
+            <Wrapper className="wide-block-wr">
+              <Title>Import a pocket account</Title>
+              <div className="quantity">
+                <form className="import-p-form">
+                  <div className="container">
+                    <div className="cont-input">
+                      <label htmlFor="keyf">Access by Key File</label>
+                      <div
+                        id="cont-file"
+                        className="cont-file"
+                        data-text={
+                          uploaderText !== undefined
+                            ? uploaderText
+                            : "Choose your Key File"
+                        }
+                      >
+                        <div className="upload"></div>
+                        <Input
+                          onChange={this.privKeyInputChange}
+                          type="file"
+                          name="key-file"
+                          id="import-ppk"
+                        />
+                      </div>
+                      <span
+                        id="ppk-error"
+                        className="error"
+                        style={{
+                          display: `${
+                            ppkError === undefined ? "none" : "block"
+                          }`,
+                        }}
+                      >
+                        {" "}
+                        <img src={altertR} alt="alert" />
+                        Incorrect file
+                      </span>
                     </div>
-                </Wrapper>
-                <div>
-                    <Button style={{ display: "none" }} id="open-modal" onClick={this.showModal.bind(this)}></Button>
-                    <Modal
-                        style={{ background: "rgba(0, 0, 0, 0.5)" }} //overwrites the default background
-                        containerStyle={{
-                            width: "534px",
-                            background: "white",
-                            boxShadow: "0 43px 39px -40px rgba(0,0,0,0.5)",
-                            borderRadius: "12px",
-                        }} //changes styling on the inner content area
-                        containerClassName="pocket-modal"
-                        closeOnOuterClick={true}
-                        show={this.state.isModalVisible}
-                        onClose={this.closeModal.bind(this)}
+                    <div className="cont-input">
+                      <label htmlFor="import-privatekey">
+                        Access by Private Key
+                      </label>
+                      <Input
+                        style={{ color: "black" }}
+                        type="password"
+                        name="privatekey"
+                        id="import-privatekey"
+                        placeholder="Enter Private Key"
+                        defaultValue={
+                          privateKey !== undefined ? privateKey : ""
+                        }
+                        onChange={this.privKeyInputChange}
+                      />
+                      <span
+                        id="private-key-error"
+                        className="error"
+                        style={{
+                          display: `${
+                            privateKeyError === undefined ? "none" : "block"
+                          }`,
+                        }}
+                      >
+                        {" "}
+                        <img src={altertR} alt="alert" />
+                        Incorrect private key
+                      </span>
+                    </div>
+                  </div>
+                  <div className="btn-subm">
+                    <Button
+                      disabled={ppk !== undefined || privateKey !== undefined}
+                      onClick={this.showModal.bind(this)}
                     >
-                        <div className="cont-input" style={{textAlign: "center"}}>
-                            <label style={{ 
-                                    textAlign: "left",
-                                    margin: "31px 0px 0px 87px",
-                                    color: "#06202e",
-                                    fontSize: "20px",
-                                    fontWeight: "700",
-                                    textTransform: "uppercase",
-                                    display: "block" 
-                                }} htmlFor="private">
-                                ENTER PASSPHRASE
-                            </label>
-                            <Input
-                                className="import-pk-passphrase"
-                                style={{ marginTop: "8px" }}
-                                type="password"
-                                name="import-pk-passphrase"
-                                id="import-pk-passphrase"
-                                placeholder="Passphrase"
-                                minLength="1"
-                            />
-                        </div>
-                        <span id="passphrase-invalid" className="error" style={{ display: "none" }}>
-                            {" "}
-                            <img src={altertR} alt="alert" />
-                            Invalid Passphrase
-                        </span>
-                        <Button
-                            style={{
-                                textAlign: "center",
-                                width: "119px", 
-                                display: "block",
-                                padding: "9px 6px",
-                                margin: "26px auto 10px auto" }}
-                            onClick={this.importAccount.bind(this)}
-                        >
-                            Import
-                        </Button>
-                        <button className="close" onClick={this.closeModal.bind(this)}>
-                            <img src={exit} alt="exit icon close"/>
-                        </button>
-                    </Modal>
+                      Import Account
+                    </Button>
+                    <span
+                      id="button-error"
+                      className="error"
+                      style={{
+                        display: `${
+                          buttonError === undefined ? "none" : "block"
+                        }`,
+                      }}
+                    >
+                      {" "}
+                      <img src={altertR} alt="alert" /> Please enter Private key
+                    </span>
+                  </div>
+                </form>
+                <a href="/create" className="account">
+                  Don’t have an account? Create a new Pocket account
+                </a>
+              </div>
+            </Wrapper>
+            <div>
+              <Button
+                style={{ display: "none" }}
+                id="open-modal"
+                onClick={this.showModal.bind(this)}
+              ></Button>
+              <Modal
+                style={{ background: "rgba(0, 0, 0, 0.5)" }} //overwrites the default background
+                containerStyle={{
+                  width: "534px",
+                  background: "white",
+                  boxShadow: "0 43px 39px -40px rgba(0,0,0,0.5)",
+                  borderRadius: "12px",
+                }} //changes styling on the inner content area
+                containerClassName="pocket-modal"
+                closeOnOuterClick={true}
+                show={this.state.isModalVisible}
+                onClose={this.closeModal.bind(this)}
+              >
+                <div className="cont-input" style={{ textAlign: "center" }}>
+                  <label
+                    style={{
+                      textAlign: "left",
+                      margin: "31px 0px 0px 87px",
+                      color: "#06202e",
+                      fontSize: "20px",
+                      fontWeight: "700",
+                      textTransform: "uppercase",
+                      display: "block",
+                    }}
+                    htmlFor="private"
+                  >
+                    ENTER PASSPHRASE
+                  </label>
+                  <Input
+                    className="import-pk-passphrase"
+                    style={{ marginTop: "8px" }}
+                    type="password"
+                    name="import-pk-passphrase"
+                    id="import-pk-passphrase"
+                    placeholder="Passphrase"
+                    minLength="1"
+                  />
                 </div>
-            </ImportPocketContent>
-        )
+                <span
+                  id="passphrase-invalid"
+                  className="error"
+                  style={{ 
+                      display: passphraseError === undefined ? "none" : "block"
+                    }}>
+                  
+                  <img src={altertR} alt="alert" />
+                  {passphraseError}
+                </span>
+                <Button
+                  style={{
+                    textAlign: "center",
+                    width: "119px",
+                    display: "block",
+                    padding: "9px 6px",
+                    margin: "26px auto 10px auto",
+                  }}
+                  onClick={this.importAccount.bind(this)}
+                >
+                  Import
+                </Button>
+                <button className="close" onClick={this.closeModal.bind(this)}>
+                  <img src={exit} alt="exit icon close" />
+                </button>
+              </Modal>
+            </div>
+          </ImportPocketContent>
+        );
     }
 }
 

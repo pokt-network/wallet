@@ -12,47 +12,41 @@ import load from '../../utils/images/load.png';
 import none from '../../utils/images/none.png';
 import success from '../../utils/images/check_green.png';
 import failed from '../../utils/images/wrong_red.png';
-import { DataSource } from "../../datasource"
 import Config from "../../config/config.json"
 import {
     withRouter
 } from 'react-router-dom'
+import PocketService from "../../core/services/pocket-service";
 
 class TransactionDetail extends Component {
-    constructor(props) {
-        super(props)
+    constructor() {
+        super();
+
         this.state = {
             transaction: undefined,
             successImgSrc: success,
             failedImgSrc: failed,
-            pendingImgSrc: none
+            pendingImgSrc: none,
+            fromAddress: undefined,
+            destinationAddress: undefined,
+            sentAmount: undefined,
+            txHash: undefined,
+            txFee: undefined,
+            status: undefined,
+            sentStatus: undefined
+        };
 
-        }
-        // Set up locals
-        this.dataSource = DataSource.instance
-        this.getTx = this.getTx.bind(this)
-        this.updateTxInformation = this.updateTxInformation.bind(this)
-        this.backToAccountDetail = this.backToAccountDetail.bind(this)
-        // Set current transaction detail object
-        this.data = this.props.location.data
-        this.currentAccount = undefined
+        // Bindings
+        this.getTx = this.getTx.bind(this);
+        this.updateTxInformation = this.updateTxInformation.bind(this);
+        this.backToAccountDetail = this.backToAccountDetail.bind(this);
     }
 
     backToAccountDetail() {
-        if (this.currentAccount !== undefined) {
-            const accountObj = {
-                addressHex: this.currentAccount.addressHex,
-                publicKeyHex: this.currentAccount.publicKeyHex,
-                ppk: this.currentAccount.ppk,
-            }
-            // Move to the transaction detail
-            this.props.history.push({
-                pathname: "/account",
-                data: accountObj,
-            })
-        }else {
-            console.log("No account vailable.")
-        }
+        // Move to the account detail page
+        this.props.history.push({
+            pathname: "/account"
+        })
     }
 
     updateTxInformation(txObj) {
@@ -62,7 +56,7 @@ class TransactionDetail extends Component {
         document.getElementById("sentStatusMobile").innerHTML = txObj.sentStatus
         document.getElementById("status").innerHTML = txObj.status
         document.getElementById("statusMobile").innerHTML = txObj.status
-        
+
         // Update the status img
         switch (txObj.status) {
             case "Success":
@@ -87,7 +81,7 @@ class TransactionDetail extends Component {
         document.getElementById("toAddress").innerHTML = txObj.toAddress
         document.getElementById("toAddressMobile").innerHTML = txObj.toAddress
     }
-    async getTx(txHash){
+    async getTx(txHash) {
         try {
             const txResponse = await this.dataSource.getTx(txHash)
             if (txResponse === undefined) {
@@ -150,48 +144,55 @@ class TransactionDetail extends Component {
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         // Navigation Item
-        const navAccount = document.getElementById("navAccount")
-        
+        const navAccount = document.getElementById("navAccount");
+
         if (navAccount) {
-            navAccount.style.display = "inline"
+            navAccount.style.display = "inline";
+        }
+
+        // Retrieve the tx information from cached
+        const {
+            fromAddress,
+            destinationAddress,
+            sentAmount,
+            txHash,
+            txFee,
+            status,
+            sentStatus
+        } = PocketService.getTxInfo();
+
+        // Check if values are set
+        if (
+            fromAddress &&
+            destinationAddress &&
+            sentAmount &&
+            txHash &&
+            txFee &&
+            status &&
+            sentStatus
+        ) {
+            // Save information to the state
+            this.setState({
+                fromAddress,
+                destinationAddress,
+                sentAmount,
+                txHash,
+                txFee,
+                status,
+                sentStatus
+            });
+        } else {
+            // Redirect to the home page
+            this.props.history.push({
+                pathname: '/'
+            });
         }
     }
 
     render() {
-        if (this.data !== undefined){
-            if (this.data.account !== undefined) {
-                this.currentAccount = this.data.account
-            }else {
-                console.log("Failed to retrieve account information.")
-            }
-            // If tx hash is available, call getTx, else check for tx object
-            if (this.data.txHash) {
-                this.data.tx = {
-                    sentAmount: 0,
-                    txHash: "",
-                    txFee: 0,
-                    txType: "",
-                    fromAddress: "",
-                    toAddress: ""
-                }
-                // Retrieve the tx information
-                this.getTx(this.data.txHash)
-            }else if (this.data.tx === undefined ) {
-                // Redirect to the home page
-                this.props.history.push({
-                    pathname: '/'
-                })
-                return null
-            }
-        }else {
-            // Redirect to the home page
-            this.props.history.push({
-                pathname: '/'
-            })
-            return null
-        }
+        const {txHash, sentAmount, txFee, fromAddress, destinationAddress} = this.state;
 
         return (
             <DetailContent>
@@ -201,26 +202,26 @@ class TransactionDetail extends Component {
                         <TBody className="details-t">
                             <Tr>
                                 <Th>TRANSACTION HASH</Th>
-                                <Td id="txHash" style={{wordBreak: "break-word"}}> {this.data.tx.txHash} </Td>
+                                <Td id="txHash" style={{ wordBreak: "break-word" }}> {txHash} </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
                                 <table className="states">
-                                    <TBody> 
+                                    <TBody>
                                         <Tr>
-                                            <Td> <img src={load} alt="loading state"/> <span id="sentStatus" >Sending</span> </Td>
-                                            <Td> <span id="status">Pending</span> <img id="statusImg" src={none} alt="none state"/> </Td>
+                                            <Td> <img src={load} alt="loading state" /> <span id="sentStatus" >Sending</span> </Td>
+                                            <Td> <span id="status">Pending</span> <img id="statusImg" src={none} alt="none state" /> </Td>
                                         </Tr>
                                     </TBody>
                                 </table>
                             </Tr>
                             <Tr>
                                 <Th>AMOUNT</Th>
-                                <Td id="sentAmount">{this.data.tx.sentAmount / 1000000} <span>POKT</span></Td>
+                                <Td id="sentAmount">{sentAmount / 1000000} <span>POKT</span></Td>
                             </Tr>
                             <Tr>
                                 <Th>TX FEE</Th>
-                                <Td id="txFee">{this.data.tx.txFee} POKT</Td>
+                                <Td id="txFee">{txFee} POKT</Td>
                             </Tr>
                             <Tr>
                                 <Th>TX TYPE</Th>
@@ -228,11 +229,11 @@ class TransactionDetail extends Component {
                             </Tr>
                             <Tr>
                                 <Th>FROM ADDRESS</Th>
-                                <Td id="fromAddress">{this.data.tx.fromAddress}</Td>
+                                <Td id="fromAddress">{fromAddress}</Td>
                             </Tr>
                             <Tr>
                                 <Th>TO ADDRESS</Th>
-                                <Td id="toAddress">{this.data.tx.toAddress}</Td>
+                                <Td id="toAddress">{destinationAddress}</Td>
                             </Tr>
                         </TBody>
                     </T>
@@ -242,17 +243,17 @@ class TransactionDetail extends Component {
                                 <Th>TRANSACTION HASH</Th>
                             </Tr>
                             <Tr>
-                                <Td id="txHashMobile" style={{wordBreak: "break-word"}}> {this.data.tx.txHash} </Td>
+                                <Td id="txHashMobile" style={{ wordBreak: "break-word" }}> {txHash} </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
                             </Tr>
                             <Tr>
                                 <table className="states">
-                                    <TBody> 
+                                    <TBody>
                                         <Tr>
-                                        <Td> <img src={load} alt="loading state"/> <span id="sentStatusMobile" >Sending</span> </Td>
-                                            <Td> <span id="statusMobile">Pending</span> <img id="statusImgMobile" src={none} alt="none state"/> </Td>
+                                            <Td> <img src={load} alt="loading state" /> <span id="sentStatusMobile" >Sending</span> </Td>
+                                            <Td> <span id="statusMobile">Pending</span> <img id="statusImgMobile" src={none} alt="none state" /> </Td>
                                         </Tr>
                                     </TBody>
                                 </table>
@@ -261,13 +262,13 @@ class TransactionDetail extends Component {
                                 <Th>AMOUNT</Th>
                             </Tr>
                             <Tr>
-                            <Td id="sentAmountMobile">{this.data.tx.sentAmount / 1000000} <span>POKT</span></Td>
+                                <Td id="sentAmountMobile">{sentAmount / 1000000} <span>POKT</span></Td>
                             </Tr>
                             <Tr>
                                 <Th>TX FEE</Th>
                             </Tr>
                             <Tr>
-                                <Td id="txFeeMobile">{this.data.tx.txFee} POKT</Td>
+                                <Td id="txFeeMobile">{txFee} POKT</Td>
                             </Tr>
                             <Tr>
                                 <Th>TX TYPE</Th>
@@ -279,19 +280,19 @@ class TransactionDetail extends Component {
                                 <Th>FROM ADDRESS</Th>
                             </Tr>
                             <Tr>
-                                <Td id="fromAddressMobile">{this.data.tx.fromAddress}</Td>
+                                <Td id="fromAddressMobile">{fromAddress}</Td>
                             </Tr>
                             <Tr>
                                 <Th>TO ADDRESS</Th>
                             </Tr>
                             <Tr>
-                                <Td id="toAddressMobile">{this.data.tx.toAddress}</Td>
+                                <Td id="toAddressMobile">{destinationAddress}</Td>
                             </Tr>
                         </TBody>
                     </T>
-                    <div style={{textAlign: "center"}} className="row">
-                        <Button style={{display: "inline-block", marginTop: "20px", width: "176px"}}
-                                        onClick={this.backToAccountDetail} className="button" >Back to Account Detail</Button>
+                    <div style={{ textAlign: "center" }} className="row">
+                        <Button style={{ display: "inline-block", marginTop: "20px", width: "176px" }}
+                            onClick={this.backToAccountDetail} className="button" >Back to Account Detail</Button>
                     </div>
                 </Wrapper>
             </DetailContent>
