@@ -27,8 +27,7 @@ class Create extends Component {
             keyFileDownloaded: false,
             createBtnEnabled: true,
             downloadKeyFileBtnEnabled: false,
-            errorLabelEnabled: false,
-            errorLabelMessage: "",
+            errorLabel: {show: false, message: undefined},
             pushToAccountDetail: false
         };
 
@@ -71,18 +70,15 @@ class Create extends Component {
         if (passphrase && passphrase) {
             if (!passwordRegex.test(passphrase)) {
                 this.setState({
-                    errorLabelEnabled: true,
-                    errorLabelMessage: "Passphrase must be minimum 15 characters, 1 min uppercase letter and 1 special character."
+                    errorLabel: {show: true, message: "Passphrase must be minimum 15 characters, 1 min uppercase letter and 1 special character."}
                 });
             } else if (passphrase !== confirmPassphrase) {
                 this.setState({
-                    errorLabelEnabled: true,
-                    errorLabelMessage: "Passphrase and Confirm passphrase are not identical."
+                    errorLabel: {show: true, message: "Passphrase and Confirm passphrase are not identical."}
                 });
             } else {
                 this.setState({
-                    errorLabelEnabled: false,
-                    errorLabelMessage: "",
+                    errorLabel: {show: false, message: undefined},
                     validPassphrase: true
                 });
             }
@@ -96,8 +92,7 @@ class Create extends Component {
 
         if (ppk === undefined) {
             this.setState({
-                errorLabelEnabled: true,
-                errorLabelMessage: "Can't download if no account was created."
+                errorLabel: {show: true, message: "Can't download if no account was created."}
             });
             return;
         }
@@ -124,8 +119,7 @@ class Create extends Component {
         // Check if the key file was downloaded
         if (!keyFileDownloaded) {
             this.setState({
-                errorLabelEnabled: true,
-                errorLabelMessage: "Please download your key file before proceeding."
+                errorLabel: {show: true, message: "Please download your key file before proceeding."}
             });
 
             return;
@@ -163,8 +157,7 @@ class Create extends Component {
                 console.log(ppkOrError);
 
                 this.setState({
-                    errorLabelEnabled: true,
-                    errorLabelMessage: "Failed to create an account"
+                    errorLabel: {show: true, message: "Failed to create an account"}
                 });
             }else {
                 // Save the account information in the state
@@ -187,8 +180,7 @@ class Create extends Component {
             }
         }else {
             this.setState({
-                errorLabelEnabled: true,
-                errorLabelMessage: "The passphrase does not fit the requirements"
+                errorLabel: {show: true, message: "The passphrase does not fit the requirements"}
             });
         }
     }
@@ -197,8 +189,7 @@ class Create extends Component {
             const {
                 addressHex, 
                 publicKeyHex, 
-                errorLabelEnabled, 
-                errorLabelMessage, 
+                errorLabel,
                 createBtnEnabled, 
                 downloadKeyFileBtnEnabled,
                 pushToAccountDetail
@@ -215,8 +206,8 @@ class Create extends Component {
                             <div className="cont-input">
                                 <Input onChange={this.handlePassphraseChange} type="password" name="passphrase" id="passphrase" placeholder="Passphrase" />
                                 <span style={{
-                                    display: `${errorLabelEnabled === true ? "block" : "none"}`
-                                }} id="passphraseError" className="error passphrase-error"> <img src={altertR} alt="alert" />{errorLabelMessage}</span>
+                                    display: `${errorLabel.show === true ? "block" : "none"}`
+                                }} id="passphraseError" className="error passphrase-error"> <img src={altertR} alt="alert" />{errorLabel.message}</span>
                                 <Input style={{marginTop: "30px"}} onChange={this.handlePassphraseChange} type="password" name="confirmPassphrase" id="confirmPassphrase" placeholder="Confirm Passphrase" />
                             </div>
                             <div className="btn-subm">
