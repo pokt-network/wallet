@@ -28,7 +28,8 @@ class Header extends Component {
   onLogOut() {
     // Remove any information related to the account
     PocketService.removeUserFromCached();
-
+    // Remove any tx information from cached
+    PocketService.removeTxFromCached();
     // Refresh the page
     window.location.reload();
   };

@@ -3,7 +3,15 @@ import Config from "../../config/config.json";
 
 class PocketService {
     constructor() {
-        this.ls = new SecureLS(Config.SECURE_LS);
+        const encodingType = Config.SECURE_LS_ENCODING_TYPE;
+        const isCompression = Config.SECURE_LS_IS_COMPRESSION;
+        const encryptionSecret = Config.SECURE_LS_ENCRYPTION_SECRET;
+
+        this.ls = new SecureLS({
+            encodingType,
+            isCompression,
+            encryptionSecret
+        });
     }
 
     /**
