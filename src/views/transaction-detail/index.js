@@ -17,29 +17,40 @@ import {
     withRouter
 } from 'react-router-dom'
 import PocketService from "../../core/services/pocket-service";
+import {DataSource} from "../../datasource/datasource";
+
+const dataSource = new DataSource();
 
 class TransactionDetail extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.state = {
-            transaction: undefined,
+            txHash: this.props.location.data,
             successImgSrc: success,
             failedImgSrc: failed,
             pendingImgSrc: none,
-            fromAddress: undefined,
-            destinationAddress: undefined,
-            sentAmount: undefined,
-            txHash: undefined,
-            txFee: undefined,
-            status: undefined,
-            sentStatus: undefined
+            tx: {
+                type: undefined,
+                hash: undefined,
+                sentStatus: undefined,
+                status: undefined,
+                sentAmount: undefined,
+                fee: undefined,
+                fromAddress: undefined,
+                toAddress: undefined
+            }
         };
 
         // Bindings
         this.getTx = this.getTx.bind(this);
         this.updateTxInformation = this.updateTxInformation.bind(this);
         this.backToAccountDetail = this.backToAccountDetail.bind(this);
+        this.capitalize = this.capitalize.bind(this);
+    }
+
+    capitalize(string) {
+        return string ? string.charAt(0).toUpperCase() + string.slice(1) : ""
     }
 
     backToAccountDetail() {
@@ -49,52 +60,50 @@ class TransactionDetail extends Component {
         })
     }
 
-    updateTxInformation(txObj) {
-        document.getElementById("txHash").innerHTML = txObj.txHash
-        document.getElementById("txHashMobile").innerHTML = txObj.txHash
-        document.getElementById("sentStatus").innerHTML = txObj.sentStatus
-        document.getElementById("sentStatusMobile").innerHTML = txObj.sentStatus
-        document.getElementById("status").innerHTML = txObj.status
-        document.getElementById("statusMobile").innerHTML = txObj.status
-
+    updateTxInformation() {
+        const { tx, successImgSrc, failedImgSrc, pendingImgSrc, success, failed } = this.state;
+        
         // Update the status img
-        switch (txObj.status) {
-            case "Success":
-                document.getElementById("statusImg").src = this.state.successImgSrc
-                document.getElementById("statusImgMobile").src = this.state.successImgSrc
+        switch (tx.status.toLowerCase()) {
+            case "success":
+                document.getElementById("statusImg").src = successImgSrc;
+                document.getElementById("statusImgMobile").src = successImgSrc;
+                document.getElementById("sentStatus").src = success;
+                document.getElementById("sentStatusMobile").src = success;
                 break;
-            case "Failed":
-                document.getElementById("statusImg").src = this.state.failedImgSrc
-                document.getElementById("statusImgMobile").src = this.state.failedImgSrc
+            case "failed":
+                document.getElementById("statusImg").src = failedImgSrc;
+                document.getElementById("statusImgMobile").src = failedImgSrc;
+                document.getElementById("sentStatus").src = failed;
+                document.getElementById("sentStatusMobile").src = failed;
                 break;
             default:
-                document.getElementById("statusImg").src = this.state.pendingImgSrc
-                document.getElementById("statusImgMobile").src = this.state.pendingImgSrc
+                document.getElementById("statusImg").src = pendingImgSrc;
+                document.getElementById("statusImgMobile").src = pendingImgSrc;
+                document.getElementById("sentStatus").src = load;
+                document.getElementById("sentStatusMobile").src = load;
                 break;
         }
-        document.getElementById("sentAmount").innerHTML = txObj.sentAmount + " POKT"
-        document.getElementById("sentAmountMobile").innerHTML = txObj.sentAmount + " POKT"
-        document.getElementById("txFee").innerHTML = txObj.txFee + " POKT"
-        document.getElementById("txFeeMobile").innerHTML = txObj.txFee + " POKT"
-        document.getElementById("fromAddress").innerHTML = txObj.fromAddress
-        document.getElementById("fromAddressMobile").innerHTML = txObj.fromAddress
-        document.getElementById("toAddress").innerHTML = txObj.toAddress
-        document.getElementById("toAddressMobile").innerHTML = txObj.toAddress
     }
+
     async getTx(txHash) {
         try {
-            const txResponse = await this.dataSource.getTx(txHash)
+            const txResponse = await dataSource.getTx(txHash);
+
             if (txResponse === undefined) {
-                console.log("Couldn't retrieve the transaction using the provided tx hash")
-                return
+                console.log("Couldn't retrieve the transaction using the provided tx hash");
+                return;
             }
+
             // Update the UI with the retrieved tx
-            const logs = JSON.parse(txResponse.transaction.txResult.log)
-            const events = logs[0].events
-            const status = logs[0].success
-            let senderAddress = ""
-            let recipientAdress = ""
-            let sentAmount = 0
+            const logs = JSON.parse(txResponse.transaction.txResult.log);
+            const events = logs[0].events;
+            const status = logs[0].success;
+
+            let senderAddress = "";
+            let recipientAdress = "";
+            let sentAmount = 0;
+
             if (events.length >= 2) {
                 // Retrieve the sender address
                 const senderAttributes = events[0].attributes
@@ -116,19 +125,32 @@ class TransactionDetail extends Component {
                     sentAmount = amountObj.value.replace("upokt", "")
                     sentAmount = Number(sentAmount) / 1000000
                 }
+                // Save the tx information into the state
+                this.setState({
+                    tx: {
+                        sentAmount: sentAmount,
+                        hash: txResponse.transaction.hash,
+                        fee: Number(Config.TX_FEE) / 1000000,
+                        type: "TokenTransfer",
+                        fromAddress: senderAddress,
+                        toAddress: recipientAdress,
+                        status: status === true ? "Success" : "Failed",
+                        sentStatus: "Sent"
+                    }
+                });
 
-                const txObj = {
-                    sentAmount: sentAmount,
-                    txHash: txResponse.transaction.hash,
-                    txFee: Number(Config.TX_FEE) / 1000000,
-                    txType: "TokenTransfer",
-                    fromAddress: senderAddress,
-                    toAddress: recipientAdress,
-                    status: status === true ? "Success" : "Failed",
-                    sentStatus: "Sent"
-                }
-                this.data.tx = txObj
-                this.updateTxInformation(txObj)
+                // Cach the tx information
+                PocketService.saveTxInCache(
+                    senderAddress,
+                    recipientAdress,
+                    sentAmount,
+                    txResponse.transaction.hash,
+                    Number(Config.TX_FEE) / 1000000,
+                    status === true ? "Success" : "Failed",
+                    "Sent"
+                )
+
+                this.updateTxInformation();
             }
 
             if (events[1].type === "transfer") {
@@ -152,47 +174,57 @@ class TransactionDetail extends Component {
             navAccount.style.display = "inline";
         }
 
-        // Retrieve the tx information from cached
-        const {
-            fromAddress,
-            destinationAddress,
-            sentAmount,
-            txHash,
-            txFee,
-            status,
-            sentStatus
-        } = PocketService.getTxInfo();
+        // Retrieve the tx and txhash from state
+        const {txHash} = this.state;
 
-        // Check if values are set
-        if (
-            fromAddress &&
-            destinationAddress &&
-            sentAmount &&
-            txHash &&
-            txFee &&
-            status &&
-            sentStatus
-        ) {
-            // Save information to the state
-            this.setState({
+        if (txHash !== undefined) {
+            // Retrieve the tx information from the network
+            this.getTx(txHash.txHash);
+        } else {
+            // Retrieve the tx information from cached
+            const {
                 fromAddress,
-                destinationAddress,
+                toAddress,
                 sentAmount,
                 txHash,
                 txFee,
                 status,
                 sentStatus
-            });
-        } else {
-            // Redirect to the home page
-            this.props.history.push({
-                pathname: '/'
-            });
+            } = PocketService.getTxInfo();
+
+            // Check if values are set
+            if (
+                fromAddress &&
+                toAddress &&
+                sentAmount &&
+                txHash &&
+                txFee &&
+                status &&
+                sentStatus
+            ) {
+                // Save information to the state
+                this.setState({
+                    fromAddress,
+                    toAddress,
+                    sentAmount,
+                    txHash,
+                    txFee,
+                    status,
+                    sentStatus
+                });
+            } else {
+                // Redirect to the home page
+                this.props.history.push({
+                    pathname: '/'
+                });
+            }
         }
+
+
     }
 
     render() {
-        const {txHash, sentAmount, txFee, fromAddress, destinationAddress} = this.state;
+        const { tx } = this.state;
 
         return (
             <DetailContent>
@@ -202,26 +234,26 @@ class TransactionDetail extends Component {
                         <TBody className="details-t">
                             <Tr>
                                 <Th>TRANSACTION HASH</Th>
-                                <Td id="txHash" style={{ wordBreak: "break-word" }}> {txHash} </Td>
+                                <Td id="txHash" style={{ wordBreak: "break-word" }}> {tx.hash} </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
                                 <table className="states">
                                     <TBody>
                                         <Tr>
-                                            <Td> <img src={load} alt="loading state" /> <span id="sentStatus" >Sending</span> </Td>
-                                            <Td> <span id="status">Pending</span> <img id="statusImg" src={none} alt="none state" /> </Td>
+                                            <Td> <img src={load} alt="loading state" /> <span id="sentStatus" >{this.capitalize(tx.sentStatus)}</span> </Td>
+                                            <Td> <span id="status">{this.capitalize(tx.status)}</span> <img id="statusImg" src={none} alt="none state" /> </Td>
                                         </Tr>
                                     </TBody>
                                 </table>
                             </Tr>
                             <Tr>
                                 <Th>AMOUNT</Th>
-                                <Td id="sentAmount">{sentAmount / 1000000} <span>POKT</span></Td>
+                                <Td id="sentAmount">{tx.sentAmount / 1000000} <span>POKT</span></Td>
                             </Tr>
                             <Tr>
                                 <Th>TX FEE</Th>
-                                <Td id="txFee">{txFee} POKT</Td>
+                                <Td id="txFee">{tx.fee} POKT</Td>
                             </Tr>
                             <Tr>
                                 <Th>TX TYPE</Th>
@@ -229,11 +261,11 @@ class TransactionDetail extends Component {
                             </Tr>
                             <Tr>
                                 <Th>FROM ADDRESS</Th>
-                                <Td id="fromAddress">{fromAddress}</Td>
+                                <Td id="fromAddress">{tx.fromAddress}</Td>
                             </Tr>
                             <Tr>
                                 <Th>TO ADDRESS</Th>
-                                <Td id="toAddress">{destinationAddress}</Td>
+                                <Td id="toAddress">{tx.toAddress}</Td>
                             </Tr>
                         </TBody>
                     </T>
@@ -243,7 +275,7 @@ class TransactionDetail extends Component {
                                 <Th>TRANSACTION HASH</Th>
                             </Tr>
                             <Tr>
-                                <Td id="txHashMobile" style={{ wordBreak: "break-word" }}> {txHash} </Td>
+                                <Td id="txHashMobile" style={{ wordBreak: "break-word" }}> {tx.hash} </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
@@ -253,7 +285,7 @@ class TransactionDetail extends Component {
                                     <TBody>
                                         <Tr>
                                             <Td> <img src={load} alt="loading state" /> <span id="sentStatusMobile" >Sending</span> </Td>
-                                            <Td> <span id="statusMobile">Pending</span> <img id="statusImgMobile" src={none} alt="none state" /> </Td>
+                                            <Td> <span id="statusMobile">{this.capitalize(tx.status)}</span> <img id="statusImgMobile" src={none} alt="none state" /> </Td>
                                         </Tr>
                                     </TBody>
                                 </table>
@@ -262,13 +294,13 @@ class TransactionDetail extends Component {
                                 <Th>AMOUNT</Th>
                             </Tr>
                             <Tr>
-                                <Td id="sentAmountMobile">{sentAmount / 1000000} <span>POKT</span></Td>
+                                <Td id="sentAmountMobile">{tx.sentAmount / 1000000} <span>POKT</span></Td>
                             </Tr>
                             <Tr>
                                 <Th>TX FEE</Th>
                             </Tr>
                             <Tr>
-                                <Td id="txFeeMobile">{txFee} POKT</Td>
+                                <Td id="txFeeMobile">{tx.fee} POKT</Td>
                             </Tr>
                             <Tr>
                                 <Th>TX TYPE</Th>
@@ -280,13 +312,13 @@ class TransactionDetail extends Component {
                                 <Th>FROM ADDRESS</Th>
                             </Tr>
                             <Tr>
-                                <Td id="fromAddressMobile">{fromAddress}</Td>
+                                <Td id="fromAddressMobile">{tx.fromAddress}</Td>
                             </Tr>
                             <Tr>
                                 <Th>TO ADDRESS</Th>
                             </Tr>
                             <Tr>
-                                <Td id="toAddressMobile">{destinationAddress}</Td>
+                                <Td id="toAddressMobile">{tx.toAddress}</Td>
                             </Tr>
                         </TBody>
                     </T>
