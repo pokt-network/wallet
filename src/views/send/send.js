@@ -3,6 +3,11 @@ import { maxPhone } from "../../utils/media";
 import { colors } from '../../utils/colors';
 
 const SendContent = styled.section`
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button {  
+      opacity: 1;
+
+    }
   .popup {
     position: fixed;
     display: block;
@@ -96,7 +101,7 @@ const SendContent = styled.section`
           background-color: transparent;
           border: none;
           outline: none;
-          max-width: 200px;
+          max-width: 140px;
         }
       }
     }
