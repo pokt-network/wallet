@@ -74,7 +74,7 @@ class PocketService {
     ) {
         try {
             this.ls.set("from_address", {data: fromAddress});
-            this.ls.set("destination_address", {data: destinationAddress});
+            this.ls.set("to_address", {data: destinationAddress});
             this.ls.set("sent_amount", {data: sentAmount});
             this.ls.set("tx_hash", {data: txHash});
             this.ls.set("tx_fee", {data: txFee});
@@ -90,7 +90,7 @@ class PocketService {
      */
     removeTxFromCached() {
         this.ls.remove("from_address");
-        this.ls.remove("destination_address");
+        this.ls.remove("to_address");
         this.ls.remove("sent_amount");
         this.ls.remove("tx_hash");
         this.ls.remove("tx_fee");
@@ -105,7 +105,7 @@ class PocketService {
     getTxInfo() {
         return {
             fromAddress: this.ls.get("from_address").data,
-            destinationAddress: this.ls.get("destination_address").data,
+            toAddress: this.ls.get("to_address").data,
             sentAmount: this.ls.get("sent_amount").data,
             txHash: this.ls.get("tx_hash").data,
             txFee: this.ls.get("tx_fee").data,
