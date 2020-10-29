@@ -302,9 +302,8 @@ export class DataSource {
             passphrase
         );
 
-        if (accountOrUndefined === undefined) {
-            console.log("Failed to import account due to wrong passphrase provided");
-            return accountOrUndefined;
+        if (typeGuard(accountOrUndefined, Error)) {
+            return new Error("Failed to import account due to wrong passphrase provided");
         };
         
         const transactionSenderOrError = await this.__pocket.withImportedAccount(
