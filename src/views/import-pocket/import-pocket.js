@@ -6,10 +6,41 @@ const ImportPocketContent = styled.section`
     position: relative;
     max-width: 800px;
     margin: 80px auto;
+
+    #import-privatekey::placeholder {
+        font-family: 'Lato';
+        font-weight: 400;
+        opacity: 1;
+    }
+
     .import-pk-passphrase {
         width: 350px;
         margin-top: 8px;
     }
+
+    .upload {
+        color: none;
+        opacity: 1.0 !important;
+        line-height: 1.15 !important;
+    }
+
+    .cont-file {
+        font-family: 'Lato';
+        text-align: left;
+        line-height: 0 !important;
+        font-weight: 400;
+        color: black;
+        opacity: 1;
+    }
+
+    .cont-file-empty {
+        font-family: 'Lato';
+        text-align: left;
+        line-height: 0 !important;
+        font-weight: 100;
+        color: gray;
+    }
+
     .close {
         background-color: transparent;
         border-style: none;
@@ -82,7 +113,7 @@ const ImportPocketContent = styled.section`
                     &:last-of-type {
                         margin-top: 20px;
                     }
-                    .cont-file {
+                    .cont-file, .cont-file-empty {
                         padding: 17px 18px;
                         background-color: transparent;
                         position: relative;

@@ -26,7 +26,8 @@ class ImportPocket extends React.Component {
             uploaderText: undefined,
             ppkError: undefined,
             privateKeyError: undefined,
-            buttonError: undefined
+            buttonError: undefined,
+            keyfileName: undefined
         };
 
         // Binds
@@ -61,6 +62,10 @@ class ImportPocket extends React.Component {
             const reader = new FileReader();
             const file = input.files[0];
 
+            this.setState({
+              keyfileName: file.name
+            })
+
             return new Promise(function (resolve, reject) {
                 reader.onloadend = () => {
                     resolve(reader.result);
@@ -86,15 +91,15 @@ class ImportPocket extends React.Component {
         // Clear all errors whenever the users tries to input a private key
         this.hideAllErrors();
 
+        // Reset the file uploader text
+        this.setUploaderText("Choose your Key File");
+
         // Clear state
         this.setState({
             ppk: undefined,
             privateKey: undefined,
             uploaderText: undefined
         })
-
-        // Reset the file uploader text
-        this.setUploaderText("Choose your Key File");
 
         // Get the private key from the input
         const input = e.target;
@@ -116,8 +121,9 @@ class ImportPocket extends React.Component {
             }
 
             try {
-                const ppkObj = JSON.parse(fileInputValue);
-                this.setUploaderText(`${`Hint: ${ppkObj.hint}` || "Key File Uploaded Succesfully"}`);
+                const {keyfileName} = this.state;
+                
+                this.setUploaderText(`${`Name: ${keyfileName}` || "Key File Uploaded Succesfully"}`);
             } catch(e) {
                 console.error(e);
                 this.togglePPKError("Invalid Key File format, must be a JSON file");
@@ -144,7 +150,8 @@ class ImportPocket extends React.Component {
             }
 
             this.setState({
-                privateKey: privateKey,
+                keyfileName: undefined,
+                privateKey: privateKey
             })
         } else {
             this.toggleButtonError("Invalid private key input");
@@ -327,13 +334,12 @@ class ImportPocket extends React.Component {
                       <label htmlFor="keyf">Access by Key File</label>
                       <div
                         id="cont-file"
-                        className="cont-file"
-                        data-text={
-                          uploaderText !== undefined
-                            ? uploaderText
-                            : "Choose your Key File"
-                        }
-                      >
+                        className={uploaderText !== undefined ? "cont-file" : "cont-file-empty"}
+                      >{
+                        uploaderText !== undefined
+                          ? uploaderText
+                          : "Choose your Key File"
+                      }
                         <div className="upload"></div>
                         <Input
                           onChange={this.privKeyInputChange}
@@ -361,14 +367,10 @@ class ImportPocket extends React.Component {
                         Access by Private Key
                       </label>
                       <Input
-                        style={{ color: "black" }}
                         type="password"
                         name="privatekey"
                         id="import-privatekey"
                         placeholder="Enter Private Key"
-                        defaultValue={
-                          privateKey !== undefined ? privateKey : ""
-                        }
                         onChange={this.privKeyInputChange}
                       />
                       <span
