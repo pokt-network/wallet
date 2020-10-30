@@ -167,6 +167,9 @@ class TransactionDetail extends Component {
     }
 
     componentDidMount() {
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
         // Navigation Item
         const navAccount = document.getElementById("navAccount");
 
@@ -204,13 +207,15 @@ class TransactionDetail extends Component {
             ) {
                 // Save information to the state
                 this.setState({
-                    fromAddress,
-                    toAddress,
-                    sentAmount,
-                    txHash,
-                    txFee,
-                    status,
-                    sentStatus
+                    tx: {
+                        fromAddress,
+                        toAddress,
+                        sentAmount,
+                        hash: txHash,
+                        fee: txFee,
+                        status,
+                        sentStatus
+                    }
                 });
             } else {
                 // Redirect to the home page
@@ -219,8 +224,6 @@ class TransactionDetail extends Component {
                 });
             }
         }
-
-
     }
 
     render() {
