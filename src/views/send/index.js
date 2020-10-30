@@ -131,7 +131,7 @@ class Send extends Component {
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
                 // Show error message
-                this.togglePassphraseError(txResponse.message)
+                this.togglePassphraseError(txResponse.message !== undefined ? txResponse.message : "Failed to send the transaction, please verify the information.")
                 
                 return;
             }
@@ -142,6 +142,7 @@ class Send extends Component {
             
             // Save the user information locally
             PocketService.saveUserInCache(addressHex, publicKeyHex, ppk);
+            
             // Save the tx information locally
             PocketService.saveTxInCache(
                 addressHex,
