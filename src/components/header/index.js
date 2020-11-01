@@ -53,7 +53,7 @@ class Header extends Component {
               </StyledLi>
             </StyledUl>
           </Menu>
-          <MobileButton onClick={this.onToggleMenu} />
+          <MobileButton onClick={() => this.onToggleMenu()} />
         </Wrapper>
       </HeaderContainer>
     );

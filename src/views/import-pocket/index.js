@@ -159,8 +159,11 @@ class ImportPocket extends React.Component {
     }
 
     showModal() {
+      const {ppk, privateKey} = this.state;
+      const show = ppk || privateKey !== undefined ? true : false;
+
         this.setState({
-            isModalVisible: true,
+            isModalVisible: show,
         })
     }
 

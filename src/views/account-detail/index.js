@@ -650,9 +650,8 @@ class AccountLatest extends Component {
                             </div>
                         </div>
                         <span id="passphrase-invalid" className="error" style={{ display: displayError === true ? "block" : "none" }}>
-                            {errorMessage}
                             <img src={altertR} alt="alert" />
-                            Invalid Passphrase
+                            {` ${errorMessage}`}
                         </span>
                         <Button
                             style={{
