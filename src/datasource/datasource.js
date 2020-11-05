@@ -313,7 +313,7 @@ export class DataSource {
 
         if (typeGuard(transactionSenderOrError, RpcError)) {
             console.log(transactionSenderOrError);
-            return transactionSenderOrError.message;
+            return new Error(transactionSenderOrError.message);
         };
 
         const rawTxResponse = await transactionSenderOrError
@@ -322,7 +322,7 @@ export class DataSource {
         
         if (typeGuard(rawTxResponse, RpcError)) {
             console.log(`Failed to send transaction with error: ${rawTxResponse}`);
-            return rawTxResponse.message;
+            return new Error(rawTxResponse.message);
         } 
         
         return rawTxResponse;
