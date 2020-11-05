@@ -122,8 +122,14 @@ class ImportPocket extends React.Component {
 
             try {
                 const {keyfileName} = this.state;
-                
-                this.setUploaderText(`${`Name: ${keyfileName}` || "Key File Uploaded Succesfully"}`);
+                let str = keyfileName;
+
+                // Slice the key file name
+                if (keyfileName.length >= 21) {
+                  str = keyfileName.slice(0, 21);
+                }
+
+                this.setUploaderText(`${`Name: ${str}...` || "Key File Uploaded Succesfully"}`);
             } catch(e) {
                 console.error(e);
                 this.togglePPKError("Invalid Key File format, must be a JSON file");
