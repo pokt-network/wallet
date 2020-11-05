@@ -101,7 +101,7 @@ const SendContent = styled.section`
           background-color: transparent;
           border: none;
           outline: none;
-          max-width: 140px;
+          max-width: 180px;
         }
       }
     }
@@ -162,7 +162,8 @@ const SendContent = styled.section`
       }
       .error {
         text-align: center;
-        margin-right: 0;
+        margin-top: 2px;
+        margin-right: 0px;
       }
     }
   }

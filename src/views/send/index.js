@@ -27,12 +27,13 @@ class Send extends Component {
             visibility: false,
             isPassModalVisible: false,
             amountToSend: 0,
+            upoktBalance: 0,
             isAmountValid: false,
             isAddressValid: false,
             txFee: Number(Config.TX_FEE),
             disableSendBtn: false,
-            poktAmount: 0.00,
-            poktAmountUsd: 0.00,
+            poktAmount: undefined,
+            poktAmountUsd: undefined,
             modalAmountToSendPokt: "0.00 POKT",
             modalAmountToSendUsd: "0.00 USD",
             balanceError: undefined,
@@ -57,7 +58,15 @@ class Send extends Component {
         this.enableLoaderIndicatory = this.enableLoaderIndicatory.bind(this);
         this.togglePassphraseError = this.togglePassphraseError.bind(this);
         this.validate = this.validate.bind(this);
+        this.getAccountBalance = this.getAccountBalance.bind(this);
     }
+
+    async getAccountBalance(addressHex) {
+        // Check if the amount to send doesn't exceed the current balance
+        const upoktBalance = (await dataSource.getBalance(addressHex) * 1000000);
+
+        this.setState({upoktBalance});
+    };
 
     enableLoaderIndicatory(show){
         const loaderElement = document.getElementById("loader");
@@ -84,7 +93,7 @@ class Send extends Component {
 
     validate() {
         const {isAddressValid, isAmountValid} = this.state;
-        console.log(`${isAddressValid}, ${isAmountValid}`);
+        
         if (isAddressValid === false) {
             this.setState({
                 isPassModalVisible: false,
@@ -95,8 +104,7 @@ class Send extends Component {
 
         if (isAmountValid === false) {
             this.setState({
-                isPassModalVisible: false,
-                amountError: "Amount is invalid."
+                isPassModalVisible: false
             });
             return false;
         }
@@ -131,7 +139,7 @@ class Send extends Component {
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
                 // Show error message
-                this.togglePassphraseError(txResponse.message !== undefined ? txResponse.message : "Failed to send the transaction, please verify the information.")
+                this.togglePassphraseError(txResponse.message !== undefined ? txResponse.message : "Failed to send the transaction, please verify the information.");
                 
                 return;
             }
@@ -162,9 +170,7 @@ class Send extends Component {
             // Disable loader indicator
             this.enableLoaderIndicatory(false);
             // Show error message
-            this.toggleAddressError("Amount to send or the destination address is invalid.");
-
-            this.showPassModal(false);
+            this.toggleAddressError("Amount to send or the destination address are invalid.");
         }
     }
 
@@ -214,7 +220,11 @@ class Send extends Component {
         if (amountElement && amountElementText) {
             if(amountElement.value <= 0 || amountElement.value === "") {
                 this.toggleAmountError("Amount to send is invalid.");
-                this.setState({isAmountValid: false});
+                this.setState({
+                    poktAmount: undefined,
+                    poktAmountUsd: undefined,
+                    isAmountValid: false,
+                });
                 return;
             }
             // Update the USD value element
@@ -227,22 +237,40 @@ class Send extends Component {
                 const value = amountElement.value * 1000000;
                 // Convert pokt to usd
                 const usdValue = Number(Config.POKT_USD_VALUE) * amountElement.value;
-
-                // Save the values in the state
-                this.setState({
-                    amountToSend: Math.round(value),
-                    isAmountValid: true,
-                    poktAmount: amountElement.value,
-                    poktAmountUsd: usdValue.toFixed(2),
-                    modalAmountToSendPokt: `${amountElement.value} POKT`,
-                    modalAmountToSendUsd: `${usdValue.toFixed(2)} USD`
-                });
                 
-                // Remove error message
-                this.toggleAmountError(undefined);
+                // Check if the amount to send doesn't exceed the current balance
+                const {upoktBalance, amountToSend} = this.state;
+
+                if (upoktBalance < amountToSend) {
+                    // Update the state
+                    this.setState({
+                        amountToSend: Math.round(value),
+                        poktAmount: amountElement.value,
+                        poktAmountUsd: usdValue.toFixed(2),
+                        modalAmountToSendPokt: `${amountElement.value} POKT`,
+                        modalAmountToSendUsd: `${usdValue.toFixed(2)} USD`,
+                        isAmountValid: false,
+                        amountError: "Insufficient balance."
+                    });
+                    // Disable loader indicator
+                    this.enableLoaderIndicatory(false);
+                } else {
+                    // Save the values in the state
+                    this.setState({
+                        amountToSend: Math.round(value),
+                        isAmountValid: true,
+                        poktAmount: amountElement.value,
+                        poktAmountUsd: usdValue.toFixed(2),
+                        modalAmountToSendPokt: `${amountElement.value} POKT`,
+                        modalAmountToSendUsd: `${usdValue.toFixed(2)} USD`
+                    });
+                    
+                    // Remove error message
+                    this.toggleAmountError(undefined);
+                }
             }
         } else {
-            this.toggleAmountError("An error ocurred, please try again.");
+            this.toggleAmountError("Amount is invalid.");
             this.setState({isAmountValid: false});
             return;
         }
@@ -258,7 +286,11 @@ class Send extends Component {
         if (usdAmountElement && usdAmountElementText) {
             if(usdAmountElement.value <= 0 || usdAmountElementText.value === "") {
                 this.toggleAmountError("Amount to send is invalid.");
-                this.setState({isAmountValid: false});
+                this.setState({
+                    poktAmount: undefined,
+                    poktAmountUsd: undefined,
+                    isAmountValid: false
+                });
                 return;
             }
             // Update the POKT value element
@@ -272,24 +304,48 @@ class Send extends Component {
                 // Update the pokt amount elements too
                 const poktValue = value * 1000000;
 
-                // Save the amount in uPOKT to send in the state
-                this.setState({
-                    amountToSend: Math.round(poktValue), 
-                    isAmountValid: true,
-                    poktAmount: value.toFixed(2),
-                    poktAmountUsd: usdAmountElement.value,
-                    modalAmountToSendPokt: `${value.toFixed(2)} POKT`,
-                    modalAmountToSendUsd: `${usdAmountElement.value} USD`
-                });
+                // Check if the amount to send doesn't exceed the current balance
+                const {upoktBalance, amountToSend} = this.state;
 
-                // Remove error message
-                this.toggleAmountError(undefined);
+                if (upoktBalance < amountToSend) {
+                    // Update the state
+                    this.setState({
+                        amountToSend: Math.round(poktValue),
+                        poktAmount: value.toFixed(2),
+                        poktAmountUsd: usdAmountElement.value,
+                        modalAmountToSendPokt: `${value.toFixed(2)} POKT`,
+                        modalAmountToSendUsd: `${usdAmountElement.value} USD`,
+                        isAmountValid: false,
+                        amountError: "Insufficient balance."
+                    });
+                    // Disable loader indicator
+                    this.enableLoaderIndicatory(false);
+                } else {
+                    // Save the amount in uPOKT to send in the state
+                    this.setState({
+                        amountToSend: Math.round(poktValue), 
+                        isAmountValid: true,
+                        poktAmount: value.toFixed(2),
+                        poktAmountUsd: usdAmountElement.value,
+                        modalAmountToSendPokt: `${value.toFixed(2)} POKT`,
+                        modalAmountToSendUsd: `${usdAmountElement.value} USD`
+                    });
+
+                    // Remove error message
+                    this.toggleAmountError(undefined);
+                }
             }
+        } else {
+            this.toggleAmountError("Amount is invalid.");
+            this.setState({isAmountValid: false});
+            return;
         }
     }
 
     // Update destination address
     updateDestinationAddress(){
+        const {addressHex} = this.state;
+
         // Retrieve the current destination address element
         const destinationAddress = document.getElementById("destination-address");
         // Retrieve modal destination adress element
@@ -298,16 +354,20 @@ class Send extends Component {
         // Check if both element exists
         if (destinationAddress && destinationModal) {
             // Validate the address
-            if(dataSource.validateAddress(destinationAddress.value)) {
+            if(addressHex.toLowerCase() === destinationAddress.value.toLowerCase()) {
+                this.toggleAddressError("Recipient address cannot be the same as the sender's address.");
+            } else if(dataSource.validateAddress(destinationAddress.value)) {
                 this.setState({
                     destinationAddress: destinationAddress.value,
                     isAddressValid: true
                 });
                 this.toggleAddressError(undefined);
-            }else {
-                this.toggleAddressError("Address is invalid");
-                this.setState({isAddressValid: false});
+                return;
+            } else {
+                this.toggleAddressError("Address is invalid.");
             }
+
+            this.setState({isAddressValid: false});
         }
     }
 
@@ -322,6 +382,9 @@ class Send extends Component {
                 publicKeyHex, 
                 ppk
             });
+
+            // Retrieve the account balance
+            this.getAccountBalance(addressHex);
         } else {
             // Redirect to the home page
             this.props.history.push({
@@ -395,10 +458,12 @@ class Send extends Component {
                                     <label htmlFor="adrs">To address</label>
                                     <Input type="text" name="address" id="destination-address" onChange={this.updateValues} placeholder="Pocket account address"/>
                                     <span style={{
-                                        display: addressError !== undefined ? "block" : "none"
+                                        opacity: addressError !== undefined ? "1" : "0",
+                                        display: "block"
                                     }} id="address-error" className="error"> <img src={altertR} alt="alert" /> {addressError}</span>
                                     <span style={{
-                                        display: amountError !== undefined ? "block" : "none"
+                                        opacity: amountError !== undefined ? "1" : "0",
+                                        display: "block"
                                     }} id="amount-error" className="error"> <img src={altertR} alt="alert" /> {amountError}</span>
                                     <label>TX Fee {this.state.txFee / 1000000} POKT</label>
                                     <Button style={{display: "inline-block", marginTop: "20px"}} 
@@ -434,8 +499,9 @@ class Send extends Component {
                                                 </form>
                                             </div>
                                             <span id="balance-error" style={{ 
-                                                display: balanceError !== undefined ? "block" : "none" 
-                                                }} className="error"> <img src={altertR} alt="alert" /> Not Enough Balance</span>
+                                                opacity: balanceError !== undefined ? "1" : "0",
+                                                display: "block"
+                                                }} className="error"> <img src={altertR} alt="alert" /></span>
                                         </PopupContent>
                                     </div>
                                     <div style={{ 
@@ -452,7 +518,8 @@ class Send extends Component {
                                                         <Input type="password" name="passphrase" id="modal-passphrase" />
                                                     </div>
                                                 <span id="passphrase-error" style={{
-                                                    display: passphraseError !== undefined ? "block" : "none"
+                                                    opacity: passphraseError !== undefined ? "1" : "0",
+                                                    display: "block"
                                                 }} className="error"> <img src={altertR} alt="alert" /> {passphraseError}</span>
                                                     <div className="btn-subm">
                                                         <Button id="sendButton" disabled={disableSendBtn} onClick={this.sendTransaction} >Send</Button>
