@@ -596,7 +596,7 @@ class AccountLatest extends Component {
                                 </Tr>
                             </THead>
                             <TBody style={{
-                                display: displayTxListSection === true ? "block" : "none"
+                                display: "block"
                                 }} id="transation-list-section" className="l-tx table-scroll">
                                  <Tr id="tr-element" style={{display: "none"}}>
                                     <Td id="td-element"> <img src={load} alt="loading" /> </Td>
