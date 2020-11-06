@@ -430,7 +430,6 @@ class AccountLatest extends Component {
             displayNode,
             displayError,
             errorMessage,
-            displayTxListSection,
             isModalVisible,
             displayNormalAccount,
             displayPkReveal,
