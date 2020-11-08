@@ -32,7 +32,7 @@ jobs:
         DISPATCHERS: "https://node1.testnet.pokt.network,https://node2.testnet.pokt.network,https://node3.testnet.pokt.network,https://node4.testnet.pokt.network,https://node5.testnet.pokt.network"
         HTTP_PROVIDER: "https://node1.testnet.pokt.network:443"
         AAT_VERSION: "0.0.1"
-        MAX_DISPATCHERS: 5
+        MAX_DISPATCHERS: 0
         PROVIDER_TYPE: "http"
         BLOCK_EXPLORER_BASE_URL: "https://explorer.testnet.pokt.network"
         DASHBOARD_BASE_URL: "https://dashboard.testnet.pokt.network"
