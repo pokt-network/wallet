@@ -36,10 +36,6 @@ class Header extends Component {
   };
 
   pushToDetails() {
-    // const accountDetailsPage = `${window.location.hostname}:3000/account`;
-    // console.log(accountDetailsPage);
-    // window.location.replace(accountDetailsPage);
-    // eslint-disable-next-line react/prop-types
     this.props.history.push("/account");
   }
 
