@@ -23,9 +23,15 @@ class PocketService {
      */
     saveUserInCache(addressHex, publicKeyHex, ppk) {
         try {
+            const sessionLenght = Config.SESSION_LENGTH;
+            const sessionStart = Math.floor(Date.now()/1000);
+            const sessionExpiration = sessionStart + (sessionLenght * 60);// Expires every 1 minutes
+
             this.ls.set("address_hex", {data: addressHex});
             this.ls.set("public_key_hex", {data: publicKeyHex});
             this.ls.set("ppk", {data: ppk});
+            // Save the session end date/time in unix timestamp seconds
+            this.ls.set("session_end", {data: sessionExpiration})
         } catch (error) {
             console.log(error);
         }
@@ -38,6 +44,7 @@ class PocketService {
         this.ls.remove("address_hex");
         this.ls.remove("public_key_hex");
         this.ls.remove("ppk");
+        this.ls.remove("session_end");
     }
 
     /**
@@ -45,11 +52,38 @@ class PocketService {
      *
      */
     getUserInfo() {
+        if (!this.isSessionExpired()) {
+            return {
+                addressHex: this.ls.get("address_hex").data,
+                publicKeyHex: this.ls.get("public_key_hex").data,
+                ppk: this.ls.get("ppk").data,
+            };
+        }
+
+        // Delete all cached information
+        this.removeUserFromCached();
+        this.removeTxFromCached();
+
         return {
-            addressHex: this.ls.get("address_hex").data,
-            publicKeyHex: this.ls.get("public_key_hex").data,
-            ppk: this.ls.get("ppk").data
+            addressHex: undefined,
+            publicKeyHex: undefined,
+            ppk: undefined
         };
+    }
+
+    /**
+     * Returns true or false if the session expired for innactivity.
+     *
+     */
+    isSessionExpired() {
+        const sessionStart = Math.floor(Date.now()/1000);
+        const sessionEnd = this.ls.get("session_end").data;
+
+        if (sessionEnd < sessionStart) {
+            return true;
+        }
+        
+        return false;
     }
 
     /**
