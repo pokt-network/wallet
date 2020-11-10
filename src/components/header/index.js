@@ -7,9 +7,9 @@ import StyledUl from "./ul";
 import StyledLi from "./li";
 import HeaderContainer from "./header";
 import logo from '../../utils/images/logo-white.png';
-import arrow from '../../utils/images/right-arrow.png';
 import Config from "../../config/config.json";
 import PocketService from "../../core/services/pocket-service";
+import {withRouter} from 'react-router-dom';
 
 class Header extends Component {
   constructor(props) {
@@ -17,6 +17,7 @@ class Header extends Component {
     this.state = {
       isMenuHidden: true
     }
+    this.props = props;
   }
 
   onToggleMenu() {
@@ -34,22 +35,32 @@ class Header extends Component {
     window.location.reload();
   };
 
+  pushToDetails() {
+    // const accountDetailsPage = `${window.location.hostname}:3000/account`;
+    // console.log(accountDetailsPage);
+    // window.location.replace(accountDetailsPage);
+    // eslint-disable-next-line react/prop-types
+    this.props.history.push("/account");
+  }
+
   render() {
-    let hrefLink = '#';
+    const {isMenuHidden} = this.state;
+    
     return (
-      <HeaderContainer isHidden={this.state.isMenuHidden}>
+      
+      <HeaderContainer isHidden={isMenuHidden}>
         <Wrapper className="header">
-          <Logo href="/"> <img src={logo} alt="logo pocket" /> <span>/ &nbsp; WALLET</span> </Logo>
-          <Menu isHidden={this.state.isMenuHidden}>
+          <Logo target="_target" href="https://www.pokt.network/"> <img src={logo} alt="logo pocket" /> <span>/ &nbsp; WALLET</span> </Logo>
+          <Menu isHidden={isMenuHidden}>
             <StyledUl>
+            <StyledLi>
+                <button className="nav-button" id="account-detail-nav" onClick={() => this.pushToDetails()} >Account Detail</button>
+              </StyledLi>
               <StyledLi>
                 <a tartget="_target" href={Config.BUY_POKT_BASE_URL}>Buy POKT</a>
               </StyledLi>
-              <StyledLi style={{display: "none"}} id="navAccount" className="sub_menu">
-                <a href={hrefLink}> Account <img src={arrow} alt="greater than" /> </a>
-                <ul>
-                  <li><button style={{cursor: "pointer", borderStyle: "none", backgroundColor: "transparent"}} onClick={this.onLogOut} >Log out</button></li>
-              </ul>
+              <StyledLi>
+                <button className="nav-button" id="log-out-nav" onClick={this.onLogOut} >Log out</button>
               </StyledLi>
             </StyledUl>
           </Menu>
@@ -60,4 +71,4 @@ class Header extends Component {
   }
 }
 
-export default Header;
+export default withRouter(Header);

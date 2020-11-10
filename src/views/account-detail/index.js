@@ -389,6 +389,13 @@ class AccountLatest extends Component {
         const {addressHex, publicKeyHex, ppk} = PocketService.getUserInfo();
 
         if (addressHex && publicKeyHex && ppk) {
+            // Navigation Items
+            const navLogOut = document.getElementById("log-out-nav");
+
+            if (navLogOut) {
+                navLogOut.style.display = "block";
+            }
+
             // Save information to the state
             this.setState({
                 addressHex, 
@@ -402,13 +409,6 @@ class AccountLatest extends Component {
             this.props.history.push({
                 pathname: '/'
             });
-        }
-
-        // Navigation Item
-        const navAccount = document.getElementById("navAccount");
-        
-        if (navAccount) {
-            navAccount.style.display = "inline";
         }
     }
     
