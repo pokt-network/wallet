@@ -2,6 +2,16 @@ import styled, { css } from "styled-components";
 import { tablet, maxPhone } from "../../utils/media";
 
 const HeaderContainer = styled.header`
+  .nav-button {
+    display: none;
+    cursor: pointer; 
+    border-style: none; 
+    background-color: transparent; 
+    font-weight: 300;
+    font-size: 14px;
+    color: #fff;
+  }
+
   ${tablet(css`
     height: 75px;
     padding-top: 5px;

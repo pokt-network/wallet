@@ -376,13 +376,22 @@ class Send extends Component {
         const {addressHex, publicKeyHex, ppk} = PocketService.getUserInfo();
 
         if (addressHex && publicKeyHex && ppk) {
+            // Navigation Items
+            const navAccount = document.getElementById("account-detail-nav");
+            const navLogOut = document.getElementById("log-out-nav");
+             
+            if (navAccount && navLogOut) {
+                navAccount.style.display = "block";
+                navLogOut.style.display = "block";
+            }
+
             // Save information to the state
             this.setState({
                 addressHex, 
                 publicKeyHex, 
                 ppk
             });
-
+            
             // Retrieve the account balance
             this.getAccountBalance(addressHex);
         } else {

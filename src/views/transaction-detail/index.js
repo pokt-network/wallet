@@ -170,11 +170,13 @@ class TransactionDetail extends Component {
         // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // Navigation Item
-        const navAccount = document.getElementById("navAccount");
-
-        if (navAccount) {
-            navAccount.style.display = "inline";
+        // Navigation Items
+        const navAccount = document.getElementById("account-detail-nav");
+        const navLogOut = document.getElementById("log-out-nav");
+        
+        if (navAccount && navLogOut) {
+            navAccount.style.display = "block";
+            navLogOut.style.display = "block";
         }
 
         // Retrieve the tx and txhash from state
