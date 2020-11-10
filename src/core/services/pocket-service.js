@@ -25,7 +25,7 @@ class PocketService {
         try {
             const sessionLenght = Config.SESSION_LENGTH;
             const sessionStart = Math.floor(Date.now()/1000);
-            const sessionExpiration = sessionStart + (sessionLenght * 60);// Expires every 1 minutes
+            const sessionExpiration = sessionStart + (sessionLenght * 60);// Expires every x minutes
 
             this.ls.set("address_hex", {data: addressHex});
             this.ls.set("public_key_hex", {data: publicKeyHex});
