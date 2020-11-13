@@ -190,7 +190,7 @@ export class DataSource {
      * @returns {Account}
      */
     async importPortablePrivateKey(password, jsonStr, passphrase) {
-        
+
         const accountOrError = await this.__pocket.keybase.importPPKFromJSON(
             password,
             jsonStr,
@@ -305,7 +305,7 @@ export class DataSource {
         if (typeGuard(accountOrUndefined, Error)) {
             return new Error("Failed to import account due to wrong passphrase provided");
         };
-        
+
         const transactionSenderOrError = await this.__pocket.withImportedAccount(
             accountOrUndefined.address,
             passphrase
@@ -319,12 +319,12 @@ export class DataSource {
         const rawTxResponse = await transactionSenderOrError
             .send(accountOrUndefined.addressHex, toAddress, amount.toString())
             .submit(Config.CHAIN_ID, defaultFee, CoinDenom.Upokt, "Pocket Wallet");
-        
+
         if (typeGuard(rawTxResponse, RpcError)) {
             console.log(`Failed to send transaction with error: ${rawTxResponse}`);
             return new Error(rawTxResponse.message);
-        } 
-        
+        }
+
         return rawTxResponse;
     }
     /**
@@ -398,40 +398,35 @@ export class DataSource {
     async getAllTransactions(address) {
         let receivedTxs;
         let sentTxs;
-        
+
         try {
             // Retrieve received transactions
             const receivedTxsOrError = await this.getTxs(address, true);
 
-            if (
-                !typeGuard(receivedTxsOrError, RpcError) &&
-                receivedTxsOrError !== undefined
-            ) {
+            if (!typeGuard(receivedTxsOrError, RpcError) && receivedTxsOrError !== undefined) {
                 receivedTxs = receivedTxsOrError.toJSON();
             }
 
             // Retrieve sent transactions
             const sentTxsOrError = await this.getTxs(address, false);
 
-            if (
-                !typeGuard(sentTxsOrError, RpcError) &&
-                sentTxsOrError !== undefined
-            ) {
+            if (!typeGuard(sentTxsOrError, RpcError) && sentTxsOrError !== undefined) {
                 sentTxs = sentTxsOrError.toJSON();
             }
 
             if (receivedTxs === undefined && sentTxs === undefined) return undefined;
+
             // Check if both arrays are not empty
             if (
-                receivedTxs.txs &&
+                receivedTxs && receivedTxs.txs &&
                 receivedTxs.txs.length > 0 &&
-                sentTxs.txs &&
+                sentTxs && sentTxs.txs &&
                 sentTxs.txs.length > 0
             ) {
                 return this.mergeTxs(receivedTxs, sentTxs);
-            } else if (receivedTxs.txs.length > 0) {
+            } else if (receivedTxs && receivedTxs.txs && receivedTxs.txs.length > 0) {
                 return this.sortTxs(receivedTxs, "Received");
-            } else if (sentTxs.txs.length > 0) {
+            } else if (sentTxs && sentTxs.txs && sentTxs.txs.length > 0) {
                 return this.sortTxs(sentTxs, "Sent");
             } else {
                 return undefined;
