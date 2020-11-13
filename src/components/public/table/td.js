@@ -87,7 +87,6 @@ const Td = styled.td`
     tr:last-of-type & {
         .detail-table.desktop & {
             padding-bottom: 40px;
-            color: ${colors.blueLink};
         }
     }
     tr:nth-of-type(2) & {
@@ -107,7 +106,7 @@ const Td = styled.td`
                 span {
                     position: absolute;
                     top: 16px;
-                    right: 44px;
+                    
                 }
             }
             img {
