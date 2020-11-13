@@ -8,7 +8,6 @@ import Td from '../../components/public/table/td';
 import Tr from '../../components/public/table/tr';
 import TBody from '../../components/public/table/tbody';
 import Button from '../../components/public/button/button';
-import load from '../../utils/images/load.png';
 import none from '../../utils/images/none.png';
 import success from '../../utils/images/check_green.png';
 import failed from '../../utils/images/wrong_red.png';
@@ -45,43 +44,38 @@ class TransactionDetail extends Component {
         // Bindings
         this.getTx = this.getTx.bind(this);
         this.updateTxInformation = this.updateTxInformation.bind(this);
-        this.backToAccountDetail = this.backToAccountDetail.bind(this);
         this.capitalize = this.capitalize.bind(this);
+        this.openExplorer = this.openExplorer.bind(this);
+    }
+
+    openExplorer(address) {
+        const url = `${Config.BLOCK_EXPLORER_BASE_URL}/account/${address}`;
+        window.open(url);
     }
 
     capitalize(string) {
         return string ? string.charAt(0).toUpperCase() + string.slice(1) : ""
     }
 
-    backToAccountDetail() {
-        // Move to the account detail page
-        this.props.history.push({
-            pathname: "/account"
-        })
-    }
+    updateTxInformation(txObj = undefined) {
+        const { tx, successImgSrc, failedImgSrc, pendingImgSrc } = this.state;
+        const transaction = txObj !== undefined ? txObj : tx;
 
-    updateTxInformation() {
-        const { tx, successImgSrc, failedImgSrc, pendingImgSrc, success, failed } = this.state;
-        
         // Update the status img
-        switch (tx.status.toLowerCase()) {
+        console.log("tx.status.toLowerCase() = "+ transaction.status.toLowerCase());
+        switch (transaction.status.toLowerCase()) {
+            
             case "success":
                 document.getElementById("statusImg").src = successImgSrc;
                 document.getElementById("statusImgMobile").src = successImgSrc;
-                document.getElementById("sentStatus").src = success;
-                document.getElementById("sentStatusMobile").src = success;
                 break;
             case "failed":
                 document.getElementById("statusImg").src = failedImgSrc;
                 document.getElementById("statusImgMobile").src = failedImgSrc;
-                document.getElementById("sentStatus").src = failed;
-                document.getElementById("sentStatusMobile").src = failed;
                 break;
             default:
                 document.getElementById("statusImg").src = pendingImgSrc;
                 document.getElementById("statusImgMobile").src = pendingImgSrc;
-                document.getElementById("sentStatus").src = load;
-                document.getElementById("sentStatusMobile").src = load;
                 break;
         }
     }
@@ -123,7 +117,7 @@ class TransactionDetail extends Component {
                 const amountObj = recipientAttributes.find(e => e.key === "amount")
                 if (amountObj !== undefined) {
                     sentAmount = amountObj.value.replace("upokt", "")
-                    sentAmount = Number(sentAmount) / 1000000
+                    sentAmount = Number(sentAmount)
                 }
                 // Save the tx information into the state
                 this.setState({
@@ -151,13 +145,6 @@ class TransactionDetail extends Component {
                 )
 
                 this.updateTxInformation();
-            }
-
-            if (events[1].type === "transfer") {
-                const attributes = events[1].attributes
-                if (attributes[1].key === "amount") {
-                    console.log()
-                }
             }
 
         } catch (error) {
@@ -207,18 +194,26 @@ class TransactionDetail extends Component {
                 status &&
                 sentStatus
             ) {
-                // Save information to the state
-                this.setState({
+                // 
+                const sentAmountFormatted = sentAmount * 1000000;
+
+                //
+                const obj = {
                     tx: {
                         fromAddress,
                         toAddress,
-                        sentAmount,
+                        sentAmount: sentAmountFormatted,
                         hash: txHash,
                         fee: txFee,
                         status,
                         sentStatus
                     }
-                });
+                }
+
+                // Save information to the state
+                this.setState(obj);
+                // Update the tx information
+                this.updateTxInformation(obj.tx);
             } else {
                 // Redirect to the home page
                 this.props.history.push({
@@ -243,14 +238,18 @@ class TransactionDetail extends Component {
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
-                                <table className="states">
-                                    <TBody>
-                                        <Tr>
-                                            <Td> <img src={load} alt="loading state" /> <span id="sentStatus" >{this.capitalize(tx.sentStatus)}</span> </Td>
-                                            <Td> <span id="status">{this.capitalize(tx.status)}</span> <img id="statusImg" src={none} alt="none state" /> </Td>
-                                        </Tr>
-                                    </TBody>
-                                </table>
+                                <Td> 
+                                    <img style={{
+                                        top: "9px",
+                                        left: "14px",
+                                        position: "absolute"
+                                    }} id="statusImg" src={none} alt="none state" /> 
+                                    <span style={{
+                                        top: "13px",
+                                        left: "38px",
+                                        position: "absolute"
+                                    }} id="status">{this.capitalize(tx.status)}</span>                                     
+                                </Td>
                             </Tr>
                             <Tr>
                                 <Th>AMOUNT</Th>
@@ -265,12 +264,18 @@ class TransactionDetail extends Component {
                                 <Td>TokenTransfer</Td>
                             </Tr>
                             <Tr>
-                                <Th>FROM ADDRESS</Th>
-                                <Td id="fromAddress">{tx.fromAddress}</Td>
+                                <Th>SENDER</Th>
+                                <Td style={{
+                                    color: "#27a9e0",
+                                    cursor: "pointer"
+                                }} id="fromAddress" onClick={() => this.openExplorer(tx.fromAddress)} >{tx.fromAddress}</Td>
                             </Tr>
                             <Tr>
-                                <Th>TO ADDRESS</Th>
-                                <Td id="toAddress">{tx.toAddress}</Td>
+                                <Th>RECIPIENT</Th>
+                                <Td style={{
+                                    color: "#27a9e0",
+                                    cursor: "pointer"
+                                }} id="toAddress" onClick={() => this.openExplorer(tx.toAddress)} >{tx.toAddress}</Td>
                             </Tr>
                         </TBody>
                     </T>
@@ -284,16 +289,18 @@ class TransactionDetail extends Component {
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
-                            </Tr>
-                            <Tr>
-                                <table className="states">
-                                    <TBody>
-                                        <Tr>
-                                            <Td> <img src={load} alt="loading state" /> <span id="sentStatusMobile" >Sending</span> </Td>
-                                            <Td> <span id="statusMobile">{this.capitalize(tx.status)}</span> <img id="statusImgMobile" src={none} alt="none state" /> </Td>
-                                        </Tr>
-                                    </TBody>
-                                </table>
+                                <Td> 
+                                    <img style={{
+                                        top: "9px",
+                                        left: "14px",
+                                        position: "absolute"
+                                    }} id="statusImgMobile" src={none} alt="none state" /> 
+                                    <span style={{
+                                        top: "13px",
+                                        left: "38px",
+                                        position: "absolute"
+                                    }} id="statusMobile">{this.capitalize(tx.status)}</span>                                     
+                                </Td>
                             </Tr>
                             <Tr>
                                 <Th>AMOUNT</Th>
@@ -314,23 +321,19 @@ class TransactionDetail extends Component {
                                 <Td>TokenTransfer</Td>
                             </Tr>
                             <Tr>
-                                <Th>FROM ADDRESS</Th>
+                                <Th>SENDER</Th>
                             </Tr>
                             <Tr>
                                 <Td id="fromAddressMobile">{tx.fromAddress}</Td>
                             </Tr>
                             <Tr>
-                                <Th>TO ADDRESS</Th>
+                                <Th>RECIPIENT</Th>
                             </Tr>
                             <Tr>
                                 <Td id="toAddressMobile">{tx.toAddress}</Td>
                             </Tr>
                         </TBody>
                     </T>
-                    <div style={{ textAlign: "center" }} className="row">
-                        <Button style={{ display: "inline-block", marginTop: "20px", width: "176px" }}
-                            onClick={this.backToAccountDetail} className="button" >Back to Account Detail</Button>
-                    </div>
                 </Wrapper>
             </DetailContent>
         );
