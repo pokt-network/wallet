@@ -155,9 +155,9 @@ class Send extends Component {
             PocketService.saveTxInCache(
                 addressHex,
                 destinationAddress.value,
-                amountToSend.toString(),
+                amountToSend,
                 txResponse.hash,
-                (txFee / 1000000).toString(),
+                (txFee / 1000000),
                 "Pending",
                 "Pending"
             );
