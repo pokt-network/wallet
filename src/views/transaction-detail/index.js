@@ -7,7 +7,6 @@ import Th from '../../components/public/table/th';
 import Td from '../../components/public/table/td';
 import Tr from '../../components/public/table/tr';
 import TBody from '../../components/public/table/tbody';
-import Button from '../../components/public/button/button';
 import none from '../../utils/images/none.png';
 import success from '../../utils/images/check_green.png';
 import failed from '../../utils/images/wrong_red.png';
