@@ -294,7 +294,7 @@ export class DataSource {
         this.__pocket.rpc(provider);
 
         // uPOKT
-        const defaultFee = "100000";
+        const defaultFee = Config.TX_FEE || 10000;
 
         const accountOrUndefined = await this.__pocket.keybase.importPPKFromJSON(
             passphrase,
@@ -318,7 +318,7 @@ export class DataSource {
 
         const rawTxResponse = await transactionSenderOrError
             .send(accountOrUndefined.addressHex, toAddress, amount.toString())
-            .submit(Config.CHAIN_ID, defaultFee, CoinDenom.Upokt, "Pocket Wallet");
+            .submit(Config.CHAIN_ID, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
 
         if (typeGuard(rawTxResponse, RpcError)) {
             console.log(`Failed to send transaction with error: ${rawTxResponse}`);
