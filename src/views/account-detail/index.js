@@ -52,9 +52,12 @@ class AccountLatest extends Component {
             poktBalance: 0,
             usdBalance: 0,
             noTransactions: true,
-            stakedTokens: 0,
-            stakingStatus: "UNSTAKED",
-            stakingStatusImg: unstaked,
+            appStakedTokens: 0,
+            nodeStakedTokens: 0,
+            appStakingStatus: "UNSTAKED",
+            nodeStakingStatus: "UNSTAKED",
+            appStakingStatusImg: unstaked,
+            nodeStakingStatusImg: unstaked,
             displayApp: false,
             displayNode: false,
             privateKey: undefined,
@@ -74,7 +77,8 @@ class AccountLatest extends Component {
         this.onToggleBtn = this.onToggleBtn.bind(this);
         this.getBalance = this.getBalance.bind(this);
         this.getAccountType = this.getAccountType.bind(this);
-        this.addAppOrNode = this.addAppOrNode.bind(this);
+        this.addApp = this.addApp.bind(this);
+        this.addNode = this.addNode.bind(this);
         this.getTransactions = this.getTransactions.bind(this);
         this.pushToSend = this.pushToSend.bind(this);
         this.pushToTxDetail = this.pushToTxDetail.bind(this);
@@ -233,39 +237,66 @@ class AccountLatest extends Component {
             this.enableLoaderIndicatory(false);
         }
     }
-    async addAppOrNode(type = "app") {
-        const {node, app, stakedImgSrc, unstakingImgSrc, unstakedImgSrc} = this.state;
-        let account = app;
+    async addApp() {
+        const {app, stakedImgSrc, unstakingImgSrc, unstakedImgSrc} = this.state;
 
-        if (type === "node") {
-            account = node
-        }
+        let obj = {
+            stakingStatus: "UNSTAKED",
+            stakingStatusImg: unstakedImgSrc,
+            stakedTokens: 0
+        };
 
-        if (account !== undefined) {
+        if (app !== undefined) {
             // Update the staked amount
-            
-            const stakedTokens = Number(account.stakedTokens.toString()) / 1000000;
+            obj.stakedTokens = (Number(app.stakedTokens.toString()) / 1000000).toFixed(3);
 
-            let stakingStatus = "UNSTAKED";
-            let stakingStatusImg = unstakedImgSrc;
-
-            if (account.status === 1) {
-                stakingStatus = "UNSTAKING";
-                stakingStatusImg = unstakingImgSrc;
-            }else if(account.status === 2){
-                stakingStatus = "STAKED";
-                stakingStatusImg = stakedImgSrc;
-            }
-
-            // Update the state
-            this.setState({
-                stakedTokens,
-                displayApp: type === "app" ? true : false,
-                displayNode: type === "node" ? true : false,
-                stakingStatus,
-                stakingStatusImg,
-            });
+            if (app.status === 1) {
+                obj.stakingStatus = "UNSTAKING";
+                obj.stakingStatusImg = unstakingImgSrc;
+            }else if(app.status === 2){
+                obj.stakingStatus = "STAKED";
+                obj.stakingStatusImg = stakedImgSrc;
+            };
         }
+
+        // Update the state
+        this.setState({
+            displayApp: true,
+            appStakedTokens: obj.stakedTokens,
+            appStakingStatus: obj.stakingStatus,
+            appStakingStatusImg: obj.stakingStatusImg,
+        });
+    }
+
+    async addNode() {
+        const {node, stakedImgSrc, unstakingImgSrc, unstakedImgSrc} = this.state;
+
+        let obj = {
+            stakingStatus: "UNSTAKED",
+            stakingStatusImg: unstakedImgSrc,
+            stakedTokens: 0
+        };
+
+        if (node !== undefined) {
+            // Update the staked amount
+            obj.stakedTokens = (Number(node.stakedTokens.toString()) / 1000000).toFixed(3);
+
+            if (node.status === 1) {
+                obj.stakingStatus = "UNSTAKING";
+                obj.stakingStatusImg = unstakingImgSrc;
+            }else if(node.status === 2){
+                obj.stakingStatus = "STAKED";
+                obj.stakingStatusImg = stakedImgSrc;
+            };
+        }
+
+        // Update the state
+        this.setState({
+            displayNode: true,
+            nodeStakedTokens: obj.stakedTokens,
+            nodeStakingStatus: obj.stakingStatus,
+            nodeStakingStatusImg: obj.stakingStatusImg,
+        });
     }
 
     // Account type, amount staked and staking status
@@ -276,14 +307,15 @@ class AccountLatest extends Component {
 
         if (appOrError !== undefined) {
             this.setState({app: appOrError.application});
-            this.addAppOrNode();
+            this.addApp();
         }
+
         // Try to get the node information
         const nodeOrError = await dataSource.getNode(addressHex);
 
         if (nodeOrError !== undefined) {
             this.setState({node: nodeOrError.node});
-            this.addAppOrNode("node");
+            this.addNode();
         }
 
         // If not and app or node, load normal account
@@ -425,9 +457,12 @@ class AccountLatest extends Component {
             usdBalance, 
             visibility, 
             noTransactions,
-            stakedTokens,
-            stakingStatus,
-            stakingStatusImg,
+            appStakedTokens,
+            appStakingStatus,
+            appStakingStatusImg,
+            nodeStakedTokens,
+            nodeStakingStatus,
+            nodeStakingStatusImg,
             displayApp,
             displayNode,
             displayError,
@@ -480,7 +515,11 @@ class AccountLatest extends Component {
                             }} id="normal-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block"}} src={token} alt="staked tokens"/>
+                                    <img style={{
+                                        display: "inline-block",
+                                        marginRight: "2px",
+                                        marginBottom: "-2.4px"
+                                        }} src={token} alt="staked tokens"/>
                                     <h2 style={{display: "inline-block", verticalAlign: "bottom"}}>  0 </h2>
                                 </div>
                                 <span className="title">Staked POKT</span>
@@ -507,21 +546,25 @@ class AccountLatest extends Component {
                             }} id="node-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block"}} src={token} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="node-staked-tokens-amount" > {stakedTokens} </h2>
+                                <img style={{
+                                        display: "inline-block",
+                                        marginRight: "2px",
+                                        marginBottom: "-2.4px"
+                                        }}src={token} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="node-staked-tokens-amount" > {nodeStakedTokens} </h2>
                                 </div>
                                 <span className="title">Staked POKT</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block"}} id="node-stake-status-img" src={stakingStatusImg} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="node-staking-status"> {stakingStatus} </h2>
+                                    <img style={{display: "inline-block", marginRight: "2px", marginBottom: "-1px"}} id="node-stake-status-img" src={nodeStakingStatusImg} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="node-staking-status"> {nodeStakingStatus} </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block"}} src={node} alt="staked tokens"/>
+                                    <img style={{display: "inline-block", marginRight: "2px", marginBottom: "-1px"}} src={node} alt="staked tokens"/>
                                     <h2 style={{display: "inline-block", verticalAlign: "bottom"}}>  NODE</h2>
                                 </div>
                                 <span className="title">Account Type</span>
@@ -535,21 +578,25 @@ class AccountLatest extends Component {
                             }} id="app-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block"}} src={token} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="app-staked-tokens-amount">  {stakedTokens} </h2>
+                                    <img style={{
+                                        display: "inline-block",
+                                        marginRight: "2px",
+                                        marginBottom: "-2.4px"
+                                        }} src={token} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="app-staked-tokens-amount">  {appStakedTokens} </h2>
                                 </div>
                                 <span className="title">Staked POKT</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block"}} id="app-stake-status-img" src={stakingStatusImg} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="app-staking-status"> {stakingStatus} </h2>
+                                    <img style={{display: "inline-block", marginRight: "2px", marginBottom: "-1px"}} id="app-stake-status-img" src={appStakingStatusImg} alt="staked tokens"/>
+                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="app-staking-status"> {appStakingStatus} </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block"}} src={app} alt="staked tokens"/>
+                                    <img style={{display: "inline-block", marginRight: "2px", marginBottom: "-1px"}} src={app} alt="staked tokens"/>
                                     <h2 style={{display: "inline-block", verticalAlign: "bottom"}}>  APP</h2>
                                 </div>
                                 <span className="title">Account Type</span>
@@ -565,12 +612,12 @@ class AccountLatest extends Component {
                         <div className="container">
                             <div className="cont-input">
                                 <label htmlFor="add">Address</label>
-                                <Input style={{height: "11px"}} type="text" name="address" id="address" defaultValue={addressHex} readOnly={true}/>
+                                <Input style={{height: "11px", fontSize: "12px"}} type="text" name="address" id="address" defaultValue={addressHex} readOnly={true}/>
                                 <span className="copy-button" onClick={() => {navigator.clipboard.writeText(addressHex)}}> <img src={copy} alt="copy" /></span>
                             </div>
                             <div className="cont-input second">
                                 <label htmlFor="puk">Public Key</label>
-                                <Input style={{height: "11px"}} type="text" name="public-k" id="public-key" defaultValue={publicKeyHex} readOnly={true}/>
+                                <Input style={{height: "11px", fontSize: "12px"}} type="text" name="public-k" id="public-key" defaultValue={publicKeyHex} readOnly={true}/>
                                 <span className="copy-button" onClick={() => {navigator.clipboard.writeText(publicKeyHex)}}> <img src={copy} alt="copy" /></span>
                             </div>
                             <div className="cont-input third">
