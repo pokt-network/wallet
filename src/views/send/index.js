@@ -244,7 +244,7 @@ class Send extends Component {
                 if (upoktBalance < amountToSend) {
                     // Update the state
                     this.setState({
-                        amountToSend: Math.round(value),
+                        amountToSend: value,
                         poktAmount: amountElement.value,
                         poktAmountUsd: usdValue.toFixed(2),
                         modalAmountToSendPokt: `${amountElement.value} POKT`,
@@ -257,7 +257,7 @@ class Send extends Component {
                 } else {
                     // Save the values in the state
                     this.setState({
-                        amountToSend: Math.round(value),
+                        amountToSend: value,
                         isAmountValid: true,
                         poktAmount: amountElement.value,
                         poktAmountUsd: usdValue.toFixed(2),
@@ -310,7 +310,7 @@ class Send extends Component {
                 if (upoktBalance < amountToSend) {
                     // Update the state
                     this.setState({
-                        amountToSend: Math.round(poktValue),
+                        amountToSend: poktValue,
                         poktAmount: value.toFixed(2),
                         poktAmountUsd: usdAmountElement.value,
                         modalAmountToSendPokt: `${value.toFixed(2)} POKT`,
@@ -323,7 +323,7 @@ class Send extends Component {
                 } else {
                     // Save the amount in uPOKT to send in the state
                     this.setState({
-                        amountToSend: Math.round(poktValue), 
+                        amountToSend: poktValue, 
                         isAmountValid: true,
                         poktAmount: value.toFixed(2),
                         poktAmountUsd: usdAmountElement.value,
