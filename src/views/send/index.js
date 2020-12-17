@@ -59,6 +59,7 @@ class Send extends Component {
         this.togglePassphraseError = this.togglePassphraseError.bind(this);
         this.validate = this.validate.bind(this);
         this.getAccountBalance = this.getAccountBalance.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
     }
 
     async getAccountBalance(addressHex) {
@@ -76,6 +77,12 @@ class Send extends Component {
         };
     }
     
+    handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault()
+        }
+    }
+
     showModal(show) {
         this.setState({
             isModalVisible: show,
@@ -522,7 +529,8 @@ class Send extends Component {
                                             </button>
                                             <h2> Enter your passphrase: </h2>
                                             <div className="content">
-                                                <form className="passphrase">
+                                                
+                                                <form className="passphrase" onKeyPress={this.handleKeyPress}> 
                                                     <div className="cont-input">
                                                         <Input type="password" name="passphrase" id="modal-passphrase" />
                                                     </div>
