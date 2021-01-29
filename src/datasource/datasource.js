@@ -198,7 +198,7 @@ export class DataSource {
         );
 
         if (typeGuard(accountOrError, Error)) {
-            return undefined;
+            return accountOrError;
         } else {
             return accountOrError;
         }
