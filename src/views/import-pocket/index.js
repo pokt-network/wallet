@@ -12,6 +12,7 @@ import {
 } from 'react-router-dom';
 import PocketService from "../../core/services/pocket-service";
 import {DataSource} from "../../datasource/datasource";
+import {typeGuard} from "@pokt-network/pocket-js";
 
 const dataSource = new DataSource();
 
@@ -150,7 +151,7 @@ class ImportPocket extends React.Component {
             const isValidPrivateKey = dataSource.validatePrivateKey(privateKey);
 
             if (!isValidPrivateKey) {
-                this.togglePrivateKeyError("Invalid Private Key format.");
+                this.togglePrivateKeyError("Invalid private key input.");
                 
                 return;
             }
@@ -159,8 +160,6 @@ class ImportPocket extends React.Component {
                 keyfileName: undefined,
                 privateKey: privateKey
             })
-        } else {
-            this.toggleButtonError("Invalid private key input");
         }
     }
 
@@ -241,7 +240,7 @@ class ImportPocket extends React.Component {
 
         if (!accountObj) {
             // Close the modal to show errors in the main view
-            this.toggleButtonError(true, "An error ocurred importing your account, please verify your credentials and try again.")
+            this.toggleButtonError("An error ocurred importing your account, please verify your credentials and try again.")
             this.closeModal()
             return
         }
@@ -260,11 +259,8 @@ class ImportPocket extends React.Component {
             // Import the PPK
             const account = await dataSource.importPortablePrivateKey(passphrase, ppk, passphrase);
             
-            if (!account) {
-                this.togglePPKError(
-                    true,
-                    "Failed to decrypt your Key File, please check your passphrase and try again."
-                );
+            if (typeGuard(account, Error)) {
+              console.error(account)
                 return false;
             }
             
@@ -293,8 +289,7 @@ class ImportPocket extends React.Component {
             // Create an account by importing the private key
             const accountOrError = await dataSource.importAccount(privateKey, passphrase);
 
-            if (!accountOrError) {
-                this.togglePrivateKeyError("There was an error decoding your private key, please try again.");
+            if (typeGuard(accountOrError, Error)) {
                 console.error(accountOrError);
                 return false;
             }
@@ -368,7 +363,7 @@ class ImportPocket extends React.Component {
                       >
                         {" "}
                         <img src={altertR} alt="alert" />
-                        Incorrect file
+                        {ppkError}
                       </span>
                     </div>
                     <div className="cont-input">
@@ -393,7 +388,7 @@ class ImportPocket extends React.Component {
                       >
                         {" "}
                         <img src={altertR} alt="alert" />
-                        Incorrect private key
+                        {privateKeyError}
                       </span>
                     </div>
                   </div>
@@ -414,7 +409,7 @@ class ImportPocket extends React.Component {
                       }}
                     >
                       {" "}
-                      <img src={altertR} alt="alert" /> Please enter Private key
+                      <img src={altertR} alt="alert" /> {buttonError}
                     </span>
                   </div>
                 </form>
