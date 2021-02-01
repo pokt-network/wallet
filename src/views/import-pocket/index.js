@@ -390,6 +390,17 @@ class ImportPocket extends React.Component {
                         <img src={altertR} alt="alert" />
                         {privateKeyError}
                       </span>
+                      <span
+                      className="error"
+                      style={{
+                        display: `${
+                          buttonError !== undefined && ppkError === undefined && privateKeyError === undefined  ? "block" : "none"
+                        }`,
+                      }}
+                    >
+                      {" "}
+                      <img src={altertR} alt="alert" /> {buttonError}
+                    </span>
                     </div>
                   </div>
                   <div className="btn-subm">
@@ -399,18 +410,6 @@ class ImportPocket extends React.Component {
                     >
                       Import Account
                     </Button>
-                    <span
-                      id="button-error"
-                      className="error"
-                      style={{
-                        display: `${
-                          buttonError === undefined ? "none" : "block"
-                        }`,
-                      }}
-                    >
-                      {" "}
-                      <img src={altertR} alt="alert" /> {buttonError}
-                    </span>
                   </div>
                 </form>
                 <a href="/create" className="account">
