@@ -53,7 +53,7 @@ class Header extends Component {
                 <button className="nav-button" id="account-detail-nav" onClick={() => this.pushToDetails()} >Account Detail</button>
               </StyledLi>
               <StyledLi>
-                <a tartget="_target" href={Config.BUY_POKT_BASE_URL}>Buy POKT</a>
+                <a tartget="_target" href="https://pocketnetwork.typeform.com/to/TC96EJvo">Buy POKT</a>
               </StyledLi>
               <StyledLi>
                 <button className="nav-button" id="log-out-nav" onClick={this.onLogOut} >Log out</button>
