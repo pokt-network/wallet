@@ -439,7 +439,6 @@ class Send extends Component {
             isModalVisible,
             isPassModalVisible,
             poktAmount,
-            poktAmountUsd,
             modalAmountToSendPokt,
             modalAmountToSendUsd,
             balanceError,
