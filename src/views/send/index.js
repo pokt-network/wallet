@@ -291,15 +291,15 @@ class Send extends Component {
 
         // Check the elements
         if (usdAmountElement && usdAmountElementText) {
-            if(usdAmountElement.value <= 0 || usdAmountElementText.value === "") {
-                this.toggleAmountError("Amount to send is invalid.");
-                this.setState({
-                    poktAmount: undefined,
-                    poktAmountUsd: undefined,
-                    isAmountValid: false
-                });
-                return;
-            }
+            // if(usdAmountElement.value <= 0 || usdAmountElementText.value === "") {
+                // this.toggleAmountError("Amount to send is invalid.");
+                // this.setState({
+                    // poktAmount: undefined,
+                    // poktAmountUsd: undefined,
+                    // isAmountValid: false
+                // });
+                // return;
+            // }
             // Update the POKT value element
             const amountElement = document.getElementById("pokt-amount");
             const amountElementText = document.getElementById("modal-amount-to-send");
@@ -460,12 +460,6 @@ class Send extends Component {
                                     <div className="container">
                                         <input style={{color: "black"}} onChange={this.handlePoktValueChange} type="number" name="quantity" step="0.01" id="pokt-amount" placeholder="0.00" value={poktAmount} />
                                         <label htmlFor="pokt">POKT</label>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="container">
-                                        <input onChange={this.handleUsdValueChange} type="number" name="quantity" id="pokt-amount-usd" placeholder="0.00" value={poktAmountUsd} />
-                                        <label htmlFor="usd">USD</label>
                                     </div>
                                 </div>
                             </form>
