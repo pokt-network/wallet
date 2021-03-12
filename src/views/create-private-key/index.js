@@ -54,10 +54,6 @@ class CreatePrivateKey extends Component {
                                     <img src={increase} alt="alert" />
                                     <span>23,87% </span>
                                 </div>
-                                <div className="stat">
-                                    <span>$ 0.00 USD</span>
-                                    <img src={reload} alt="alert" />
-                                </div>
                             </div>
                         </div>
                     </div>

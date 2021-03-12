@@ -19,9 +19,6 @@ function PopupPW (){
                         <div className="pokt">
                             0,00POKT
                         </div>
-                        <div className="usd">
-                            0,00USD
-                        </div>
                     </div>
                     <form className="pass-pk">
                         <div className="cont-input">
