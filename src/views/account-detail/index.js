@@ -454,7 +454,6 @@ class AccountLatest extends Component {
             publicKeyHex, 
             privateKey,
             poktBalance, 
-            usdBalance, 
             visibility, 
             noTransactions,
             appStakedTokens,
