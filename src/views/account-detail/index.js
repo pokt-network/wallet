@@ -330,11 +330,11 @@ class AccountLatest extends Component {
         
         if (addressHex) {
             const balance = await dataSource.getBalance(addressHex);
-            
+
             // Update account detail values
             const poktBalance = balance.toFixed(2);
             const usdBalance = (balance * Number(Config.POKT_USD_VALUE)).toFixed(2);
-    
+
             // Save balance to the state
             this.setState({
                 poktBalance,
