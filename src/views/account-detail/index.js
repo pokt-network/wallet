@@ -489,7 +489,6 @@ class AccountLatest extends Component {
                             <h1 >{poktBalance} POKT</h1>
                             <div style={{flexDirection: "column"}} className="stats">
                                 <div className="stat">
-                                    <span>$ {usdBalance} USD</span>
                                     <img 
                                     id="reload-btn"
                                     src={reload}
