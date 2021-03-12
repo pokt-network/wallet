@@ -7,6 +7,7 @@ import StyledUl from "./ul";
 import StyledLi from "./li";
 import HeaderContainer from "./header";
 import logo from '../../utils/images/logo-white.png';
+import Config from "../../config/config.json";
 import PocketService from "../../core/services/pocket-service";
 import {withRouter} from 'react-router-dom';
 
@@ -40,9 +41,8 @@ class Header extends Component {
 
   render() {
     const {isMenuHidden} = this.state;
-
+    
     return (
-
       <HeaderContainer isHidden={isMenuHidden}>
         <Wrapper className="header">
           <Logo target="_target" href="https://www.pokt.network/"> <img src={logo} alt="logo pocket" /> <span>/ &nbsp; WALLET</span> </Logo>
