@@ -54,7 +54,6 @@ class Send extends Component {
         this.updateValues = this.updateValues.bind(this);
         this.backToAccountDetail = this.backToAccountDetail.bind(this);
         this.handlePoktValueChange = this.handlePoktValueChange.bind(this);
-        this.handleUsdValueChange = this.handleUsdValueChange.bind(this);
         this.enableLoaderIndicatory = this.enableLoaderIndicatory.bind(this);
         this.togglePassphraseError = this.togglePassphraseError.bind(this);
         this.validate = this.validate.bind(this);
@@ -213,7 +212,6 @@ class Send extends Component {
 
     updateValues() {
         this.handlePoktValueChange();
-        this.handleUsdValueChange();
         this.updateDestinationAddress();
     }
 
@@ -225,7 +223,9 @@ class Send extends Component {
         
         // Check the elements
         if (amountElement && amountElementText) {
-            if(amountElement.value <= 0 || amountElement.value === "") {
+            const amountValue = Number(amountElement.value)
+
+            if(amountValue <= 0 || amountElement.value === "") {
                 this.toggleAmountError("Amount to send is invalid.");
                 this.setState({
                     poktAmount: undefined,
@@ -234,113 +234,39 @@ class Send extends Component {
                 });
                 return;
             }
-            // Update the USD value element
-            const usdAmountElement = document.getElementById("pokt-amount-usd");
-            const usdAmountElementText = document.getElementById("modal-usd-amount-to-send");
             
-            // Check
-            if (usdAmountElement && usdAmountElementText) {
-                // Convert the decimals to upokt to use the value for the send-tx
-                const value = amountElement.value * 1000000;
-                // Convert pokt to usd
-                const usdValue = Number(Config.POKT_USD_VALUE) * amountElement.value;
+            // Convert the decimals to upokt to use the value for the send-tx
+            // Math.round to remove the decimals
+            const upoktValue = Math.round(amountValue * 1000000);
+            
+            // Check if the amount to send doesn't exceed the current balance
+            const { upoktBalance, txFee } = this.state;
+
+            if (upoktBalance < (upoktValue + txFee)){
+                // Update the state
+                this.setState({
+                    amountToSend: upoktValue,
+                    poktAmount: amountElement.value,
+                    modalAmountToSendPokt: `${amountElement.value} POKT`,
+                    isAmountValid: false
+                });
+                // Disable loader indicator
+                this.enableLoaderIndicatory(false);
+
+                // Show amount error message
+                this.toggleAmountError("Insufficient balance.");
                 
-                // Check if the amount to send doesn't exceed the current balance
-                const {upoktBalance, amountToSend} = this.state;
-
-                if (upoktBalance < amountToSend) {
-                    // Update the state
-                    this.setState({
-                        amountToSend: value,
-                        poktAmount: amountElement.value,
-                        poktAmountUsd: usdValue.toFixed(2),
-                        modalAmountToSendPokt: `${amountElement.value} POKT`,
-                        modalAmountToSendUsd: `${usdValue.toFixed(2)} USD`,
-                        isAmountValid: false,
-                        amountError: "Insufficient balance."
-                    });
-                    // Disable loader indicator
-                    this.enableLoaderIndicatory(false);
-                } else {
-                    // Save the values in the state
-                    this.setState({
-                        amountToSend: value,
-                        isAmountValid: true,
-                        poktAmount: amountElement.value,
-                        poktAmountUsd: usdValue.toFixed(2),
-                        modalAmountToSendPokt: `${amountElement.value} POKT`,
-                        modalAmountToSendUsd: `${usdValue.toFixed(2)} USD`
-                    });
-                    
-                    // Remove error message
-                    this.toggleAmountError(undefined);
-                }
-            }
-        } else {
-            this.toggleAmountError("Amount is invalid.");
-            this.setState({isAmountValid: false});
-            return;
-        }
-    }
-
-    handleUsdValueChange(){
-        // Retrieve current amount value set element
-        const usdAmountElement = document.getElementById("pokt-amount-usd");
-        // Retrieve modal amount value element
-        const usdAmountElementText = document.getElementById("modal-usd-amount-to-send");
-
-        // Check the elements
-        if (usdAmountElement && usdAmountElementText) {
-            // if(usdAmountElement.value <= 0 || usdAmountElementText.value === "") {
-                // this.toggleAmountError("Amount to send is invalid.");
-                // this.setState({
-                    // poktAmount: undefined,
-                    // poktAmountUsd: undefined,
-                    // isAmountValid: false
-                // });
-                // return;
-            // }
-            // Update the POKT value element
-            const amountElement = document.getElementById("pokt-amount");
-            const amountElementText = document.getElementById("modal-amount-to-send");
-
-            // Check
-            if (amountElement && amountElementText) {
-                // Convert the decimals to upokt to use the value for the send-tx
-                const value = usdAmountElement.value / Number(Config.POKT_USD_VALUE);
-                // Update the pokt amount elements too
-                const poktValue = value * 1000000;
-
-                // Check if the amount to send doesn't exceed the current balance
-                const {upoktBalance, amountToSend} = this.state;
-
-                if (upoktBalance < amountToSend) {
-                    // Update the state
-                    this.setState({
-                        amountToSend: poktValue,
-                        poktAmount: value.toFixed(2),
-                        poktAmountUsd: usdAmountElement.value,
-                        modalAmountToSendPokt: `${value.toFixed(2)} POKT`,
-                        modalAmountToSendUsd: `${usdAmountElement.value} USD`,
-                        isAmountValid: false,
-                        amountError: "Insufficient balance."
-                    });
-                    // Disable loader indicator
-                    this.enableLoaderIndicatory(false);
-                } else {
-                    // Save the amount in uPOKT to send in the state
-                    this.setState({
-                        amountToSend: poktValue, 
-                        isAmountValid: true,
-                        poktAmount: value.toFixed(2),
-                        poktAmountUsd: usdAmountElement.value,
-                        modalAmountToSendPokt: `${value.toFixed(2)} POKT`,
-                        modalAmountToSendUsd: `${usdAmountElement.value} USD`
-                    });
-
-                    // Remove error message
-                    this.toggleAmountError(undefined);
-                }
+            } else {
+                // Save the values in the state
+                this.setState({
+                    amountToSend: upoktValue,
+                    isAmountValid: true,
+                    poktAmount: amountValue,
+                    modalAmountToSendPokt: `${amountValue} POKT`
+                });
+                
+                // Remove error message
+                this.toggleAmountError(undefined);
             }
         } else {
             this.toggleAmountError("Amount is invalid.");
@@ -351,7 +277,7 @@ class Send extends Component {
 
     // Update destination address
     updateDestinationAddress(){
-        const {addressHex} = this.state;
+        const { addressHex } = this.state;
 
         // Retrieve the current destination address element
         const destinationAddress = document.getElementById("destination-address");
