@@ -194,14 +194,8 @@ class AccountLatest extends Component {
             let idCounter = 1;
 
             rTxs.forEach(tx => {
-                let events
+                const events = tx.tx_result.events
                 
-                if (tx.tx_result && tx.tx_result.log) {
-                    events = JSON.parse(tx.tx_result.log)[0].events;
-                } else if (tx.tx_result.events) {
-                    events = tx.tx_result.events
-                }
-
                 if (events[1].type === "transfer") {
                     const attributes = events[1].attributes;
                     if (attributes[1].key === "amount") {
