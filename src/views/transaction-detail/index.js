@@ -89,27 +89,28 @@ class TransactionDetail extends Component {
             }
 
             // Update the UI with the retrieved tx
-            const logs = JSON.parse(txResponse.transaction.txResult.log);
-            const events = logs[0].events;
-            const status = logs[0].success;
+            const events = txResponse.transaction.txResult.events;
+            const log = JSON.parse(txResponse.transaction.txResult.log);
+            const status = log[0].success ?? "Success"
 
             let senderAddress = "";
             let recipientAdress = "";
             let sentAmount = 0;
 
             if (events.length >= 2) {
-                // Retrieve the sender address
-                const senderAttributes = events[0].attributes
-                const senderObj = senderAttributes.find(e => e.key === "sender")
-                if (senderObj !== undefined) {
-                    senderAddress = senderObj.value
-                }
 
-                // Retrieve the destination address
+                // Retrieve the recipient address
                 const recipientAttributes = events[1].attributes
                 const recipientObj = recipientAttributes.find(e => e.key === "recipient")
                 if (recipientObj !== undefined) {
                     recipientAdress = recipientObj.value
+                }
+
+                // Retrieve the sender address
+                const senderAttributes = events[2].attributes
+                const senderObj = senderAttributes.find(e => e.key === "sender")
+                if (senderObj !== undefined) {
+                    senderAddress = senderObj.value
                 }
 
                 // Retrieve the amount sent
