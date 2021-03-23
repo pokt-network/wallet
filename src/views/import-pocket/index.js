@@ -335,7 +335,7 @@ class ImportPocket extends React.Component {
                 <form className="import-p-form">
                   <div className="container">
                     <div className="cont-input">
-                      <label htmlFor="keyf">Access by Key File</label>
+                      <label htmlFor="keyf">Access using a Key File</label>
                       <div
                         id="cont-file"
                         className={uploaderText !== undefined ? "cont-file" : "cont-file-empty"}
@@ -366,9 +366,14 @@ class ImportPocket extends React.Component {
                         {ppkError}
                       </span>
                     </div>
+                    </div>
+                      <div className="divider">
+                        Or
+                      </div>
+                    <div className="container">
                     <div className="cont-input">
                       <label htmlFor="import-privatekey">
-                        Access by Private Key
+                        Access using a Private Key
                       </label>
                       <Input
                         type="password"

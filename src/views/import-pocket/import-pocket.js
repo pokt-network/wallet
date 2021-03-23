@@ -7,6 +7,14 @@ const ImportPocketContent = styled.section`
     max-width: 800px;
     margin: 80px auto;
 
+    .divider {
+        font-weight: 300;
+        font-size: 14px;
+        width: 60px;
+        color: white;
+        margin: 20px auto;
+
+    }
     #import-privatekey::placeholder {
         font-family: 'Lato';
         font-weight: 400;
@@ -77,10 +85,11 @@ const ImportPocketContent = styled.section`
                 margin-top: 35px;
             `)};
             .container {
+                margin-top: 20px;
                 border-radius: 12px;
                 box-shadow: 0 43px 39px -40px rgba(0, 0, 0, 0.5);
                 background-image: linear-gradient(to bottom, #fbfbfb, #f5f5f5);
-                padding: 40px 90px 27px 85px;
+                padding: 20px 90px 44px 85px;
                 ${maxPhone(css`
                     padding: 40px 30px 25px 30px;
                 `)};
