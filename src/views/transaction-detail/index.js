@@ -90,8 +90,7 @@ class TransactionDetail extends Component {
 
             // Update the UI with the retrieved tx
             const events = txResponse.transaction.txResult.events;
-            const log = JSON.parse(txResponse.transaction.txResult.log);
-            const status = log[0].success ?? "Success"
+            const status = txResponse.transaction.txResult.log === "" ? true : JSON.parse(txResponse.transaction.txResult.log)[0].success;
 
             let senderAddress = "";
             let recipientAdress = "";
