@@ -194,39 +194,44 @@ class AccountLatest extends Component {
             let idCounter = 1;
 
             rTxs.forEach(tx => {
+                let events
+                
                 if (tx.tx_result && tx.tx_result.log) {
-                    const events = JSON.parse(tx.tx_result.log)[0].events;
+                    events = JSON.parse(tx.tx_result.log)[0].events;
+                } else if (tx.tx_result.events) {
+                    events = tx.tx_result.events
+                }
 
-                    if (events[1].type === "transfer") {
-                        const attributes = events[1].attributes;
-                        if (attributes[1].key === "amount") {
-                            const value = attributes[1].value.replace("upokt", "");
+                if (events[1].type === "transfer") {
+                    const attributes = events[1].attributes;
+                    if (attributes[1].key === "amount") {
+                        const value = attributes[1].value.replace("upokt", "");
 
-                            const txHash = tx.hash;
-                            const imageSrc = tx.type.toLowerCase() === "sent" ? sentImgSrc : receivedImgSrc;
-                            const TrClass = document.getElementById("tr-element").className;
-                            const TdClass = document.getElementById("td-element").className;
+                        const txHash = tx.hash;
+                        const imageSrc = tx.type.toLowerCase() === "sent" ? sentImgSrc : receivedImgSrc;
+                        const TrClass = document.getElementById("tr-element").className;
+                        const TdClass = document.getElementById("td-element").className;
 
-                            const txTemplate = '<Tr class="' + TrClass + '">\n' +
-                                '<Td class="' + TdClass + '"> <img src=' + imageSrc + ' alt="' + tx.type.toLowerCase() + '" /> </Td>\n' +
-                                '<Td class="' + TdClass + '"> <div class="qty">' + value / 1000000 + ' <span>POKT</span></div> <div class="status">' + tx.type.toLowerCase() + '</div> </Td>\n' +
-                                '<Td class="' + TdClass + ' block-align">' + tx.height + '</Td>\n' +
-                                '<Td class="' + TdClass + '"> <a id="txHashElement' + idCounter + '"> ' + txHash + ' </a> </Td>\n' +
-                                '</Tr>';
+                        const txTemplate = '<Tr class="' + TrClass + '">\n' +
+                            '<Td class="' + TdClass + '"> <img src=' + imageSrc + ' alt="' + tx.type.toLowerCase() + '" /> </Td>\n' +
+                            '<Td class="' + TdClass + '"> <div class="qty">' + value / 1000000 + ' <span>POKT</span></div> <div class="status">' + tx.type.toLowerCase() + '</div> </Td>\n' +
+                            '<Td class="' + TdClass + ' block-align">' + tx.height + '</Td>\n' +
+                            '<Td class="' + TdClass + '"> <a id="txHashElement' + idCounter + '"> ' + txHash + ' </a> </Td>\n' +
+                            '</Tr>';
 
-                            section.insertAdjacentHTML('beforeend', txTemplate);
-                            // Add onClick event to the clickable element
-                            const toTxDetail = document.getElementById(`txHashElement${idCounter}`);
+                        section.insertAdjacentHTML('beforeend', txTemplate);
+                        // Add onClick event to the clickable element
+                        const toTxDetail = document.getElementById(`txHashElement${idCounter}`);
 
-                            if (toTxDetail) {
-                                toTxDetail.addEventListener("click", () => { this.pushToTxDetail(txHash) });
-                            }
-                            idCounter++;
-                        } else {
-                            console.dir(attributes, { depth: null });
+                        if (toTxDetail) {
+                            toTxDetail.addEventListener("click", () => { this.pushToTxDetail(txHash) });
                         }
+                        idCounter++;
+                    } else {
+                        console.dir(attributes, { depth: null });
                     }
                 }
+                
             })
             // Display the table
             this.setState({displayTxListSection: true});
