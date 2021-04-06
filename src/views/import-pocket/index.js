@@ -137,7 +137,7 @@ class ImportPocket extends React.Component {
             }
 
             this.setState({
-                ppk: fileInputValue,
+                ppk: fileInputValue
             });
 
         } else if (this.isTextInput(input)) {
@@ -238,7 +238,7 @@ class ImportPocket extends React.Component {
             accountObj = await this.importAccountFromPrivateKey(privateKey, passphrase);
         }
 
-        if (!accountObj) {
+        if (accountObj === false) {
             // Close the modal to show errors in the main view
             this.toggleButtonError("An error ocurred importing your account, please verify your credentials and try again.")
             this.closeModal()
@@ -247,8 +247,7 @@ class ImportPocket extends React.Component {
 
         // Move to the account detail
         this.props.history.push({
-            pathname: "/account",
-            data: accountObj,
+            pathname: "/account"
         })
     }
 
@@ -282,7 +281,6 @@ class ImportPocket extends React.Component {
             // Validate private key
             if (!dataSource.validatePrivateKey(privateKey)) {
                 this.togglePrivateKeyError("Your private key is invalid, please try again.");
-
                 return false;
             }
 

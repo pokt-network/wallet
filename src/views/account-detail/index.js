@@ -14,7 +14,7 @@ import app from '../../utils/images/app.png';
 import na from '../../utils/images/NA.png';
 import sent from '../../utils/images/sent.png';
 import received from '../../utils/images/received.png';
-import load from '../../utils/images/load.png'; 
+import load from '../../utils/images/load.png';
 import reload from '../../utils/images/reload.png';
 import reloadActive from '../../utils/images/refresh-active.png'
 import T from '../../components/public/table/table';
@@ -31,16 +31,15 @@ import {
 import Modal from "simple-react-modal";
 import altertR from "../../utils/images/alert-circle-red.png";
 import exit from '../../utils/images/exit.png';
-import altertT from '../../utils/images/alert-triangle.png';
 import PocketService from "../../core/services/pocket-service";
-import {DataSource} from "../../datasource/datasource";
+import { DataSource } from "../../datasource/datasource";
 
 const dataSource = new DataSource();
 
 class AccountLatest extends Component {
     constructor() {
         super();
-        
+
         this.state = {
             normal: undefined,
             app: undefined,
@@ -104,23 +103,23 @@ class AccountLatest extends Component {
 
         this.togglePkReveal(false);
     }
-    
+
     togglePkReveal(show) {
 
         this.setState({
             displayPkReveal: show
         })
     }
-    
+
     async revealPrivateKey() {
-        const {ppk} = this.state;
+        const { ppk } = this.state;
 
         // passphrase-invalid
         const passphraseInput = document.getElementById("reveal-pk-passphrase");
 
         // Check for ppk and the element
         if (ppk && passphraseInput) {
-            
+
             const account = await dataSource.importPortablePrivateKey(
                 passphraseInput.value,
                 ppk,
@@ -171,12 +170,12 @@ class AccountLatest extends Component {
                 noTransactions: false
             });
             this.updateTransactionList(allTxs);
-        }else {
+        } else {
             this.setState({
-                visibility: false, 
+                visibility: false,
                 noTransactions: true
             });
-            
+
             this.enableLoaderIndicatory(false);
         }
     }
@@ -195,7 +194,7 @@ class AccountLatest extends Component {
 
             rTxs.forEach(tx => {
                 const events = tx.tx_result.events
-                
+
                 if (events[1].type === "transfer") {
                     const attributes = events[1].attributes;
                     if (attributes[1].key === "amount") {
@@ -225,10 +224,10 @@ class AccountLatest extends Component {
                         console.dir(attributes, { depth: null });
                     }
                 }
-                
+
             })
             // Display the table
-            this.setState({displayTxListSection: true});
+            this.setState({ displayTxListSection: true });
 
             this.enableLoaderIndicatory(false);
         } catch (error) {
@@ -237,7 +236,7 @@ class AccountLatest extends Component {
         }
     }
     async addApp() {
-        const {app, stakedImgSrc, unstakingImgSrc, unstakedImgSrc} = this.state;
+        const { app, stakedImgSrc, unstakingImgSrc, unstakedImgSrc } = this.state;
 
         let obj = {
             stakingStatus: "UNSTAKED",
@@ -252,7 +251,7 @@ class AccountLatest extends Component {
             if (app.status === 1) {
                 obj.stakingStatus = "UNSTAKING";
                 obj.stakingStatusImg = unstakingImgSrc;
-            }else if(app.status === 2){
+            } else if (app.status === 2) {
                 obj.stakingStatus = "STAKED";
                 obj.stakingStatusImg = stakedImgSrc;
             };
@@ -268,7 +267,7 @@ class AccountLatest extends Component {
     }
 
     async addNode() {
-        const {node, stakedImgSrc, unstakingImgSrc, unstakedImgSrc} = this.state;
+        const { node, stakedImgSrc, unstakingImgSrc, unstakedImgSrc } = this.state;
 
         let obj = {
             stakingStatus: "UNSTAKED",
@@ -283,7 +282,7 @@ class AccountLatest extends Component {
             if (node.status === 1) {
                 obj.stakingStatus = "UNSTAKING";
                 obj.stakingStatusImg = unstakingImgSrc;
-            }else if(node.status === 2){
+            } else if (node.status === 2) {
                 obj.stakingStatus = "STAKED";
                 obj.stakingStatusImg = stakedImgSrc;
             };
@@ -305,7 +304,7 @@ class AccountLatest extends Component {
         const appOrError = await dataSource.getApp(addressHex);
 
         if (appOrError !== undefined) {
-            this.setState({app: appOrError.application});
+            this.setState({ app: appOrError.application });
             this.addApp();
         }
 
@@ -313,20 +312,20 @@ class AccountLatest extends Component {
         const nodeOrError = await dataSource.getNode(addressHex);
 
         if (nodeOrError !== undefined) {
-            this.setState({node: nodeOrError.node});
+            this.setState({ node: nodeOrError.node });
             this.addNode();
         }
 
         // If not and app or node, load normal account
         if (appOrError === undefined && nodeOrError === undefined) {
             // Account type, amount staked and staking status
-            this.setState({displayNormalAccount: true});
+            this.setState({ displayNormalAccount: true });
         }
     }
-    
+
     // Retrieves the account balance
     async getBalance(addressHex) {
-        
+
         if (addressHex) {
             const balance = await dataSource.getBalance(addressHex);
 
@@ -343,7 +342,7 @@ class AccountLatest extends Component {
     }
 
     pushToTxDetail(txHash) {
-        const {addressHex, publicKeyHex, ppk} = this.state;
+        const { addressHex, publicKeyHex, ppk } = this.state;
 
         // Check the account info before pushing
         if (!addressHex ||
@@ -361,13 +360,13 @@ class AccountLatest extends Component {
             // Move to the account detail
             this.props.history.push({
                 pathname: "/transaction-detail",
-                data: {txHash}
+                data: { txHash }
             });
         };
     }
 
     pushToSend() {
-        const {addressHex, publicKeyHex, ppk} = this.state;
+        const { addressHex, publicKeyHex, ppk } = this.state;
         // Check the account info before pushing
         if (!addressHex ||
             !publicKeyHex ||
@@ -387,8 +386,8 @@ class AccountLatest extends Component {
         });
     }
 
-    reloadBtnState(boolean){
-        const {reloadActiveImgSrc, reloadImgSrc} = this.state;
+    reloadBtnState(boolean) {
+        const { reloadActiveImgSrc, reloadImgSrc } = this.state;
         const reloadBtn = document.getElementById("reload-btn");
 
         if (reloadBtn) {
@@ -403,7 +402,7 @@ class AccountLatest extends Component {
         });
     }
 
-    enableLoaderIndicatory(show){
+    enableLoaderIndicatory(show) {
         const loaderElement = document.getElementById("loader");
         if (loaderElement) {
             loaderElement.style.display = show === true ? "block" : "none"
@@ -419,7 +418,7 @@ class AccountLatest extends Component {
 
     componentDidMount() {
 
-        const {addressHex, publicKeyHex, ppk} = PocketService.getUserInfo();
+        const { addressHex, publicKeyHex, ppk } = PocketService.getUserInfo();
 
         if (addressHex && publicKeyHex && ppk) {
             // Navigation Items
@@ -431,8 +430,8 @@ class AccountLatest extends Component {
 
             // Save information to the state
             this.setState({
-                addressHex, 
-                publicKeyHex, 
+                addressHex,
+                publicKeyHex,
                 ppk
             });
             // Load the account balance, type and transaction list
@@ -444,16 +443,16 @@ class AccountLatest extends Component {
             });
         }
     }
-    
+
     // Render
     render() {
         // Check if current account information is set
         const {
-            addressHex, 
-            publicKeyHex, 
+            addressHex,
+            publicKeyHex,
             privateKey,
-            poktBalance, 
-            visibility, 
+            poktBalance,
+            visibility,
             noTransactions,
             appStakedTokens,
             appStakingStatus,
@@ -478,28 +477,28 @@ class AccountLatest extends Component {
             })
             return null;
         }
-        
+
         return (
             <AccountLContent>
                 <Wrapper className="wide-block-wr">
                     <div className="quantitypokt">
                         <div className="container">
                             <h1 >{poktBalance} POKT</h1>
-                            <div style={{flexDirection: "column"}} className="stats">
+                            <div style={{ flexDirection: "column" }} className="stats">
                                 <div className="stat">
-                                    <img 
-                                    id="reload-btn"
-                                    src={reload}
-                                    className="refresh-btn" 
-                                    onMouseOut={() => this.reloadBtnState(false)}
-                                    onMouseOver={() => this.reloadBtnState(true)}
-                                    style={{
-                                        src: `${hovered ? reloadActive : reload}`,
-                                        cursor: "pointer",
-                                        display: "none"
-                                    }}
-                                    // onClick={this.refreshView(addressHex)} 
-                                    alt="reload" 
+                                    <img
+                                        id="reload-btn"
+                                        src={reload}
+                                        className="refresh-btn"
+                                        onMouseOut={() => this.reloadBtnState(false)}
+                                        onMouseOver={() => this.reloadBtnState(true)}
+                                        style={{
+                                            src: `${hovered ? reloadActive : reload}`,
+                                            cursor: "pointer",
+                                            display: "none"
+                                        }}
+                                        // onClick={this.refreshView(addressHex)} 
+                                        alt="reload"
                                     />
                                 </div>
                             </div>
@@ -507,94 +506,94 @@ class AccountLatest extends Component {
                     </div>
                     <div className="pokt-options">
                         {/* Normal Account Section */}
-                        <div style={{ 
+                        <div style={{
                             display: displayNormalAccount === true ? "flex" : "none"
-                            }} id="normal-type-section" className="container">
+                        }} id="normal-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
                                     <img style={{
                                         display: "inline-block",
                                         marginRight: "2px",
                                         marginBottom: "-2.4px"
-                                        }} src={token} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}}>  0 </h2>
+                                    }} src={token} alt="staked tokens" />
+                                    <h2 style={{ display: "inline-block", verticalAlign: "bottom" }}>  0 </h2>
                                 </div>
                                 <span className="title">Staked POKT</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block"}} id="normal-stake-status-img" src={unstaked} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}}>  UNSTAKED </h2>
+                                    <img style={{ display: "inline-block" }} id="normal-stake-status-img" src={unstaked} alt="staked tokens" />
+                                    <h2 style={{ display: "inline-block", verticalAlign: "bottom" }}>  UNSTAKED </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block", marginBottom: "4px"}} src={na} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}}> NA</h2>
+                                    <img style={{ display: "inline-block", marginBottom: "4px" }} src={na} alt="staked tokens" />
+                                    <h2 style={{ display: "inline-block", verticalAlign: "bottom" }}> NA</h2>
                                 </div>
                                 <span className="title">Account Type</span>
                             </div>
                         </div>
                         {/* / Normal Account Section */}
                         {/* NODE Section */}
-                        <div style={{ 
+                        <div style={{
                             display: displayNode === true ? "flex" : "none"
-                            }} id="node-type-section" className="container">
-                            <div className="option">
-                                <div className="heading">
-                                <img style={{
-                                        display: "inline-block",
-                                        marginRight: "2px",
-                                        marginBottom: "-2.4px"
-                                        }}src={token} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="node-staked-tokens-amount" > {nodeStakedTokens} </h2>
-                                </div>
-                                <span className="title">Staked POKT</span>
-                            </div>
-                            <div className="option">
-                                <div className="heading">
-                                    <img style={{display: "inline-block", marginRight: "2px", marginBottom: "-1px"}} id="node-stake-status-img" src={nodeStakingStatusImg} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="node-staking-status"> {nodeStakingStatus} </h2>
-                                </div>
-                                <span className="title">Staking Status</span>
-                            </div>
-                            <div className="option">
-                                <div className="heading">
-                                    <img style={{display: "inline-block", marginRight: "2px", marginBottom: "-1px"}} src={node} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}}>  NODE</h2>
-                                </div>
-                                <span className="title">Account Type</span>
-                            </div>
-                        </div>
-                        {/* / NODE Section */}
-                        {/* APP Section */}
-                        <div style={{ 
-                            display: displayApp === true ? "flex" : "none", 
-                            marginTop: "16px" 
-                            }} id="app-type-section" className="container">
+                        }} id="node-type-section" className="container">
                             <div className="option">
                                 <div className="heading">
                                     <img style={{
                                         display: "inline-block",
                                         marginRight: "2px",
                                         marginBottom: "-2.4px"
-                                        }} src={token} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="app-staked-tokens-amount">  {appStakedTokens} </h2>
+                                    }} src={token} alt="staked tokens" />
+                                    <h2 style={{ display: "inline-block", verticalAlign: "bottom" }} id="node-staked-tokens-amount" > {nodeStakedTokens} </h2>
                                 </div>
                                 <span className="title">Staked POKT</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block", marginRight: "2px", marginBottom: "-1px"}} id="app-stake-status-img" src={appStakingStatusImg} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}} id="app-staking-status"> {appStakingStatus} </h2>
+                                    <img style={{ display: "inline-block", marginRight: "2px", marginBottom: "-1px" }} id="node-stake-status-img" src={nodeStakingStatusImg} alt="staked tokens" />
+                                    <h2 style={{ display: "inline-block", verticalAlign: "bottom" }} id="node-staking-status"> {nodeStakingStatus} </h2>
                                 </div>
                                 <span className="title">Staking Status</span>
                             </div>
                             <div className="option">
                                 <div className="heading">
-                                    <img style={{display: "inline-block", marginRight: "2px", marginBottom: "-1px"}} src={app} alt="staked tokens"/>
-                                    <h2 style={{display: "inline-block", verticalAlign: "bottom"}}>  APP</h2>
+                                    <img style={{ display: "inline-block", marginRight: "2px", marginBottom: "-1px" }} src={node} alt="staked tokens" />
+                                    <h2 style={{ display: "inline-block", verticalAlign: "bottom" }}>  NODE</h2>
+                                </div>
+                                <span className="title">Account Type</span>
+                            </div>
+                        </div>
+                        {/* / NODE Section */}
+                        {/* APP Section */}
+                        <div style={{
+                            display: displayApp === true ? "flex" : "none",
+                            marginTop: "16px"
+                        }} id="app-type-section" className="container">
+                            <div className="option">
+                                <div className="heading">
+                                    <img style={{
+                                        display: "inline-block",
+                                        marginRight: "2px",
+                                        marginBottom: "-2.4px"
+                                    }} src={token} alt="staked tokens" />
+                                    <h2 style={{ display: "inline-block", verticalAlign: "bottom" }} id="app-staked-tokens-amount">  {appStakedTokens} </h2>
+                                </div>
+                                <span className="title">Staked POKT</span>
+                            </div>
+                            <div className="option">
+                                <div className="heading">
+                                    <img style={{ display: "inline-block", marginRight: "2px", marginBottom: "-1px" }} id="app-stake-status-img" src={appStakingStatusImg} alt="staked tokens" />
+                                    <h2 style={{ display: "inline-block", verticalAlign: "bottom" }} id="app-staking-status"> {appStakingStatus} </h2>
+                                </div>
+                                <span className="title">Staking Status</span>
+                            </div>
+                            <div className="option">
+                                <div className="heading">
+                                    <img style={{ display: "inline-block", marginRight: "2px", marginBottom: "-1px" }} src={app} alt="staked tokens" />
+                                    <h2 style={{ display: "inline-block", verticalAlign: "bottom" }}>  APP</h2>
                                 </div>
                                 <span className="title">Account Type</span>
                             </div>
@@ -603,19 +602,19 @@ class AccountLatest extends Component {
                         <div className="btn-subm">
                             <Button target="_target" href={Config.BUY_POKT_BASE_URL} dark>Buy POKT</Button>
                             <Button id="send-pokt" onClick={this.pushToSend}>Send</Button>
-                        </div> 
+                        </div>
                     </div>
                     <form className="pass-pk">
                         <div className="container">
                             <div className="cont-input">
                                 <label htmlFor="add">Address</label>
-                                <Input style={{height: "11px", fontSize: "12px"}} type="text" name="address" id="address" defaultValue={addressHex} readOnly={true}/>
-                                <span className="copy-button" onClick={() => {navigator.clipboard.writeText(addressHex)}}> <img src={copy} alt="copy" /></span>
+                                <Input style={{ height: "11px", fontSize: "12px" }} type="text" name="address" id="address" defaultValue={addressHex} readOnly={true} />
+                                <span className="copy-button" onClick={() => { navigator.clipboard.writeText(addressHex) }}> <img src={copy} alt="copy" /></span>
                             </div>
                             <div className="cont-input second">
                                 <label htmlFor="puk">Public Key</label>
-                                <Input style={{height: "11px", fontSize: "12px"}} type="text" name="public-k" id="public-key" defaultValue={publicKeyHex} readOnly={true}/>
-                                <span className="copy-button" onClick={() => {navigator.clipboard.writeText(publicKeyHex)}}> <img src={copy} alt="copy" /></span>
+                                <Input style={{ height: "11px", fontSize: "12px" }} type="text" name="public-k" id="public-key" defaultValue={publicKeyHex} readOnly={true} />
+                                <span className="copy-button" onClick={() => { navigator.clipboard.writeText(publicKeyHex) }}> <img src={copy} alt="copy" /></span>
                             </div>
                             <div className="cont-input third">
                                 <Button id="reveal-pk" onClick={this.showModal}>Reveal Private Key</Button>
@@ -634,16 +633,16 @@ class AccountLatest extends Component {
                         <T>
                             <THead className="latest-tx">
                                 <Tr>
-                                <Th> </Th>
-                                <Th>STATUS</Th>
-                                <Th>BLOCK HEIGHT</Th>
-                                <Th> TX HASH</Th>
+                                    <Th> </Th>
+                                    <Th>STATUS</Th>
+                                    <Th>BLOCK HEIGHT</Th>
+                                    <Th> TX HASH</Th>
                                 </Tr>
                             </THead>
                             <TBody style={{
                                 display: "block"
-                                }} id="transation-list-section" className="l-tx table-scroll">
-                                 <Tr id="tr-element" style={{display: "none"}}>
+                            }} id="transation-list-section" className="l-tx table-scroll">
+                                <Tr id="tr-element" style={{ display: "none" }}>
                                     <Td id="td-element"> <img src={load} alt="loading" /> </Td>
                                     <Td> <div className="qty">0.00 <span>POKT</span></div> <div className="status">Sending</div> </Td>
                                 </Tr>
@@ -652,78 +651,69 @@ class AccountLatest extends Component {
                     </ContainerToggle>
                 </Wrapper>
                 <Modal
-                        style={{ background: "rgba(0, 0, 0, 0.5)" }} //overwrites the default background
-                        containerStyle={{
-                            width: "534px",
-                            background: "white",
-                            boxShadow: "0 43px 39px -40px rgba(0,0,0,0.5)",
-                            borderRadius: "12px",
-                            padding: "5px 0px 13px"
-                        }} //changes styling on the inner content area
-                        containerClassName="pocket-modal"
-                        closeOnOuterClick={true}
-                        show={isModalVisible}
-                        onClose={this.closeModal.bind(this)}
-                    >
-                        <div className="cont-input" style={{textAlign: "center"}}>
-                            <label style={{display: isModalVisible === true ? "block" : "none"}} id="passphrase-label" className="passphrase-label" htmlFor="private">
-                                PASSPHRASE
+                    style={{ background: "rgba(0, 0, 0, 0.5)" }} //overwrites the default background
+                    containerStyle={{
+                        width: "534px",
+                        background: "white",
+                        boxShadow: "0 43px 39px -40px rgba(0,0,0,0.5)",
+                        borderRadius: "12px",
+                        padding: "5px 0px 13px"
+                    }} //changes styling on the inner content area
+                    containerClassName="pocket-modal"
+                    closeOnOuterClick={true}
+                    show={isModalVisible}
+                    onClose={this.closeModal.bind(this)}
+                >
+                    <div className="cont-input" style={{ textAlign: "center" }}>
+                        <label style={{ display: isModalVisible === true ? "block" : "none" }} id="passphrase-label" className="passphrase-label" htmlFor="private">
+                            PASSPHRASE
                             </label>
-                            <Input
-                                className="reveal-pk-passphrase"
-                                style={{ 
-                                    display: isModalVisible === true ? "block" : "none",
-                                    margin: "8px auto auto auto", 
-                                    width: "350px" }}
-                                type="password"
-                                name="reveal-pk-passphrase"
-                                id="reveal-pk-passphrase"
-                                placeholder="Passphrase"
-                                minLength="1"
-                            />
-                            <div id="private-key-container" style={{display: displayPkReveal === true ? "block" : "none"}}>
-                                <label id="private-key-label" className="passphrase-label" htmlFor="private">
-                                    PRIVATE KEY
-                                </label>
-                                <Input style={{ 
-                                    backgroundColor: "#f5f5f5", 
-                                    height: "20px",
-                                    width: "350px",
-                                    marginTop: "9px"
-                                    }} type="text" name="private-k" id="private-key-input" defaultValue={privateKey ? privateKey : ""} readonly />
-                                <span style={{marginTop: "18px"}} className="copy-button" onClick={() => {navigator.clipboard.writeText(privateKey)}}> <img src={copy} alt="copy" /></span>
-                            </div>
-                        </div>
-                        <span id="passphrase-invalid" className="error" style={{ display: displayError === true ? "block" : "none" }}>
-                            <img src={altertR} alt="alert" />
-                            {` ${errorMessage}`}
-                        </span>
-                        <Button
+                        <Input
+                            className="reveal-pk-passphrase"
                             style={{
-                                textAlign: "center",
-                                width: "119px", 
-                                display: displayPkReveal === true ? "none" : "block",
-                                padding: "9px 6px",
-                                margin: "24px auto 10px auto" }}
-                            onClick={this.revealPrivateKey.bind(this)}
-                        >
-                            Reveal
+                                display: isModalVisible === true ? "block" : "none",
+                                margin: "8px auto auto auto",
+                                width: "350px"
+                            }}
+                            type="password"
+                            name="reveal-pk-passphrase"
+                            id="reveal-pk-passphrase"
+                            placeholder="Passphrase"
+                            minLength="1"
+                        />
+                        <div id="private-key-container" style={{ display: displayPkReveal === true ? "block" : "none" }}>
+                            <label id="private-key-label" className="passphrase-label" htmlFor="private">
+                                PRIVATE KEY
+                                </label>
+                            <Input style={{
+                                backgroundColor: "#f5f5f5",
+                                height: "20px",
+                                width: "350px",
+                                marginTop: "9px"
+                            }} type="text" name="private-k" id="private-key-input" defaultValue={privateKey ? privateKey : ""} readonly />
+                            <span style={{ marginTop: "18px" }} className="copy-button" onClick={() => { navigator.clipboard.writeText(privateKey) }}> <img src={copy} alt="copy" /></span>
+                        </div>
+                    </div>
+                    <span id="passphrase-invalid" className="error" style={{ display: displayError === true ? "block" : "none" }}>
+                        <img src={altertR} alt="alert" />
+                        {` ${errorMessage}`}
+                    </span>
+                    <Button
+                        style={{
+                            textAlign: "center",
+                            width: "119px",
+                            display: displayPkReveal === true ? "none" : "block",
+                            padding: "9px 6px",
+                            margin: "24px auto 10px auto"
+                        }}
+                        onClick={this.revealPrivateKey.bind(this)}
+                    >
+                        Reveal
                         </Button>
-                        <button className="close" onClick={this.closeModal.bind(this)}>
-                            <img src={exit} alt="exit icon close"/>
-                        </button>
-                        <div className="alert">
-                                <img src={altertT} alt="alert" />
-                                <div className="cont-alert">
-                                    <div className="title">
-                                        <h3>SAVE YOUR PRIVATE KEY!</h3>
-                                    </div>
-                                    <p>
-                                        You wont be able to reveal it again or restore it. Make a back up and store it safely, preferably offline. You’ll need it to access your account.
-                                    </p>
-                                </div>
-                            </div>
-                    </Modal>
+                    <button className="close" onClick={this.closeModal.bind(this)}>
+                        <img src={exit} alt="exit icon close" />
+                    </button>
+                </Modal>
             </AccountLContent>
         );
     }

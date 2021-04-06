@@ -28,5 +28,5 @@ import StyledLink from "./link";
     z-index: 999999;
   `)};
 `;
-
+// eslint-disable-next-line
 export default props => <MenuButton {...props}>&#9776;</MenuButton>;

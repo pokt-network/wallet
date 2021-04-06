@@ -214,11 +214,7 @@ export class DataSource {
             passphrase
         );
 
-        if (typeGuard(accountOrError, Error)) {
-            return undefined;
-        } else {
-            return accountOrError;
-        }
+        return accountOrError;
     }
 
     /**
