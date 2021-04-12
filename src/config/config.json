@@ -1,0 +1,20 @@
+{
+  "maxTransactionListCount": 100,
+  "gatewayUrl": "http://localhost:3000/v1/60676c9f7cbbfe002f0b9cbe",
+  "http": {
+    "timeout": 0,
+    "headers": {
+      "Content-Type": "application/json",
+      "Blockchain-Subdomain": "mainnet"
+    }
+  },
+  "maxDispatchers": 1,
+  "blockTime": 900000,
+  "txFee": 100000,
+  "chainId": "mainnet",
+  "useLegacyCodec": true,
+  "SECURE_LS_ENCRYPTION_SECRET": "9rdi0sa",
+  "SECURE_LS_ENCODING_TYPE": "aes",
+  "SECURE_LS_IS_COMPRESSION": true,
+  "SESSION_LENGTH": "30"
+}
