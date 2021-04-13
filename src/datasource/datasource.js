@@ -10,151 +10,38 @@ import {
   Hex,
   CoinDenom,
 } from "@pokt-network/pocket-js";
-import Config from "../config/config.json";
-
-const CONFIGURATION = new Configuration(
-  Config.MAX_DISPATCHERS,
-  1000,
-  0,
-  20000,
-  undefined,
-  undefined,
-  Number(Config.BLOCK_TIME),
-  undefined,
-  false,
-  false
-);
-
-/**
- * Retrieve a list of URL's from the configuration for the dispatchers
- *
- * @returns {URL[]} Dispatcher urls.
- */
-function getPocketDispatchers() {
-  const dispatchersStr = Config.DISPATCHERS || "";
-
-  if (dispatchersStr === "") {
-    return [];
-  }
-
-  return dispatchersStr.split(",").map(function (dispatcherURLStr) {
-    return new URL(dispatcherURLStr);
-  });
-}
-
-/**
- * @returns {HttpRpcProvider | PocketRpcProvider} RPC Provider.
- */
-async function getRPCProvider() {
-  const providerType = Config.PROVIDER_TYPE;
-
-  if (providerType.toLowerCase() === "http") {
-    return getHttpRPCProvider();
-  } else if (providerType.toLowerCase() === "pocket") {
-    return await getPocketRPCProvider();
-  } else {
-    // Default to HTTP RPC Provider
-    return getHttpRPCProvider();
-  }
-}
-
-/**
- * @returns {HttpRpcProvider} HTTP RPC Provider.
- */
-function getHttpRPCProvider() {
-  const node = Config.HTTP_PROVIDER;
-
-  if (!node || node === "") {
-    throw new Error(`Invalid HTTP Provider node: ${node}`);
-  }
-
-  return new HttpRpcProvider(new URL(node));
-}
-
-/**
- * @returns {PocketRpcProvider} Pocket RPC Provider.
- */
-async function getPocketRPCProvider() {
-  const clientPubKeyHex = Config.CLIENT_PUBLIC_KEY;
-  const clientPrivateKey = Config.CLIENT_PRIVATE_KEY;
-  const clientPassphrase = Config.CLIENT_PASSPHRASE;
-  const walletAppPublicKey = Config.WALLET_APP_PUBLIC_KEY;
-  const walletAppSignature = Config.WALLET_APP_AAT_SIGNATURE;
-  const blockchain = Config.CHAIN;
-
-  if (
-    clientPubKeyHex &&
-    clientPrivateKey &&
-    clientPassphrase &&
-    walletAppPublicKey &&
-    walletAppSignature &&
-    blockchain
-  ) {
-    // Dispatcher
-    const dispatchers = getPocketDispatchers();
-
-    if (!dispatchers || dispatchers.length === 0) {
-      throw new Error(`Failed to retrieve a list of dispatcher for the PocketRpcProvider: ${dispatchers}`);
-    }
-
-    // Pocket instance
-    const pocket = new Pocket(dispatchers, undefined, CONFIGURATION);
-
-    // Import client Account
-    const clientAccountOrError = await pocket.keybase.importAccount(
-      Buffer.from(clientPrivateKey, "hex"),
-      clientPassphrase
-    );
-
-    if (typeGuard(clientAccountOrError, Error)) {
-      throw clientAccountOrError;
-    }
-
-    // Unlock the client account
-    const unlockOrError = await pocket.keybase.unlockAccount(
-      clientAccountOrError.addressHex,
-      clientPassphrase,
-      0
-    );
-
-    if (typeGuard(unlockOrError, Error)) {
-      throw clientAccountOrError;
-    }
-
-    // Generate the AAT
-    const aat = new PocketAAT(
-      Config.AAT_VERSION,
-      clientPubKeyHex,
-      walletAppPublicKey,
-      walletAppSignature
-    );
-
-    // Pocket Rpc Instance
-    return new PocketRpcProvider(
-      pocket,
-      aat,
-      blockchain,
-      true
-    );
-  } else {
-    throw new Error(
-      `One of the environment variables are missing: CLIENT_PUBLIC_KEY=${Config.CLIENT_PUBLIC_KEY}, CLIENT_PRIVATE_KEY=${Config.CLIENT_PRIVATE_KEY}, CLIENT_PASSPHRASE=${Config.CLIENT_PASSPHRASE}, WALLET_APP_PUBLIC_KEY=${Config.WALLET_APP_PUBLIC_KEY}, WALLET_APP_AAT_SIGNATURE=${Config.WALLET_APP_AAT_SIGNATURE}, CHAIN=${Config.CHAIN}`
-    );
-  }
-}
 
 export class DataSource {
+  constructor(config) {
+    const gatewayUrl = config ? (config.gatewayUrl || "") : "";
+    const httpConfig = config ? (config.http || {}) : {};
+    
+    if (gatewayUrl === "") {
+      throw Errors.ConfigErrors.RequiredParam('gatewayUrl');
+    }
 
-  constructor() {
-    this.dispatchers = getPocketDispatchers();
-
-    if (!this.dispatchers || this.dispatchers.length === 0) {
-      throw new Error(
-        `Failed to retrieve a list of dispatchers to instantiate Pocket: ${this.dispatchers}`
+    if (Object.keys(httpConfig).length === 0) {
+      console.warn(
+        Errors.ConfigErrors.RequiredParam('http')
       );
     }
 
-    this.__pocket = new Pocket(this.dispatchers, undefined, CONFIGURATION);
+    this.gwClient = getGatewayClient(gatewayUrl, httpConfig);
+
+    const pocketClientConfiguration = new Configuration(
+      config.maxDispatchers,
+      1000,
+      0,
+      20000,
+      undefined,
+      undefined,
+      Number(config.blockTime),
+      undefined,
+      false,
+      false
+    );
+
+    this.__pocket = new Pocket([], undefined, pocketClientConfiguration);
   }
 
   /**
@@ -205,6 +92,7 @@ export class DataSource {
   }
 
   /**
+   * 
    * @returns {Account}
    */
   async importAccount(privateKey, passphrase) {
@@ -260,11 +148,8 @@ export class DataSource {
    * @returns {Number}
    */
   async getBalance(address) {
-    const provider = await getRPCProvider();
+    const balanceResponseOrError = await this.gwClient.getBalance(address, BigInt(0));
 
-    const balanceResponseOrError = await this.__pocket
-      .rpc(provider)
-      .query.getBalance(address, BigInt(0));
     if (typeGuard(balanceResponseOrError, RpcError)) {
       console.log(balanceResponseOrError);
       return 0;
@@ -273,12 +158,12 @@ export class DataSource {
       return uPOKT / 1000000;
     }
   }
+
   /**
    * @returns {Object}
    */
-  async getTx(tx) {
-    const provider = await getRPCProvider();
-    const txResponseOrError = await this.__pocket.rpc(provider).query.getTX(tx);
+  async getTx(txHash) {
+    const txResponseOrError = await this.gwClient.getTransaction(txHash);
 
     if (typeGuard(txResponseOrError, RpcError)) {
       console.log(txResponseOrError);
@@ -286,15 +171,41 @@ export class DataSource {
     }
     return txResponseOrError;
   }
+
+  /**
+   * @returns {Object | undefined}
+   */
+  async getApp(address) {
+    const provider = await getRPCProvider();
+
+    const appOrError = await this.gwClient.getApp(address, BigInt(0));
+
+    if (typeGuard(appOrError, RpcError)) {
+      return undefined;
+    } else {
+      return appOrError;
+    }
+  }
+  
+  /**
+   * @returns {Object | undefined}
+   */
+  async getNode(address) {
+    const nodeOrError = await this.gwClient.getNode(address, BigInt(0));
+
+    if (typeGuard(nodeOrError, RpcError)) {
+      return undefined;
+    } else {
+      return nodeOrError;
+    }
+  }
+
   /**
    * @returns {Object}
    */
   async sendTransaction(ppk, passphrase, toAddress, amount) {
-    const provider = await getRPCProvider();
-    this.__pocket.rpc(provider);
-
     // uPOKT
-    const defaultFee = Config.TX_FEE || 10000;
+    const defaultFee = this.txFee || 10000;
 
     const accountOrUndefined = await this.__pocket.keybase.importPPKFromJSON(
       passphrase,
@@ -316,48 +227,25 @@ export class DataSource {
       return new Error(transactionSenderOrError.message);
     };
 
-    const rawTxPayload = await transactionSenderOrError
+    const rawTxPayloadOrError = await transactionSenderOrError
       .send(accountOrUndefined.addressHex, toAddress, amount.toString())
       .process(Config.CHAIN_ID, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
 
-    if (typeGuard(rawTxResponse, RpcError)) {
+    if (typeGuard(rawTxPayloadOrError, RpcError)) {
+      console.log(`Failed to process transaction with error: ${rawTxResponse}`);
+      return new Error(rawTxPayloadOrError.message);
+    }
+
+    const rawTxResponseOrError = await this.gwClient.sendRawTx(rawTxPayload.addressHex, rawTxPayload.encodedTxBytes);
+
+    if (typeGuard(rawTxResponseOrError, RpcError)) {
       console.log(`Failed to send transaction with error: ${rawTxResponse}`);
       return new Error(rawTxResponse.message);
     }
 
-    const rawTxResponse = this.gwClient.sendRawTx(rawTxPayload.addressHex, rawTxPayload.encodedTxBytes)
-
     return rawTxResponse;
   }
-  /**
-   * @returns {Object | undefined}
-   */
-  async getApp(address) {
-    const provider = await getRPCProvider();
 
-    const appOrError = await this.__pocket.rpc(provider).query.getApp(address, BigInt(0));
-
-    if (typeGuard(appOrError, RpcError)) {
-      return undefined;
-    } else {
-      return appOrError;
-    }
-  }
-
-  /**
-   * @returns {Object | undefined}
-   */
-  async getNode(address) {
-    const provider = await getRPCProvider();
-
-    const nodeOrError = await this.__pocket.rpc(provider).query.getNode(address, BigInt(0));
-
-    if (typeGuard(nodeOrError, RpcError)) {
-      return undefined;
-    } else {
-      return nodeOrError;
-    }
-  }
   /**
    * @returns {Object}
    */
@@ -445,10 +333,8 @@ export class DataSource {
     const provider = await getRPCProvider();
     const maxTxs = Number(Config.MAX_TRANSACTION_LIST_COUNT);
     // Retrieve received transactions
-    const receivedTxsOrError = await this.__pocket
-      .rpc(provider)
-      .query.getAccountTxs(address, received, false, 1, maxTxs);
-    //
+    const receivedTxsOrError = await this.gwClient.getAccountTxs(address, received, false, 1, maxTxs);
+
     if (!typeGuard(receivedTxsOrError, RpcError)) {
       const txs = receivedTxsOrError;
       // Check the amount of total records
@@ -461,10 +347,8 @@ export class DataSource {
         }
       }
       // Call the last page
-      const txsOrError = await this.__pocket
-        .rpc(provider)
-        .query.getAccountTxs(address, received, false, page, maxTxs);
-      //
+      const txsOrError = await this.gwClient.getAccountTxs(address, received, false, page, maxTxs);
+
       if (!typeGuard(txsOrError, RpcError)) {
         return txsOrError;
       }
@@ -480,12 +364,14 @@ export class DataSource {
   validateAddress(address) {
     return Hex.validateAddress(address);
   }
+
   /**
    * @returns {boolean}
    */
   validatePrivateKey(privateKey) {
     return Hex.isHex(privateKey) && privateKey.length === 128;
   }
+
   /**
    * @returns {boolean}
    */
