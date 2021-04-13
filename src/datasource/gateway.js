@@ -1,7 +1,3 @@
-import {
-  JailedStatus,
-  StakingStatus,
-} from "@pokt-network/pocket-js";
 import Axios from "axios";
 import Errors from "./errors";
 
@@ -135,7 +131,7 @@ class PocketQueriesController {
   }
   
   // does not really need to be bound to `this`, but keeping it for semantics' sake.
-  // arguments explicit forward for clear signature lookup, avoid using `...args` 
+  // arguments explicit forwardong for clear signature lookup, avoid using `...args` 
   _getBalance = (address, height) => this.perform.call(this, 'getBalance', address, height) 
   _getTransaction = (id) => this.perform.call(this, 'getTransaction', id)
   _getApp = (address, height) => this.perform.call(this, 'getApp', address, height)
@@ -174,7 +170,7 @@ class PocketQueriesController {
 
 /**
  * Exposes registered/allowed gateway queries.
- * This layer is added for gateway level logic control.
+ * This layer is added for gateway level logic control. i.e: custom errors and responses.
  */
 class GatewayClient {
   constructor(httpProvider, requestsController, config) {
