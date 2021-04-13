@@ -149,7 +149,7 @@ class PocketQueriesController {
     getAccountTxs: this._getAccountTxs,
     sendRawTx: async (fromAddress, tx) => {
       const request = this.processors.rawTx.processRequest({ fromAddress, tx });
-      const rawResponse = await this._sendRawTx(request);
+      const rawResponse = await this._sendRawTx(request.addressHex, request.rawTxBytes);
       const response = this.processors.rawTx.processResponse(rawResponse);
 
       return response;
@@ -160,8 +160,8 @@ class PocketQueriesController {
   processors = {
     rawTx: {
       processRequest: ({ fromAddress, tx }) => ({
-        fromAddress: fromAddress.toString('hex'),
-        tx: tx.toString('hex'),
+        addressHex: fromAddress.toString('hex'),
+        rawTxBytes: tx.toString('hex'),
       }),
       processResponse: (response) => response,
     }
