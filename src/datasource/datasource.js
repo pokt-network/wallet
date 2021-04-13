@@ -316,14 +316,16 @@ export class DataSource {
       return new Error(transactionSenderOrError.message);
     };
 
-    const rawTxResponse = await transactionSenderOrError
+    const rawTxPayload = await transactionSenderOrError
       .send(accountOrUndefined.addressHex, toAddress, amount.toString())
-      .submit(Config.CHAIN_ID, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
+      .process(Config.CHAIN_ID, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
 
     if (typeGuard(rawTxResponse, RpcError)) {
       console.log(`Failed to send transaction with error: ${rawTxResponse}`);
       return new Error(rawTxResponse.message);
     }
+
+    const rawTxResponse = this.gwClient.sendRawTx(rawTxPayload.addressHex, rawTxPayload.encodedTxBytes)
 
     return rawTxResponse;
   }
