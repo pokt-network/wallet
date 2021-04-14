@@ -33,9 +33,9 @@ import altertR from "../../utils/images/alert-circle-red.png";
 import exit from '../../utils/images/exit.png';
 import altertT from '../../utils/images/alert-triangle.png';
 import PocketService from "../../core/services/pocket-service";
-import {DataSource} from "../../datasource/datasource";
+import { getDataSource } from "../../datasource";
 
-const dataSource = new DataSource();
+const dataSource = getDataSource();
 
 class AccountLatest extends Component {
     constructor() {
@@ -420,7 +420,6 @@ class AccountLatest extends Component {
     componentDidMount() {
 
         const {addressHex, publicKeyHex, ppk} = PocketService.getUserInfo();
-
         if (addressHex && publicKeyHex && ppk) {
             // Navigation Items
             const navLogOut = document.getElementById("log-out-nav");

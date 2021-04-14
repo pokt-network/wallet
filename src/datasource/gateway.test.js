@@ -17,7 +17,6 @@ const testConfig = {
   },
   "ppkFilePath": `${__dirname}/ppk.json`,
   "passphrase": "L0c4ld3v3l0pment!",
-  "recipientAddress": "",
   "chainId": "mainnet",
   "txFee": 10000,
 }

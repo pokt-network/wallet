@@ -15,9 +15,9 @@ import {
     withRouter
 } from 'react-router-dom'
 import PocketService from "../../core/services/pocket-service";
-import {DataSource} from "../../datasource/datasource";
+import {getDataSource} from "../../datasource";
 
-const dataSource = new DataSource();
+const dataSource = getDataSource();
 
 class TransactionDetail extends Component {
     constructor(props) {
