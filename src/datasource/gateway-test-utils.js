@@ -32,8 +32,6 @@ export const processTx = async ({
     "http://localhost:8081" // just a placeholder really, ignore
   ], undefined, pocketClientConfiguration);
 
-  console.log(passphrase);
-
   const accountOrUndefined = await pocket.keybase.importPPKFromJSON(
     passphrase,
     ppk,
@@ -57,9 +55,6 @@ export const processTx = async ({
   const rawTxPayloadOrError = await transactionSenderOrError
     .send(accountOrUndefined.addressHex, toAddress, amount.toString())
     .process(chainId, defaultFee.toString(), CoinDenom.Upokt, memo);
-
-  console.log({ rawTxPayloadOrError });
-  console.log("Returning");
 
   return {
     address: rawTxPayloadOrError.addressHex.toString('hex'),

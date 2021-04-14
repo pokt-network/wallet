@@ -1,15 +1,14 @@
-/* global BigInt */
 import {
   Pocket,
-  HttpRpcProvider,
-  PocketRpcProvider,
   Configuration,
   typeGuard,
   RpcError,
-  PocketAAT,
-  Hex,
   CoinDenom,
+  Hex,
 } from "@pokt-network/pocket-js";
+import { getGatewayClient } from "./gateway";
+
+import Errors from "./errors";
 
 export class DataSource {
   constructor(config) {
@@ -38,10 +37,13 @@ export class DataSource {
       Number(config.blockTime),
       undefined,
       false,
-      false
+      false,
+      config.useLegacyCodec,
     );
 
-    this.__pocket = new Pocket([], undefined, pocketClientConfiguration);
+    this.__pocket = new Pocket([""], undefined, pocketClientConfiguration);
+
+    this.config = config;
   }
 
   /**
@@ -77,7 +79,6 @@ export class DataSource {
    * @returns {Account}
    */
   async importPortablePrivateKey(password, jsonStr, passphrase) {
-
     const accountOrError = await this.__pocket.keybase.importPPKFromJSON(
       password,
       jsonStr,
@@ -148,56 +149,62 @@ export class DataSource {
    * @returns {Number}
    */
   async getBalance(address) {
-    const balanceResponseOrError = await this.gwClient.getBalance(address, BigInt(0));
-
-    if (typeGuard(balanceResponseOrError, RpcError)) {
-      console.log(balanceResponseOrError);
+    let balanceResponse;
+    try {
+      balanceResponse = await this.gwClient.makeQuery('getBalance', address, 0);
+    } catch (error) {
+      console.log(error);
       return 0;
-    } else {
-      const uPOKT = Number(balanceResponseOrError.balance.toString());
-      return uPOKT / 1000000;
     }
+
+    const uPOKT = Number(balanceResponse.balance.toString());
+    return uPOKT / 1000000;
   }
 
   /**
    * @returns {Object}
    */
   async getTx(txHash) {
-    const txResponseOrError = await this.gwClient.getTransaction(txHash);
-
-    if (typeGuard(txResponseOrError, RpcError)) {
-      console.log(txResponseOrError);
+    let txResponse; 
+    try {
+      txResponse = await this.gwClient.makeQuery('getTransaction', txHash);
+    } catch (error) {
+      console.log(error);
       return undefined;
     }
-    return txResponseOrError;
+
+    return txResponse;
   }
 
   /**
    * @returns {Object | undefined}
    */
   async getApp(address) {
-    const provider = await getRPCProvider();
+    let app;
 
-    const appOrError = await this.gwClient.getApp(address, BigInt(0));
-
-    if (typeGuard(appOrError, RpcError)) {
+    try {
+      app = await this.gwClient.makeQuery('getApp', address, 0)
+    } catch (error) {
+      console.log(error);
       return undefined;
-    } else {
-      return appOrError;
     }
+
+    return app;
   }
   
   /**
    * @returns {Object | undefined}
    */
   async getNode(address) {
-    const nodeOrError = await this.gwClient.getNode(address, BigInt(0));
-
-    if (typeGuard(nodeOrError, RpcError)) {
+    let node;
+    try {
+      node = await this.gwClient.makeQuery('getNode', address, 0);
+    } catch (error) {
+      console.log(error);
       return undefined;
-    } else {
-      return nodeOrError;
     }
+
+    return node;
   }
 
   /**
@@ -205,7 +212,7 @@ export class DataSource {
    */
   async sendTransaction(ppk, passphrase, toAddress, amount) {
     // uPOKT
-    const defaultFee = this.txFee || 10000;
+    const defaultFee = this.config.txFee || 10000;
 
     const accountOrUndefined = await this.__pocket.keybase.importPPKFromJSON(
       passphrase,
@@ -223,24 +230,30 @@ export class DataSource {
     );
 
     if (typeGuard(transactionSenderOrError, RpcError)) {
-      console.log(transactionSenderOrError);
       return new Error(transactionSenderOrError.message);
     };
 
     const rawTxPayloadOrError = await transactionSenderOrError
       .send(accountOrUndefined.addressHex, toAddress, amount.toString())
-      .process(Config.CHAIN_ID, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
+      .process(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
-      console.log(`Failed to process transaction with error: ${rawTxResponse}`);
+      console.log(`Failed to process transaction with error: ${rawTxPayloadOrError}`);
       return new Error(rawTxPayloadOrError.message);
     }
 
-    const rawTxResponseOrError = await this.gwClient.sendRawTx(rawTxPayload.addressHex, rawTxPayload.encodedTxBytes);
-
-    if (typeGuard(rawTxResponseOrError, RpcError)) {
-      console.log(`Failed to send transaction with error: ${rawTxResponse}`);
-      return new Error(rawTxResponse.message);
+    let rawTxResponse;
+    try {
+      rawTxResponse = await this
+        .gwClient
+        .makeQuery(
+          'sendRawTx',
+          rawTxPayloadOrError.addressHex,
+          rawTxPayloadOrError.encodedTxBytes
+        );
+    } catch (error) {
+      console.log(`Failed to send transaction with error: ${error.raw_log}`);
+      return new Error(error.message);
     }
 
     return rawTxResponse;
@@ -287,75 +300,74 @@ export class DataSource {
    */
   async getAllTransactions(address) {
     let receivedTxs;
-    let sentTxs;
-
     try {
-      // Retrieve received transactions
-      const receivedTxsOrError = await this.getTxs(address, true);
-
-      if (!typeGuard(receivedTxsOrError, RpcError) && receivedTxsOrError !== undefined) {
-        receivedTxs = receivedTxsOrError.toJSON();
-      }
-
-      // Retrieve sent transactions
-      const sentTxsOrError = await this.getTxs(address, false);
-
-      if (!typeGuard(sentTxsOrError, RpcError) && sentTxsOrError !== undefined) {
-        sentTxs = sentTxsOrError.toJSON();
-      }
-
-      if (receivedTxs === undefined && sentTxs === undefined) return undefined;
-
-      // Check if both arrays are not empty
-      if (
-        receivedTxs && receivedTxs.txs &&
-        receivedTxs.txs.length > 0 &&
-        sentTxs && sentTxs.txs &&
-        sentTxs.txs.length > 0
-      ) {
-        return this.mergeTxs(receivedTxs, sentTxs);
-      } else if (receivedTxs && receivedTxs.txs && receivedTxs.txs.length > 0) {
-        return this.sortTxs(receivedTxs, "Received");
-      } else if (sentTxs && sentTxs.txs && sentTxs.txs.length > 0) {
-        return this.sortTxs(sentTxs, "Sent");
-      } else {
-        return undefined;
-      }
+      receivedTxs = await this.getTxs(address, true);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      return undefined;
+    }
+    
+    let sentTxs;
+    try {
+      sentTxs = await this.getTxs(address, true);
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
+
+    if (receivedTxs === undefined && sentTxs === undefined) return undefined;
+    
+    // Check if both arrays are not empty
+    if (
+      receivedTxs && receivedTxs.txs &&
+      receivedTxs.txs.length > 0 &&
+      sentTxs && sentTxs.txs &&
+      sentTxs.txs.length > 0
+    ) {
+      return this.mergeTxs(receivedTxs, sentTxs);
+    } else if (receivedTxs && receivedTxs.txs && receivedTxs.txs.length > 0) {
+      return this.sortTxs(receivedTxs, "Received");
+    } else if (sentTxs && sentTxs.txs && sentTxs.txs.length > 0) {
+      return this.sortTxs(sentTxs, "Sent");
+    } else {
       return undefined;
     }
   }
+
   /**
    * @returns {Object[]}
    */
   async getTxs(address, received) {
-    const provider = await getRPCProvider();
-    const maxTxs = Number(Config.MAX_TRANSACTION_LIST_COUNT);
+    const maxTxs = Number(this.config.maxTransactionListCount);
     // Retrieve received transactions
-    const receivedTxsOrError = await this.gwClient.getAccountTxs(address, received, false, 1, maxTxs);
+    let receivedTxs;
 
-    if (!typeGuard(receivedTxsOrError, RpcError)) {
-      const txs = receivedTxsOrError;
-      // Check the amount of total records
-      let page = receivedTxsOrError.totalCount / maxTxs;
-      // Check if the page is decimal
-      if (page % 1 !== 0) {
-        page = Math.round(page);
-        if (page === 1 || page === 0) {
-          return txs;
-        }
-      }
-      // Call the last page
-      const txsOrError = await this.gwClient.getAccountTxs(address, received, false, page, maxTxs);
-
-      if (!typeGuard(txsOrError, RpcError)) {
-        return txsOrError;
-      }
-      return undefined;
-    } else {
+    try {
+      receivedTxs = await this.gwClient.makeQuery('getAccountTxs', address, received, false, 1, maxTxs);
+    } catch (error) {
       return undefined;
     }
+
+    let txs = receivedTxs;
+
+    // Check the amount of total records
+    let page = receivedTxs.total_count / maxTxs;
+
+    // Check if the page is decimal
+    if (page % 1 !== 0) {
+      page = Math.round(page);
+      if (page === 1 || page === 0) {
+        return txs;
+      }
+    }
+    
+    try {
+      txs = await this.gwClient.makeQuery('getAccountTxs', address, received, false, page, maxTxs);
+    } catch (error) {
+      return undefined;
+    }
+
+    return txs;
   }
 
   /**

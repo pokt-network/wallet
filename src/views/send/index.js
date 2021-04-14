@@ -10,10 +10,10 @@ import altertR from '../../utils/images/alert-circle-red.png';
 import Config from "../../config/config.json";
 import {withRouter} from 'react-router-dom';
 import PocketService from "../../core/services/pocket-service";
-import {DataSource} from "../../datasource/datasource";
+import {getDataSource} from "../../datasource";
 import {typeGuard} from "@pokt-network/pocket-js";
 
-const dataSource = new DataSource();
+const dataSource = getDataSource();
 
 class Send extends Component {
     constructor() {
