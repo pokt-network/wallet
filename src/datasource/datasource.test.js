@@ -149,7 +149,7 @@ describe('DataSource', () => {
       expect(txs.length).toBeGreaterThan(0);
 
       const types = txs.map(({ type }) => type)
-      
+
       expect(
         types.some(
           (t) => ['Received', 'Sent'].includes(t)
@@ -163,10 +163,10 @@ describe('DataSource', () => {
   describe.only('DataSource#sendTransaction', () => {
     test('responds with a txhash and a log resuming the transaction', async () => {
       const response = await context.datasource.sendTransaction(...context.args.sendTransaction());
-  
+
       console.log({ response })
       expect(response).toBeDefined();
-      
+
       expect(response).toHaveProperty('txhash');
       expect(response).toHaveProperty('log');
     })
