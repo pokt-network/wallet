@@ -54,10 +54,10 @@ export const processTx = async ({
 
   const rawTxPayloadOrError = await transactionSenderOrError
     .send(accountOrUndefined.addressHex, toAddress, amount.toString())
-    .process(chainId, defaultFee.toString(), CoinDenom.Upokt, memo);
+    .createTransaction(chainId, defaultFee.toString(), CoinDenom.Upokt, memo);
 
   return {
-    address: rawTxPayloadOrError.addressHex.toString('hex'),
-    raw_hex_bytes: rawTxPayloadOrError.encodedTxBytes.toString('hex'),
+    address: rawTxPayloadOrError.address.toString('hex'),
+    raw_hex_bytes: rawTxPayloadOrError.txHex.toString('hex'),
   }
 }

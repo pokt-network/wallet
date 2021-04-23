@@ -40,7 +40,7 @@ const dataSource = getDataSource();
 class AccountLatest extends Component {
     constructor() {
         super();
-        
+
         this.state = {
             normal: undefined,
             app: undefined,
@@ -176,7 +176,7 @@ class AccountLatest extends Component {
                 visibility: false, 
                 noTransactions: true
             });
-            
+
             this.enableLoaderIndicatory(false);
         }
     }
@@ -195,7 +195,7 @@ class AccountLatest extends Component {
 
             rTxs.forEach(tx => {
                 const events = tx.tx_result.events
-                
+
                 if (events[1].type === "transfer") {
                     const attributes = events[1].attributes;
                     if (attributes[1].key === "amount") {

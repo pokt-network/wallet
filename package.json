@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "private": true,
   "dependencies": {
-    "@pokt-network/pocket-js": "https://github.com/pokt-foundation/pocket-js#feat/expose-raw-tx-signature-logic",
+    "@pokt-network/pocket-js": "^0.6.11-rc",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
