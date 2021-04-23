@@ -146,11 +146,6 @@ describe("GatewayClient", () => {
       const toAddress = variables.recipientAddress;
       const amount = variables.txSendAmount;
 
-      console.log({
-        ppk,
-        passphrase,
-      });
-
       await processTx({
         toAddress,
         amount,
