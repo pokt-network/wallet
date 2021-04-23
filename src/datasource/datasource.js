@@ -14,7 +14,7 @@ export class DataSource {
   constructor(config) {
     const gatewayUrl = config ? (config.gatewayUrl || "") : "";
     const httpConfig = config ? (config.http || {}) : {};
-    
+
     if (gatewayUrl === "") {
       throw Errors.ConfigErrors.RequiredParam('gatewayUrl');
     }
@@ -235,7 +235,7 @@ export class DataSource {
 
     const rawTxPayloadOrError = await transactionSenderOrError
       .send(accountOrUndefined.addressHex, toAddress, amount.toString())
-      .process(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
+      .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
       console.log(`Failed to process transaction with error: ${rawTxPayloadOrError}`);
@@ -248,8 +248,8 @@ export class DataSource {
         .gwClient
         .makeQuery(
           'sendRawTx',
-          rawTxPayloadOrError.addressHex,
-          rawTxPayloadOrError.encodedTxBytes
+          rawTxPayloadOrError.address,
+          rawTxPayloadOrError.txHex
         );
     } catch (error) {
       console.log(`Failed to send transaction with error: ${error.raw_log}`);
@@ -360,7 +360,7 @@ export class DataSource {
         return txs;
       }
     }
-    
+
     try {
       txs = await this.gwClient.makeQuery('getAccountTxs', address, received, false, page, maxTxs);
     } catch (error) {
