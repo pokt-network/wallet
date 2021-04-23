@@ -195,7 +195,6 @@ class AccountLatest extends Component {
       try {
         // Invert the list
         const rTxs = txs.reverse();
-
         // Images src paths
         const sentImgSrc = sent;
         const receivedImgSrc = received;
