@@ -8,7 +8,7 @@ import github from '../../utils/images/github.png';
 import discord from '../../utils/images/discord.png';
 import telegram from '../../utils/images/telegram.png';
 import cent from '../../utils/images/cent.png';
-import Config from "../../config/config.json";
+import {Config} from "../../config/config";
 
 class Footer extends Component {
   

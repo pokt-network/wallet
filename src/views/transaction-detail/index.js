@@ -10,7 +10,7 @@ import TBody from '../../components/public/table/tbody';
 import none from '../../utils/images/none.png';
 import success from '../../utils/images/check_green.png';
 import failed from '../../utils/images/wrong_red.png';
-import Config from "../../config/config.json"
+import {Config} from "../../config/config"
 import {
     withRouter
 } from 'react-router-dom'
