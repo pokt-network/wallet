@@ -7,7 +7,7 @@ import Button from '../../components/public/button/button';
 import exit from '../../utils/images/exit.png';
 import PopupContent from './popup-content';
 import altertR from '../../utils/images/alert-circle-red.png';
-import Config from "../../config/config.json";
+import {Config} from "../../config/config";
 import {withRouter} from 'react-router-dom';
 import PocketService from "../../core/services/pocket-service";
 import {getDataSource} from "../../datasource";

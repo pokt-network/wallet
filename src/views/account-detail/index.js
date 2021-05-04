@@ -24,7 +24,7 @@ import Tr from '../../components/public/table/tr';
 import THead from '../../components/public/table/thead';
 import TBody from '../../components/public/table/tbody';
 import copy from '../../utils/images/copy.png';
-import Config from "../../config/config.json";
+import {Config} from "../../config/config";
 import {
     withRouter
 } from 'react-router-dom';
