@@ -1,5 +1,5 @@
 import SecureLS from "secure-ls";
-import Config from "../../config/config.json";
+import {Config} from "../../config/config";
 
 class PocketService {
     constructor() {
