@@ -28,7 +28,7 @@ export class DataSource {
     this.gwClient = getGatewayClient(gatewayUrl, httpConfig);
 
     const pocketClientConfiguration = new Configuration(
-      config.maxDispatchers,
+      1,
       1000,
       0,
       20000,
