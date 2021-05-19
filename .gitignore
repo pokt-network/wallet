@@ -25,7 +25,5 @@ yarn-error.log*
 *node_modules
 dist
 
-/config/config*.json
-
 *.swp
 ./src/config/config.json
