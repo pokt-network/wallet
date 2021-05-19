@@ -27,3 +27,4 @@ dist
 
 *.swp
 ./src/config/config.json
+.env
