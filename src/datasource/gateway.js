@@ -134,7 +134,7 @@ class PocketQueriesController {
   _getNode = (address, height) => this.perform.call(this, 'getNode', address, height)
   _getAccountTxs = (address, received, prove, page, per_page) => this.perform.call(this, 'getAccountTxs', address, received, prove, page, per_page)
   _sendRawTx = (fromAddress, tx) => this.perform.call(this, 'sendRawTx', fromAddress, tx)
-    
+
   // For semantic separation, and for "ease of middlewaring" when necessary.
   // hook your processors to your cals in here
   query = {
@@ -142,7 +142,12 @@ class PocketQueriesController {
     getTransaction: this._getTransaction,
     getApp: this._getApp,
     getNode: this._getNode,
-    getAccountTxs: this._getAccountTxs,
+    getAccountTxs: async (...args) => {
+      const rawResponse = await this._getAccountTxs(...args);
+      const response = this.processors.accountTxs.processResponse(rawResponse);
+
+      return response;
+    },
     sendRawTx: async (fromAddress, tx) => {
       const request = this.processors.rawTx.processRequest({ fromAddress, tx });
       const rawResponse = await this._sendRawTx(request.addressHex, request.rawTxBytes);
@@ -160,7 +165,33 @@ class PocketQueriesController {
         rawTxBytes: tx.toString('hex'),
       }),
       processResponse: (response) => response,
-    }
+    },
+
+    accountTxs: {
+      processResponse: (response) => {
+        const base64ToStr = (v) => Buffer.from(v, "base64").toString();
+        const kvToStr = (kvObj) => ({
+          key: base64ToStr(kvObj.key),
+          value: base64ToStr(kvObj.value),
+        });
+
+        const mapEvents = (events) => events.map(
+          (e) => ({ ...e, attributes: e.attributes.map(kvToStr) })
+        )
+
+        const txs = response.txs.map(
+          (tx) => ({
+            ...tx,
+            tx_result: {
+              ...tx.tx_result,
+              events: mapEvents(tx.tx_result.events),
+            }
+          })
+        )
+
+        return { ...response, txs }
+      }
+   }
   }
 }
 
