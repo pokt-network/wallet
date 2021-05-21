@@ -18,6 +18,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: NPM install
       run: npm install
+    - name: Production build
+      run: npm run build
       env:
         REACT_APP_CLIENT_PASSPHRASE: ${{ secrets.WALLET_TESTNET_CLIENT_PASSPHRASE }}
         REACT_APP_CLIENT_PUBLIC_KEY: ${{ secrets.WALLET_TESTNET_CLIENT_PUBLIC_KEY }}
@@ -32,18 +34,16 @@ jobs:
         REACT_APP_BLOCK_EXPLORER_BASE_URL: "https://explorer.testnet.pokt.network"
         REACT_APP_DASHBOARD_BASE_URL: "https://dashboard.testnet.pokt.network"
         REACT_APP_BUY_POKT_BASE_URL: "https://pokt.network/pokt-sale/"
-        REACT_APP_CHAIN: "0002"
-        REACT_APP_CHAIN_ID: "testnet"
+        REACT_APP_CHAIN: "0001"
+        REACT_APP_CHAIN_ID: "mainnet"
         REACT_APP_BLOCK_TIME: "900000"
         REACT_APP_MAX_TRANSACTION_LIST_COUNT: "100"
         REACT_APP_TX_FEE: "10000"
         REACT_APP_SESSION_LENGTH: "15"
-        REACT_APP_GATEWAY_URL: "http://gateway.pokt.network:3000/v1/lb/60a2ac11b1747c6552385c61"
+        REACT_APP_GATEWAY_URL: "http://gateway.pokt.network/v1/lb/60a2ac11b1747c6552385c61"
         REACT_APP_HTTP_TIMEOUT: 0
         REACT_APP_USE_LEGACY_CODEC: true
         REACT_APP_HTTP_HEADERS: '{"Content-Type": "application/json"}'
-    - name: Production build
-      run: npm run build
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
       with:
