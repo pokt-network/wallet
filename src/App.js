@@ -15,7 +15,6 @@ import Footer from "./components/footer";
 import history from './history';
 import './normalize.css';
 import JSBI from 'jsbi';
-import { Config } from "./config/config.js";
 
 class App extends Component {
   constructor(props) {
