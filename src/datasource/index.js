@@ -6,7 +6,7 @@ const dataSourceConfig = {
   gatewayUrl: Config.GATEWAY_BASE_URL,
   http: {
     timeout: Config.HTTP_TIMEOUT,
-    headers: Config.HTTP_HEADERS,
+    headers: Config.HTTP_HEADERS !== "" ? JSON.parse(Config.HTTP_HEADERS) : {},
   }
 }
 export const getDataSource = () => new DataSource(dataSourceConfig);
