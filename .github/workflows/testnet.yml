@@ -38,7 +38,7 @@ jobs:
         REACT_APP_AAT_VERSION: "0.0.1"
         REACT_APP_BLOCK_EXPLORER_BASE_URL: "https://explorer.testnet.pokt.network"
         REACT_APP_DASHBOARD_BASE_URL: "https://dashboard.testnet.pokt.network"
-        REACT_APP_BUY_POKT_BASE_URL: "https://pokt.network/pokt-sale/"
+        REACT_APP_BUY_POKT_BASE_URL: "https://forum.pokt.network/t/secondary-markets-for-pokt/629"
         REACT_APP_CHAIN: "0001"
         REACT_APP_CHAIN_ID: "mainnet"
         REACT_APP_BLOCK_TIME: "900000"

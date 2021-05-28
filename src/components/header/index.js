@@ -9,6 +9,7 @@ import HeaderContainer from "./header";
 import logo from '../../utils/images/logo-white.png';
 import PocketService from "../../core/services/pocket-service";
 import {withRouter} from 'react-router-dom';
+import {Config} from "../../config/config";
 
 class Header extends Component {
   constructor(props) {
@@ -51,7 +52,7 @@ class Header extends Component {
                 <button className="nav-button" id="account-detail-nav" onClick={() => this.pushToDetails()} >Account Detail</button>
               </StyledLi>
               <StyledLi>
-                <a tartget="_target" href="https://pocketnetwork.typeform.com/to/TC96EJvo">Buy POKT</a>
+                <a tartget="_target" href={Config.BUY_POKT_BASE_URL}>Buy POKT</a>
               </StyledLi>
               <StyledLi>
                 <button className="nav-button" id="log-out-nav" onClick={this.onLogOut} >Log out</button>
