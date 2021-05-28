@@ -72,6 +72,7 @@ class AccountLatest extends Component {
             isModalVisible: false,
             maxTxListCount: Number(Config.MIN_TRANSACTION_LIST_COUNT),
             txList: [],
+            passphraseInput: "",
             displayPkReveal: <i class="fas fa-less    "></i>
         };
 
@@ -127,16 +128,14 @@ class AccountLatest extends Component {
     async revealPrivateKey() {
         const {ppk} = this.state;
 
-        // passphrase-invalid
-        const passphraseInput = document.getElementById("reveal-pk-passphrase");
-
+        const passphraseInput = this.state.passphraseInput;
         // Check for ppk and the element
         if (ppk && passphraseInput) {
 
             const account = await dataSource.importPortablePrivateKey(
-                passphraseInput.value,
+                passphraseInput,
                 ppk,
-                passphraseInput.value
+                passphraseInput
             );
 
             if (account === undefined) {
