@@ -75,7 +75,7 @@ class Send extends Component {
             loaderElement.style.display = show === true ? "block" : "none";
         };
     }
-    
+
     handleKeyPress(event) {
         if (event.key === 'Enter') {
             event.preventDefault()
@@ -126,7 +126,7 @@ class Send extends Component {
 
         const passphrase = document.getElementById("modal-passphrase");
         const destinationAddress = document.getElementById("destination-address");
-        
+
         if (passphrase && destinationAddress && ppk && amountToSend > 0) {
             // Update the state values for the addresses
             this.setState({
@@ -146,23 +146,23 @@ class Send extends Component {
                 this.enableLoaderIndicatory(false);
                 // Show error message
                 this.togglePassphraseError(txResponse.message !== undefined ? txResponse.message : "Failed to send the transaction, please verify the information.");
-                
+
                 return;
             }
 
             this.finishSendTransaction();
             // Print in console the tx response
             console.log(txResponse);
-            
+
             // Save the user information locally
             PocketService.saveUserInCache(addressHex, publicKeyHex, ppk);
-            
+
             // Save the tx information locally
             PocketService.saveTxInCache(
                 addressHex,
                 destinationAddress.value,
                 (amountToSend / 1000000),
-                txResponse.hash,
+                txResponse.txhash,
                 (txFee / 1000000),
                 "Pending",
                 "Pending"
@@ -171,7 +171,7 @@ class Send extends Component {
             // Disable loader indicator
             this.enableLoaderIndicatory(false);
             // Push to transaction detail page
-            this.pushToTxDetail();
+            this.pushToTxDetail(txResponse.txhash);
         } else {
             // Disable loader indicator
             this.enableLoaderIndicatory(false);
@@ -187,13 +187,15 @@ class Send extends Component {
         })
     }
 
-    pushToTxDetail() {
+    pushToTxDetail(txHash) {
         // Move to the transaction detail
         this.props.history.push({
-            pathname: "/transaction-detail"
+            pathname: "/transaction-detail",
+            data: txHash,
+            loadFromCache: true,
         })
     }
-    
+
     // Close and clean after sending a transaction
     finishSendTransaction() {
         // Set default values
@@ -204,7 +206,7 @@ class Send extends Component {
         });
 
         document.getElementById("modal-passphrase").value = "";
-        
+
         // Close active modals
         this.showModal(false);
         this.showPassModal(false);

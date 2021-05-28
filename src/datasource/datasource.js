@@ -253,7 +253,7 @@ export class DataSource {
         );
     } catch (error) {
       console.log(`Failed to send transaction with error: ${error.raw_log}`);
-      return new Error(error.message);
+      return new Error(error.raw_log);
     }
 
     return rawTxResponse;
@@ -306,17 +306,17 @@ export class DataSource {
       console.error(error);
       return undefined;
     }
-    
+
     let sentTxs;
     try {
-      sentTxs = await this.getTxs(address, true);
+      sentTxs = await this.getTxs(address, false);
     } catch (error) {
       console.error(error);
       return undefined;
     }
 
     if (receivedTxs === undefined && sentTxs === undefined) return undefined;
-    
+
     // Check if both arrays are not empty
     if (
       receivedTxs && receivedTxs.txs &&
@@ -345,29 +345,11 @@ export class DataSource {
     try {
       receivedTxs = await this.gwClient.makeQuery('getAccountTxs', address, received, false, 1, maxTxs);
     } catch (error) {
+      console.log({ error  })
       return undefined;
     }
 
-    let txs = receivedTxs;
-
-    // Check the amount of total records
-    let page = receivedTxs.total_count / maxTxs;
-
-    // Check if the page is decimal
-    if (page % 1 !== 0) {
-      page = Math.round(page);
-      if (page === 1 || page === 0) {
-        return txs;
-      }
-    }
-
-    try {
-      txs = await this.gwClient.makeQuery('getAccountTxs', address, received, false, page, maxTxs);
-    } catch (error) {
-      return undefined;
-    }
-
-    return txs;
+    return receivedTxs;
   }
 
   /**
