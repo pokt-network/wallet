@@ -70,6 +70,7 @@ class AccountLatest extends Component {
             reloadImgSrc: reload,
             reloadActiveImgSrc: reloadActive,
             isModalVisible: false,
+            passphraseInput: "",
             displayPkReveal: <i class="fas fa-less    "></i>
         };
 
@@ -104,27 +105,25 @@ class AccountLatest extends Component {
 
         this.togglePkReveal(false);
     }
-    
+
     togglePkReveal(show) {
 
         this.setState({
             displayPkReveal: show
         })
     }
-    
+
     async revealPrivateKey() {
         const {ppk} = this.state;
 
-        // passphrase-invalid
-        const passphraseInput = document.getElementById("reveal-pk-passphrase");
-
+        const passphraseInput = this.state.passphraseInput;
         // Check for ppk and the element
         if (ppk && passphraseInput) {
-            
+
             const account = await dataSource.importPortablePrivateKey(
-                passphraseInput.value,
+                passphraseInput,
                 ppk,
-                passphraseInput.value
+                passphraseInput
             );
 
             if (account === undefined) {
@@ -194,43 +193,38 @@ class AccountLatest extends Component {
             let idCounter = 1;
 
             rTxs.forEach(tx => {
-                const events = tx.tx_result.events
+              if (!tx.stdTx.msg.amount && !tx.stdTx.msg.value) {
+                return;
+              }
+              const amount = Object.keys(tx.stdTx.msg).includes('amount') ? tx.stdTx.msg.amount : tx.stdTx.msg.value.amount;
+              const txType = tx.type.toLowerCase();
 
-                if (events[1].type === "transfer") {
-                    const attributes = events[1].attributes;
-                    if (attributes[1].key === "amount") {
-                        const value = attributes[1].value.replace("upokt", "");
+              const txHash = tx.hash;
+              const imageSrc = txType === 'sent' ? sentImgSrc : receivedImgSrc;
 
-                        const txHash = tx.hash;
-                        const imageSrc = tx.type.toLowerCase() === "sent" ? sentImgSrc : receivedImgSrc;
-                        const TrClass = document.getElementById("tr-element").className;
-                        const TdClass = document.getElementById("td-element").className;
+              const TrClass = document.getElementById("tr-element").className;
+              const TdClass = document.getElementById("td-element").className;
 
-                        const txTemplate = '<Tr class="' + TrClass + '">\n' +
-                            '<Td class="' + TdClass + '"> <img src=' + imageSrc + ' alt="' + tx.type.toLowerCase() + '" /> </Td>\n' +
-                            '<Td class="' + TdClass + '"> <div class="qty">' + value / 1000000 + ' <span>POKT</span></div> <div class="status">' + tx.type.toLowerCase() + '</div> </Td>\n' +
-                            '<Td class="' + TdClass + ' block-align">' + tx.height + '</Td>\n' +
-                            '<Td class="' + TdClass + '"> <a id="txHashElement' + idCounter + '"> ' + txHash + ' </a> </Td>\n' +
-                            '</Tr>';
+              const txTemplate = '<Tr class="' + TrClass + '">\n' +
+                  '<Td class="' + TdClass + '"> <img src=' + imageSrc + ' alt="' + tx.type.toLowerCase() + '" /> </Td>\n' +
+                  '<Td class="' + TdClass + '"> <div class="qty">' + amount / 1000000 + ' <span>POKT</span></div> <div class="status">' + tx.type.toLowerCase() + '</div> </Td>\n' +
+                  '<Td class="' + TdClass + ' block-align">' + tx.height + '</Td>\n' +
+                  '<Td class="' + TdClass + '"> <a id="txHashElement' + idCounter + '"> ' + txHash + ' </a> </Td>\n' +
+                  '</Tr>';
 
-                        section.insertAdjacentHTML('beforeend', txTemplate);
-                        // Add onClick event to the clickable element
-                        const toTxDetail = document.getElementById(`txHashElement${idCounter}`);
+              section.insertAdjacentHTML('beforeend', txTemplate);
+              // Add onClick event to the clickable element
+              const toTxDetail = document.getElementById(`txHashElement${idCounter}`);
 
-                        if (toTxDetail) {
-                            toTxDetail.addEventListener("click", () => { this.pushToTxDetail(txHash) });
-                        }
-                        idCounter++;
-                    } else {
-                        console.dir(attributes, { depth: null });
-                    }
-                }
-                
-            })
-            // Display the table
-            this.setState({displayTxListSection: true});
+              if (toTxDetail) {
+                  toTxDetail.addEventListener("click", () => { this.pushToTxDetail(txHash) });
+              }
+              idCounter++;
+          });
+          // Display the table
+          this.setState({displayTxListSection: true});
 
-            this.enableLoaderIndicatory(false);
+          this.enableLoaderIndicatory(false);
         } catch (error) {
             console.log(error);
             this.enableLoaderIndicatory(false);
@@ -678,6 +672,7 @@ class AccountLatest extends Component {
                                 name="reveal-pk-passphrase"
                                 id="reveal-pk-passphrase"
                                 placeholder="Passphrase"
+                                onInput={(e) => this.setState({ passphraseInput: e.currentTarget.value})}
                                 minLength="1"
                             />
                             <div id="private-key-container" style={{display: displayPkReveal === true ? "block" : "none"}}>

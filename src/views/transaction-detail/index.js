@@ -25,6 +25,7 @@ class TransactionDetail extends Component {
 
         this.state = {
             txHash: this.props.location.data,
+            loadFromCache: this.props.location.loadFromCache,
             successImgSrc: success,
             failedImgSrc: failed,
             pendingImgSrc: none,
@@ -60,10 +61,8 @@ class TransactionDetail extends Component {
         const { tx, successImgSrc, failedImgSrc, pendingImgSrc } = this.state;
         const transaction = txObj !== undefined ? txObj : tx;
 
-        // Update the status img
-        console.log("tx.status.toLowerCase() = "+ transaction.status.toLowerCase());
         switch (transaction.status.toLowerCase()) {
-            
+
             case "success":
                 document.getElementById("statusImg").src = successImgSrc;
                 document.getElementById("statusImgMobile").src = successImgSrc;
@@ -81,7 +80,32 @@ class TransactionDetail extends Component {
 
     async getTx(txHash) {
         try {
-            const txResponse = await dataSource.getTx(txHash);
+          const txResponse = await dataSource
+            .getTx(txHash.toLowerCase())
+            .then(
+              (response) => {
+
+              return ({
+                transaction: {
+                  txResult: {
+                    ...response.tx_result,
+                    events: response.tx_result.events === null ? null : response.tx_result.events.map(
+                      (e) => ({
+                        ...e,
+                        attributes: e.attributes
+                          .map(
+                            (kv) => ({
+                              key: Buffer.from(kv.key, "base64").toString(),
+                              value: Buffer.from(kv.value, "base64").toString(),
+                            })
+                          )
+                      })
+                    )
+                  },
+                }
+              })
+              }
+            );
 
             if (txResponse === undefined) {
                 console.log("Couldn't retrieve the transaction using the provided tx hash");
@@ -159,18 +183,18 @@ class TransactionDetail extends Component {
         // Navigation Items
         const navAccount = document.getElementById("account-detail-nav");
         const navLogOut = document.getElementById("log-out-nav");
-        
+
         if (navAccount && navLogOut) {
             navAccount.style.display = "block";
             navLogOut.style.display = "block";
         }
 
         // Retrieve the tx and txhash from state
-        const {txHash} = this.state;
+        const { txHash, loadFromCache } = this.state;
 
-        if (txHash !== undefined) {
+        if (txHash !== undefined && !loadFromCache) {
             // Retrieve the tx information from the network
-            this.getTx(txHash.txHash);
+            this.getTx(txHash);
         } else {
             // Retrieve the tx information from cached
             const {
@@ -182,7 +206,6 @@ class TransactionDetail extends Component {
                 status,
                 sentStatus
             } = PocketService.getTxInfo();
-
             // Check if values are set
             if (
                 fromAddress &&
@@ -193,10 +216,8 @@ class TransactionDetail extends Component {
                 status &&
                 sentStatus
             ) {
-                // 
                 const sentAmountFormatted = sentAmount * 1000000;
 
-                //
                 const obj = {
                     tx: {
                         fromAddress,
