@@ -25,6 +25,7 @@ class TransactionDetail extends Component {
 
         this.state = {
             txHash: this.props.location.data,
+            loadFromCache: this.props.location.loadFromCache,
             successImgSrc: success,
             failedImgSrc: failed,
             pendingImgSrc: none,
@@ -60,8 +61,6 @@ class TransactionDetail extends Component {
         const { tx, successImgSrc, failedImgSrc, pendingImgSrc } = this.state;
         const transaction = txObj !== undefined ? txObj : tx;
 
-        // Update the status img
-        console.log("tx.status.toLowerCase() = "+ transaction.status.toLowerCase());
         switch (transaction.status.toLowerCase()) {
 
             case "success":
@@ -142,11 +141,11 @@ class TransactionDetail extends Component {
         }
 
         // Retrieve the tx and txhash from state
-        const {txHash} = this.state;
+        const { txHash, loadFromCache } = this.state;
 
-        if (txHash !== undefined) {
+        if (txHash !== undefined && !loadFromCache) {
             // Retrieve the tx information from the network
-            this.getTx(txHash.txHash);
+            this.getTx(txHash);
         } else {
             // Retrieve the tx information from cached
             const {
@@ -158,7 +157,6 @@ class TransactionDetail extends Component {
                 status,
                 sentStatus
             } = PocketService.getTxInfo();
-
             // Check if values are set
             if (
                 fromAddress &&
