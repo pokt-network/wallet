@@ -75,7 +75,7 @@ class Send extends Component {
             loaderElement.style.display = show === true ? "block" : "none";
         };
     }
-    
+
     handleKeyPress(event) {
         if (event.key === 'Enter') {
             event.preventDefault()
@@ -159,7 +159,7 @@ class Send extends Component {
                 addressHex,
                 destinationAddress.value,
                 (amountToSend / 1000000),
-                txResponse.hash,
+                txResponse.txhash,
                 (txFee / 1000000),
                 "Pending",
                 "Pending"
@@ -168,7 +168,7 @@ class Send extends Component {
             // Disable loader indicator
             this.enableLoaderIndicatory(false);
             // Push to transaction detail page
-            this.pushToTxDetail();
+            this.pushToTxDetail(txResponse.txhash);
         } else {
             // Disable loader indicator
             this.enableLoaderIndicatory(false);
@@ -184,10 +184,12 @@ class Send extends Component {
         })
     }
 
-    pushToTxDetail() {
+    pushToTxDetail(txHash) {
         // Move to the transaction detail
         this.props.history.push({
-            pathname: "/transaction-detail"
+            pathname: "/transaction-detail",
+            data: txHash,
+            loadFromCache: true,
         })
     }
 
