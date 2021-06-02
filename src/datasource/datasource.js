@@ -22,6 +22,7 @@ const CONFIGURATION = new Configuration(
     Number(Config.BLOCK_TIME),
     undefined,
     false,
+    false,
     false
 );
 
