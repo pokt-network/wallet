@@ -23,7 +23,7 @@ const CONFIGURATION = new Configuration(
     undefined,
     false,
     false,
-    false
+    true
 );
 
 /**
