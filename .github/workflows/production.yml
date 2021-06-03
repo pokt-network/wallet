@@ -43,6 +43,7 @@ jobs:
         MAX_TRANSACTION_LIST_COUNT: "100"
         TX_FEE: "10000"
         SESSION_LENGTH: "30"
+        USE_LEGACY_CODEC: true
     - name: NPM install
       run: npm install
     - name: Production build
