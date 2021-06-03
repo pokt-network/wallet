@@ -28,3 +28,4 @@ dist
 /config/config*.json
 
 *.swp
+./src/config/config.json
