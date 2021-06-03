@@ -126,7 +126,7 @@ class Send extends Component {
 
         const passphrase = document.getElementById("modal-passphrase");
         const destinationAddress = document.getElementById("destination-address");
-        
+
         if (passphrase && destinationAddress && ppk && amountToSend > 0) {
             // Update the state values for the addresses
             this.setState({
@@ -146,17 +146,14 @@ class Send extends Component {
                 this.enableLoaderIndicatory(false);
                 // Show error message
                 this.togglePassphraseError(txResponse.message !== undefined ? txResponse.message : "Failed to send the transaction, please verify the information.");
-                
                 return;
             }
 
             this.finishSendTransaction();
-            // Print in console the tx response
-            console.log(txResponse);
-            
+
             // Save the user information locally
             PocketService.saveUserInCache(addressHex, publicKeyHex, ppk);
-            
+
             // Save the tx information locally
             PocketService.saveTxInCache(
                 addressHex,
@@ -193,7 +190,7 @@ class Send extends Component {
             pathname: "/transaction-detail"
         })
     }
-    
+
     // Close and clean after sending a transaction
     finishSendTransaction() {
         // Set default values
@@ -204,7 +201,7 @@ class Send extends Component {
         });
 
         document.getElementById("modal-passphrase").value = "";
-        
+
         // Close active modals
         this.showModal(false);
         this.showPassModal(false);
@@ -220,7 +217,7 @@ class Send extends Component {
         const amountElement = document.getElementById("pokt-amount");
         // Retrieve modal amount value element
         const amountElementText = document.getElementById("modal-amount-to-send");
-        
+
         // Check the elements
         if (amountElement && amountElementText) {
             const amountValue = Number(amountElement.value)
@@ -458,7 +455,14 @@ class Send extends Component {
                                                     display: "block"
                                                 }} className="error"> <img src={altertR} alt="alert" /> {passphraseError}</span>
                                                     <div className="btn-subm">
-                                                        <Button id="sendButton" disabled={disableSendBtn} onClick={this.sendTransaction} >Send</Button>
+                                                            <Button 
+                                                              id="sendButton"
+                                                              style={ disableSendBtn ? {  'pointer-events': 'none', 'transition': 'none' } : {}  }
+                                                              dark={disableSendBtn}
+                                                              onClick={this.sendTransaction}
+                                                            >
+                                                            Send
+                                                            </Button>
                                                     </div>
                                                 </form>
                                             </div>
