@@ -23,7 +23,7 @@ const CONFIGURATION = new Configuration(
     undefined,
     false,
     false,
-    Config.USE_LEGACY_CODEC,
+    Config.USE_LEGACY_CODEC === "false" ? false : true,
 );
 
 /**
