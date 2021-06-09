@@ -189,6 +189,7 @@ class TransactionDetail extends Component {
 
     render() {
         const { tx } = this.state;
+        const txExplorerLink = `${Config.BLOCK_EXPLORER_BASE_URL}/tx/${tx.hash}`;
 
         return (
             <DetailContent>
@@ -198,7 +199,9 @@ class TransactionDetail extends Component {
                         <TBody className="details-t">
                             <Tr>
                                 <Th>TRANSACTION HASH</Th>
-                                <Td id="txHash" style={{ wordBreak: "break-word" }}> {tx.hash} </Td>
+                                <Td id="txHash" style={{ wordBreak: "break-word" }}>
+                                  <a href={txExplorerLink}>{tx.hash}</a>
+                                </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
