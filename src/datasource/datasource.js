@@ -372,7 +372,10 @@ export class DataSource {
         //
         const mergedTxs = received.txs.concat(sent.txs);
         const filterByBlockHeight = mergedTxs.sort(function (a, b) {
-            return a.height - b.height;
+          const blockHeightDistance = (a.height - b.height);
+          return blockHeightDistance === 0
+            ? a.index - b.index
+            : blockHeightDistance;
         });
 
         return filterByBlockHeight;
@@ -387,7 +390,10 @@ export class DataSource {
         });
 
         const filterByBlockHeight = object.txs.sort(function (a, b) {
-            return a.height - b.height;
+          const blockHeightDistance = (a.height - b.height);
+          return blockHeightDistance === 0
+            ? a.index - b.index
+            : blockHeightDistance;
         });
 
         return filterByBlockHeight;

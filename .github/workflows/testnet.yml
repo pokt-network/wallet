@@ -40,7 +40,7 @@ jobs:
         CHAIN: "0002"
         CHAIN_ID: "testnet"
         BLOCK_TIME: "900000"
-        MAX_TRANSACTION_LIST_COUNT: "100"
+        MAX_TRANSACTION_LIST_COUNT: "300"
         TX_FEE: "10000"
         SESSION_LENGTH: "15"
         USE_LEGACY_CODEC: false
