@@ -22,7 +22,8 @@ const CONFIGURATION = new Configuration(
     Number(Config.BLOCK_TIME),
     undefined,
     false,
-    false
+    false,
+    Config.USE_LEGACY_CODEC === "false" ? false : true,
 );
 
 /**
