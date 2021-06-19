@@ -40,8 +40,8 @@ jobs:
         CHAIN: "0001"
         CHAIN_ID: "mainnet"
         BLOCK_TIME: "900000"
-        MAX_TRANSACTION_LIST_COUNT: "300"
-        MIN_TRANSACTION_LIST_COUNT: "100"
+        MAX_TRANSACTION_LIST_COUNT: "5000"
+        MIN_TRANSACTION_LIST_COUNT: "200"
         TX_FEE: "10000"
         SESSION_LENGTH: "30"
         USE_LEGACY_CODEC: true
