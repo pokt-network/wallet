@@ -14,7 +14,7 @@ import app from '../../utils/images/app.png';
 import na from '../../utils/images/NA.png';
 import sent from '../../utils/images/sent.png';
 import received from '../../utils/images/received.png';
-import load from '../../utils/images/load.png'; 
+import load from '../../utils/images/load.png';
 import reload from '../../utils/images/reload.png';
 import reloadActive from '../../utils/images/refresh-active.png'
 import T from '../../components/public/table/table';
@@ -247,7 +247,7 @@ class AccountLatest extends Component {
           if (app.status === 1) {
               obj.stakingStatus = "UNSTAKING";
               obj.stakingStatusImg = unstakingImgSrc;
-          }else if(app.status === 2){
+          } else if (app.status === 2){
               obj.stakingStatus = "STAKED";
               obj.stakingStatusImg = stakedImgSrc;
           };
@@ -603,7 +603,7 @@ class AccountLatest extends Component {
                       <div className="btn-subm">
                           <Button target="_target" href={Config.BUY_POKT_BASE_URL} dark>Buy POKT</Button>
                           <Button id="send-pokt" onClick={this.pushToSend}>Send</Button>
-                      </div> 
+                      </div>
                   </div>
                   <form className="pass-pk">
                       <div className="container">
@@ -685,14 +685,14 @@ class AccountLatest extends Component {
                     <Button
                       style={{
                           textAlign: "center",
-                          width: "119px", 
+                          width: "119px",
                           display:  this.maxListCountExceeded() ? "none" : "block",
                           padding: "9px 6px",
                           margin: "24px auto 10px auto" }}
                           onClick={() => this.refreshView(addressHex, true)}
                           disabled={this.maxListCountExceeded()}
                       >
-                        Load more 
+                        Load more
                     </Button>
                   </ContainerToggle>
               </Wrapper>
@@ -716,9 +716,9 @@ class AccountLatest extends Component {
                           </label>
                           <Input
                               className="reveal-pk-passphrase"
-                              style={{ 
+                              style={{
                                   display: isModalVisible === true ? "block" : "none",
-                                  margin: "8px auto auto auto", 
+                                  margin: "8px auto auto auto",
                                   width: "350px" }}
                               type="password"
                               name="reveal-pk-passphrase"
@@ -730,8 +730,8 @@ class AccountLatest extends Component {
                               <label id="private-key-label" className="passphrase-label" htmlFor="private">
                                   PRIVATE KEY
                               </label>
-                              <Input style={{ 
-                                  backgroundColor: "#f5f5f5", 
+                              <Input style={{
+                                  backgroundColor: "#f5f5f5",
                                   height: "20px",
                                   width: "350px",
                                   marginTop: "9px"
@@ -746,7 +746,7 @@ class AccountLatest extends Component {
                         <Button
                             style={{
                                 textAlign: "center",
-                                width: "119px", 
+                                width: "119px",
                                 display: displayPkReveal === true ? "none" : "block",
                                 padding: "9px 6px",
                                 margin: "24px auto 10px auto" }}
