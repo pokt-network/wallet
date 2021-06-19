@@ -372,7 +372,10 @@ export class DataSource {
         //
         const mergedTxs = received.txs.concat(sent.txs);
         const filterByBlockHeight = mergedTxs.sort(function (a, b) {
-            return a.height - b.height;
+          const blockHeightDistance = (a.height - b.height);
+          return blockHeightDistance === 0
+            ? a.index - b.index
+            : blockHeightDistance;
         });
 
         return filterByBlockHeight;
@@ -387,7 +390,10 @@ export class DataSource {
         });
 
         const filterByBlockHeight = object.txs.sort(function (a, b) {
-            return a.height - b.height;
+          const blockHeightDistance = (a.height - b.height);
+          return blockHeightDistance === 0
+            ? a.index - b.index
+            : blockHeightDistance;
         });
 
         return filterByBlockHeight;
@@ -396,20 +402,20 @@ export class DataSource {
     /**
      * @returns {Object | undefined}
      */
-    async getAllTransactions(address) {
+    async getAllTransactions(address, txListMaxCount) {
         let receivedTxs;
         let sentTxs;
 
         try {
             // Retrieve received transactions
-            const receivedTxsOrError = await this.getTxs(address, true);
+            const receivedTxsOrError = await this.getTxs(address, true, txListMaxCount);
 
             if (!typeGuard(receivedTxsOrError, RpcError) && receivedTxsOrError !== undefined) {
                 receivedTxs = receivedTxsOrError.toJSON();
             }
 
             // Retrieve sent transactions
-            const sentTxsOrError = await this.getTxs(address, false);
+            const sentTxsOrError = await this.getTxs(address, false, txListMaxCount);
 
             if (!typeGuard(sentTxsOrError, RpcError) && sentTxsOrError !== undefined) {
                 sentTxs = sentTxsOrError.toJSON();
@@ -440,9 +446,9 @@ export class DataSource {
     /**
      * @returns {Object[]}
      */
-    async getTxs(address, received) {
+    async getTxs(address, received, txListMaxCount) {
         const provider = await getRPCProvider();
-        const maxTxs = Number(Config.MAX_TRANSACTION_LIST_COUNT);
+        const maxTxs = Number(txListMaxCount ||  Config.MIN_TRANSACTION_LIST_COUNT);
         // Retrieve received transactions
         const receivedTxsOrError = await this.__pocket
             .rpc(provider)
