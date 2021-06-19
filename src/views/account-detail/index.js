@@ -657,7 +657,20 @@ class AccountLatest extends Component {
                                     </Td>
                                     <Td class={TdClass+"block-align"}>{tx.height}</Td>
                                     <Td onClick={onClick} class={TdClass}>
-                                      <a onClick={onClick}>{tx.hash}</a>
+                                      <Button
+                                        style={{
+                                          background: 'none',
+                                          color: 'none',
+                                          margin: '0px',
+                                          padding: '0px',
+                                          '-webkit-text-decoration': 'none',
+                                          textDecoration: 'none',
+                                          borderRadius: '0px',
+                                          transition: 'none',
+                                        }}
+                                        onClick={onClick}>
+                                          {tx.hash}
+                                        </Button>
                                     </Td>
                                   </Tr>
                             )
