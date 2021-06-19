@@ -63,7 +63,7 @@ class TransactionDetail extends Component {
         // Update the status img
         console.log("tx.status.toLowerCase() = "+ transaction.status.toLowerCase());
         switch (transaction.status.toLowerCase()) {
-            
+
             case "success":
                 document.getElementById("statusImg").src = successImgSrc;
                 document.getElementById("statusImgMobile").src = successImgSrc;
@@ -109,6 +109,17 @@ class TransactionDetail extends Component {
                     sentStatus: "Sent"
                 }
             });
+
+            // Cach the tx information
+            PocketService.saveTxInCache(
+                txSummary.from,
+                txSummary.to,
+                txSummary.amount,
+                txSummary.hash,
+                Number(Config.TX_FEE) / 1000000,
+                txSummary.status,
+                "Sent"
+            )
 
             this.updateTxInformation();
         } catch (error) {
@@ -158,10 +169,8 @@ class TransactionDetail extends Component {
                 status &&
                 sentStatus
             ) {
-                // 
                 const sentAmountFormatted = sentAmount * 1000000;
 
-                //
                 const obj = {
                     tx: {
                         fromAddress,
@@ -205,17 +214,17 @@ class TransactionDetail extends Component {
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
-                                <Td> 
+                                <Td>
                                     <img style={{
                                         top: "9px",
                                         left: "14px",
                                         position: "absolute"
-                                    }} id="statusImg" src={none} alt="none state" /> 
+                                    }} id="statusImg" src={none} alt="none state" />
                                     <span style={{
                                         top: "13px",
                                         left: "38px",
                                         position: "absolute"
-                                    }} id="status">{this.capitalize(tx.status)}</span>                                     
+                                    }} id="status">{this.capitalize(tx.status)}</span>
                                 </Td>
                             </Tr>
                             <Tr>
@@ -256,17 +265,17 @@ class TransactionDetail extends Component {
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
-                                <Td> 
+                                <Td>
                                     <img style={{
                                         top: "9px",
                                         left: "14px",
                                         position: "absolute"
-                                    }} id="statusImgMobile" src={none} alt="none state" /> 
+                                    }} id="statusImgMobile" src={none} alt="none state" />
                                     <span style={{
                                         top: "13px",
                                         left: "38px",
                                         position: "absolute"
-                                    }} id="statusMobile">{this.capitalize(tx.status)}</span>                                     
+                                    }} id="statusMobile">{this.capitalize(tx.status)}</span>
                                 </Td>
                             </Tr>
                             <Tr>
