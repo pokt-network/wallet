@@ -63,7 +63,7 @@ class TransactionDetail extends Component {
         // Update the status img
         console.log("tx.status.toLowerCase() = "+ transaction.status.toLowerCase());
         switch (transaction.status.toLowerCase()) {
-            
+
             case "success":
                 document.getElementById("statusImg").src = successImgSrc;
                 document.getElementById("statusImgMobile").src = successImgSrc;
@@ -135,7 +135,7 @@ class TransactionDetail extends Component {
         // Navigation Items
         const navAccount = document.getElementById("account-detail-nav");
         const navLogOut = document.getElementById("log-out-nav");
-        
+
         if (navAccount && navLogOut) {
             navAccount.style.display = "block";
             navLogOut.style.display = "block";
@@ -169,10 +169,8 @@ class TransactionDetail extends Component {
                 status &&
                 sentStatus
             ) {
-                // 
                 const sentAmountFormatted = sentAmount * 1000000;
 
-                //
                 const obj = {
                     tx: {
                         fromAddress,
@@ -200,6 +198,7 @@ class TransactionDetail extends Component {
 
     render() {
         const { tx } = this.state;
+        const txExplorerLink = `${Config.BLOCK_EXPLORER_BASE_URL}/tx/${tx.hash}`;
 
         return (
             <DetailContent>
@@ -209,21 +208,23 @@ class TransactionDetail extends Component {
                         <TBody className="details-t">
                             <Tr>
                                 <Th>TRANSACTION HASH</Th>
-                                <Td id="txHash" style={{ wordBreak: "break-word" }}> {tx.hash} </Td>
+                                <Td id="txHash" style={{ wordBreak: "break-word" }}>
+                                  <a href={txExplorerLink}>{tx.hash}</a>
+                                </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
-                                <Td> 
+                                <Td>
                                     <img style={{
                                         top: "9px",
                                         left: "14px",
                                         position: "absolute"
-                                    }} id="statusImg" src={none} alt="none state" /> 
+                                    }} id="statusImg" src={none} alt="none state" />
                                     <span style={{
                                         top: "13px",
                                         left: "38px",
                                         position: "absolute"
-                                    }} id="status">{this.capitalize(tx.status)}</span>                                     
+                                    }} id="status">{this.capitalize(tx.status)}</span>
                                 </Td>
                             </Tr>
                             <Tr>
@@ -264,17 +265,17 @@ class TransactionDetail extends Component {
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
-                                <Td> 
+                                <Td>
                                     <img style={{
                                         top: "9px",
                                         left: "14px",
                                         position: "absolute"
-                                    }} id="statusImgMobile" src={none} alt="none state" /> 
+                                    }} id="statusImgMobile" src={none} alt="none state" />
                                     <span style={{
                                         top: "13px",
                                         left: "38px",
                                         position: "absolute"
-                                    }} id="statusMobile">{this.capitalize(tx.status)}</span>                                     
+                                    }} id="statusMobile">{this.capitalize(tx.status)}</span>
                                 </Td>
                             </Tr>
                             <Tr>
