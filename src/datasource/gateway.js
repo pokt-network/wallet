@@ -7,13 +7,13 @@ import Errors from "./errors";
  * Interceptors and Network Layer middlewares should come in here.
  */
 class AxiosProvider {
-  constructor(baseURL, config) {
-    this.http = Axios.create({
-      baseURL,
-      timeout: config.timeout || 100000,
-      headers: config.headers,
-    });
-  }
+    constructor(baseURL, config) {
+        this.http = Axios.create({
+            baseURL,
+            timeout: config.timeout || 100000,
+            headers: config.headers,
+        });
+    }
 }
 
 /**
@@ -21,147 +21,170 @@ class AxiosProvider {
  * Throw your http control logic in here, i.e: if error, if data, if 201.
  */
 class PocketQueriesController {
-  provider = null;
+    provider = null;
 
-  requests = {
-    getBalance: (address, height) => ({
-      url: '/v1/query/balance',
-      method: 'post',
-      data: {
-        address,
-        height,
-      }
-    }),
-    getTransaction: (id) => ({
-      url: '/v1/query/tx',
-      method: 'post',
-      data: {
-        hash: id,
-      }
-    }),
-    getApp: (address, height) => ({
-      url: '/v1/query/app',
-      method: 'post',
-      data: {
-        address,
-        height,
-      }
-    }),
-    getNode: (address, height) => ({
-      url: '/v1/query/node',
-      method: 'post',
-      data: {
-        address,
-        height,
-      }
-    }),
-    getAccountTxs: (address, received, prove, page, per_page) => ({
-      url: '/v1/query/accounttxs',
-      method: 'post',
-      data: {
-        address,
-        prove,
-        received,
-        page,
-        per_page,
-      }
-    }),
-    sendRawTx: (fromAddress, tx) => ({
-      url: '/v1/client/rawtx',
-      method: 'post',
-      data: {
-        address: fromAddress,
-        raw_hex_bytes: tx,
-      }
-    })
-  }
+    requests = {
+        getBalance: (address, height) => ({
+            url: "/v1/query/balance",
+            method: "post",
+            data: {
+                address,
+                height,
+            },
+        }),
+        getTransaction: (id) => ({
+            url: "/v1/query/tx",
+            method: "post",
+            data: {
+                hash: id,
+            },
+        }),
+        getApp: (address, height) => ({
+            url: "/v1/query/app",
+            method: "post",
+            data: {
+                address,
+                height,
+            },
+        }),
+        getNode: (address, height) => ({
+            url: "/v1/query/node",
+            method: "post",
+            data: {
+                address,
+                height,
+            },
+        }),
+        getAccountTxs: (address, received, prove, page, per_page) => ({
+            url: "/v1/query/accounttxs",
+            method: "post",
+            data: {
+                address,
+                prove,
+                received,
+                page,
+                per_page,
+            },
+        }),
+        sendRawTx: (fromAddress, tx) => ({
+            url: "/v1/client/rawtx",
+            method: "post",
+            data: {
+                address: fromAddress,
+                raw_hex_bytes: tx,
+            },
+        }),
+    };
 
-  use(provider) {
-    this.provider = provider;
-    return this;
-  }
-
-  // looks ugly with the ifs
-  // but the gateway constantly responds with 200
-  // and responds with errors in response.data
-  // in a non-consistent form.
-  parseSuccessfulResponse = (response) => {
-    
-    if (typeof response.data === 'string' && response.data.indexOf('Method Not Allowed') > -1) {
-      throw new Error('Method Not Allowed')
+    use(provider) {
+        this.provider = provider;
+        return this;
     }
 
-    if (response.data.code && response.data.code !== 200) {
-      throw response.data;
-    }
+    // looks ugly with the ifs
+    // but the gateway constantly responds with 200
+    // and responds with errors in response.data
+    // in a non-consistent form.
+    parseSuccessfulResponse = (response) => {
+        if (
+            typeof response.data === "string" &&
+            response.data.indexOf("Method Not Allowed") > -1
+        ) {
+            throw new Error("Method Not Allowed");
+        }
 
-    return response.data;
-  }
+        if (response.data.code && response.data.code !== 200) {
+            throw response.data;
+        }
 
-  parseErrorResponse = (error) => {
-    if (error.response && error.response.data && error.response.data.error) {
-      throw error.response.data.error;
-    }
+        return response.data;
+    };
 
-    if (typeof error === 'string') {
-      throw new Error(error)
-    }
+    parseErrorResponse = (error) => {
+        if (
+            error.response &&
+            error.response.data &&
+            error.response.data.error
+        ) {
+            throw error.response.data.error;
+        }
 
-    throw error;
+        if (typeof error === "string") {
+            throw new Error(error);
+        }
 
-  }
+        throw error;
+    };
 
-  perform = async (requestName, ...args) => {
-    const reqConfig = typeof this.requests[requestName] === 'function' ?
-      this.requests[requestName](...args) :
-      this.requests[requestName];
+    perform = async (requestName, ...args) => {
+        const reqConfig =
+            typeof this.requests[requestName] === "function"
+                ? this.requests[requestName](...args)
+                : this.requests[requestName];
 
-    const response = await this
-      .provider
-      .http
-      .request(reqConfig)
-      .then(this.parseSuccessfulResponse)
-      .catch(this.parseErrorResponse);
+        const response = await this.provider.http
+            .request(reqConfig)
+            .then(this.parseSuccessfulResponse)
+            .catch(this.parseErrorResponse);
 
-    return response;
-  }
-  
-  // does not really need to be bound to `this`, but keeping it for semantics' sake.
-  // arguments explicit forwardong for clear signature lookup, avoid using `...args` 
-  _getBalance = (address, height) => this.perform.call(this, 'getBalance', address, height) 
-  _getTransaction = (id) => this.perform.call(this, 'getTransaction', id)
-  _getApp = (address, height) => this.perform.call(this, 'getApp', address, height)
-  _getNode = (address, height) => this.perform.call(this, 'getNode', address, height)
-  _getAccountTxs = (address, received, prove, page, per_page) => this.perform.call(this, 'getAccountTxs', address, received, prove, page, per_page)
-  _sendRawTx = (fromAddress, tx) => this.perform.call(this, 'sendRawTx', fromAddress, tx)
-    
-  // For semantic separation, and for "ease of middlewaring" when necessary.
-  // hook your processors to your cals in here
-  query = {
-    getBalance: this._getBalance,
-    getTransaction: this._getTransaction,
-    getApp: this._getApp,
-    getNode: this._getNode,
-    getAccountTxs: this._getAccountTxs,
-    sendRawTx: async (fromAddress, tx) => {
-      const request = this.processors.rawTx.processRequest({ fromAddress, tx });
-      const rawResponse = await this._sendRawTx(request.addressHex, request.rawTxBytes);
-      const response = this.processors.rawTx.processResponse(rawResponse);
+        return response;
+    };
 
-      return response;
-    }
-  }
+    // does not really need to be bound to `this`, but keeping it for semantics' sake.
+    // arguments explicit forwardong for clear signature lookup, avoid using `...args`
+    _getBalance = (address, height) =>
+        this.perform.call(this, "getBalance", address, height);
+    _getTransaction = (id) => this.perform.call(this, "getTransaction", id);
+    _getApp = (address, height) =>
+        this.perform.call(this, "getApp", address, height);
+    _getNode = (address, height) =>
+        this.perform.call(this, "getNode", address, height);
+    _getAccountTxs = (address, received, prove, page, per_page) =>
+        this.perform.call(
+            this,
+            "getAccountTxs",
+            address,
+            received,
+            prove,
+            page,
+            per_page
+        );
+    _sendRawTx = (fromAddress, tx) =>
+        this.perform.call(this, "sendRawTx", fromAddress, tx);
 
-  // request/response processors
-  processors = {
-    rawTx: {
-      processRequest: ({ fromAddress, tx }) => ({
-        addressHex: fromAddress.toString('hex'),
-        rawTxBytes: tx.toString('hex'),
-      }),
-      processResponse: (response) => response,
-    }
-  }
+    // For semantic separation, and for "ease of middlewaring" when necessary.
+    // hook your processors to your cals in here
+    query = {
+        getBalance: this._getBalance,
+        getTransaction: this._getTransaction,
+        getApp: this._getApp,
+        getNode: this._getNode,
+        getAccountTxs: this._getAccountTxs,
+        sendRawTx: async (fromAddress, tx) => {
+            const request = this.processors.rawTx.processRequest({
+                fromAddress,
+                tx,
+            });
+            const rawResponse = await this._sendRawTx(
+                request.addressHex,
+                request.rawTxBytes
+            );
+            const response = this.processors.rawTx.processResponse(rawResponse);
+
+            return response;
+        },
+    };
+
+    // request/response processors
+    processors = {
+        rawTx: {
+            processRequest: ({ fromAddress, tx }) => ({
+                addressHex: fromAddress.toString("hex"),
+                rawTxBytes: tx.toString("hex"),
+            }),
+            processResponse: (response) => response,
+        },
+    };
 }
 
 /**
@@ -169,44 +192,45 @@ class PocketQueriesController {
  * This layer is added for gateway level logic control. i.e: custom errors and responses.
  */
 class GatewayClient {
-  constructor(httpProvider, requestsController, config) {
-    this.controller = requestsController.use(httpProvider)
-    this.config     = config;
-  }
-
-  queries = [
-    'getBalance',
-    'getTransaction',
-    'getApp',
-    'getNode',
-    'getAccountTxs',
-    'sendRawTx',
-  ]
-
-  /**
-   * @returns {BigInt}
-   */
-  async makeQuery(queryName, ...args) {
-    if (!(this.queries.includes(queryName) > -1)) {
-      throw Errors
+    constructor(httpProvider, requestsController, config) {
+        this.controller = requestsController.use(httpProvider);
+        this.config = config;
     }
-    return await this
-      .controller
-      .query[queryName](...args);
-  }
+
+    queries = [
+        "getBalance",
+        "getTransaction",
+        "getApp",
+        "getNode",
+        "getAccountTxs",
+        "sendRawTx",
+    ];
+
+    /**
+     * @returns {BigInt}
+     */
+    async makeQuery(queryName, ...args) {
+        if (!(this.queries.includes(queryName) > -1)) {
+            throw Errors;
+        }
+        return await this.controller.query[queryName](...args);
+    }
 }
 
 const getGatewayClient = (baseUrl, config) => {
-  const httpProvider = new AxiosProvider(baseUrl, config);
-  const requestsCtrl = new PocketQueriesController();
-  const gwClient = new GatewayClient(httpProvider, requestsCtrl, { baseUrl, ...config });
+    const httpProvider = new AxiosProvider(baseUrl, config);
+    const requestsCtrl = new PocketQueriesController();
+    const gwClient = new GatewayClient(httpProvider, requestsCtrl, {
+        baseUrl,
+        ...config,
+    });
 
-  return gwClient;
-}
+    return gwClient;
+};
 
 export {
-  AxiosProvider,
-  PocketQueriesController,
-  GatewayClient,
-  getGatewayClient,
-}
+    AxiosProvider,
+    PocketQueriesController,
+    GatewayClient,
+    getGatewayClient,
+};

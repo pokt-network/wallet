@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { colors } from '../../../utils/colors';
+import { colors } from "../../../utils/colors";
 
 const TFooter = styled.tfoot`
     position: relative;
@@ -19,7 +19,7 @@ const TFooter = styled.tfoot`
             height: auto;
             overflow: visible;
             text-decoration: none;
-            transition: all .3s ease-in-out;
+            transition: all 0.3s ease-in-out;
             &:hover {
                 background-color: ${colors.blue};
             }

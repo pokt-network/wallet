@@ -1,4 +1,4 @@
-import { createGlobalStyle, css } from 'styled-components';
+import { createGlobalStyle, css } from "styled-components";
 import { maxPhone } from "../utils/media";
 
 const GlobalStyles = createGlobalStyle`
@@ -8,7 +8,12 @@ const GlobalStyles = createGlobalStyle`
   .page-container {
     background-image: linear-gradient(126deg, #27a9e0 19%, #092e40 94%, #06202e 100%);
     ${maxPhone(css`
-      background-image: linear-gradient(161deg, #27a9e0 -3%, #092e40 93%, #06202e 100%);
+        background-image: linear-gradient(
+            161deg,
+            #27a9e0 -3%,
+            #092e40 93%,
+            #06202e 100%
+        );
     `)};
   }
   .loader-container {
@@ -58,7 +63,7 @@ const GlobalStyles = createGlobalStyle`
     margin-right: 17px;
     text-align: right;
     ${maxPhone(css`
-      margin-right: 10px;
+        margin-right: 10px;
     `)};
     img {
       max-width: 12px;
@@ -72,8 +77,8 @@ const GlobalStyles = createGlobalStyle`
     box-shadow: 0 43px 39px -40px rgba(0, 0, 0, 0.5);
     background-image: linear-gradient(to bottom, #fbfbfb, #f5f5f5);
     ${maxPhone(css`
-      max-width: 96%;
-      width: 96% !important;
+        max-width: 96%;
+        width: 96% !important;
     `)};
   }
 `;

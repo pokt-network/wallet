@@ -1,5 +1,5 @@
 import SecureLS from "secure-ls";
-import {Config} from "../../config/config";
+import { Config } from "../../config/config";
 
 class PocketService {
     constructor() {
@@ -10,7 +10,7 @@ class PocketService {
         this.ls = new SecureLS({
             encodingType,
             isCompression,
-            encryptionSecret
+            encryptionSecret,
         });
     }
 
@@ -24,14 +24,14 @@ class PocketService {
     saveUserInCache(addressHex, publicKeyHex, ppk) {
         try {
             const sessionLenght = Config.SESSION_LENGTH;
-            const sessionStart = Math.floor(Date.now()/1000);
-            const sessionExpiration = sessionStart + (sessionLenght * 60);// Expires every x minutes
+            const sessionStart = Math.floor(Date.now() / 1000);
+            const sessionExpiration = sessionStart + sessionLenght * 60; // Expires every x minutes
 
-            this.ls.set("address_hex", {data: addressHex});
-            this.ls.set("public_key_hex", {data: publicKeyHex});
-            this.ls.set("ppk", {data: ppk});
+            this.ls.set("address_hex", { data: addressHex });
+            this.ls.set("public_key_hex", { data: publicKeyHex });
+            this.ls.set("ppk", { data: ppk });
             // Save the session end date/time in unix timestamp seconds
-            this.ls.set("session_end", {data: sessionExpiration})
+            this.ls.set("session_end", { data: sessionExpiration });
         } catch (error) {
             console.log(error);
         }
@@ -67,7 +67,7 @@ class PocketService {
         return {
             addressHex: undefined,
             publicKeyHex: undefined,
-            ppk: undefined
+            ppk: undefined,
         };
     }
 
@@ -76,13 +76,13 @@ class PocketService {
      *
      */
     isSessionExpired() {
-        const sessionStart = Math.floor(Date.now()/1000);
+        const sessionStart = Math.floor(Date.now() / 1000);
         const sessionEnd = this.ls.get("session_end").data;
 
         if (sessionEnd < sessionStart) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -107,13 +107,13 @@ class PocketService {
         sentStatus
     ) {
         try {
-            this.ls.set("from_address", {data: fromAddress});
-            this.ls.set("to_address", {data: destinationAddress});
-            this.ls.set("sent_amount", {data: sentAmount});
-            this.ls.set("tx_hash", {data: txHash});
-            this.ls.set("tx_fee", {data: txFee});
-            this.ls.set("status", {data: status});
-            this.ls.set("sent_status", {data: sentStatus});
+            this.ls.set("from_address", { data: fromAddress });
+            this.ls.set("to_address", { data: destinationAddress });
+            this.ls.set("sent_amount", { data: sentAmount });
+            this.ls.set("tx_hash", { data: txHash });
+            this.ls.set("tx_fee", { data: txFee });
+            this.ls.set("status", { data: status });
+            this.ls.set("sent_status", { data: sentStatus });
         } catch (error) {
             console.log(error);
         }
@@ -144,7 +144,7 @@ class PocketService {
             txHash: this.ls.get("tx_hash").data,
             txFee: this.ls.get("tx_fee").data,
             status: this.ls.get("status").data,
-            sentStatus: this.ls.get("sent_status").data
+            sentStatus: this.ls.get("sent_status").data,
         };
     }
 }

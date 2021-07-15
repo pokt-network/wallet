@@ -10,4 +10,4 @@ export const colors = {
     footerBg: "#07212f",
     error: "#fa5849",
     alert: "#ffbf02",
-}
+};

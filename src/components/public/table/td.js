@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { colors } from '../../../utils/colors';
+import { colors } from "../../../utils/colors";
 import { maxPhone } from "../../../utils/media";
 
 const Td = styled.td`
@@ -30,7 +30,7 @@ const Td = styled.td`
         &:nth-of-type(2) {
             padding-left: 10px;
             .qty {
-                font-family: 'Open Sans', sans-serif;
+                font-family: "Open Sans", sans-serif;
                 color: ${colors.darkBlue};
                 font-weight: 900;
                 font-size: 12px;
@@ -80,7 +80,7 @@ const Td = styled.td`
         .detail-table.desktop & {
             padding-top: 40px;
             color: ${colors.blueLink};
-            font-family: 'Open Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-weight: 700;
         }
     }
@@ -106,7 +106,6 @@ const Td = styled.td`
                 span {
                     position: absolute;
                     top: 16px;
-                    
                 }
             }
             img {
@@ -123,7 +122,7 @@ const Td = styled.td`
     }
     tr:nth-of-type(4) & {
         .detail-table.desktop & {
-            font-family: 'Open Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-weight: 700;
             color: ${colors.darkBlue};
             span {
@@ -157,7 +156,7 @@ const Td = styled.td`
     tr:nth-of-type(2) & {
         .detail-table.mobile & {
             color: ${colors.blueLink};
-            font-family: 'Open Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-weight: 700;
         }
     }
@@ -195,7 +194,7 @@ const Td = styled.td`
     }
     tr:nth-of-type(8) & {
         .detail-table.mobile & {
-            font-family: 'Open Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-weight: 700;
             color: ${colors.darkBlue};
             span {

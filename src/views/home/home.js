@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const HomeContent = styled.main`
-  position: relative;
+    position: relative;
 `;
 
 export default HomeContent;

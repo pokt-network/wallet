@@ -1,21 +1,19 @@
-import React, { Component } from 'react';
-import Wrapper from '../../components/wrapper';
-import DetailContent from './detail-content';
-import Title from '../../components/public/title/title';
-import T from '../../components/public/table/table';
-import Th from '../../components/public/table/th';
-import Td from '../../components/public/table/td';
-import Tr from '../../components/public/table/tr';
-import TBody from '../../components/public/table/tbody';
-import none from '../../utils/images/none.png';
-import success from '../../utils/images/check_green.png';
-import failed from '../../utils/images/wrong_red.png';
-import {Config} from "../../config/config"
-import {
-    withRouter
-} from 'react-router-dom'
+import React, { Component } from "react";
+import Wrapper from "../../components/wrapper";
+import DetailContent from "./detail-content";
+import Title from "../../components/public/title/title";
+import T from "../../components/public/table/table";
+import Th from "../../components/public/table/th";
+import Td from "../../components/public/table/td";
+import Tr from "../../components/public/table/tr";
+import TBody from "../../components/public/table/tbody";
+import none from "../../utils/images/none.png";
+import success from "../../utils/images/check_green.png";
+import failed from "../../utils/images/wrong_red.png";
+import { Config } from "../../config/config";
+import { withRouter } from "react-router-dom";
 import PocketService from "../../core/services/pocket-service";
-import {getDataSource} from "../../datasource";
+import { getDataSource } from "../../datasource";
 
 const dataSource = getDataSource();
 
@@ -36,8 +34,8 @@ class TransactionDetail extends Component {
                 sentAmount: undefined,
                 fee: undefined,
                 fromAddress: undefined,
-                toAddress: undefined
-            }
+                toAddress: undefined,
+            },
         };
 
         // Bindings
@@ -53,7 +51,7 @@ class TransactionDetail extends Component {
     }
 
     capitalize(string) {
-        return string ? string.charAt(0).toUpperCase() + string.slice(1) : ""
+        return string ? string.charAt(0).toUpperCase() + string.slice(1) : "";
     }
 
     updateTxInformation(txObj = undefined) {
@@ -61,9 +59,10 @@ class TransactionDetail extends Component {
         const transaction = txObj !== undefined ? txObj : tx;
 
         // Update the status img
-        console.log("tx.status.toLowerCase() = "+ transaction.status.toLowerCase());
+        console.log(
+            "tx.status.toLowerCase() = " + transaction.status.toLowerCase()
+        );
         switch (transaction.status.toLowerCase()) {
-            
             case "success":
                 document.getElementById("statusImg").src = successImgSrc;
                 document.getElementById("statusImgMobile").src = successImgSrc;
@@ -84,39 +83,50 @@ class TransactionDetail extends Component {
             const txResponse = await dataSource.getTx(txHash);
 
             if (txResponse === undefined) {
-                console.log("Couldn't retrieve the transaction using the provided tx hash");
+                console.log(
+                    "Couldn't retrieve the transaction using the provided tx hash"
+                );
                 return;
             }
 
             // Update the UI with the retrieved tx
             const events = txResponse.transaction.txResult.events;
-            const status = txResponse.transaction.txResult.log === "" ? true : JSON.parse(txResponse.transaction.txResult.log)[0].success;
+            const status =
+                txResponse.transaction.txResult.log === ""
+                    ? true
+                    : JSON.parse(txResponse.transaction.txResult.log)[0]
+                          .success;
 
             let senderAddress = "";
             let recipientAdress = "";
             let sentAmount = 0;
 
             if (events.length >= 2) {
-
                 // Retrieve the recipient address
-                const recipientAttributes = events[1].attributes
-                const recipientObj = recipientAttributes.find(e => e.key === "recipient")
+                const recipientAttributes = events[1].attributes;
+                const recipientObj = recipientAttributes.find(
+                    (e) => e.key === "recipient"
+                );
                 if (recipientObj !== undefined) {
-                    recipientAdress = recipientObj.value
+                    recipientAdress = recipientObj.value;
                 }
 
                 // Retrieve the sender address
-                const senderAttributes = events[2].attributes
-                const senderObj = senderAttributes.find(e => e.key === "sender")
+                const senderAttributes = events[2].attributes;
+                const senderObj = senderAttributes.find(
+                    (e) => e.key === "sender"
+                );
                 if (senderObj !== undefined) {
-                    senderAddress = senderObj.value
+                    senderAddress = senderObj.value;
                 }
 
                 // Retrieve the amount sent
-                const amountObj = recipientAttributes.find(e => e.key === "amount")
+                const amountObj = recipientAttributes.find(
+                    (e) => e.key === "amount"
+                );
                 if (amountObj !== undefined) {
-                    sentAmount = amountObj.value.replace("upokt", "")
-                    sentAmount = Number(sentAmount)
+                    sentAmount = amountObj.value.replace("upokt", "");
+                    sentAmount = Number(sentAmount);
                 }
                 // Save the tx information into the state
                 this.setState({
@@ -128,8 +138,8 @@ class TransactionDetail extends Component {
                         fromAddress: senderAddress,
                         toAddress: recipientAdress,
                         status: status === true ? "Success" : "Failed",
-                        sentStatus: "Sent"
-                    }
+                        sentStatus: "Sent",
+                    },
                 });
 
                 // Cach the tx information
@@ -141,32 +151,31 @@ class TransactionDetail extends Component {
                     Number(Config.TX_FEE) / 1000000,
                     status === true ? "Success" : "Failed",
                     "Sent"
-                )
+                );
 
                 this.updateTxInformation();
             }
-
         } catch (error) {
-            console.log(error)
-            console.log("Failed to retrieve the transaction information.")
+            console.log(error);
+            console.log("Failed to retrieve the transaction information.");
         }
     }
 
     componentDidMount() {
         // Scroll to top
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: "smooth" });
 
         // Navigation Items
         const navAccount = document.getElementById("account-detail-nav");
         const navLogOut = document.getElementById("log-out-nav");
-        
+
         if (navAccount && navLogOut) {
             navAccount.style.display = "block";
             navLogOut.style.display = "block";
         }
 
         // Retrieve the tx and txhash from state
-        const {txHash} = this.state;
+        const { txHash } = this.state;
 
         if (txHash !== undefined) {
             // Retrieve the tx information from the network
@@ -180,7 +189,7 @@ class TransactionDetail extends Component {
                 txHash,
                 txFee,
                 status,
-                sentStatus
+                sentStatus,
             } = PocketService.getTxInfo();
 
             // Check if values are set
@@ -193,7 +202,7 @@ class TransactionDetail extends Component {
                 status &&
                 sentStatus
             ) {
-                // 
+                //
                 const sentAmountFormatted = sentAmount * 1000000;
 
                 //
@@ -205,9 +214,9 @@ class TransactionDetail extends Component {
                         hash: txHash,
                         fee: txFee,
                         status,
-                        sentStatus
-                    }
-                }
+                        sentStatus,
+                    },
+                };
 
                 // Save information to the state
                 this.setState(obj);
@@ -216,7 +225,7 @@ class TransactionDetail extends Component {
             } else {
                 // Redirect to the home page
                 this.props.history.push({
-                    pathname: '/'
+                    pathname: "/",
                 });
             }
         }
@@ -233,26 +242,44 @@ class TransactionDetail extends Component {
                         <TBody className="details-t">
                             <Tr>
                                 <Th>TRANSACTION HASH</Th>
-                                <Td id="txHash" style={{ wordBreak: "break-word" }}> {tx.hash} </Td>
+                                <Td
+                                    id="txHash"
+                                    style={{ wordBreak: "break-word" }}
+                                >
+                                    {" "}
+                                    {tx.hash}{" "}
+                                </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
-                                <Td> 
-                                    <img style={{
-                                        top: "9px",
-                                        left: "14px",
-                                        position: "absolute"
-                                    }} id="statusImg" src={none} alt="none state" /> 
-                                    <span style={{
-                                        top: "13px",
-                                        left: "38px",
-                                        position: "absolute"
-                                    }} id="status">{this.capitalize(tx.status)}</span>                                     
+                                <Td>
+                                    <img
+                                        style={{
+                                            top: "9px",
+                                            left: "14px",
+                                            position: "absolute",
+                                        }}
+                                        id="statusImg"
+                                        src={none}
+                                        alt="none state"
+                                    />
+                                    <span
+                                        style={{
+                                            top: "13px",
+                                            left: "38px",
+                                            position: "absolute",
+                                        }}
+                                        id="status"
+                                    >
+                                        {this.capitalize(tx.status)}
+                                    </span>
                                 </Td>
                             </Tr>
                             <Tr>
                                 <Th>AMOUNT</Th>
-                                <Td id="sentAmount">{tx.sentAmount / 1000000} <span>POKT</span></Td>
+                                <Td id="sentAmount">
+                                    {tx.sentAmount / 1000000} <span>POKT</span>
+                                </Td>
                             </Tr>
                             <Tr>
                                 <Th>TX FEE</Th>
@@ -264,17 +291,33 @@ class TransactionDetail extends Component {
                             </Tr>
                             <Tr>
                                 <Th>SENDER</Th>
-                                <Td style={{
-                                    color: "#27a9e0",
-                                    cursor: "pointer"
-                                }} id="fromAddress" onClick={() => this.openExplorer(tx.fromAddress)} >{tx.fromAddress}</Td>
+                                <Td
+                                    style={{
+                                        color: "#27a9e0",
+                                        cursor: "pointer",
+                                    }}
+                                    id="fromAddress"
+                                    onClick={() =>
+                                        this.openExplorer(tx.fromAddress)
+                                    }
+                                >
+                                    {tx.fromAddress}
+                                </Td>
                             </Tr>
                             <Tr>
                                 <Th>RECIPIENT</Th>
-                                <Td style={{
-                                    color: "#27a9e0",
-                                    cursor: "pointer"
-                                }} id="toAddress" onClick={() => this.openExplorer(tx.toAddress)} >{tx.toAddress}</Td>
+                                <Td
+                                    style={{
+                                        color: "#27a9e0",
+                                        cursor: "pointer",
+                                    }}
+                                    id="toAddress"
+                                    onClick={() =>
+                                        this.openExplorer(tx.toAddress)
+                                    }
+                                >
+                                    {tx.toAddress}
+                                </Td>
                             </Tr>
                         </TBody>
                     </T>
@@ -284,28 +327,46 @@ class TransactionDetail extends Component {
                                 <Th>TRANSACTION HASH</Th>
                             </Tr>
                             <Tr>
-                                <Td id="txHashMobile" style={{ wordBreak: "break-word" }}> {tx.hash} </Td>
+                                <Td
+                                    id="txHashMobile"
+                                    style={{ wordBreak: "break-word" }}
+                                >
+                                    {" "}
+                                    {tx.hash}{" "}
+                                </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
-                                <Td> 
-                                    <img style={{
-                                        top: "9px",
-                                        left: "14px",
-                                        position: "absolute"
-                                    }} id="statusImgMobile" src={none} alt="none state" /> 
-                                    <span style={{
-                                        top: "13px",
-                                        left: "38px",
-                                        position: "absolute"
-                                    }} id="statusMobile">{this.capitalize(tx.status)}</span>                                     
+                                <Td>
+                                    <img
+                                        style={{
+                                            top: "9px",
+                                            left: "14px",
+                                            position: "absolute",
+                                        }}
+                                        id="statusImgMobile"
+                                        src={none}
+                                        alt="none state"
+                                    />
+                                    <span
+                                        style={{
+                                            top: "13px",
+                                            left: "38px",
+                                            position: "absolute",
+                                        }}
+                                        id="statusMobile"
+                                    >
+                                        {this.capitalize(tx.status)}
+                                    </span>
                                 </Td>
                             </Tr>
                             <Tr>
                                 <Th>AMOUNT</Th>
                             </Tr>
                             <Tr>
-                                <Td id="sentAmountMobile">{tx.sentAmount / 1000000} <span>POKT</span></Td>
+                                <Td id="sentAmountMobile">
+                                    {tx.sentAmount / 1000000} <span>POKT</span>
+                                </Td>
                             </Tr>
                             <Tr>
                                 <Th>TX FEE</Th>

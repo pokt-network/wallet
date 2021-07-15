@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { colors } from '../../../utils/colors';
+import { colors } from "../../../utils/colors";
 import { maxPhone, tablet } from "../../../utils/media";
 
 const T = styled.table`
@@ -36,6 +36,5 @@ const T = styled.table`
         width: 100%;
     }
 `;
-
 
 export default T;

@@ -1,6 +1,6 @@
-import styled, { css } from "styled-components"
-import { maxPhone } from "../../utils/media"
-import { colors } from "../../utils/colors"
+import styled, { css } from "styled-components";
+import { maxPhone } from "../../utils/media";
+import { colors } from "../../utils/colors";
 
 const ImportPocketContent = styled.section`
     position: relative;
@@ -13,10 +13,9 @@ const ImportPocketContent = styled.section`
         width: 60px;
         color: white;
         margin: 20px auto;
-
     }
     #import-privatekey::placeholder {
-        font-family: 'Lato';
+        font-family: "Lato";
         font-weight: 400;
         opacity: 1;
     }
@@ -28,12 +27,12 @@ const ImportPocketContent = styled.section`
 
     .upload {
         color: none;
-        opacity: 1.0 !important;
+        opacity: 1 !important;
         line-height: 1.15 !important;
     }
 
     .cont-file {
-        font-family: 'Lato';
+        font-family: "Lato";
         text-align: left;
         line-height: 0 !important;
         font-weight: 400;
@@ -42,7 +41,7 @@ const ImportPocketContent = styled.section`
     }
 
     .cont-file-empty {
-        font-family: 'Lato';
+        font-family: "Lato";
         text-align: left;
         line-height: 0 !important;
         font-weight: 100;
@@ -59,18 +58,19 @@ const ImportPocketContent = styled.section`
         padding: 0 !important;
         margin-top: 0 !important;
         ${maxPhone(css`
-          width: initial !important;
+            width: initial !important;
         `)}
         img {
-          max-width: 16px;
-          width: 16px;
+            max-width: 16px;
+            width: 16px;
         }
-      }
+    }
     ${maxPhone(css`
         max-width: 100%;
     `)};
     h1 {
-        background: linear-gradient(to right, #fff 27%, #27a9e0 100%) right bottom no-repeat;
+        background: linear-gradient(to right, #fff 27%, #27a9e0 100%) right
+            bottom no-repeat;
         background-size: 100% 1px;
         margin-top: 0;
         padding-bottom: 33px;
@@ -122,7 +122,8 @@ const ImportPocketContent = styled.section`
                     &:last-of-type {
                         margin-top: 20px;
                     }
-                    .cont-file, .cont-file-empty {
+                    .cont-file,
+                    .cont-file-empty {
                         padding: 17px 18px;
                         background-color: transparent;
                         position: relative;
@@ -201,6 +202,6 @@ const ImportPocketContent = styled.section`
         margin-top: 35px;
         display: block;
     }
-`
+`;
 
-export default ImportPocketContent
+export default ImportPocketContent;

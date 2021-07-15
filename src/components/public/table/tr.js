@@ -6,7 +6,7 @@ const Tr = styled.tr`
     width: 100%;
     transform: scale(1);
     &:after {
-        content: '';
+        content: "";
         display: block;
         margin: auto;
         position: absolute;

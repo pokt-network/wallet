@@ -1,9 +1,9 @@
 import styled, { css } from "styled-components";
-import { colors } from '../../../utils/colors';
+import { colors } from "../../../utils/colors";
 import { maxPhone } from "../../../utils/media";
 
 const Th = styled.th`
-    font-family: 'Open Sans', sans-serif;
+    font-family: "Open Sans", sans-serif;
     text-align: left;
     font-size: 12px;
     color: ${colors.darkBlue};
