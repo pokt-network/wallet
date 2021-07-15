@@ -16,6 +16,35 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Write config
+      uses: schdck/create-env-json@v1
+      with:
+        file-name: 'src/config/config.json'
+        CLIENT_PASSPHRASE: ${{ secrets.WALLET_PRODUCTION_CLIENT_PASSPHRASE }}
+        CLIENT_PUBLIC_KEY: ${{ secrets.WALLET_PRODUCTION_CLIENT_PUBLIC_KEY }}
+        CLIENT_PRIVATE_KEY: ${{ secrets.WALLET_PRODUCTION_CLIENT_PRIVATE_KEY }}
+        WALLET_APP_PUBLIC_KEY: ${{ secrets.WALLET_PRODUCTION_APP_PUBLIC_KEY }}
+        WALLET_APP_AAT_SIGNATURE: ${{ secrets.WALLET_PRODUCTION_APP_AAT_SIGNATURE }}
+        POKT_USD_VALUE: ${{ secrets.POKT_USD_MARKET_PRICE }}
+        SECURE_LS_ENCRYPTION_SECRET: ${{ secrets.SECURE_LS_ENCRYPTION_SECRET }}
+        SECURE_LS_ENCODING_TYPE: "aes"
+        SECURE_LS_IS_COMPRESSION: true
+        DISPATCHERS: "https://mainnet-1.nodes.pokt.network:4201,https://mainnet-2.nodes.pokt.network:4202,https://mainnet-3.nodes.pokt.network:4203,https://mainnet-4.nodes.pokt.network:4204,https://mainnet-5.nodes.pokt.network:4205,https://mainnet-6.nodes.pokt.network:4206,https://mainnet-7.nodes.pokt.network:4207,https://mainnet-8.nodes.pokt.network:4208,https://mainnet-9.nodes.pokt.network:4209,https://mainnet-10.nodes.pokt.network:4210,https://mainnet-11.nodes.pokt.network:4211,https://mainnet-12.nodes.pokt.network:4212,https://mainnet-13.nodes.pokt.network:4213,https://mainnet-14.nodes.pokt.network:4214,https://mainnet-15.nodes.pokt.network:4215,https://mainnet-16.nodes.pokt.network:4216,https://mainnet-17.nodes.pokt.network:4217,https://mainnet-18.nodes.pokt.network:4218,https://mainnet-19.nodes.pokt.network:4219,https://mainnet-20.nodes.pokt.network:4220,https://mainnet-21.nodes.pokt.network:4221,https://mainnet-22.nodes.pokt.network:4222,https://mainnet-23.nodes.pokt.network:4223,https://mainnet-24.nodes.pokt.network:4224"
+        HTTP_PROVIDER: "https://mainnet-1.nodes.pokt.network:4201"
+        AAT_VERSION: "0.0.1"
+        MAX_DISPATCHERS: 24
+        PROVIDER_TYPE: "http"
+        BLOCK_EXPLORER_BASE_URL: "https://explorer.pokt.network"
+        DASHBOARD_BASE_URL: "https://dashboard.pokt.network"
+        BUY_POKT_BASE_URL: "https://pokt.network/pokt-sale/"
+        CHAIN: "0001"
+        CHAIN_ID: "mainnet"
+        BLOCK_TIME: "900000"
+        MAX_TRANSACTION_LIST_COUNT: "5000"
+        MIN_TRANSACTION_LIST_COUNT: "200"
+        TX_FEE: "10000"
+        SESSION_LENGTH: "30"
+        USE_LEGACY_CODEC: false
     - name: NPM install
       run: npm install
     - name: Production build

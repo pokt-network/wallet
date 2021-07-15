@@ -80,7 +80,7 @@ class TransactionDetail extends Component {
 
     async getTx(txHash) {
         try {
-            const txResponse = await dataSource.getTx(txHash);
+          const txResponse = await dataSource.getTx(txHash.toLowerCase()).then(({ transaction  }) => transaction);
 
             if (txResponse === undefined) {
                 console.log(
@@ -90,71 +90,39 @@ class TransactionDetail extends Component {
             }
 
             // Update the UI with the retrieved tx
-            const events = txResponse.transaction.txResult.events;
-            const status =
-                txResponse.transaction.txResult.log === ""
-                    ? true
-                    : JSON.parse(txResponse.transaction.txResult.log)[0]
-                          .success;
-
-            let senderAddress = "";
-            let recipientAdress = "";
-            let sentAmount = 0;
-
-            if (events.length >= 2) {
-                // Retrieve the recipient address
-                const recipientAttributes = events[1].attributes;
-                const recipientObj = recipientAttributes.find(
-                    (e) => e.key === "recipient"
-                );
-                if (recipientObj !== undefined) {
-                    recipientAdress = recipientObj.value;
-                }
-
-                // Retrieve the sender address
-                const senderAttributes = events[2].attributes;
-                const senderObj = senderAttributes.find(
-                    (e) => e.key === "sender"
-                );
-                if (senderObj !== undefined) {
-                    senderAddress = senderObj.value;
-                }
-
-                // Retrieve the amount sent
-                const amountObj = recipientAttributes.find(
-                    (e) => e.key === "amount"
-                );
-                if (amountObj !== undefined) {
-                    sentAmount = amountObj.value.replace("upokt", "");
-                    sentAmount = Number(sentAmount);
-                }
-                // Save the tx information into the state
-                this.setState({
-                    tx: {
-                        sentAmount: sentAmount,
-                        hash: txResponse.transaction.hash,
-                        fee: Number(Config.TX_FEE) / 1000000,
-                        type: "TokenTransfer",
-                        fromAddress: senderAddress,
-                        toAddress: recipientAdress,
-                        status: status === true ? "Success" : "Failed",
-                        sentStatus: "Sent",
-                    },
-                });
-
-                // Cach the tx information
-                PocketService.saveTxInCache(
-                    senderAddress,
-                    recipientAdress,
-                    sentAmount,
-                    txResponse.transaction.hash,
-                    Number(Config.TX_FEE) / 1000000,
-                    status === true ? "Success" : "Failed",
-                    "Sent"
-                );
-
-                this.updateTxInformation();
+            const txSummary = {
+               from: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.from_address : txResponse.stdTx.msg.from_address,
+               to: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.to_address : txResponse.stdTx.msg.to_address,
+               amount: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.amount: txResponse.stdTx.msg.amount,
+               status: txResponse.txResult.code === 0 ? "Success" : "Failure",
+               hash: txResponse.hash,
             }
+
+            this.setState({
+                tx: {
+                    sentAmount: txSummary.amount,
+                    hash: txSummary.hash,
+                    fee: Number(Config.TX_FEE) / 1000000,
+                    type: "TokenTransfer",
+                    fromAddress: txSummary.from,
+                    toAddress: txSummary.to,
+                    status: txSummary.status,
+                    sentStatus: "Sent"
+                }
+            });
+
+            // Cach the tx information
+            PocketService.saveTxInCache(
+                txSummary.from,
+                txSummary.to,
+                txSummary.amount,
+                txSummary.hash,
+                Number(Config.TX_FEE) / 1000000,
+                txSummary.status,
+                "Sent"
+            )
+
+            this.updateTxInformation();
         } catch (error) {
             console.log(error);
             console.log("Failed to retrieve the transaction information.");
@@ -202,10 +170,8 @@ class TransactionDetail extends Component {
                 status &&
                 sentStatus
             ) {
-                //
                 const sentAmountFormatted = sentAmount * 1000000;
 
-                //
                 const obj = {
                     tx: {
                         fromAddress,
@@ -233,6 +199,7 @@ class TransactionDetail extends Component {
 
     render() {
         const { tx } = this.state;
+        const txExplorerLink = `${Config.BLOCK_EXPLORER_BASE_URL}/tx/${tx.hash}`;
 
         return (
             <DetailContent>
@@ -242,37 +209,23 @@ class TransactionDetail extends Component {
                         <TBody className="details-t">
                             <Tr>
                                 <Th>TRANSACTION HASH</Th>
-                                <Td
-                                    id="txHash"
-                                    style={{ wordBreak: "break-word" }}
-                                >
-                                    {" "}
-                                    {tx.hash}{" "}
+                                <Td id="txHash" style={{ wordBreak: "break-word" }}>
+                                  <a href={txExplorerLink}>{tx.hash}</a>
                                 </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
                                 <Td>
-                                    <img
-                                        style={{
-                                            top: "9px",
-                                            left: "14px",
-                                            position: "absolute",
-                                        }}
-                                        id="statusImg"
-                                        src={none}
-                                        alt="none state"
-                                    />
-                                    <span
-                                        style={{
-                                            top: "13px",
-                                            left: "38px",
-                                            position: "absolute",
-                                        }}
-                                        id="status"
-                                    >
-                                        {this.capitalize(tx.status)}
-                                    </span>
+                                    <img style={{
+                                        top: "9px",
+                                        left: "14px",
+                                        position: "absolute"
+                                    }} id="statusImg" src={none} alt="none state" />
+                                    <span style={{
+                                        top: "13px",
+                                        left: "38px",
+                                        position: "absolute"
+                                    }} id="status">{this.capitalize(tx.status)}</span>
                                 </Td>
                             </Tr>
                             <Tr>
@@ -338,26 +291,16 @@ class TransactionDetail extends Component {
                             <Tr>
                                 <Th>STATUS</Th>
                                 <Td>
-                                    <img
-                                        style={{
-                                            top: "9px",
-                                            left: "14px",
-                                            position: "absolute",
-                                        }}
-                                        id="statusImgMobile"
-                                        src={none}
-                                        alt="none state"
-                                    />
-                                    <span
-                                        style={{
-                                            top: "13px",
-                                            left: "38px",
-                                            position: "absolute",
-                                        }}
-                                        id="statusMobile"
-                                    >
-                                        {this.capitalize(tx.status)}
-                                    </span>
+                                    <img style={{
+                                        top: "9px",
+                                        left: "14px",
+                                        position: "absolute"
+                                    }} id="statusImgMobile" src={none} alt="none state" />
+                                    <span style={{
+                                        top: "13px",
+                                        left: "38px",
+                                        position: "absolute"
+                                    }} id="statusMobile">{this.capitalize(tx.status)}</span>
                                 </Td>
                             </Tr>
                             <Tr>

@@ -287,7 +287,10 @@ export class DataSource {
         //
         const mergedTxs = received.txs.concat(sent.txs);
         const filterByBlockHeight = mergedTxs.sort(function (a, b) {
-            return a.height - b.height;
+          const blockHeightDistance = (a.height - b.height);
+          return blockHeightDistance === 0
+            ? a.index - b.index
+            : blockHeightDistance;
         });
 
         return filterByBlockHeight;
@@ -302,7 +305,10 @@ export class DataSource {
         });
 
         const filterByBlockHeight = object.txs.sort(function (a, b) {
-            return a.height - b.height;
+          const blockHeightDistance = (a.height - b.height);
+          return blockHeightDistance === 0
+            ? a.index - b.index
+            : blockHeightDistance;
         });
 
         return filterByBlockHeight;
@@ -311,10 +317,10 @@ export class DataSource {
     /**
      * @returns {Object | undefined}
      */
-    async getAllTransactions(address) {
+    async getAllTransactions(address, txListMaxCount) {
         let receivedTxs;
         try {
-            receivedTxs = await this.getTxs(address, true);
+            receivedTxs = await this.getTxs(address, true, txListMaxCount);
         } catch (error) {
             console.error(error);
             return undefined;
@@ -322,7 +328,7 @@ export class DataSource {
 
         let sentTxs;
         try {
-            sentTxs = await this.getTxs(address, true);
+            sentTxs = await this.getTxs(address, true, txListMaxCount);
         } catch (error) {
             console.error(error);
             return undefined;
@@ -357,7 +363,9 @@ export class DataSource {
     /**
      * @returns {Object[]}
      */
-    async getTxs(address, received) {
+    async getTxs(address, received, txListMaxCount) {
+
+        const maxTxs = Number(txListMaxCount ||  Config.MIN_TRANSACTION_LIST_COUNT);
         const maxTxs = Number(this.config.maxTransactionListCount);
         // Retrieve received transactions
         let receivedTxs;

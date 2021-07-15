@@ -128,9 +128,7 @@ class Send extends Component {
             this.state;
 
         const passphrase = document.getElementById("modal-passphrase");
-        const destinationAddress = document.getElementById(
-            "destination-address"
-        );
+        const destinationAddress = document.getElementById("destination-address");
 
         if (passphrase && destinationAddress && ppk && amountToSend > 0) {
             // Update the state values for the addresses
@@ -150,18 +148,11 @@ class Send extends Component {
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
                 // Show error message
-                this.togglePassphraseError(
-                    txResponse.message !== undefined
-                        ? txResponse.message
-                        : "Failed to send the transaction, please verify the information."
-                );
-
+                this.togglePassphraseError(txResponse.message !== undefined ? txResponse.message : "Failed to send the transaction, please verify the information.");
                 return;
             }
 
             this.finishSendTransaction();
-            // Print in console the tx response
-            console.log(txResponse);
 
             // Save the user information locally
             PocketService.saveUserInCache(addressHex, publicKeyHex, ppk);
@@ -230,9 +221,7 @@ class Send extends Component {
         // Retrieve current amount value set element
         const amountElement = document.getElementById("pokt-amount");
         // Retrieve modal amount value element
-        const amountElementText = document.getElementById(
-            "modal-amount-to-send"
-        );
+        const amountElementText = document.getElementById("modal-amount-to-send");
 
         // Check the elements
         if (amountElement && amountElementText) {
@@ -518,6 +507,53 @@ class Send extends Component {
                                                 >
                                                     {modalAmountToSendUsd}
                                                 </div>
+                                                <form className="pass-pk">
+                                                    <div className="cont-input">
+                                                        <label htmlFor="toadd">To Address</label>
+                                                        <Input type="text" name="toaddress" id="modal-destination-address" 
+                                                            disabled
+                                                            value={destinationAddress}
+                                                        />
+                                                    </div>
+                                                    <div className="btn-subm">
+                                                        <Button onClick={()=> this.showPassModal(true)} >Confirm</Button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <span id="balance-error" style={{ 
+                                                opacity: balanceError !== undefined ? "1" : "0",
+                                                display: "block"
+                                                }} className="error"> <img src={altertR} alt="alert" /></span>
+                                        </PopupContent>
+                                    </div>
+                                    <div style={{ 
+                                            display: isPassModalVisible === true ? "block" : "none" 
+                                        }} id="popup-passphrase" className="container popup">
+                                        <PopupContent className="modal popup-child">
+                                            <button className="close" onClick={()=> this.showPassModal(false)}>
+                                                <img src={exit} alt="exit icon close"/>
+                                            </button>
+                                            <h2> Enter your passphrase: </h2>
+                                            <div className="content">
+                                                <form className="passphrase" onKeyPress={this.handleKeyPress}> 
+                                                    <div className="cont-input">
+                                                        <Input type="password" name="passphrase" id="modal-passphrase" />
+                                                    </div>
+                                                <span id="passphrase-error" style={{
+                                                    opacity: passphraseError !== undefined ? "1" : "0",
+                                                    display: "block"
+                                                }} className="error"> <img src={altertR} alt="alert" /> {passphraseError}</span>
+                                                    <div className="btn-subm">
+                                                            <Button 
+                                                              id="sendButton"
+                                                              style={ disableSendBtn ? {  'pointer-events': 'none', 'transition': 'none' } : {}  }
+                                                              dark={disableSendBtn}
+                                                              onClick={this.sendTransaction}
+                                                            >
+                                                            Send
+                                                            </Button>
+                                                    </div>
+                                                </form>
                                             </div>
                                             <form className="pass-pk">
                                                 <div className="cont-input">
