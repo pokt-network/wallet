@@ -80,7 +80,9 @@ class TransactionDetail extends Component {
 
     async getTx(txHash) {
         try {
-          const txResponse = await dataSource.getTx(txHash.toLowerCase()).then(({ transaction  }) => transaction);
+            const txResponse = await dataSource
+                .getTx(txHash.toLowerCase())
+                .then(({ transaction }) => transaction);
 
             if (txResponse === undefined) {
                 console.log(
@@ -91,12 +93,18 @@ class TransactionDetail extends Component {
 
             // Update the UI with the retrieved tx
             const txSummary = {
-               from: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.from_address : txResponse.stdTx.msg.from_address,
-               to: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.to_address : txResponse.stdTx.msg.to_address,
-               amount: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.amount: txResponse.stdTx.msg.amount,
-               status: txResponse.txResult.code === 0 ? "Success" : "Failure",
-               hash: txResponse.hash,
-            }
+                from: txResponse.stdTx.msg.value
+                    ? txResponse.stdTx.msg.value.from_address
+                    : txResponse.stdTx.msg.from_address,
+                to: txResponse.stdTx.msg.value
+                    ? txResponse.stdTx.msg.value.to_address
+                    : txResponse.stdTx.msg.to_address,
+                amount: txResponse.stdTx.msg.value
+                    ? txResponse.stdTx.msg.value.amount
+                    : txResponse.stdTx.msg.amount,
+                status: txResponse.txResult.code === 0 ? "Success" : "Failure",
+                hash: txResponse.hash,
+            };
 
             this.setState({
                 tx: {
@@ -107,8 +115,8 @@ class TransactionDetail extends Component {
                     fromAddress: txSummary.from,
                     toAddress: txSummary.to,
                     status: txSummary.status,
-                    sentStatus: "Sent"
-                }
+                    sentStatus: "Sent",
+                },
             });
 
             // Cach the tx information
@@ -120,7 +128,7 @@ class TransactionDetail extends Component {
                 Number(Config.TX_FEE) / 1000000,
                 txSummary.status,
                 "Sent"
-            )
+            );
 
             this.updateTxInformation();
         } catch (error) {
@@ -209,23 +217,36 @@ class TransactionDetail extends Component {
                         <TBody className="details-t">
                             <Tr>
                                 <Th>TRANSACTION HASH</Th>
-                                <Td id="txHash" style={{ wordBreak: "break-word" }}>
-                                  <a href={txExplorerLink}>{tx.hash}</a>
+                                <Td
+                                    id="txHash"
+                                    style={{ wordBreak: "break-word" }}
+                                >
+                                    <a href={txExplorerLink}>{tx.hash}</a>
                                 </Td>
                             </Tr>
                             <Tr>
                                 <Th>STATUS</Th>
                                 <Td>
-                                    <img style={{
-                                        top: "9px",
-                                        left: "14px",
-                                        position: "absolute"
-                                    }} id="statusImg" src={none} alt="none state" />
-                                    <span style={{
-                                        top: "13px",
-                                        left: "38px",
-                                        position: "absolute"
-                                    }} id="status">{this.capitalize(tx.status)}</span>
+                                    <img
+                                        style={{
+                                            top: "9px",
+                                            left: "14px",
+                                            position: "absolute",
+                                        }}
+                                        id="statusImg"
+                                        src={none}
+                                        alt="none state"
+                                    />
+                                    <span
+                                        style={{
+                                            top: "13px",
+                                            left: "38px",
+                                            position: "absolute",
+                                        }}
+                                        id="status"
+                                    >
+                                        {this.capitalize(tx.status)}
+                                    </span>
                                 </Td>
                             </Tr>
                             <Tr>
@@ -291,16 +312,26 @@ class TransactionDetail extends Component {
                             <Tr>
                                 <Th>STATUS</Th>
                                 <Td>
-                                    <img style={{
-                                        top: "9px",
-                                        left: "14px",
-                                        position: "absolute"
-                                    }} id="statusImgMobile" src={none} alt="none state" />
-                                    <span style={{
-                                        top: "13px",
-                                        left: "38px",
-                                        position: "absolute"
-                                    }} id="statusMobile">{this.capitalize(tx.status)}</span>
+                                    <img
+                                        style={{
+                                            top: "9px",
+                                            left: "14px",
+                                            position: "absolute",
+                                        }}
+                                        id="statusImgMobile"
+                                        src={none}
+                                        alt="none state"
+                                    />
+                                    <span
+                                        style={{
+                                            top: "13px",
+                                            left: "38px",
+                                            position: "absolute",
+                                        }}
+                                        id="statusMobile"
+                                    >
+                                        {this.capitalize(tx.status)}
+                                    </span>
                                 </Td>
                             </Tr>
                             <Tr>
