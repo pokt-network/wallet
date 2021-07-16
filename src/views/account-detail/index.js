@@ -147,7 +147,7 @@ class AccountLatest extends Component {
                 return;
             }
 
-            const unlockedAccount = await dataSource.getUnlockedAccount(account.addressHex, passphraseInput.value);
+            const unlockedAccount = await dataSource.getUnlockedAccount(account.addressHex, passphraseInput);
 
             if (unlockedAccount === undefined) {
                 this.setState({
@@ -163,7 +163,7 @@ class AccountLatest extends Component {
             });
 
             // Clear the passphrase input
-            passphraseInput.value = "";
+            this.setState({passphraseInput: ""})
 
             // Toggle the passphrase view off
             this.togglePkReveal(true);
@@ -723,6 +723,7 @@ class AccountLatest extends Component {
                               id="reveal-pk-passphrase"
                               placeholder="Passphrase"
                               minLength="1"
+                              onChange={(e) => this.setState({ passphraseInput: e.target.value })}
                           />
                           <div id="private-key-container" style={{display: displayPkReveal === true ? "block" : "none"}}>
                               <label id="private-key-label" className="passphrase-label" htmlFor="private">

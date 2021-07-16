@@ -24,7 +24,7 @@ class TransactionDetail extends Component {
         super(props);
 
         this.state = {
-            txHash: this.props.location && this.props.location.data ? (this.props.location.data.txHash || {}) : {},
+            txHash: this.props.location && this.props.location.data ? this.props.location.data.txHash : undefined,
             loadFromCache: this.props.location.loadFromCache,
             successImgSrc: success,
             failedImgSrc: failed,
@@ -80,7 +80,7 @@ class TransactionDetail extends Component {
 
     async getTx(txHash) {
         try {
-          const txResponse = await dataSource.getTx(txHash.toLowerCase()).then(({ transaction  }) => transaction);
+          const txResponse = await dataSource.getTx(txHash.toLowerCase());
 
             if (txResponse === undefined) {
                 console.log("Couldn't retrieve the transaction using the provided tx hash");
