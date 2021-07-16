@@ -10,7 +10,8 @@ const dataSourceConfig = {
   },
   chainId: Config.CHAIN_ID,
   txFee: Config.TX_FEE,
-  maxTransactionListCount: Config.MAX_TRANSACTION_LIST_COUNT
+  maxTransactionListCount: Config.MAX_TRANSACTION_LIST_COUNT,
+  useLegacyCodec: Config.USE_LEGACY_CODEC === "false" ? false : true
 }
 
 export const getDataSource = () => new DataSource(dataSourceConfig);
