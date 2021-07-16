@@ -24,7 +24,7 @@ class TransactionDetail extends Component {
         super(props);
 
         this.state = {
-            txHash: this.props.location.data.txHash || {},
+            txHash: this.props.location && this.props.location.data ? (this.props.location.data.txHash || {}) : {},
             loadFromCache: this.props.location.loadFromCache,
             successImgSrc: success,
             failedImgSrc: failed,
