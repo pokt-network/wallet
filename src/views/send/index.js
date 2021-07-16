@@ -188,7 +188,7 @@ class Send extends Component {
         // Move to the transaction detail
         this.props.history.push({
             pathname: "/transaction-detail",
-            data: txHash,
+            data: {txHash},
             loadFromCache: true,
         })
     }
