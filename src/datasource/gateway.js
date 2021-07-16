@@ -86,7 +86,6 @@ class PocketQueriesController {
   // and responds with errors in response.data
   // in a non-consistent form.
   parseSuccessfulResponse = (response) => {
-    
     if (typeof response.data === 'string' && response.data.indexOf('Method Not Allowed') > -1) {
       throw new Error('Method Not Allowed')
     }
