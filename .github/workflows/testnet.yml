@@ -45,7 +45,7 @@ jobs:
         REACT_APP_MIN_TRANSACTION_LIST_COUNT: "200"
         REACT_APP_TX_FEE: "10000"
         REACT_APP_SESSION_LENGTH: "15"
-        REACT_APP_GATEWAY_BASE_URL: "http://gateway.pokt.network/v1/lb/60a2ac11b1747c6552385c61"
+        REACT_APP_GATEWAY_BASE_URL: "http://gateway-staging.pokt.network/v1/lb/60a2ac11b1747c6552385c61"
         REACT_APP_HTTP_TIMEOUT: 0
         REACT_APP_USE_LEGACY_CODEC: "true"
         REACT_APP_HTTP_HEADERS: '{"Content-Type": "application/json"}'
