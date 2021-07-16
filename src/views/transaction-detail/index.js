@@ -24,7 +24,7 @@ class TransactionDetail extends Component {
         super(props);
 
         this.state = {
-            txHash: this.props.location.data,
+            txHash: this.props.location.data.txHash || {},
             loadFromCache: this.props.location.loadFromCache,
             successImgSrc: success,
             failedImgSrc: failed,
@@ -92,7 +92,7 @@ class TransactionDetail extends Component {
                from: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.from_address : txResponse.stdTx.msg.from_address,
                to: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.to_address : txResponse.stdTx.msg.to_address,
                amount: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.amount: txResponse.stdTx.msg.amount,
-               status: txResponse.txResult.code === 0 ? "Success" : "Failure",
+               status: txResponse.tx_result.code === 0 ? "Success" : "Failure",
                hash: txResponse.hash,
             }
 
