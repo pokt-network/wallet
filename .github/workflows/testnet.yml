@@ -32,15 +32,14 @@ jobs:
         REACT_APP_SECURE_LS_IS_COMPRESSION: true
         REACT_APP_DISPATCHERS: "https://node1.testnet.pokt.network,https://node2.testnet.pokt.network,https://node3.testnet.pokt.network,https://node4.testnet.pokt.network,https://node5.testnet.pokt.network"
         REACT_APP_HTTP_PROVIDER: "https://node1.testnet.pokt.network:443"
-        REACT_APP_AAT_VERSION: "0.0.1"
         REACT_APP_MAX_DISPATCHERS: 0
         REACT_APP_PROVIDER_TYPE: "http"
         REACT_APP_AAT_VERSION: "0.0.1"
         REACT_APP_BLOCK_EXPLORER_BASE_URL: "https://explorer.testnet.pokt.network"
         REACT_APP_DASHBOARD_BASE_URL: "https://dashboard.testnet.pokt.network"
         REACT_APP_BUY_POKT_BASE_URL: "https://forum.pokt.network/t/secondary-markets-for-pokt/629"
-        REACT_APP_CHAIN: "0001"
-        REACT_APP_CHAIN_ID: "mainnet"
+        REACT_APP_CHAIN: "0002"
+        REACT_APP_CHAIN_ID: "testnet"
         REACT_APP_BLOCK_TIME: "900000"
         REACT_APP_MAX_TRANSACTION_LIST_COUNT: "5000"
         REACT_APP_MIN_TRANSACTION_LIST_COUNT: "200"
