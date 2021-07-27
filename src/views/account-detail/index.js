@@ -262,7 +262,7 @@ class AccountLatest extends Component {
 
   async addNode() {
       const {node, stakedImgSrc, unstakingImgSrc, unstakedImgSrc} = this.state;
-
+      
       let obj = {
           stakingStatus: "UNSTAKED",
           stakingStatusImg: unstakedImgSrc,
@@ -271,7 +271,7 @@ class AccountLatest extends Component {
 
       if (node !== undefined) {
           // Update the staked amount
-          obj.stakedTokens = (Number(node.stakedTokens.toString()) / 1000000).toFixed(3);
+          obj.stakedTokens = (Number(node.tokens.toString()) / 1000000).toFixed(3);
 
           if (node.status === 1) {
               obj.stakingStatus = "UNSTAKING";
@@ -306,7 +306,7 @@ class AccountLatest extends Component {
       const nodeOrError = await dataSource.getNode(addressHex);
 
       if (nodeOrError !== undefined) {
-          this.setState({node: nodeOrError.node});
+          this.setState({node: nodeOrError});
           this.addNode();
       }
 
