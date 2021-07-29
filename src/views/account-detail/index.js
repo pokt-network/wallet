@@ -240,7 +240,7 @@ class AccountLatest extends Component {
 
       if (app !== undefined) {
           // Update the staked amount
-          obj.stakedTokens = (Number(app.stakedTokens.toString()) / 1000000).toFixed(3);
+          obj.stakedTokens = (Number(app.tokens.toString()) / 1000000).toFixed(3);
 
           if (app.status === 1) {
               obj.stakingStatus = "UNSTAKING";
