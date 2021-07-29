@@ -240,7 +240,7 @@ class AccountLatest extends Component {
 
       if (app !== undefined) {
           // Update the staked amount
-          obj.stakedTokens = (Number(app.tokens.toString()) / 1000000).toFixed(3);
+          obj.stakedTokens = (Number(app.staked_tokens.toString()) / 1000000).toFixed(3);
 
           if (app.status === 1) {
               obj.stakingStatus = "UNSTAKING";
@@ -298,7 +298,7 @@ class AccountLatest extends Component {
       const appOrError = await dataSource.getApp(addressHex);
 
       if (appOrError !== undefined) {
-          this.setState({app: appOrError.application});
+          this.setState({app: appOrError});
           this.addApp();
       }
 
