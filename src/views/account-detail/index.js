@@ -450,7 +450,6 @@ class AccountLatest extends Component {
           stakingStatus: "UNSTAKED",
           stakingStatusImg: unstakedImgSrc,
           stakedTokens: 0,
-          jailed: false
       };
 
 
@@ -459,7 +458,6 @@ class AccountLatest extends Component {
           if (node.tokens) {
             obj.stakedTokens = (Number(node.tokens.toString()) / 1000000).toFixed(3);
           }
-          obj.jailed = node.jailed;
 
           if (node.status === 1) {
               obj.stakingStatus = "UNSTAKING";
