@@ -60,6 +60,7 @@ class AccountLatest extends Component {
             nodeStakingStatusImg: unstaked,
             displayApp: false,
             displayNode: false,
+            isNodeJailed: false,
             privateKey: undefined,
             displayError: false,
             errorMessage: "",
@@ -172,6 +173,12 @@ class AccountLatest extends Component {
     toggleUnstakeModal(show) {
         this.setState({
             displayUnstakeModal: show,
+        })
+    }
+
+    toggleUnjail(show) {
+        this.setState({
+            displayConfirmUnjail: show,
         })
     }
 
@@ -479,6 +486,7 @@ class AccountLatest extends Component {
           nodeStakedTokens: obj.stakedTokens,
           nodeStakingStatus: obj.stakingStatus,
           nodeStakingStatusImg: obj.stakingStatusImg,
+          isNodeJailed: obj.jailed
       });
   }
 
@@ -647,6 +655,7 @@ class AccountLatest extends Component {
           appStakingStatus,
           appStakingStatusImg,
           nodeStakedTokens,
+          isNodeJailed,
           nodeStakingStatus,
           nodeStakingStatusImg,
           displayApp,
