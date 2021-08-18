@@ -485,8 +485,7 @@ class AccountLatest extends Component {
           displayNode: true,
           nodeStakedTokens: obj.stakedTokens,
           nodeStakingStatus: obj.stakingStatus,
-          nodeStakingStatusImg: obj.stakingStatusImg,
-          isNodeJailed: obj.jailed
+          nodeStakingStatusImg: obj.stakingStatusImg
       });
   }
 
