@@ -70,13 +70,15 @@ class AccountLatest extends Component {
             unstakedImgSrc: unstaked,
             reloadImgSrc: reload,
             reloadActiveImgSrc: reloadActive,
-            isPkRevealVisible: false,
-            isConfirmUnjail: false,
+            isPkRevealModalVisible: false,
+            isUnjailModalVisible: false,
+            isUnstakeModalVisible: false,
             maxTxListCount: Number(Config.MIN_TRANSACTION_LIST_COUNT),
             txList: [],
             passphraseInput: "",
-            displayPkReveal: <i class="fas fa-less    "></i>,
-            displayConfirmUnjail: <i class="fas fa-check-circle"></i>,
+            displayPkRevealModal: <i class="fas fa-less"></i>,
+            displayUnjailModal: <i class="fas fa-less"></i>,
+            displayUnstakeModal: <i class="fas fa-less"></i>,
         };
 
         // Binds
@@ -93,11 +95,16 @@ class AccountLatest extends Component {
         this.reloadBtnState = this.reloadBtnState.bind(this);
         this.revealPrivateKey = this.revealPrivateKey.bind(this);
         this.unjailNode = this.unjailNode.bind(this);
-        this.showPkReveal = this.showPkReveal.bind(this);
-        this.closePkReveal = this.closePkReveal.bind(this);
-        this.showConfirmUnjail = this.showConfirmUnjail.bind(this);
-        this.closeConfirmUnjail = this.closeConfirmUnjail.bind(this);
-        this.togglePkReveal = this.togglePkReveal.bind(this);
+        this.unstakeNode = this.unstakeNode.bind(this);
+        this.showPkRevealModal = this.showPkRevealModal.bind(this);
+        this.closePkRevealModal = this.closePkRevealModal.bind(this);
+        this.showUnjailModal = this.showUnjailModal.bind(this);
+        this.closeUnjailModal = this.closeUnjailModal.bind(this);
+        this.showUnstakeModal = this.showUnstakeModal.bind(this);
+        this.closeUnstakeModal = this.closeUnstakeModal.bind(this);
+        this.togglePkRevealModal = this.togglePkRevealModal.bind(this);
+        this.toggleUnjailModal = this.toggleUnjailModal.bind(this);
+        this.toggleUnstakeModal = this.toggleUnstakeModal.bind(this);
     }
 
     increaseMaxTxListCount() {
@@ -110,37 +117,62 @@ class AccountLatest extends Component {
       return this.state.maxTxListCount > Number(Config.MAX_TRANSACTION_LIST_COUNT)
     }
 
-    showPkReveal() {
+    showPkRevealModal() {
         this.setState({
-            isPkRevealVisible: true,
+            isPkRevealModalVisible: true,
         });
     }
 
-    closePkReveal() {
+    closePkRevealModal() {
         this.setState({
-            isPkRevealVisible: false,
+            isPkRevealModalVisible: false,
         });
 
-        this.togglePkReveal(false);
+        this.togglePkRevealModal(false);
     }
 
-    showConfirmUnjail() {
+    showUnjailModal() {
         this.setState({
-            isConfirmUnjail: true,
+            isUnjailModalVisible: true,
         });
     }
 
-    closeConfirmUnjail() {
+    closeUnjailModal() {
         this.setState({
-            isConfirmUnjail: false,
+            isUnjailModalVisible: false,
         });
-        this.toggleUnjail(false);
+        this.toggleUnjailModal(false);
     }
 
-    togglePkReveal(show) {
+    showUnstakeModal() {
+        this.setState({
+            isUnstakeModalVisible: true,
+        });
+    }
+
+    closeUnstakeModal() {
+        this.setState({
+            isUnstakeModalVisible: false,
+        });
+        this.toggleUnstakeModal(false);
+    }
+
+    togglePkRevealModal(show) {
 
         this.setState({
-            displayPkReveal: show
+            displayPkRevealModal: show
+        })
+    }
+
+    toggleUnjailModal(show) {
+        this.setState({
+            displayUnjailModal: show,
+        })
+    }
+
+    toggleUnstakeModal(show) {
+        this.setState({
+            displayUnstakeModal: show,
         })
     }
 
@@ -191,7 +223,7 @@ class AccountLatest extends Component {
             this.setState({passphraseInput: ""})
 
             // Toggle the passphrase view off
-            this.togglePkReveal(true);
+            this.togglePkRevealModal(true);
         }
 
     }
@@ -242,22 +274,89 @@ class AccountLatest extends Component {
                 this.setState({passphraseInput: ""})
 
                 // Toggle the passphrase view off
-                this.toggleUnjail(true);
+                this.toggleUnjailModal(true);
 
                 // Close unjail modal
-                this.closeConfirmUnjail();
+                this.closeUnjailModal();
 
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
-                return
+                return;
             } else {
                 this.setState({
-                    visibility: false
+                    visibility: false,
+                    displayError: true,
+                    errorMessage: "Failed to submit unjail tx."
                 });
+                return;
             }
             
         }
+    }
 
+    async unstakeNode() {    
+        // Enable loader indicator
+        this.enableLoaderIndicatory(true);
+
+        const {ppk} = this.state;
+        
+        const passphraseInput = this.state.passphraseInput;
+
+        // Check for ppk and the element
+        if (ppk && passphraseInput) {
+
+            const account = await dataSource.importPortablePrivateKey(
+                passphraseInput,
+                ppk,
+                passphraseInput
+            );
+
+            if (account === undefined) {
+                this.setState({
+                    displayError: true,
+                    errorMessage: "Invalid passphrase."
+                });
+
+                return;
+            }
+
+            const unlockedAccount = await dataSource.getUnlockedAccount(account.addressHex, passphraseInput);
+
+            if (unlockedAccount === undefined) {
+                this.setState({
+                    displayError: true,
+                    errorMessage: "Invalid passphrase."
+                });
+                return;
+            }
+            
+            const unstakeTx = await dataSource.unstakeNode(ppk, passphraseInput, account.addressHex);
+            
+            if (unstakeTx !== undefined) {
+                this.setState({
+                    visibility: true
+                });
+                // Clear the passphrase input
+                this.setState({passphraseInput: ""})
+
+                // Toggle the passphrase view off
+                this.toggleUnstakeModal(true);
+
+                // Close unstake modal
+                this.closeUnstakeModal();
+
+                // Disable loader indicator
+                this.enableLoaderIndicatory(false);
+                return;
+            } else {
+                this.setState({
+                    visibility: false,
+                    displayError: true,
+                    errorMessage: "Failed to submit unstake tx."
+                });
+                return;
+            }
+        }
     }
 
     // Retrieve the latest transactions
@@ -358,7 +457,6 @@ class AccountLatest extends Component {
           stakingStatus: "UNSTAKED",
           stakingStatusImg: unstakedImgSrc,
           stakedTokens: 0,
-          jailed: false
       };
 
 
@@ -367,15 +465,19 @@ class AccountLatest extends Component {
           if (node.tokens) {
             obj.stakedTokens = (Number(node.tokens.toString()) / 1000000).toFixed(3);
           }
-          obj.jailed = node.jailed;
 
           if (node.status === 1) {
               obj.stakingStatus = "UNSTAKING";
               obj.stakingStatusImg = unstakingImgSrc;
-          }else if(node.status === 2){
+          } else if(node.status === 2) {
               obj.stakingStatus = "STAKED";
               obj.stakingStatusImg = stakedImgSrc;
-          };
+          } 
+          
+          if(node.jailed) {
+            obj.stakingStatus = "JAILED";
+            obj.stakingStatusImg = stakedImgSrc;
+        };
       }
 
       // Update the state
@@ -560,11 +662,12 @@ class AccountLatest extends Component {
           displayNode,
           displayError,
           errorMessage,
-          isPkRevealVisible,
-          isConfirmUnjail,
+          isPkRevealModalVisible,
+          isUnjailModalVisible,
+          isUnstakeModalVisible,
           displayNormalAccount,
-          displayPkReveal,
-          displayConfirmUnjail,
+          displayPkRevealModal,
+          displayUnjailModal,
           hovered,
           txList,
       } = this.state;
@@ -701,7 +804,9 @@ class AccountLatest extends Component {
                       <div className="btn-subm">
                           <Button target="_target" href={Config.BUY_POKT_BASE_URL} dark>Buy POKT</Button>
                           {/* Node Staked */}
-                          {nodeStakingStatus === 'STAKED' && isNodeJailed && <Button id="unjail-node" onClick={this.showConfirmUnjail} dark>Unjail</Button>}
+                          {nodeStakingStatus === 'JAILED' && <Button id="unjail-node" onClick={this.showUnjailModal} dark>Unjail</Button>}
+                          {nodeStakingStatus === 'STAKED' && <Button id="unstake-node" onClick={this.showUnstakeModal} dark>Unstake</Button>}
+                          {/* Shared */}
                           <Button id="send-pokt" onClick={this.pushToSend}>Send</Button>
                       </div>
                   </div>
@@ -718,7 +823,7 @@ class AccountLatest extends Component {
                               <span className="copy-button" onClick={() => {navigator.clipboard.writeText(publicKeyHex)}}> <img src={copy} alt="copy" /></span>
                           </div>
                           <div className="cont-input third">
-                              <Button id="reveal-pk" onClick={this.showPkReveal}>Reveal Private Key</Button>
+                              <Button id="reveal-pk" onClick={this.showPkRevealModal}>Reveal Private Key</Button>
                           </div>
                       </div>
                   </form>
@@ -808,17 +913,17 @@ class AccountLatest extends Component {
                       }} //changes styling on the inner content area
                       containerClassName="pocket-modal"
                       closeOnOuterClick={true}
-                      show={isPkRevealVisible}
-                      onClose={this.closePkReveal.bind(this)}
+                      show={isPkRevealModalVisible}
+                      onClose={this.closePkRevealModal.bind(this)}
                   >
                       <div className="cont-input" style={{textAlign: "center"}}>
-                          <label style={{display: isPkRevealVisible === true ? "block" : "none"}} id="passphrase-label" className="passphrase-label" htmlFor="private">
+                          <label style={{display: isPkRevealModalVisible === true ? "block" : "none"}} id="passphrase-label" className="passphrase-label" htmlFor="private">
                               PASSPHRASE
                           </label>
                           <Input
                               className="reveal-pk-passphrase"
                               style={{
-                                  display: isPkRevealVisible === true ? "block" : "none",
+                                  display: isPkRevealModalVisible === true ? "block" : "none",
                                   margin: "8px auto auto auto",
                                   width: "350px" }}
                               type="password"
@@ -828,7 +933,7 @@ class AccountLatest extends Component {
                               minLength="1"
                               onChange={(e) => this.setState({ passphraseInput: e.target.value })}
                           />
-                          <div id="private-key-container" style={{display: displayPkReveal === true ? "block" : "none"}}>
+                          <div id="private-key-container" style={{display: displayPkRevealModal === true ? "block" : "none"}}>
                               <label id="private-key-label" className="passphrase-label" htmlFor="private">
                                   PRIVATE KEY
                               </label>
@@ -849,14 +954,14 @@ class AccountLatest extends Component {
                             style={{
                                 textAlign: "center",
                                 width: "119px",
-                                display: displayPkReveal === true ? "none" : "block",
+                                display: displayPkRevealModal === true ? "none" : "block",
                                 padding: "9px 6px",
                                 margin: "24px auto 10px auto" }}
                             onClick={this.revealPrivateKey.bind(this)}
                         >
                             Reveal
                         </Button>
-                        <button className="close" onClick={this.closePkReveal.bind(this)}>
+                        <button className="close" onClick={this.closePkRevealModal.bind(this)}>
                             <img src={exit} alt="exit icon close"/>
                         </button>
                         <div className="alert">
@@ -883,17 +988,17 @@ class AccountLatest extends Component {
                 }} //changes styling on the inner content area
                 containerClassName="pocket-confirm-unjail-modal"
                 closeOnOuterClick={true}
-                show={isConfirmUnjail}
-                onClose={this.closeConfirmUnjail.bind(this)}
+                show={isUnjailModalVisible}
+                onClose={this.closeUnjailModal.bind(this)}
             >
                 <div className="cont-input" style={{textAlign: "center"}}>
-                    <label style={{display: isConfirmUnjail === true ? "block" : "none"}} id="passphrase-label" className="passphrase-label" htmlFor="private">
+                    <label style={{display: isUnjailModalVisible === true ? "block" : "none"}} id="passphrase-label" className="passphrase-label" htmlFor="private">
                         PASSPHRASE
                     </label>
                     <Input
                         className="confirm-unjail-passphrase"
                         style={{
-                            display: isConfirmUnjail === true ? "block" : "none",
+                            display: isUnjailModalVisible === true ? "block" : "none",
                             margin: "8px auto auto auto",
                             width: "350px" }}
                         type="password"
@@ -908,21 +1013,76 @@ class AccountLatest extends Component {
                     <img src={altertR} alt="alert" />
                     {` ${errorMessage}`}
                 </span>
-                <label style={{fontSize: 14, display: isConfirmUnjail === true ? "block" : "none", alignContent:'center'}} id="passphrase-label" className="passphrase-label" htmlFor="private">
+                <label style={{fontSize: 14, display: isUnjailModalVisible === true ? "block" : "none", alignContent:'center'}} id="passphrase-label" className="passphrase-label" htmlFor="private">
                         ARE YOU SURE YOU WANT TO GET UNJAILED?
                     </label>
                 <Button
                     style={{
                         textAlign: "center",
                         width: "119px",
-                        display: displayConfirmUnjail === true ? "none" : "block",
+                        display: displayUnjailModal === true ? "none" : "block",
                         padding: "9px 6px",
                         margin: "24px auto 10px auto" }}
                     onClick={this.unjailNode.bind(this)}
                 >
                     Proceed
                 </Button>
-                <button className="close" onClick={this.closeConfirmUnjail.bind(this)}>
+                <button className="close" onClick={this.closeUnjailModal.bind(this)}>
+                    <img src={exit} alt="exit icon close"/>
+                </button>
+            </Modal>
+            {/* Unstake Modal */}
+            <Modal
+                style={{ background: "rgba(0, 0, 0, 0.5)" }} //overwrites the default background
+                containerStyle={{
+                    width: "534px",
+                    background: "white",
+                    boxShadow: "0 43px 39px -40px rgba(0,0,0,0.5)",
+                    borderRadius: "12px",
+                    padding: "5px 0px 13px"
+                }} //changes styling on the inner content area
+                containerClassName="pocket-confirm-unstake-modal"
+                closeOnOuterClick={true}
+                show={isUnstakeModalVisible}
+                onClose={this.closeUnstakeModal.bind(this)}
+            >
+                <div className="cont-input" style={{textAlign: "center"}}>
+                    <label style={{display: isUnstakeModalVisible === true ? "block" : "none"}} id="passphrase-label" className="passphrase-label" htmlFor="private">
+                        PASSPHRASE
+                    </label>
+                    <Input
+                        className="confirm-unstake-passphrase"
+                        style={{
+                            display: isUnstakeModalVisible === true ? "block" : "none",
+                            margin: "8px auto auto auto",
+                            width: "350px" }}
+                        type="password"
+                        name="confirm-unjail-passphrase"
+                        id="confirm-unjail-passphrase"
+                        placeholder="Passphrase"
+                        minLength="1"
+                        onChange={(e) => this.setState({ passphraseInput: e.target.value })}
+                    />
+                </div>
+                <span id="passphrase-invalid" className="error" style={{ display: displayError === true ? "block" : "none" }}>
+                    <img src={altertR} alt="alert" />
+                    {` ${errorMessage}`}
+                </span>
+                <label style={{fontSize: 14, display: isUnstakeModalVisible === true ? "block" : "none", alignContent:'center'}} id="passphrase-label" className="passphrase-label" htmlFor="private">
+                        ARE YOU SURE YOU WANT TO UNSTAKE?
+                    </label>
+                <Button
+                    style={{
+                        textAlign: "center",
+                        width: "119px",
+                        display: displayUnjailModal === true ? "none" : "block",
+                        padding: "9px 6px",
+                        margin: "24px auto 10px auto" }}
+                    onClick={this.unstakeNode.bind(this)}
+                >
+                    Proceed
+                </Button>
+                <button className="close" onClick={this.closeUnstakeModal.bind(this)}>
                     <img src={exit} alt="exit icon close"/>
                 </button>
             </Modal>
