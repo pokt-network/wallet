@@ -284,6 +284,10 @@ class AccountLatest extends Component {
                 this.pushToTxDetail(unjailTx.txhash);
 
                 this.enableLoaderIndicatory(false);
+
+                // Redirect to transaction detail
+                this.pushToTxDetail(unjailTx.txhash);
+
                 return;
             } else {
                 this.setState({
