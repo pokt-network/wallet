@@ -280,6 +280,10 @@ class AccountLatest extends Component {
 
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
+
+                // Redirect to transaction detail
+                this.pushToTxDetail(unjailTx.txhash);
+
                 return;
             } else {
                 this.setState({
@@ -287,9 +291,10 @@ class AccountLatest extends Component {
                     displayError: true,
                     errorMessage: "Failed to submit unjail tx."
                 });
+                // Disable loader indicator
+                this.enableLoaderIndicatory(false);
                 return;
             }
-            
         }
     }
 
@@ -331,7 +336,7 @@ class AccountLatest extends Component {
             
             const unstakeTx = await dataSource.unstakeNode(ppk, passphraseInput, account.addressHex);
             
-            if (unstakeTx !== undefined) {
+            if (unstakeTx.txhash !== undefined) {
                 this.setState({
                     visibility: true
                 });
@@ -346,6 +351,10 @@ class AccountLatest extends Component {
 
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
+
+                // Redirect to transaction detail
+                this.pushToTxDetail(unstakeTx.txhash);
+
                 return;
             } else {
                 this.setState({
@@ -353,6 +362,8 @@ class AccountLatest extends Component {
                     displayError: true,
                     errorMessage: "Failed to submit unstake tx."
                 });
+                // Disable loader indicator
+                this.enableLoaderIndicatory(false);
                 return;
             }
         }
