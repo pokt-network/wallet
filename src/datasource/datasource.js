@@ -262,7 +262,7 @@ export class DataSource {
   /**
    * @returns {Object}
    */
-   async unjailNode(ppk, passphrase, address) {
+   async unjailNode(ppk, passphrase) {
     // uPOKT
     const defaultFee = this.config.txFee || 10000;
 
@@ -271,6 +271,7 @@ export class DataSource {
       ppk,
       passphrase
     );
+    console.log('Address:', accountOrUndefined.addressHex);
 
     if (typeGuard(accountOrUndefined, Error)) {
       return new Error("Failed to import account due to wrong passphrase provided");
@@ -280,22 +281,21 @@ export class DataSource {
       accountOrUndefined.address,
       passphrase
     );
+    console.log('TransactionSender', transactionSenderOrError);
 
     if (typeGuard(transactionSenderOrError, RpcError)) {
       console.log('TransactionSenderError', transactionSenderOrError.message);
       return new Error(transactionSenderOrError.message);
     };
 
-    console.log('Unjail Addy:', address);
-    console.log('Tx args:', this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
-
     const rawTxPayloadOrError = await transactionSenderOrError
-      .nodeUnjail(address)
-      .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
+      .nodeUnjail(accountOrUndefined.addressHex)
+      .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Unjail Node - Pocket Wallet");
+      
+    console.log('RawTxPayload', rawTxPayloadOrError);
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
-      console.log(`Failed to process transaction with error: ${rawTxPayloadOrError}`);
-      console.log('TxPayloadError', rawTxPayloadOrError.message);
+      console.log(`Failed to process transaction with error: ${rawTxPayloadOrError.message}`);
       return new Error(rawTxPayloadOrError.message);
     }
     
@@ -319,7 +319,7 @@ export class DataSource {
   /**
    * @returns {Object}
    */
-   async unstakeNode(ppk, passphrase, address) {
+   async unstakeNode(ppk, passphrase) {
     // uPOKT
     const defaultFee = this.config.txFee || 10000;
 
@@ -343,8 +343,8 @@ export class DataSource {
     };
 
     const rawTxPayloadOrError = await transactionSenderOrError
-      .nodeUnstake(address)
-      .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
+      .nodeUnstake(accountOrUndefined.addressHex)
+      .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Unstake Node - Pocket Wallet");
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
       console.log(`Failed to process transaction with error: ${rawTxPayloadOrError}`);

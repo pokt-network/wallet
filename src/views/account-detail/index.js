@@ -264,7 +264,7 @@ class AccountLatest extends Component {
                 return;
             }
             
-            const unjailTx = await dataSource.unjailNode(ppk, passphraseInput, account.addressHex);
+            const unjailTx = await dataSource.unjailNode(ppk, passphraseInput);
             console.log(unjailTx);
 
             if (unjailTx !== undefined) {
@@ -331,7 +331,7 @@ class AccountLatest extends Component {
                 return;
             }
             
-            const unstakeTx = await dataSource.unstakeNode(ppk, passphraseInput, account.addressHex);
+            const unstakeTx = await dataSource.unstakeNode(ppk, passphraseInput);
             
             if (unstakeTx.txhash !== undefined) {
                 this.setState({
