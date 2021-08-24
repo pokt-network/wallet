@@ -280,13 +280,7 @@ class AccountLatest extends Component {
                 // Close unjail modal
                 this.closeUnjailModal();
 
-                // Redirect to transaction detail
-                this.pushToTxDetail(unjailTx.txhash);
-
                 this.enableLoaderIndicatory(false);
-
-                // Redirect to transaction detail
-                this.pushToTxDetail(unjailTx.txhash);
 
                 return;
             } else {
@@ -354,9 +348,6 @@ class AccountLatest extends Component {
 
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
-
-                // Redirect to transaction detail
-                this.pushToTxDetail(unstakeTx.txhash);
 
                 return;
             } else {
