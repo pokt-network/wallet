@@ -279,7 +279,7 @@ class AccountLatest extends Component {
 
                 // Close unjail modal
                 this.closeUnjailModal();
-
+              
                 this.enableLoaderIndicatory(false);
 
                 return;
