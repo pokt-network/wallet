@@ -229,6 +229,8 @@ export class DataSource {
       passphrase
     );
 
+    console.log('SEND transactionSenderOrError', transactionSenderOrError);
+
     if (typeGuard(transactionSenderOrError, RpcError)) {
       return new Error(transactionSenderOrError.message);
     };
@@ -236,6 +238,8 @@ export class DataSource {
     const rawTxPayloadOrError = await transactionSenderOrError
       .send(accountOrUndefined.addressHex, toAddress, amount.toString())
       .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
+
+    console.log('SEND rawTxPayloadOrError', rawTxPayloadOrError);
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
       console.log(`Failed to process transaction with error: ${rawTxPayloadOrError}`);
