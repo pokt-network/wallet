@@ -83,6 +83,7 @@ class AccountLatest extends Component {
         // Binds
         this.onToggleBtn = this.onToggleBtn.bind(this);
         this.getBalance = this.getBalance.bind(this);
+        this.getPrice = this.getPrice.bind(this);
         this.getAccountType = this.getAccountType.bind(this);
         this.addApp = this.addApp.bind(this);
         this.addNode = this.addNode.bind(this);
@@ -227,12 +228,12 @@ class AccountLatest extends Component {
 
     }
 
-    async unjailNode() {    
+    async unjailNode() {
         // Enable loader indicator
         this.enableLoaderIndicatory(true);
 
         const {ppk} = this.state;
-        
+
         const passphraseInput = this.state.passphraseInput;
 
         // Check for ppk and the element
@@ -262,9 +263,9 @@ class AccountLatest extends Component {
                 });
                 return;
             }
-            
+
             const unjailTx = await dataSource.unjailNode(ppk, passphraseInput, account.addressHex);
-            
+
             if (unjailTx !== undefined) {
                 this.setState({
                     visibility: true
@@ -298,12 +299,12 @@ class AccountLatest extends Component {
         }
     }
 
-    async unstakeNode() {    
+    async unstakeNode() {
         // Enable loader indicator
         this.enableLoaderIndicatory(true);
 
         const {ppk} = this.state;
-        
+
         const passphraseInput = this.state.passphraseInput;
 
         // Check for ppk and the element
@@ -333,9 +334,9 @@ class AccountLatest extends Component {
                 });
                 return;
             }
-            
+
             const unstakeTx = await dataSource.unstakeNode(ppk, passphraseInput, account.addressHex);
-            
+
             if (unstakeTx.txhash !== undefined) {
                 this.setState({
                     visibility: true
@@ -462,7 +463,7 @@ class AccountLatest extends Component {
 
   async addNode() {
       const {node, stakedImgSrc, unstakingImgSrc, unstakedImgSrc} = this.state;
-      
+
       let obj = {
           stakingStatus: "UNSTAKED",
           stakingStatusImg: unstakedImgSrc,
@@ -482,8 +483,8 @@ class AccountLatest extends Component {
           } else if(node.status === 2) {
               obj.stakingStatus = "STAKED";
               obj.stakingStatusImg = stakedImgSrc;
-          } 
-          
+          }
+
           if(node.jailed) {
             obj.stakingStatus = "JAILED";
             obj.stakingStatusImg = stakedImgSrc;
@@ -541,6 +542,13 @@ class AccountLatest extends Component {
               usdBalance
           })
       }
+  }
+
+  async getPrice() {
+    const price = await dataSource.getPrice();
+    this.setState({
+        price
+    })
   }
 
   pushToTxDetail(txHash) {
@@ -614,6 +622,7 @@ class AccountLatest extends Component {
   refreshView(addressHex, loadMore = false) {
       this.enableLoaderIndicatory(true);
       this.getBalance(addressHex);
+      this.getPrice();
       this.getAccountType(addressHex);
 
       if (loadMore) {
@@ -658,6 +667,7 @@ class AccountLatest extends Component {
           publicKeyHex,
           privateKey,
           poktBalance,
+          price,
           visibility,
           noTransactions,
           appStakedTokens,
@@ -693,7 +703,13 @@ class AccountLatest extends Component {
               <Wrapper className="wide-block-wr">
                   <div className="quantitypokt">
                       <div className="container">
-                          <h1 >{poktBalance} POKT</h1>
+                          <h1>{poktBalance} POKT</h1>
+                          { price != -1 &&
+                            <div>
+                              <h2 style={{margin:"0px", color:"white"}}>${parseFloat(price*poktBalance).toFixed(2)}</h2>
+                              <h4 style={{margin:"-3px", fontWeight:"430", fontSize:"14px", paddingTop:"5px"}}>Price by <a className="th-link" target="_blank" href="https://thunderheadotc.com">Thunderhead</a></h4>
+                            </div>
+                          }
                           <div style={{flexDirection: "column"}} className="stats">
                               <div className="stat">
                                   <img
