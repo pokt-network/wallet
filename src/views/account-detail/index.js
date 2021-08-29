@@ -250,7 +250,7 @@ class AccountLatest extends Component {
                     displayError: true,
                     errorMessage: "Invalid passphrase."
                 });
-
+                this.enableLoaderIndicatory(false);
                 return;
             }
 
@@ -261,10 +261,12 @@ class AccountLatest extends Component {
                     displayError: true,
                     errorMessage: "Invalid passphrase."
                 });
+                this.enableLoaderIndicatory(false);
                 return;
             }
-
-            const unjailTx = await dataSource.unjailNode(ppk, passphraseInput, account.addressHex);
+            
+            const unjailTx = await dataSource.unjailNode(ppk, passphraseInput);
+            console.log(unjailTx)
 
             if (unjailTx !== undefined) {
                 this.setState({
@@ -278,12 +280,8 @@ class AccountLatest extends Component {
 
                 // Close unjail modal
                 this.closeUnjailModal();
-
-                // Disable loader indicator
+              
                 this.enableLoaderIndicatory(false);
-
-                // Redirect to transaction detail
-                this.pushToTxDetail(unjailTx.txhash);
 
                 return;
             } else {
@@ -292,7 +290,6 @@ class AccountLatest extends Component {
                     displayError: true,
                     errorMessage: "Failed to submit unjail tx."
                 });
-                // Disable loader indicator
                 this.enableLoaderIndicatory(false);
                 return;
             }
@@ -334,9 +331,9 @@ class AccountLatest extends Component {
                 });
                 return;
             }
-
-            const unstakeTx = await dataSource.unstakeNode(ppk, passphraseInput, account.addressHex);
-
+            
+            const unstakeTx = await dataSource.unstakeNode(ppk, passphraseInput);
+            
             if (unstakeTx.txhash !== undefined) {
                 this.setState({
                     visibility: true
@@ -352,9 +349,6 @@ class AccountLatest extends Component {
 
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
-
-                // Redirect to transaction detail
-                this.pushToTxDetail(unstakeTx.txhash);
 
                 return;
             } else {
