@@ -282,7 +282,7 @@ export class DataSource {
     };
 
     const transactionSenderOrError = await this.__pocket.withImportedAccount(
-      accountOrUndefined.address,
+      accountOrUndefined.addressHex,
       passphrase
     );
     console.log('TransactionSender', transactionSenderOrError);
