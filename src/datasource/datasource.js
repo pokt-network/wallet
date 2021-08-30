@@ -288,15 +288,12 @@ export class DataSource {
     console.log('TransactionSender', transactionSenderOrError);
 
     if (typeGuard(transactionSenderOrError, RpcError)) {
-      console.log('TransactionSenderError', transactionSenderOrError.message);
       return new Error(transactionSenderOrError.message);
     };
 
     const rawTxPayloadOrError = await transactionSenderOrError
       .nodeUnjail(accountOrUndefined.addressHex)
       .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Unjail Node - Pocket Wallet");
-      
-    console.log('RawTxPayload', rawTxPayloadOrError);
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
       console.log(`Failed to process transaction with error: ${rawTxPayloadOrError.message}`);
