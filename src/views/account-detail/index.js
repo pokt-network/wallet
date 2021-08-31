@@ -264,10 +264,12 @@ class AccountLatest extends Component {
                 return;
             }
             
-            const unjailTx = await dataSource.unjailNode(ppk, passphraseInput);
-            console.log(unjailTx);
+            const txResponse = await dataSource.unjailNode(ppk, passphraseInput);
 
-            if (unjailTx !== undefined) {
+            if (txResponse !== undefined) {
+                
+                await new Promise((resolve) => setTimeout(resolve, 5000));
+
                 this.setState({
                     visibility: true
                 });
@@ -280,7 +282,27 @@ class AccountLatest extends Component {
                 // Close unjail modal
                 this.closeUnjailModal();
               
+                const publicKeyHex = unlockedAccount.privateKey.toString("hex");
+
+                // Save the user information locally
+                PocketService.saveUserInCache(account.addressHex, publicKeyHex, ppk);
+
+                // Save the tx information locally
+                PocketService.saveTxInCache(
+                    account.addressHex,
+                    account.addressHex,
+                    0,
+                    txResponse.txhash,
+                    Number(Config.TX_FEE) / 1000000,
+                    "Pending",
+                    "Pending"
+                );
+
+                // Disable loader indicator
                 this.enableLoaderIndicatory(false);
+
+                // Switch to details view
+                this.pushToTxDetail(txResponse.txhash);
 
                 return;
             } else {
@@ -331,9 +353,9 @@ class AccountLatest extends Component {
                 return;
             }
             
-            const unstakeTx = await dataSource.unstakeNode(ppk, passphraseInput);
+            const txResponse = await dataSource.unstakeNode(ppk, passphraseInput);
             
-            if (unstakeTx.txhash !== undefined) {
+            if (txResponse.txhash !== undefined) {
                 this.setState({
                     visibility: true
                 });
@@ -346,8 +368,27 @@ class AccountLatest extends Component {
                 // Close unstake modal
                 this.closeUnstakeModal();
 
+                const publicKeyHex = unlockedAccount.privateKey.toString("hex");
+
+                // Save the user information locally
+                PocketService.saveUserInCache(account.addressHex, publicKeyHex, ppk);
+
+                // Save the tx information locally
+                PocketService.saveTxInCache(
+                    account.addressHex,
+                    account.addressHex,
+                    0,
+                    txResponse.txhash,
+                    Number(Config.TX_FEE) / 1000000,
+                    "Pending",
+                    "Pending"
+                );
+
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
+
+                // Switch to details view
+                this.pushToTxDetail(txResponse.txhash);
 
                 return;
             } else {
