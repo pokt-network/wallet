@@ -78,6 +78,16 @@ class TransactionDetail extends Component {
         }
     }
 
+    getTransactionType(stdTx) { 
+        if (stdTx.msg.type === "pos/MsgUnjail") {
+            return "Unjail";
+        } else if (stdTx.msg.type === "pos/MsgUnstake") {
+            return "Unstake";
+        } else {
+            return "TokenTransfer";
+        }
+    }
+
     async getTx(txHash) {
         try {
           const txResponse = await dataSource.getTx(txHash.toLowerCase());
@@ -87,6 +97,8 @@ class TransactionDetail extends Component {
                 return;
             }
 
+            const transactionType = this.getTransactionType(txResponse.stdTx);
+
             // Update the UI with the retrieved tx
             const txSummary = {
                from: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.from_address : txResponse.stdTx.msg.from_address,
@@ -94,6 +106,7 @@ class TransactionDetail extends Component {
                amount: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.amount: txResponse.stdTx.msg.amount,
                status: txResponse.tx_result.code === 0 ? "Success" : "Failure",
                hash: txResponse.hash,
+               type: transactionType
             }
 
             this.setState({
@@ -101,7 +114,7 @@ class TransactionDetail extends Component {
                     sentAmount: txSummary.amount,
                     hash: txSummary.hash,
                     fee: Number(Config.TX_FEE) / 1000000,
-                    type: "TokenTransfer",
+                    type: txSummary.type,
                     fromAddress: txSummary.from,
                     toAddress: txSummary.to,
                     status: txSummary.status,
@@ -235,7 +248,7 @@ class TransactionDetail extends Component {
                             </Tr>
                             <Tr>
                                 <Th>TX TYPE</Th>
-                                <Td>TokenTransfer</Td>
+                                <Td>{tx.type}</Td>
                             </Tr>
                             <Tr>
                                 <Th>SENDER</Th>
@@ -292,7 +305,7 @@ class TransactionDetail extends Component {
                                 <Th>TX TYPE</Th>
                             </Tr>
                             <Tr>
-                                <Td>TokenTransfer</Td>
+                                <Td>{tx.type}</Td>
                             </Tr>
                             <Tr>
                                 <Th>SENDER</Th>
