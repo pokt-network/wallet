@@ -267,8 +267,6 @@ class AccountLatest extends Component {
             const txResponse = await dataSource.unjailNode(ppk, passphraseInput);
 
             if (txResponse !== undefined) {
-                
-                await new Promise((resolve) => setTimeout(resolve, 5000));
 
                 this.setState({
                     visibility: true
@@ -297,6 +295,9 @@ class AccountLatest extends Component {
                     "Pending",
                     "Pending"
                 );
+
+                // Wait some seconds before going to tx detail
+                await new Promise((resolve) => setTimeout(resolve, 5000));
 
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
@@ -384,6 +385,9 @@ class AccountLatest extends Component {
                     "Pending"
                 );
 
+                // Wait some seconds before going to tx detail
+                await new Promise((resolve) => setTimeout(resolve, 5000));
+
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
 
@@ -445,13 +449,14 @@ class AccountLatest extends Component {
           if (!tx.stdTx.msg.amount && !tx.stdTx.msg.value) {
             return;
           }
+          const transactionType = this.getTransactionType(tx.stdTx);
           return {
             hash: tx.hash,
             imageSrc: tx.type.toLowerCase() === 'sent' ? sentImgSrc : receivedImgSrc,
             amount: Object.keys(tx.stdTx.msg).includes('amount')
               ? tx.stdTx.msg.amount / 1000000
               : tx.stdTx.msg.value.amount / 1000000,
-            type: this.getTransactionType(tx.stdTx),
+            type: transactionType,
             height: tx.height,
             options: {
               onClick: this.pushToTxDetail.bind(this, tx.hash),
