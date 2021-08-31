@@ -267,7 +267,6 @@ class AccountLatest extends Component {
             const txResponse = await dataSource.unjailNode(ppk, passphraseInput);
 
             if (txResponse !== undefined) {
-
                 this.setState({
                     visibility: true
                 });
@@ -298,7 +297,7 @@ class AccountLatest extends Component {
 
                 // Wait some seconds before going to tx detail
                 await new Promise((resolve) => setTimeout(resolve, 5000));
-
+              
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
 
@@ -387,7 +386,7 @@ class AccountLatest extends Component {
 
                 // Wait some seconds before going to tx detail
                 await new Promise((resolve) => setTimeout(resolve, 5000));
-
+              
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
 
