@@ -423,6 +423,16 @@ class AccountLatest extends Component {
         }
     }
 
+    getTransactionType(stdTx) { 
+        if (stdTx.msg.type === "pos/MsgUnjail") {
+            return "unjail";
+        } else if (stdTx.msg.type === "pos/MsgUnstake") {
+            return "unstake";
+        } else {
+            return "sent";
+        }
+    }
+
     updateTransactionList(txs) {
       try {
         // Invert the list
@@ -441,7 +451,7 @@ class AccountLatest extends Component {
             amount: Object.keys(tx.stdTx.msg).includes('amount')
               ? tx.stdTx.msg.amount / 1000000
               : tx.stdTx.msg.value.amount / 1000000,
-            type: tx.type.toLowerCase(),
+            type: this.getTransactionType(tx.stdTx),
             height: tx.height,
             options: {
               onClick: this.pushToTxDetail.bind(this, tx.hash),

@@ -248,7 +248,7 @@ class TransactionDetail extends Component {
                             </Tr>
                             <Tr>
                                 <Th>TX TYPE</Th>
-                                <Td>TokenTransfer</Td>
+                                <Td>{tx.type}</Td>
                             </Tr>
                             <Tr>
                                 <Th>SENDER</Th>
@@ -305,7 +305,7 @@ class TransactionDetail extends Component {
                                 <Th>TX TYPE</Th>
                             </Tr>
                             <Tr>
-                                <Td>TokenTransfer</Td>
+                                <Td>{tx.type}</Td>
                             </Tr>
                             <Tr>
                                 <Th>SENDER</Th>
