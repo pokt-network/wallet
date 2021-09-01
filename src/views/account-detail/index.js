@@ -304,7 +304,7 @@ class AccountLatest extends Component {
                 this.enableLoaderIndicatory(false);
 
                 // Switch to details view
-                this.pushToTxDetail(txResponse.txhash);
+                this.pushToTxDetail(txResponse.txhash, true);
 
                 return;
             } else {
@@ -392,7 +392,7 @@ class AccountLatest extends Component {
                 this.enableLoaderIndicatory(false);
 
                 // Switch to details view
-                this.pushToTxDetail(txResponse.txhash);
+                this.pushToTxDetail(txResponse.txhash, true);
 
                 return;
             } else {
@@ -453,15 +453,16 @@ class AccountLatest extends Component {
             return;
           }
 
-          const { type: transactionType, amount = 0 } = this.getTransactionData(tx.stdTx);
+          const { type: transactionType, amount } = this.getTransactionData(tx.stdTx);
+
           return {
             hash: tx.hash,
             imageSrc: tx.type.toLowerCase() === 'sent' ? sentImgSrc : receivedImgSrc,
-            amount: amount,
+            amount: amount === typeof number ? amount : 0,
             type: transactionType,
             height: tx.height,
             options: {
-              onClick: this.pushToTxDetail.bind(this, tx.hash),
+              onClick: this.pushToTxDetail.bind(this, tx.hash, false),
               TrClass: document.getElementById("tr-element").className,
               TdClass: document.getElementById("td-element").className,
             }
@@ -595,7 +596,7 @@ class AccountLatest extends Component {
       }
   }
 
-  pushToTxDetail(txHash) {
+  pushToTxDetail(txHash, useCache) {
       const {addressHex, publicKeyHex, ppk} = this.state;
 
       // Check the account info before pushing
@@ -615,9 +616,9 @@ class AccountLatest extends Component {
           this.props.history.push({
               pathname: "/transaction-detail",
               data: {txHash},
-              loadFromCache: true,
+              loadFromCache: useCache,
           });
-      };
+       }
   }
 
   pushToSend() {
