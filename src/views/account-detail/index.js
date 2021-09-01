@@ -297,6 +297,9 @@ class AccountLatest extends Component {
                     "Pending"
                 );
 
+                // Wait some seconds before going to tx detail
+                await new Promise((resolve) => setTimeout(resolve, 5000));
+              
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
 
@@ -433,6 +436,7 @@ class AccountLatest extends Component {
             const sendAmount = Object.keys(stdTx.msg).includes('amount') ? 
             stdTx.msg.amount / 1000000 : stdTx.msg.value.amount / 1000000;
             return { type: "sent", amount: sendAmount };
+
         }
     }
 
@@ -448,7 +452,8 @@ class AccountLatest extends Component {
           if (!tx.stdTx.msg.amount && !tx.stdTx.msg.value) {
             return;
           }
-          const { type: transactionType, amount } = this.getTransactionData(tx.stdTx);
+
+          const { type: transactionType, amount = 0 } = this.getTransactionData(tx.stdTx);
           return {
             hash: tx.hash,
             imageSrc: tx.type.toLowerCase() === 'sent' ? sentImgSrc : receivedImgSrc,
