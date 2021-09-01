@@ -81,7 +81,7 @@ class TransactionDetail extends Component {
     getTransactionType(stdTx) { 
         if (stdTx.msg.type === "pos/MsgUnjail") {
             return "Unjail";
-        } else if (stdTx.msg.type === "pos/MsgUnstake") {
+        } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
             return "Unstake";
         } else {
             return "TokenTransfer";

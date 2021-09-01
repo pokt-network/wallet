@@ -265,6 +265,7 @@ class AccountLatest extends Component {
             }
             
             const txResponse = await dataSource.unjailNode(ppk, passphraseInput);
+            console.log('TxResponse:', txResponse)
 
             if (txResponse !== undefined) {
                 this.setState({
@@ -354,6 +355,7 @@ class AccountLatest extends Component {
             }
             
             const txResponse = await dataSource.unstakeNode(ppk, passphraseInput);
+            console.log('TxResponse:', txResponse)
             
             if (txResponse.txhash !== undefined) {
                 this.setState({
@@ -429,7 +431,7 @@ class AccountLatest extends Component {
     getTransactionType(stdTx) { 
         if (stdTx.msg.type === "pos/MsgUnjail") {
             return "unjail";
-        } else if (stdTx.msg.type === "pos/MsgUnstake") {
+        } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
             return "unstake";
         } else {
             return "sent";
