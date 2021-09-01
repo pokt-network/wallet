@@ -265,6 +265,7 @@ class AccountLatest extends Component {
             }
             
             const txResponse = await dataSource.unjailNode(ppk, passphraseInput);
+            console.log('TxResponse:', txResponse)
 
             if (txResponse !== undefined) {
                 this.setState({
@@ -286,6 +287,7 @@ class AccountLatest extends Component {
 
                 // Save the tx information locally
                 PocketService.saveTxInCache(
+                    "Unjail",
                     account.addressHex,
                     account.addressHex,
                     0,
@@ -354,6 +356,7 @@ class AccountLatest extends Component {
             }
             
             const txResponse = await dataSource.unstakeNode(ppk, passphraseInput);
+            console.log('TxResponse:', txResponse)
             
             if (txResponse.txhash !== undefined) {
                 this.setState({
@@ -375,6 +378,7 @@ class AccountLatest extends Component {
 
                 // Save the tx information locally
                 PocketService.saveTxInCache(
+                    "Unstake",
                     account.addressHex,
                     account.addressHex,
                     0,
@@ -383,9 +387,6 @@ class AccountLatest extends Component {
                     "Pending",
                     "Pending"
                 );
-
-                // Wait some seconds before going to tx detail
-                await new Promise((resolve) => setTimeout(resolve, 5000));
               
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
@@ -426,13 +427,16 @@ class AccountLatest extends Component {
         }
     }
 
-    getTransactionType(stdTx) { 
+    getTransactionData(stdTx) { 
         if (stdTx.msg.type === "pos/MsgUnjail") {
-            return "unjail";
-        } else if (stdTx.msg.type === "pos/MsgUnstake") {
-            return "unstake";
+            return { type: "unjail", amount: 0 };
+        } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
+            return {type: "unstake", amount: 0 };
         } else {
-            return "sent";
+            const sendAmount = Object.keys(stdTx.msg).includes('amount') ? 
+            stdTx.msg.amount / 1000000 : stdTx.msg.value.amount / 1000000;
+            return { type: "sent", amount: sendAmount };
+
         }
     }
 
@@ -448,13 +452,12 @@ class AccountLatest extends Component {
           if (!tx.stdTx.msg.amount && !tx.stdTx.msg.value) {
             return;
           }
-          const transactionType = this.getTransactionType(tx.stdTx);
+
+          const { type: transactionType, amount = 0 } = this.getTransactionData(tx.stdTx);
           return {
             hash: tx.hash,
             imageSrc: tx.type.toLowerCase() === 'sent' ? sentImgSrc : receivedImgSrc,
-            amount: Object.keys(tx.stdTx.msg).includes('amount')
-              ? tx.stdTx.msg.amount / 1000000
-              : tx.stdTx.msg.value.amount / 1000000,
+            amount: amount,
             type: transactionType,
             height: tx.height,
             options: {
@@ -611,7 +614,8 @@ class AccountLatest extends Component {
           // Move to the account detail
           this.props.history.push({
               pathname: "/transaction-detail",
-              data: {txHash}
+              data: {txHash},
+              loadFromCache: true,
           });
       };
   }
