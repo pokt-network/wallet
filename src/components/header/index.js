@@ -31,6 +31,8 @@ class Header extends Component {
     PocketService.removeUserFromCached();
     // Remove any tx information from cached
     PocketService.removeTxFromCached();
+    // Clear the local storage
+    localStorage.clear();
     // Refresh the page
     window.location.reload();
   };
