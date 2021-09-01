@@ -221,6 +221,8 @@ class TransactionDetail extends Component {
                 // Update the tx information
                 this.updateTxInformation(obj.tx);
             } else {
+                // Clear before redirecting to the login page
+                localStorage.clear();
                 // Redirect to the home page
                 this.props.history.push({
                     pathname: '/'

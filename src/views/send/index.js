@@ -328,6 +328,8 @@ class Send extends Component {
             // Retrieve the account balance
             this.getAccountBalance(addressHex);
         } else {
+            // Clear before redirecting to the login page
+            localStorage.clear();
             // Redirect to the home page
             this.props.history.push({
                 pathname: '/'

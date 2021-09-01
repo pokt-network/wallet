@@ -267,7 +267,8 @@ class AccountLatest extends Component {
             const txResponse = await dataSource.unjailNode(ppk, passphraseInput);
             console.log('TxResponse:', txResponse)
 
-            if (txResponse !== undefined) {
+            if (txResponse.txhash !== undefined) {
+
                 this.setState({
                     visibility: true
                 });
@@ -296,10 +297,9 @@ class AccountLatest extends Component {
                     "Pending",
                     "Pending"
                 );
-
-                // Wait some seconds before going to tx detail
-                await new Promise((resolve) => setTimeout(resolve, 5000));
               
+                localStorage.setItem('unjailing', true);
+
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
 
@@ -524,6 +524,8 @@ class AccountLatest extends Component {
 
 
       if (node !== undefined) {
+          const isUnjailing = localStorage.getItem('unjailing');
+
           // Update the staked amount
           if (node.tokens) {
             obj.stakedTokens = (Number(node.tokens.toString()) / 1000000).toFixed(3);
@@ -538,9 +540,15 @@ class AccountLatest extends Component {
           } 
           
           if(node.jailed) {
-            obj.stakingStatus = "JAILED";
+            if (isUnjailing) {
+                obj.stakingStatus = "UNJAILING";
+            } else {
+                obj.stakingStatus = "JAILED";
+            }
             obj.stakingStatusImg = stakedImgSrc;
-        };
+         } else {
+            localStorage.setItem('unjailing', false);
+         };
       }
 
       // Update the state
@@ -697,6 +705,8 @@ class AccountLatest extends Component {
           // Load the account balance, type and transaction list
           this.refreshView(addressHex);
       } else {
+          // Clear before redirecting to the login page
+          localStorage.clear();
           // Redirect to the home page
           this.props.history.push({
               pathname: '/'
@@ -735,6 +745,8 @@ class AccountLatest extends Component {
       } = this.state;
 
       if (addressHex === undefined || publicKeyHex === undefined) {
+          // Clear before redirecting to the login page
+          localStorage.clear();
           // Redirect to the home page
           this.props.history.push({
               pathname: '/'
