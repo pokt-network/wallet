@@ -156,6 +156,7 @@ class Send extends Component {
 
             // Save the tx information locally
             PocketService.saveTxInCache(
+                "TokenTransfer",
                 addressHex,
                 destinationAddress.value,
                 (amountToSend / 1000000),
