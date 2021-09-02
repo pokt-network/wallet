@@ -156,6 +156,7 @@ class Send extends Component {
 
             // Save the tx information locally
             PocketService.saveTxInCache(
+                "TokenTransfer",
                 addressHex,
                 destinationAddress.value,
                 (amountToSend / 1000000),
@@ -327,6 +328,8 @@ class Send extends Component {
             // Retrieve the account balance
             this.getAccountBalance(addressHex);
         } else {
+            // Clear before redirecting to the login page
+            localStorage.clear();
             // Redirect to the home page
             this.props.history.push({
                 pathname: '/'

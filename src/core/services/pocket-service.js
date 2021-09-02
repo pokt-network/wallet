@@ -89,6 +89,7 @@ class PocketService {
     /**
      * Save transaction data in local storage.
      *
+     * @param {string} type Transaction type string.
      * @param {string} fromAddress Address hex string.
      * @param {string} destinationAddress Address hex string.
      * @param {string} sentAmount Public Key hex string.
@@ -98,6 +99,7 @@ class PocketService {
      * @param {string} sentStatus Portable Private Key.
      */
     saveTxInCache(
+        type,
         fromAddress,
         destinationAddress,
         sentAmount,
@@ -107,6 +109,7 @@ class PocketService {
         sentStatus
     ) {
         try {
+            this.ls.set("type", {data: type});
             this.ls.set("from_address", {data: fromAddress});
             this.ls.set("to_address", {data: destinationAddress});
             this.ls.set("sent_amount", {data: sentAmount});
@@ -123,6 +126,7 @@ class PocketService {
      * Remove Tx data from local storage.
      */
     removeTxFromCached() {
+        this.ls.remove("type");
         this.ls.remove("from_address");
         this.ls.remove("to_address");
         this.ls.remove("sent_amount");
@@ -138,6 +142,7 @@ class PocketService {
      */
     getTxInfo() {
         return {
+            type: this.ls.get("type").data,
             fromAddress: this.ls.get("from_address").data,
             toAddress: this.ls.get("to_address").data,
             sentAmount: this.ls.get("sent_amount").data,

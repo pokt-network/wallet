@@ -36,6 +36,8 @@ class CreatePrivateKey extends Component {
             // Call getBalance
             this.getBalance(this.currentAccount.addressHex)
         }else {
+            // Clear before redirecting to the login page
+            localStorage.clear();
             // Redirect to the home page
             this.props.history.push({
                 pathname: '/'

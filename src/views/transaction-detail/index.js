@@ -78,13 +78,30 @@ class TransactionDetail extends Component {
         }
     }
 
-    getTransactionType(stdTx) { 
+    getTransactionData(stdTx) { 
         if (stdTx.msg.type === "pos/MsgUnjail") {
-            return "Unjail";
-        } else if (stdTx.msg.type === "pos/MsgUnstake") {
-            return "Unstake";
+            console.log('Unjail Address', stdTx.msg.value.address);
+            return { 
+                type: "Unjail", 
+                from: stdTx.msg.value.address, 
+                to: stdTx.msg.value.address, 
+                amount: 0 
+            };
+        } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
+            console.log('Unstake Validator Address', stdTx.msg.value.validator_address);
+            return { 
+                type: "Unstake", 
+                from: stdTx.msg.value.validator_address, 
+                to: stdTx.msg.value.validator_address, 
+                amount: 0 
+            };
         } else {
-            return "TokenTransfer";
+            return { 
+                type: "TokenTransfer", 
+                from: stdTx.msg.value.from_address, 
+                to: stdTx.msg.value.to_address, 
+                amount: stdTx.msg.value.amount 
+            };
         }
     }
 
@@ -92,21 +109,23 @@ class TransactionDetail extends Component {
         try {
           const txResponse = await dataSource.getTx(txHash.toLowerCase());
 
-            if (txResponse === undefined) {
+          console.log('getTxResponse', txResponse)
+
+            if (txResponse.stdTx === undefined) {
                 console.log("Couldn't retrieve the transaction using the provided tx hash");
                 return;
             }
 
-            const transactionType = this.getTransactionType(txResponse.stdTx);
+            const { type: transactiontype, from: fromAddress, to: toAddress, amount } = this.getTransactionData(txResponse.stdTx);
 
             // Update the UI with the retrieved tx
             const txSummary = {
-               from: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.from_address : txResponse.stdTx.msg.from_address,
-               to: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.to_address : txResponse.stdTx.msg.to_address,
-               amount: txResponse.stdTx.msg.value ? txResponse.stdTx.msg.value.amount: txResponse.stdTx.msg.amount,
+               from: fromAddress,
+               to: toAddress,
+               amount: amount,
                status: txResponse.tx_result.code === 0 ? "Success" : "Failure",
                hash: txResponse.hash,
-               type: transactionType
+               type: transactiontype
             }
 
             this.setState({
@@ -162,6 +181,7 @@ class TransactionDetail extends Component {
         } else {
             // Retrieve the tx information from cached
             const {
+                type,
                 fromAddress,
                 toAddress,
                 sentAmount,
@@ -172,9 +192,10 @@ class TransactionDetail extends Component {
             } = PocketService.getTxInfo();
             // Check if values are set
             if (
+                type &&
                 fromAddress &&
                 toAddress &&
-                sentAmount &&
+                sentAmount !== undefined &&
                 txHash &&
                 txFee &&
                 status &&
@@ -184,6 +205,7 @@ class TransactionDetail extends Component {
 
                 const obj = {
                     tx: {
+                        type,
                         fromAddress,
                         toAddress,
                         sentAmount: sentAmountFormatted,
@@ -199,6 +221,8 @@ class TransactionDetail extends Component {
                 // Update the tx information
                 this.updateTxInformation(obj.tx);
             } else {
+                // Clear before redirecting to the login page
+                localStorage.clear();
                 // Redirect to the home page
                 this.props.history.push({
                     pathname: '/'
