@@ -87,12 +87,12 @@ const AccountLContent = styled.section`
     margin-bottom: 50px;
     background:
       linear-gradient(
-        to right, 
+        to right,
         #fff 27%,
         #27a9e0 100%
       )
-      right 
-      bottom    
+      right
+      bottom
       no-repeat;
     background-size: 100% 1px;
     ${maxPhone(css`
@@ -105,7 +105,7 @@ const AccountLContent = styled.section`
         font-size: 55px;
         color: ${colors.white};
         margin-top: 0;
-        margin-bottom: 10px;
+        margin-bottom: -5px;
         ${maxPhone(css`
           font-size: 33px;
         `)};
@@ -123,7 +123,7 @@ const AccountLContent = styled.section`
                 max-width: 12px;
                 margin-right: 3px;
               `)};
-            }  
+            }
           }
           &:last-of-type {
             img {
@@ -133,7 +133,7 @@ const AccountLContent = styled.section`
                 max-width: 13px;
                 margin-left: 5px;
               `)};
-            }  
+            }
           }
           span {
             font-size: 28px;
@@ -150,6 +150,40 @@ const AccountLContent = styled.section`
         }
       }
     }
+  }
+  .th-link, .th-link > span {
+    position: relative;
+    color: inherit;
+    text-decoration: none;
+    line-height: 24px;
+  }
+  .th-link:before, .th-link:after, .th-link > span:before, .th-link > span:after {
+    content: '';
+    position: absolute;
+    transition: transform .5s ease;
+  }
+  .th-link {
+    padding-top: 10px;
+    ${'' /* font-family: 'Montserrat'!important; */}
+    font-weight: 400;
+    font-size:16px;
+    letter-spacing: 0px;
+  }
+  .th-link:before {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: #F0E68C;
+    transform: scaleX(0);
+  }
+  .th-link:hover:before {
+    transform: scaleX(1);
+  }
+  .th-link, .th-link > span {
+    color:#F0E68C;
+    position: relative;
+    text-decoration: none;
   }
   .pokt-options {
     max-width: 489px;
@@ -229,7 +263,7 @@ const AccountLContent = styled.section`
     .btn-subm {
       margin: 45px 0 0;
       ${maxPhone(css`
-        margin-top: 20px;    
+        margin-top: 20px;
       `)};
       a {
         max-width: 110px;
@@ -271,7 +305,7 @@ const AccountLContent = styled.section`
         border-radius: 23px;
         padding: 15px 18px;
         &#prk {
-          
+
         }
       }
       label {
