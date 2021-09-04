@@ -439,7 +439,6 @@ class AccountLatest extends Component {
             const sendAmount = Object.keys(stdTx.msg).includes('amount') ? 
             stdTx.msg.amount / 1000000 : stdTx.msg.value.amount / 1000000;
             return { type: "sent", amount: sendAmount };
-
         }
     }
 
@@ -613,7 +612,7 @@ class AccountLatest extends Component {
         price
     })
   }
-
+  
   pushToTxDetail(txHash, useCache) {
       const {addressHex, publicKeyHex, ppk} = this.state;
 
