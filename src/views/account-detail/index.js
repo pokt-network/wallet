@@ -293,7 +293,9 @@ class AccountLatest extends Component {
                     account.addressHex,
                     account.addressHex,
                     0,
-                    txResponse.txhash,
+                    
+                  
+                  1.txhash,
                     Number(Config.TX_FEE) / 1000000,
                     "Pending",
                     "Pending"
