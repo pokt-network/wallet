@@ -169,7 +169,7 @@ export class DataSource {
 
     let response = await axios.get('https://thunderheadotc.com/api/price/')
     let data =  response["data"]
-    if (data["status"] == "200") {
+    if (data["status"] === "200") {
       return parseFloat(data["price"])
     }
     else {
