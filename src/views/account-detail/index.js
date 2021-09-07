@@ -769,10 +769,10 @@ class AccountLatest extends Component {
                   <div className="quantitypokt">
                       <div className="container">
                           <h1>{poktBalance} POKT</h1>
-                          { price != -1 &&
+                          { price !== -1 &&
                             <div>
                               <h2 style={{margin:"0px", color:"white"}}>${parseFloat(price*poktBalance).toFixed(2)}</h2>
-                              <h4 style={{margin:"-3px", fontWeight:"430", fontSize:"14px", paddingTop:"5px"}}>Price by <a className="th-link" target="_blank" href="https://thunderheadotc.com">Thunderhead</a></h4>
+                              <h4 style={{margin:"-3px", fontWeight:"430", fontSize:"14px", paddingTop:"5px"}}>Price by <a className="th-link" target="_blank" rel="noopener noreferrer" href="https://thunderheadotc.com">Thunderhead</a></h4>
                             </div>
                           }
                           <div style={{flexDirection: "column"}} className="stats">
