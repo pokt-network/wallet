@@ -174,14 +174,13 @@ const AccountLContent = styled.section`
     bottom: 0;
     width: 100%;
     height: 2px;
-    background: #F0E68C;
+    background: #FFFFFF;
     transform: scaleX(0);
   }
   .th-link:hover:before {
     transform: scaleX(1);
   }
   .th-link, .th-link > span {
-    color:#F0E68C;
     position: relative;
     text-decoration: none;
   }
