@@ -429,6 +429,7 @@ class AccountLatest extends Component {
     }
 
     getTransactionData(stdTx) { 
+        console.log('stdTx', stdTx)
         if (stdTx.msg.type === "pos/MsgUnjail") {
             return { type: "unjail", amount: 0 };
         } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
@@ -455,6 +456,7 @@ class AccountLatest extends Component {
 
           const { type: transactionType, amount } = this.getTransactionData(tx.stdTx);
 
+          console.log('Amount', amount, typeof amount)
           return {
             hash: tx.hash,
             imageSrc: tx.type.toLowerCase() === 'sent' ? sentImgSrc : receivedImgSrc,
