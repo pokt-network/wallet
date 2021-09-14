@@ -80,7 +80,6 @@ class TransactionDetail extends Component {
 
     getTransactionData(stdTx) { 
         if (stdTx.msg.type === "pos/MsgUnjail") {
-            console.log('Unjail Address', stdTx.msg.value.address);
             return { 
                 type: "Unjail", 
                 from: stdTx.msg.value.address, 
@@ -88,7 +87,6 @@ class TransactionDetail extends Component {
                 amount: 0 
             };
         } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
-            console.log('Unstake Validator Address', stdTx.msg.value.validator_address);
             return { 
                 type: "Unstake", 
                 from: stdTx.msg.value.validator_address, 
@@ -108,8 +106,6 @@ class TransactionDetail extends Component {
     async getTx(txHash) {
         try {
           const txResponse = await dataSource.getTx(txHash.toLowerCase());
-
-          console.log('getTxResponse', txResponse)
 
             if (txResponse.stdTx === undefined) {
                 console.log("Couldn't retrieve the transaction using the provided tx hash");
