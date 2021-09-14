@@ -266,7 +266,6 @@ class AccountLatest extends Component {
             }
             
             const txResponse = await dataSource.unjailNode(ppk, passphraseInput);
-            console.log('TxResponse:', txResponse)
 
             if (txResponse.txhash !== undefined) {
 
@@ -357,7 +356,6 @@ class AccountLatest extends Component {
             }
             
             const txResponse = await dataSource.unstakeNode(ppk, passphraseInput);
-            console.log('TxResponse:', txResponse)
             
             if (txResponse.txhash !== undefined) {
                 this.setState({
@@ -429,12 +427,18 @@ class AccountLatest extends Component {
     }
 
     getTransactionData(stdTx) { 
-        console.log('stdTx', stdTx)
         if (stdTx.msg.type === "pos/MsgUnjail") {
             return { type: "unjail", amount: 0 };
         } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
             return {type: "unstake", amount: 0 };
-        } else {
+        } else if (stdTx.msg.type === "pos/MsgStake")  {
+            const value = stdTx.msg.value.value / 1000000
+            return {type: "stake", amount: value };
+        } else if (stdTx.msg.type === "pos/Send")  {
+            const amount = stdTx.msg.value.amount / 1000000
+            return {type: "unstake", amount: amount};
+        }
+        else {
             const sendAmount = Object.keys(stdTx.msg).includes('amount') ? 
             stdTx.msg.amount / 1000000 : stdTx.msg.value.amount / 1000000;
             return { type: "sent", amount: sendAmount };
@@ -456,11 +460,10 @@ class AccountLatest extends Component {
 
           const { type: transactionType, amount } = this.getTransactionData(tx.stdTx);
 
-          console.log('Amount', amount, typeof amount)
           return {
             hash: tx.hash,
             imageSrc: tx.type.toLowerCase() === 'sent' ? sentImgSrc : receivedImgSrc,
-            amount: amount === typeof number ? amount : 0,
+            amount: amount ? amount : 0,
             type: transactionType,
             height: tx.height,
             options: {

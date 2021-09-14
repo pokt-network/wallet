@@ -165,8 +165,6 @@ export class DataSource {
    * @returns {Float}
    */
   async getPrice() {
-    console.log('getting price');
-
     let response = await axios.get('https://thunderheadotc.com/api/price/')
     let data =  response["data"]
     if (data["status"] === "200") {
@@ -175,7 +173,6 @@ export class DataSource {
     else {
       return -1
     }
-
   }
 
   /**
