@@ -428,7 +428,7 @@ class AccountLatest extends Component {
 
     getTransactionData(stdTx) { 
         if (stdTx.msg.type === "pos/MsgUnjail") {
-            return { type: "unjail", amount: 0 };
+            return {type: "unjail", amount: 0};
         } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
             return {type: "unstake", amount: 0 };
         } else if (stdTx.msg.type === "pos/MsgStake")  {
@@ -441,7 +441,7 @@ class AccountLatest extends Component {
         else {
             const sendAmount = Object.keys(stdTx.msg).includes('amount') ? 
             stdTx.msg.amount / 1000000 : stdTx.msg.value.amount / 1000000;
-            return { type: "sent", amount: sendAmount };
+            return {type: "sent", amount: sendAmount};
         }
     }
 
@@ -463,7 +463,7 @@ class AccountLatest extends Component {
           console.log(transactionType, amount)
           return {
             hash: tx.hash,
-            imageSrc: tx.type.toLowerCase() === 'sent' ? sentImgSrc : receivedImgSrc,
+            imageSrc: transactionType.toLowerCase() === 'sent' ? sentImgSrc : receivedImgSrc,
             amount: amount ? amount : 0,
             type: transactionType,
             height: tx.height,
