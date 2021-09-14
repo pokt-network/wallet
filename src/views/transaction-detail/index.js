@@ -93,7 +93,16 @@ class TransactionDetail extends Component {
                 to: stdTx.msg.value.validator_address, 
                 amount: 0 
             };
-        } else {
+        } 
+        else if (stdTx.msg.type === "pos/MsgStake") {
+            return { 
+                type: "Stake", 
+                from: "Myself", 
+                to: "Myself", 
+                amount: stdTx.msg.value.value
+            };
+        }
+        else {
             return { 
                 type: "TokenTransfer", 
                 from: stdTx.msg.value.from_address, 
