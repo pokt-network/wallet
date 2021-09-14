@@ -436,7 +436,7 @@ class AccountLatest extends Component {
             return {type: "stake", amount: value };
         } else if (stdTx.msg.type === "pos/Send")  {
             const amount = stdTx.msg.value.amount / 1000000
-            return {type: "unstake", amount: amount};
+            return {type: "sent", amount: amount};
         }
         else {
             const sendAmount = Object.keys(stdTx.msg).includes('amount') ? 
@@ -460,6 +460,7 @@ class AccountLatest extends Component {
 
           const { type: transactionType, amount } = this.getTransactionData(tx.stdTx);
 
+          console.log(transactionType, amount)
           return {
             hash: tx.hash,
             imageSrc: tx.type.toLowerCase() === 'sent' ? sentImgSrc : receivedImgSrc,
