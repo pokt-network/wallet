@@ -7,7 +7,7 @@ import {
   Hex,
 } from "@pokt-network/pocket-js";
 import { getGatewayClient } from "./gateway";
-
+import axios from 'axios';
 import Errors from "./errors";
 
 export class DataSource {
@@ -93,7 +93,7 @@ export class DataSource {
   }
 
   /**
-   * 
+   *
    * @returns {Account}
    */
   async importAccount(privateKey, passphrase) {
@@ -162,10 +162,24 @@ export class DataSource {
   }
 
   /**
+   * @returns {Float}
+   */
+  async getPrice() {
+    let response = await axios.get('https://thunderheadotc.com/api/price/')
+    let data =  response["data"]
+    if (data["status"] === "200") {
+      return parseFloat(data["price"])
+    }
+    else {
+      return -1
+    }
+  }
+
+  /**
    * @returns {Object}
    */
   async getTx(txHash) {
-    let txResponse; 
+    let txResponse;
     try {
       txResponse = await this.gwClient.makeQuery('getTransaction', txHash);
     } catch (error) {
@@ -191,7 +205,7 @@ export class DataSource {
 
     return app;
   }
-  
+
   /**
    * @returns {Object | undefined}
    */
@@ -293,7 +307,7 @@ export class DataSource {
       console.log(`Failed to process transaction with error: ${rawTxPayloadOrError.message}`);
       return new Error(rawTxPayloadOrError.message);
     }
-    
+
     let rawTxResponse;
     try {
       rawTxResponse = await this
@@ -345,7 +359,7 @@ export class DataSource {
       console.log(`Failed to process transaction with error: ${rawTxPayloadOrError}`);
       return new Error(rawTxPayloadOrError.message);
     }
-    
+
     let rawTxResponse;
     try {
       rawTxResponse = await this

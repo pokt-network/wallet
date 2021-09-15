@@ -83,6 +83,7 @@ class AccountLatest extends Component {
         // Binds
         this.onToggleBtn = this.onToggleBtn.bind(this);
         this.getBalance = this.getBalance.bind(this);
+        this.getPrice = this.getPrice.bind(this);
         this.getAccountType = this.getAccountType.bind(this);
         this.addApp = this.addApp.bind(this);
         this.addNode = this.addNode.bind(this);
@@ -227,12 +228,12 @@ class AccountLatest extends Component {
 
     }
 
-    async unjailNode() {    
+    async unjailNode() {
         // Enable loader indicator
         this.enableLoaderIndicatory(true);
 
         const {ppk} = this.state;
-        
+
         const passphraseInput = this.state.passphraseInput;
 
         // Check for ppk and the element
@@ -268,7 +269,6 @@ class AccountLatest extends Component {
             console.log('TxResponse:', txResponse)
 
             if (txResponse.txhash !== undefined) {
-
                 this.setState({
                     visibility: true
                 });
@@ -319,12 +319,12 @@ class AccountLatest extends Component {
         }
     }
 
-    async unstakeNode() {    
+    async unstakeNode() {
         // Enable loader indicator
         this.enableLoaderIndicatory(true);
 
         const {ppk} = this.state;
-        
+
         const passphraseInput = this.state.passphraseInput;
 
         // Check for ppk and the element
@@ -429,13 +429,20 @@ class AccountLatest extends Component {
 
     getTransactionData(stdTx) { 
         if (stdTx.msg.type === "pos/MsgUnjail") {
-            return { type: "unjail", amount: 0 };
+            return {type: "unjail", amount: 0};
         } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
             return {type: "unstake", amount: 0 };
-        } else {
+        } else if (stdTx.msg.type === "pos/MsgStake")  {
+            const value = stdTx.msg.value.value / 1000000
+            return {type: "stake", amount: value };
+        } else if (stdTx.msg.type === "pos/Send")  {
+            const amount = stdTx.msg.value.amount / 1000000
+            return {type: "sent", amount: amount};
+        }
+        else {
             const sendAmount = Object.keys(stdTx.msg).includes('amount') ? 
             stdTx.msg.amount / 1000000 : stdTx.msg.value.amount / 1000000;
-            return { type: "sent", amount: sendAmount };
+            return {type: "sent", amount: sendAmount};
         }
     }
 
@@ -454,10 +461,11 @@ class AccountLatest extends Component {
 
           const { type: transactionType, amount } = this.getTransactionData(tx.stdTx);
 
+          console.log(transactionType, amount)
           return {
             hash: tx.hash,
-            imageSrc: tx.type.toLowerCase() === 'sent' ? sentImgSrc : receivedImgSrc,
-            amount: amount === typeof number ? amount : 0,
+            imageSrc: transactionType.toLowerCase() === 'sent' ? sentImgSrc : receivedImgSrc,
+            amount: amount ? amount : 0,
             type: transactionType,
             height: tx.height,
             options: {
@@ -514,7 +522,7 @@ class AccountLatest extends Component {
 
   async addNode() {
       const {node, stakedImgSrc, unstakingImgSrc, unstakedImgSrc} = this.state;
-      
+
       let obj = {
           stakingStatus: "UNSTAKED",
           stakingStatusImg: unstakedImgSrc,
@@ -536,8 +544,8 @@ class AccountLatest extends Component {
           } else if(node.status === 2) {
               obj.stakingStatus = "STAKED";
               obj.stakingStatusImg = stakedImgSrc;
-          } 
-          
+          }
+
           if(node.jailed) {
             if (isUnjailing) {
                 obj.stakingStatus = "UNJAILING";
@@ -603,6 +611,12 @@ class AccountLatest extends Component {
       }
   }
 
+  async getPrice() {
+    const price = await dataSource.getPrice();
+    this.setState({
+        price
+    })
+  }
   pushToTxDetail(txHash, useCache) {
       const {addressHex, publicKeyHex, ppk} = this.state;
 
@@ -675,6 +689,7 @@ class AccountLatest extends Component {
   refreshView(addressHex, loadMore = false) {
       this.enableLoaderIndicatory(true);
       this.getBalance(addressHex);
+      this.getPrice();
       this.getAccountType(addressHex);
 
       if (loadMore) {
@@ -721,6 +736,7 @@ class AccountLatest extends Component {
           publicKeyHex,
           privateKey,
           poktBalance,
+          price,
           visibility,
           noTransactions,
           appStakedTokens,
@@ -758,7 +774,13 @@ class AccountLatest extends Component {
               <Wrapper className="wide-block-wr">
                   <div className="quantitypokt">
                       <div className="container">
-                          <h1 >{poktBalance} POKT</h1>
+                          <h1>{poktBalance} POKT</h1>
+                          { price !== -1 &&
+                            <div>
+                              <h2 style={{display:"inline-block",margin:"10px", color:"white"}}>${parseFloat(price*poktBalance).toFixed(2)} USD</h2>
+                              <h4 style={{display:"inline-block", fontWeight:"430", fontSize:"14px", paddingTop:"5px", color:"white"}}>Price by <a className="th-link" target="_blank" rel="noopener noreferrer" href="https://thunderheadotc.com">Thunderhead</a></h4>
+                            </div>
+                          }
                           <div style={{flexDirection: "column"}} className="stats">
                               <div className="stat">
                                   <img
