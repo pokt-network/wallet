@@ -6,6 +6,7 @@ import GlobalStyles from './components/global-style';
 import Home from './views/home/index';
 import Send from './views/send/index';
 import Create from './views/create/index';
+import ConnectLedger from './views/connect-ledger';
 import LogOut from './views/log-out/index';
 import AccountLatest from './views/account-detail/index';
 import ImportPocket from './views/import-pocket/index';
@@ -41,6 +42,7 @@ class App extends Component {
                 <Route exact path="/import" component={ImportPocket}></Route>
                 <Route exact path="/account" component={AccountLatest}></Route>
                 <Route exact path="/transaction-detail" component={TransactionDetail}></Route>
+                <Route exact path="/connect" component={ConnectLedger}></Route>
                 <Footer />
             </div>
         </Router>

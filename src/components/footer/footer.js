@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import { desktop, tablet, tabletLandscape, maxPhone } from "../../utils/media";
-import { colors } from '../../utils/colors';
+import { colors } from "../../utils/colors";
 
 const FooterContent = styled.footer`
   width: 100%;
@@ -13,8 +13,10 @@ const FooterContent = styled.footer`
   align-items: center;
   background-color: ${colors.footerBg};
   padding: 67px 0 37px 0;
+
   ${maxPhone(css`
     padding: 60px 0 50px 0;
+    height: auto;
   `)};
   .last {
     ${maxPhone(css`
@@ -47,10 +49,10 @@ const FooterContent = styled.footer`
           font-size: 14px;
         `)};
         ${tablet(css`
-            max-width: 295px;
+          max-width: 295px;
         `)};
         ${tabletLandscape(css`
-            max-width: 80%;
+          max-width: 80%;
         `)};
         ${desktop(css`
           max-width: 390px;
@@ -132,7 +134,6 @@ const FooterContent = styled.footer`
       }
     }
   }
-
 `;
 
 export default FooterContent;
