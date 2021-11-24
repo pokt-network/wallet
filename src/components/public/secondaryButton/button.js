@@ -13,9 +13,12 @@ const Button = styled.button`
   border-radius: 25px;
   border: none;
   transition: background-color 0.3s ease-in-out;
+  outline: none;
+
   &:hover {
     background: ${(props) => (props.dark ? colors.blue : colors.darkGray)};
   }
+
   ${maxPhone(css`
     display: block;
     font-size: 14px;

@@ -1,17 +1,21 @@
 import React, { useCallback, useState } from "react";
 import LedgerIcon from "../../utils/images/ledger.png";
 import Button from "../public/secondaryButton/button";
+import WebTransport from "@ledgerhq/hw-transport-webusb";
 
-export default function ConnectLedgerHome({ setStep }) {
+export default function ConnectLedgerHome({ setStep, onSelectDevice }) {
   const [loading, setLoading] = useState(false);
-  const onConnectClick = useCallback(() => {
-    setLoading(true);
+  const onConnectClick = useCallback(async () => {
+    const transport = await WebTransport.create();
+    onSelectDevice(transport);
 
-    setTimeout(() => {
-      setLoading(false);
-      setStep(1);
-    }, [2000]);
-  }, [setStep]);
+    // setLoading(true);
+
+    // setTimeout(() => {
+    //   setLoading(false);
+    //   setStep(1);
+    // }, [2000]);
+  }, [onSelectDevice]);
 
   return (
     <>

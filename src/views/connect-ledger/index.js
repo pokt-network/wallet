@@ -5,9 +5,19 @@ import ConnectLedgerContent from "./connect-ledger";
 import pocketService from "../../core/services/pocket-service";
 import ConnectLedgerHome from "../../components/connect-ledger/connect-ledger-home";
 import SelectWallet from "../../components/connect-ledger/Select-wallet";
+import Card from "../../components/public/card/card";
 
 function ConnectLedger({ history }) {
   const [step, setStep] = useState(1);
+  const [transport, setTransport] = useState();
+
+  const onSelectDevice = (transport) => {
+    window.ledgerTransport = transport;
+    transport.on("disconnect", () => {
+      setTransport(null);
+    });
+    setTransport(transport);
+  };
 
   // Fix in wallet redesign
   useEffect(() => {
@@ -34,13 +44,18 @@ function ConnectLedger({ history }) {
 
   return (
     <Layout title={step === 0 ? "Connect Hardware Wallet" : "Select Wallet"}>
-      <ConnectLedgerContent>
-        {step === 0 ? (
-          <ConnectLedgerHome setStep={setStep} />
-        ) : (
-          <SelectWallet />
-        )}
-      </ConnectLedgerContent>
+      <Card>
+        <ConnectLedgerContent>
+          {step === 0 ? (
+            <ConnectLedgerHome
+              setStep={setStep}
+              onSelectDevice={onSelectDevice}
+            />
+          ) : (
+            <SelectWallet transport={transport}/>
+          )}
+        </ConnectLedgerContent>
+      </Card>
     </Layout>
   );
 }

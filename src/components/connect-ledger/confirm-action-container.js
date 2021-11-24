@@ -13,8 +13,8 @@ const ConfirmActionContainer = styled.div`
     width: 16px;
     height: 16px;
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 15px;
+    right: 20px;
 
     &:hover {
       cursor: pointer;

@@ -6,6 +6,7 @@ import Button from "../public/secondaryButton/button";
 import SelectWalletContent from "./select-wallet-container";
 import ReactPaginate from "react-paginate";
 import ConfirmSelectModal from "./confirm-action";
+import AppPokt from "hw-app-pokt";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -69,7 +70,7 @@ function Items({ data }) {
   );
 }
 
-export default function SelectWallet() {
+export default function SelectWallet({ transport }) {
   const [items, setItems] = useState([]);
   const pageCount = useMemo(
     () => Math.ceil(walletMockData.length / ITEMS_PER_PAGE),
@@ -77,15 +78,31 @@ export default function SelectWallet() {
   );
   const [itemOffset, setItemOffset] = useState(0);
 
-  useEffect(() => {
-    const endOffset = itemOffset + ITEMS_PER_PAGE;
-    setItems(walletMockData.slice(itemOffset, endOffset));
-  }, [itemOffset]);
-
   const handlePageClick = (event) => {
     const newOffset = (event.selected * ITEMS_PER_PAGE) % walletMockData.length;
     setItemOffset(newOffset);
   };
+
+  const fetchAddress = useCallback(async () => {
+    try {
+      const pokt = new AppPokt(transport);
+      const pk = await pokt.getPublicKey("0");
+      console.log(pk);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }, [transport]);
+
+  useEffect(() => {
+    const r = fetchAddress();
+    r.then(x => console.log(x))
+  }, [fetchAddress]);
+
+  useEffect(() => {
+    const endOffset = itemOffset + ITEMS_PER_PAGE;
+    setItems(walletMockData.slice(itemOffset, endOffset));
+  }, [itemOffset]);
 
   return (
     <SelectWalletContent>

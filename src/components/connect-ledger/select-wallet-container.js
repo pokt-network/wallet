@@ -1,6 +1,7 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { colors } from "../../utils/colors";
 import copy from "../../utils/images/copy.png";
+import { maxPhone } from "../../utils/media";
 
 const SelectWalletContent = styled.section`
   display: flex;
@@ -8,7 +9,8 @@ const SelectWalletContent = styled.section`
   justify-content: center;
   align-items: center;
   font-size: 14px;
-  width: 100%;
+  width: 708px;
+  min-height: 322px;
 
   .container-row {
     display: flex;
@@ -63,11 +65,7 @@ const SelectWalletContent = styled.section`
       border-radius: 50%;
       transform: scale(0);
       transition: 120ms transform ease-in-out;
-      box-shadow: inset 1em 1em ${colors.darkBlue};
-    }
-
-    &:checked {
-      border: 1px solid ${colors.darkBlue};
+      box-shadow: inset 1em 1em ${colors.darkGray};
     }
 
     &:checked::before {
@@ -76,11 +74,13 @@ const SelectWalletContent = styled.section`
   }
 
   .pokts {
-    color: ${colors.white};
+    color: ${colors.darkGray};
+    white-space: normal;
   }
 
   .public-key {
-    color: ${colors.darkBlue};
+    color: ${colors.blue};
+    white-space: normal;
   }
 
   .pagination {
@@ -88,7 +88,6 @@ const SelectWalletContent = styled.section`
     justify-content: center;
     width: 80%;
     list-style: none;
-    margin-top: 20px;
 
     .previous,
     .next {
@@ -99,23 +98,33 @@ const SelectWalletContent = styled.section`
       font-weight: normal;
       font-size: 12px;
       text-align: center;
-      color: ${colors.white};
+      color: ${colors.darkGray};
       width: 24px;
       height: 24px;
       vertical-align: middle;
       line-height: 160%;
       margin-right: 20px;
-      
+
+      &:focus-visible,
+      a {
+        outline: none;
+      }
+
       &:hover {
         cursor: pointer;
       }
 
       &.selected {
         border-radius: 4px;
-        background: ${colors.blue};
+        background: ${colors.secondaryDarkBlue};
+        color: ${colors.white};
       }
     }
   }
+
+  ${maxPhone(css`
+    width: 100%;
+  `)}
 `;
 
 export default SelectWalletContent;

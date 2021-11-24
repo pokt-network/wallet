@@ -9,7 +9,7 @@ const ConnectLedgerContent = styled.main`
   align-items: center;
 
   .connect-description {
-    color: ${colors.white};
+    color: ${colors.gray};
     margin: 2rem 0 4rem 0;
     text-align: center;
 
