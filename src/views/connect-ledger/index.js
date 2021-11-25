@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { withRouter } from "react-router";
 import Layout from "../../components/connect-ledger";
 import ConnectLedgerContent from "./connect-ledger";
@@ -6,18 +6,10 @@ import pocketService from "../../core/services/pocket-service";
 import ConnectLedgerHome from "../../components/connect-ledger/connect-ledger-home";
 import SelectWallet from "../../components/connect-ledger/Select-wallet";
 import Card from "../../components/public/card/card";
+import useTransport from "../../hooks/useTransport";
 
 function ConnectLedger({ history }) {
-  const [step, setStep] = useState(1);
-  const [transport, setTransport] = useState();
-
-  const onSelectDevice = (transport) => {
-    window.ledgerTransport = transport;
-    transport.on("disconnect", () => {
-      setTransport(null);
-    });
-    setTransport(transport);
-  };
+  const { transport, onSelectDevice } = useTransport();
 
   // Fix in wallet redesign
   useEffect(() => {
@@ -43,16 +35,13 @@ function ConnectLedger({ history }) {
   }, [history]);
 
   return (
-    <Layout title={step === 0 ? "Connect Hardware Wallet" : "Select Wallet"}>
+    <Layout title={!transport ? "Connect Hardware Wallet" : "Select Wallet"}>
       <Card>
         <ConnectLedgerContent>
-          {step === 0 ? (
-            <ConnectLedgerHome
-              setStep={setStep}
-              onSelectDevice={onSelectDevice}
-            />
+          {!transport ? (
+            <ConnectLedgerHome onSelectDevice={onSelectDevice} />
           ) : (
-            <SelectWallet transport={transport}/>
+            <SelectWallet transport={transport} />
           )}
         </ConnectLedgerContent>
       </Card>

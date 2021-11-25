@@ -1,21 +1,12 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
+import useTransport from "../../hooks/useTransport";
 import LedgerIcon from "../../utils/images/ledger.png";
+import { createWebUSBTransport } from "../../utils/transports";
 import Button from "../public/secondaryButton/button";
-import WebTransport from "@ledgerhq/hw-transport-webusb";
 
-export default function ConnectLedgerHome({ setStep, onSelectDevice }) {
-  const [loading, setLoading] = useState(false);
-  const onConnectClick = useCallback(async () => {
-    const transport = await WebTransport.create();
-    onSelectDevice(transport);
-
-    // setLoading(true);
-
-    // setTimeout(() => {
-    //   setLoading(false);
-    //   setStep(1);
-    // }, [2000]);
-  }, [onSelectDevice]);
+export default function ConnectLedgerHome() {
+  const { onSelectDevice } = useTransport();
+  const [loading] = useState(false);
 
   return (
     <>
@@ -23,7 +14,7 @@ export default function ConnectLedgerHome({ setStep, onSelectDevice }) {
         Connect your <img src={LedgerIcon} alt="Ledger wallet" /> Hardware
         Wallet directly to your computer.
       </p>
-      <Button onClick={onConnectClick}>
+      <Button onClick={() => onSelectDevice(createWebUSBTransport)}>
         {loading ? "Verifying" : "Connect"}
       </Button>
     </>
