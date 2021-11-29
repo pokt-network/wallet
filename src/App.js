@@ -17,6 +17,7 @@ import history from "./history";
 import "./normalize.css";
 import JSBI from "jsbi";
 import { TransportProvider } from "./context/transportContext";
+import ThemeProvider from "./context/themeContext";
 
 class App extends Component {
   constructor(props) {
@@ -30,6 +31,7 @@ class App extends Component {
   render() {
     return (
       <Router history={history}>
+        <ThemeProvider>
         <div className="loader-container" id="loader">
           <div className="loader"></div>
         </div>
@@ -53,6 +55,7 @@ class App extends Component {
             <Footer />
           </TransportProvider>
         </div>
+        </ThemeProvider>
       </Router>
     );
   }

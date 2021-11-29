@@ -1,5 +1,4 @@
 import styled, { css } from "styled-components";
-import { colors } from '../../utils/colors';
 import { maxPhone } from "../../utils/media";
 
 const LandingContent = styled.section`
@@ -13,23 +12,14 @@ const LandingContent = styled.section`
   `)};
   .top {
     padding-bottom: 60px;
-    background:
-      linear-gradient(
-        to right, 
-        #fff 27%,
-        #27a9e0 100%
-      )
-      right 
-      bottom    
-      no-repeat; 
+    background: ${(props) => props.theme.backgroundBorder};
     background-size: 100% 1px;
     .title {
       margin-bottom: 27px;
       h1 {
         margin: 0 0 15px 0;
         font-size: 55px;
-        text-transform: uppercase;
-        color: ${colors.white};
+        color: ${(props) => props.theme.colors.blue};
         line-height: 1;
         ${maxPhone(css`
           font-size: 33px;

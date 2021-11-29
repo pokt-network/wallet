@@ -5,7 +5,6 @@ import ConnectLedgerContent from "./connect-ledger";
 import pocketService from "../../core/services/pocket-service";
 import ConnectLedgerHome from "../../components/connect-ledger/connect-ledger-home";
 import SelectWallet from "../../components/connect-ledger/Select-wallet";
-import Card from "../../components/public/card/card";
 import useTransport from "../../hooks/useTransport";
 
 function ConnectLedger({ history }) {
@@ -36,15 +35,13 @@ function ConnectLedger({ history }) {
 
   return (
     <Layout title={!transport ? "Connect Hardware Wallet" : "Select Wallet"}>
-      <Card>
-        <ConnectLedgerContent>
-          {!transport ? (
-            <ConnectLedgerHome onSelectDevice={onSelectDevice} />
-          ) : (
-            <SelectWallet transport={transport} />
-          )}
-        </ConnectLedgerContent>
-      </Card>
+      <ConnectLedgerContent>
+        {transport ? (
+          <ConnectLedgerHome onSelectDevice={onSelectDevice} />
+        ) : (
+          <SelectWallet transport={transport} />
+        )}
+      </ConnectLedgerContent>
     </Layout>
   );
 }

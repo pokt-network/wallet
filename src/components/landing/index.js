@@ -25,7 +25,7 @@ class Landing extends Component {
                 Do you have a Pocket account?
               </Title>
               <div className="btns">
-                <Button href="/create" dark>Create</Button>
+                <Button href="/create" transparent>Create</Button>
                 <Button href="/import">Import</Button>
               </div>
             </div>

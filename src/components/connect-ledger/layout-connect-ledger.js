@@ -9,8 +9,7 @@ const Layout = styled(Wrapper)`
   align-items: center;
 
   .title-container {
-    background: linear-gradient(to right, #fff 27%, #27a9e0 100%) right bottom
-      no-repeat;
+    background: ${(props) => props.theme.backgroundBorder};
     background-size: 100% 1px;
     margin-bottom: 32px;
     width: 95%;
@@ -18,6 +17,7 @@ const Layout = styled(Wrapper)`
     .title {
      text-transform: none;
      margin-bottom: 32px;
+     color: ${props => props.theme.colors.blue}
     }
   }
 `;

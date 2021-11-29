@@ -57,7 +57,7 @@ function Items({ data }) {
             </div>
           </div>
           <div className="column">
-            <p className="pokts">{wallet.pokts} POKT</p>
+            <p className="pokts">{wallet.pokts } POKT</p>
           </div>
         </div>
       ))}

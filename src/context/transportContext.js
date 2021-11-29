@@ -9,15 +9,18 @@ export function TransportProvider({ children }) {
   const history = useHistory();
 
   const onSelectDevice = useCallback(async () => {
-    const transport = await WebTransport.create();
+    try {
+      const transport = await WebTransport.create();
+      window.ledgerTransport = transport;
+      transport.on("disconnect", () => {
+        setTransport(null);
 
-    window.ledgerTransport = transport;
-    transport.on("disconnect", () => {
-      setTransport(null);
-
-      history.push("/connect");
-    });
-    setTransport(transport);
+        history.push("/connect");
+      });
+      setTransport(transport);
+    } catch (error) {
+      console.error(error);
+    }
   }, [history]);
 
   return (

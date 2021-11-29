@@ -41,15 +41,7 @@ const SendContent = styled.section`
     .row {
       &:first-of-type {
         padding-bottom: 13px;
-        background:
-          linear-gradient(
-            to right, 
-            #fff 27%,
-            #27a9e0 100%
-          )
-          right 
-          bottom    
-          no-repeat; 
+        background: ${(props) => props.theme.backgroundBorder};
         background-size: 100% 1px;
         input {
           &::placeholder {

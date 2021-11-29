@@ -65,7 +65,11 @@ const SelectWalletContent = styled.section`
       border-radius: 50%;
       transform: scale(0);
       transition: 120ms transform ease-in-out;
-      box-shadow: inset 1em 1em ${colors.darkGray};
+      box-shadow: inset 1em 1em ${props => props.theme.colors.blue};
+    }
+
+    &:checked {
+      border-color: ${props => props.theme.colors.blue}
     }
 
     &:checked::before {
@@ -74,12 +78,12 @@ const SelectWalletContent = styled.section`
   }
 
   .pokts {
-    color: ${colors.darkGray};
+    color: ${props => props.theme.colors.white};
     white-space: normal;
   }
 
   .public-key {
-    color: ${colors.blue};
+    color: ${props => props.theme.colors.green};
     white-space: normal;
   }
 
@@ -98,7 +102,7 @@ const SelectWalletContent = styled.section`
       font-weight: normal;
       font-size: 12px;
       text-align: center;
-      color: ${colors.darkGray};
+      color: ${props => props.theme.colors.white};
       width: 24px;
       height: 24px;
       vertical-align: middle;
@@ -116,8 +120,7 @@ const SelectWalletContent = styled.section`
 
       &.selected {
         border-radius: 4px;
-        background: ${colors.secondaryDarkBlue};
-        color: ${colors.white};
+        background: ${props => props.theme.colors.blue};
       }
     }
   }

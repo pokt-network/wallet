@@ -4,15 +4,12 @@ import { colors } from "../../utils/colors";
 
 const FooterContent = styled.footer`
   width: 100%;
-  position: relative;
-  bottom: -40px;
-  left: 0;
   height: 173px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: ${colors.footerBg};
   padding: 67px 0 37px 0;
+  background: rgba(255, 255, 255, 0.05);
 
   ${maxPhone(css`
     padding: 60px 0 50px 0;
@@ -26,9 +23,8 @@ const FooterContent = styled.footer`
   .social-ch {
     .title {
       h3 {
-        text-transform: uppercase;
         font-size: 16px;
-        color: ${colors.blue};
+        color: ${props => props.theme.colors.white};
         font-weight: 900;
         line-height: 1;
         margin-bottom: 22px;
@@ -43,8 +39,10 @@ const FooterContent = styled.footer`
         font-weight: 300;
         font-size: 12px;
         color: ${colors.white};
-        line-height: 1.4;
+        line-height: 14px;
         margin-bottom: 17px;
+        font-family: lato;
+
         ${maxPhone(css`
           font-size: 14px;
         `)};
@@ -106,8 +104,7 @@ const FooterContent = styled.footer`
           font-weight: 900;
           font-size: 16px;
           text-align: left;
-          color: ${colors.blue};
-          text-transform: uppercase;
+          color: ${props => props.theme.colors.white};
           padding-bottom: 21px;
           ${maxPhone(css`
             padding-bottom: 16px;
@@ -117,9 +114,10 @@ const FooterContent = styled.footer`
           padding-left: 0;
           li {
             a {
+              font-family: lato;
               font-size: 12px;
               font-weight: 300;
-              color: ${colors.white};
+              color: ${props => props.theme.colors.white};
               margin-bottom: 4px;
               display: inline-block;
               text-decoration: none;

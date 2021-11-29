@@ -1,5 +1,4 @@
 import styled, { css } from "styled-components";
-import { colors } from "../../utils/colors";
 import { phone } from "../../utils/media";
 
 const ConnectLedgerContent = styled.main`
@@ -9,7 +8,7 @@ const ConnectLedgerContent = styled.main`
   align-items: center;
 
   .connect-description {
-    color: ${colors.gray};
+    color: ${props => props.theme.colors.white};
     margin: 2rem 0 4rem 0;
     text-align: center;
 
