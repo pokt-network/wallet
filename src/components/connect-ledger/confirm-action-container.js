@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { colors } from "../../utils/colors";
 
 const ConfirmActionContainer = styled.div`
   width: 100%;
@@ -22,8 +21,15 @@ const ConfirmActionContainer = styled.div`
   }
 
   .title {
-    color: ${colors.darkBlue};
+    color: ${props => props.theme.colors.white};
     text-transform: none;
+    margin-bottom: 36px;
+    font-size: 24px;
+  }
+
+  .verifyButton {
+    width: 220px;
+    height: 48px;
   }
 `;
 

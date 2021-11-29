@@ -11,8 +11,10 @@ export default function ConfirmSelectModal({ show, setShow }) {
     <Modal show={show} closeOnOuterClick={true} onClose={onClose}>
       <ConfirmActionContainer>
         <img src={ExitIcon} alt="exit" className="exitIcon" onClick={onClose} />
-        <Title className="title">Confirm action on your Ledger device</Title>
-        <Button>Verifying</Button>
+        <Title className="title">
+          Confirm action on your <br></br> Ledger device
+        </Title>
+        <Button className="verifyButton">Verifying</Button>
       </ConfirmActionContainer>
     </Modal>
   );

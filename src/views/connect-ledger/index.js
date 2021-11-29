@@ -36,7 +36,7 @@ function ConnectLedger({ history }) {
   return (
     <Layout title={!transport ? "Connect Hardware Wallet" : "Select Wallet"}>
       <ConnectLedgerContent>
-        {transport ? (
+        {!transport ? (
           <ConnectLedgerHome onSelectDevice={onSelectDevice} />
         ) : (
           <SelectWallet transport={transport} />

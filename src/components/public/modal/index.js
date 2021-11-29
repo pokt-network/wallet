@@ -7,19 +7,16 @@ export default function Modal({
   show,
   onClose,
   className,
-  modalClassName,
   containerClassName,
 }) {
   return (
-    <ModalContainer
-      className={className}
-      modalClassName={modalClassName}
-      containerClassNamwe={containerClassName}
-    >
+    <ModalContainer>
       <SimpleModal
         show={show}
-        className={modalClassName}
-        containerClassNamwe={containerClassName}
+        className={className ? className : "default"}
+        containerClassNamwe={
+          containerClassName ? containerClassName : "default"
+        }
         closeOnOuterClick
         onClose={onClose}
       >
