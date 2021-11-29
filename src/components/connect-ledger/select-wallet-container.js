@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 import { colors } from "../../utils/colors";
 import copy from "../../utils/images/copy.png";
-import { maxPhone } from "../../utils/media";
+import { maxPhone, phone } from "../../utils/media";
 
 const SelectWalletContent = styled.section`
   display: flex;
@@ -43,6 +43,13 @@ const SelectWalletContent = styled.section`
     position: relative;
     margin: 0 0 0 25px;
     outline: 0;
+
+    ${phone(css`
+      width: 16px;
+      height: 16px;
+      background-size: 16px 16px;
+      margin: 0 0 0 10px;
+    `)}
   }
 
   .radio {
@@ -75,16 +82,29 @@ const SelectWalletContent = styled.section`
     &:checked::before {
       transform: scale(1);
     }
+
+    ${phone(css`
+      width: 16px;
+      height: 16px;
+    `)}
   }
 
   .pokts {
     color: ${props => props.theme.colors.white};
     white-space: normal;
+
+    ${phone(css`
+      font-size: 12px;
+    `)}
   }
 
   .public-key {
     color: ${props => props.theme.colors.green};
     white-space: normal;
+
+    ${phone(css`
+      font-size: 12px;
+    `)}
   }
 
   .pagination {
