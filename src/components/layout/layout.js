@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Wrapper from "../wrapper";
 
 const Layout = styled(Wrapper)`
-  min-height: calc(100vh - (80px + 277px));
+  /* min-height: calc(100vh - (80px + 277px)); */
   display: flex;
   flex-direction: column;
   margin: 80px auto;
@@ -16,8 +16,8 @@ const Layout = styled(Wrapper)`
 
     .title {
      text-transform: none;
-     margin-bottom: 32px;
-     color: ${props => props.theme.colors.blue}
+     margin-bottom: 36px;
+     color: ${props => props.theme.colors.blue};
     }
   }
 `;

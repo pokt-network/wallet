@@ -4,12 +4,13 @@ import { colors } from "../../utils/colors";
 
 const FooterContent = styled.footer`
   width: 100%;
-  height: 173px;
+  /* height: 173px; */
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 67px 0 37px 0;
   background: rgba(255, 255, 255, 0.05);
+  margin-top: auto;
 
   ${maxPhone(css`
     padding: 60px 0 50px 0;

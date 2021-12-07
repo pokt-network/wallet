@@ -1,7 +1,8 @@
 import styled, { css } from "styled-components";
 import { maxPhone } from "../../../utils/media";
+import { Link } from "react-router-dom";
 
-const Button = styled.a`
+const Button = styled(Link)`
   background: ${(props) =>
     props.transparent ? props.theme.transparent : props.theme.colors.green};
   color: ${(props) =>

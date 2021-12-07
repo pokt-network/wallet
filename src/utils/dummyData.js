@@ -1,3 +1,7 @@
+import load from "./images/load.png";
+import sent from "./images/sent.png";
+import received from "./images/received.png";
+
 export const walletMockData = [
   {
     publicKey: "2f4f511c11e5c9a751e158ef9313b50cb8acfd91",
@@ -78,5 +82,134 @@ export const walletMockData = [
   {
     publicKey: "2f4f511c11e5c9a751e158ef9313b50cb8acfd20",
     pokts: "435,673.234578",
+  },
+];
+
+export const TransactionsMockData = [
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99 1111111111111111111111111111111111",
+    height: "34 sec ago  ",
+    imageSrc: load,
+    type: "Sending",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: sent,
+    type: "Sent",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
+  },
+  {
+    amount: "246,576.058",
+    hash: "a9691343T5cbd87abd8864bd87ab99",
+    height: "34 sec ago  ",
+    imageSrc: received,
+    type: "Received",
   },
 ];

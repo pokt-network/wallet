@@ -1,24 +1,30 @@
+import { useTheme } from "@pokt-foundation/ui";
 import React from "react";
+import { useMemo } from "react";
 import { ThemeProvider as Theme } from "styled-components";
 
-const theme = {
-  colors: {
-    white: "#fff",
-    secondaryWhite: "#FAFAFA",
-    black: "#000",
-    secondaryBlack: "#212121",
-    blue: "#1D8AED",
-    green: "#C5EC4B",
-    transparent: "transparent",
-    gray: "#5F6569",
-  },
-  opacity: {
-    five: "0.5",
-  },
-  backgroundBorder: `linear-gradient(to right,  #C5EC4B 27%, #C5EC4B 100%) right bottom no-repeat`,
-};
-
 function ThemeProvider({ children }) {
+  const poktTheme = useTheme();
+
+  const theme = useMemo(
+    () => ({
+      colors: {
+        white: poktTheme.content,
+        secondaryWhite: "#FAFAFA",
+        black: poktTheme.contentInverted,
+        secondaryBlack: "#212121",
+        blue: poktTheme.accentAlternative,
+        green: poktTheme.accent,
+        transparent: "transparent",
+        gray: "#5F6569",
+        secondaryGray: poktTheme.placeholder,
+      },
+      backgroundBorder: `linear-gradient(to right, ${poktTheme.accent} 27%, ${poktTheme.accent} 27%) right bottom no-repeat`,
+      ...poktTheme,
+    }),
+    [poktTheme]
+  );
+
   return <Theme theme={theme}>{children}</Theme>;
 }
 

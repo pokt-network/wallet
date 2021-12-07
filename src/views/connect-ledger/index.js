@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import { withRouter } from "react-router";
-import Layout from "../../components/connect-ledger";
+import Layout from "../../components/layout";
 import ConnectLedgerContent from "./connect-ledger";
 import pocketService from "../../core/services/pocket-service";
 import ConnectLedgerHome from "../../components/connect-ledger/connect-ledger-home";
 import SelectWallet from "../../components/connect-ledger/Select-wallet";
 import useTransport from "../../hooks/useTransport";
+import Title from "../../components/public/title/title";
 
 function ConnectLedger({ history }) {
   const { transport, onSelectDevice } = useTransport();
@@ -34,7 +35,15 @@ function ConnectLedger({ history }) {
   }, [history]);
 
   return (
-    <Layout title={!transport ? "Connect Hardware Wallet" : "Select Wallet"}>
+    <Layout
+      title={
+        !transport ? (
+          <Title className="title">Connect Hardware Wallet</Title>
+        ) : (
+          <Title className="title">Select Wallet</Title>
+        )
+      }
+    >
       <ConnectLedgerContent>
         {!transport ? (
           <ConnectLedgerHome onSelectDevice={onSelectDevice} />

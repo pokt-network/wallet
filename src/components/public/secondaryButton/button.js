@@ -3,7 +3,7 @@ import { maxPhone } from "../../../utils/media";
 
 const Button = styled.button`
   background: ${(props) =>
-    props.transparent ? props.theme.transparent : props.theme.colors.green};
+    props.transparent ? props.theme.transparent : props.theme.green};
   color: ${(props) =>
     props.transparent
       ? props.theme.colors.secondaryWhite
