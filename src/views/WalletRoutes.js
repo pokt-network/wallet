@@ -8,7 +8,7 @@ import Create from "./create/createWallet";
 import ConnectLedger from "./connect-ledger";
 import LogOut from "./log-out/index";
 import ImportPocket from "./import-pocket/index";
-import TransactionDetail from "./transaction-detail/index";
+import TransactionDetail from "./transaction-detail/transactionDetail";
 import AccountDetail from "./account-detail/accountDetail";
 import Header from "../components/header";
 import Footer from "../components/footer";

@@ -32,12 +32,14 @@ const AccountContent = styled.div`
   }
 
   .staking-options {
-    /* display: flex;
-    justify-content: space-evenly;
-    flex-wrap: wrap; */
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(131px, 1fr));
     width: 100%;
+
+    svg {
+      height: 12px;
+      width: 12px;
+    }
 
     div {
       h3 {

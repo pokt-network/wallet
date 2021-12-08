@@ -6,7 +6,8 @@ import AccountContent from "../../components/account-detail/content";
 import CopyButton from "../../components/copy/copy";
 import { TransactionsMockData } from "../../utils/dummyData";
 import AccountTableContainer from "../../components/account-detail/tableContainer";
-import IconUnstaking from "../../icons/iconUnstaking";
+import IconStatus from "../../icons/iconStatus";
+import IconAccount from "../../icons/iconAccount";
 
 export default function AccountDetail() {
   const [pokts, setPokts] = useState("345,789.403");
@@ -31,12 +32,14 @@ export default function AccountDetail() {
           </div>
           <div className="option-status">
             <h3>
-              <IconUnstaking /> Staked
+              <IconStatus type="staked" /> Staked
             </h3>
             <p>Staking Status</p>
           </div>
           <div className="option-type">
-            <h3>Node</h3>
+            <h3>
+              <IconAccount type="node" /> Node
+            </h3>
             <p>Account Type</p>
           </div>
         </div>
@@ -49,11 +52,15 @@ export default function AccountDetail() {
             <p>POKT Staked</p>
           </div>
           <div className="option-status">
-            <h3>Staked</h3>
+            <h3>
+              <IconStatus type="unstaking" /> unstaking
+            </h3>
             <p>Staking Status</p>
           </div>
           <div className="option-type">
-            <h3>App</h3>
+            <h3>
+              <IconAccount type="app" /> App
+            </h3>
             <p>Account Type</p>
           </div>
         </div>

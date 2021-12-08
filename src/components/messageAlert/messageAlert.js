@@ -1,11 +1,11 @@
-import styled from "styled-components";
-import { colors } from "../../../utils/colors";
+import styled, { css } from "styled-components";
+import { maxPhone } from "../../utils/media";
 
 const MessageALert = styled.span`
   position: absolute;
-  background-color: ${colors.black};
+  background-color: ${(props) => props.theme.colors.black};
   border-radius: 6px;
-  color: ${colors.white};
+  color: ${(props) => props.theme.colors.white};
   display: none;
   font-size: 0.9em;
   opacity: 1;
@@ -17,6 +17,11 @@ const MessageALert = styled.span`
   &.active {
     display: block;
   }
+
+  ${maxPhone(css`
+    top: -35px;
+    right: 0;
+  `)}
 `;
 
 export default MessageALert;

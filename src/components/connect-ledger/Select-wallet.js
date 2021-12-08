@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { walletMockData } from "../../utils/dummyData";
 import Input from "../public/input/input";
-import MessageALert from "../public/messageAlert/messageAlert";
 import Button from "../public/secondaryButton/button";
 import SelectWalletContent from "./select-wallet-container";
 import ReactPaginate from "react-paginate";
 import ConfirmSelectModal from "./confirm-action";
 import AppPokt from "hw-app-pokt";
+import MessageAlert from "../messageAlert/messageAlert";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -48,16 +48,16 @@ function Items({ data }) {
                 className="copy-button"
                 onClick={() => onCopyClick(wallet.publicKey)}
               >
-                <MessageALert
+                <MessageAlert
                   className={wallet.publicKey === messageID ? "active" : ""}
                 >
                   Copied!
-                </MessageALert>
+                </MessageAlert>
               </Button>
             </div>
           </div>
           <div className="column">
-            <p className="pokts">{wallet.pokts } POKT</p>
+            <p className="pokts">{wallet.pokts} POKT</p>
           </div>
         </div>
       ))}
@@ -96,7 +96,7 @@ export default function SelectWallet({ transport }) {
 
   useEffect(() => {
     const r = fetchAddress();
-    r.then(x => console.log(x))
+    r.then((x) => console.log(x));
   }, [fetchAddress]);
 
   useEffect(() => {
