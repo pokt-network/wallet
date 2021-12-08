@@ -3,7 +3,7 @@ import { useTheme } from "@pokt-foundation/ui";
 import { Route, Switch } from "react-router-dom";
 
 import Home from "./home/index";
-import Send from "./send/index";
+import Send from "./send/send";
 import Create from "./create/createWallet";
 import ConnectLedger from "./connect-ledger";
 import LogOut from "./log-out/index";
