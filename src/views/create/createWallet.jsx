@@ -73,7 +73,7 @@ function Download({ goNext, goBack }) {
 
         <ButtonBase className="download-button">
           <span>cfd93.json</span>
-          <IconDownload />z
+          <IconDownload />
         </ButtonBase>
 
         <p className="disclaimer">

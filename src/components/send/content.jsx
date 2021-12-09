@@ -15,7 +15,7 @@ const SendContent = styled.section`
 
   button {
     width: 220px;
-    margin: 39px 0 0 0;
+    margin: 79px 0 0 0;
   }
 
   p {

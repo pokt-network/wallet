@@ -15,8 +15,7 @@ const ImportPocketContent = styled.section`
 
     .temporary-passphrase {
       color: ${(props) => props.theme.colors.white};
-      width: 90%;
-      font-family: "Manrope";
+      width: 100%;
       font-style: normal;
       font-weight: normal;
       line-height: 140%;
@@ -34,6 +33,36 @@ const ImportPocketContent = styled.section`
         width: 100%;
       `)}
     }
+
+    .custom-file-input {
+      width: 100%;
+      margin: 0 0 40px 0;
+      border: 2px solid ${(props) => props.theme.surfaceInteractiveBorder};
+      color: ${(props) => props.theme.placeholder};
+      height: 56px;
+      line-height: 56px;
+      padding: 0 12px;
+      position: relative;
+
+      div:first-of-type {
+        position: absolute;
+        left: 0;
+        .upload-file-input {
+          border: 2px solid ${(props) => props.theme.surfaceInteractiveBorder};
+          color: ${(props) => props.theme.colors.white};
+          opacity: 0;
+        }
+
+        svg {
+          position: absolute;
+          right: 0;
+        }
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
   }
 
   .title {
@@ -43,7 +72,6 @@ const ImportPocketContent = styled.section`
     color: ${(props) => props.theme.colors.blue};
     line-height: 110%;
     text-align: center;
-    font-family: "Manrope";
   }
 
   .description {
@@ -51,7 +79,6 @@ const ImportPocketContent = styled.section`
     text-align: center;
     line-height: 140%;
     color: ${(props) => props.theme.colors.white};
-    font-family: "Manrope";
     margin-bottom: 32px;
   }
   .create-link {

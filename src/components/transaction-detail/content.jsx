@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { maxPhone } from "../../utils/media";
+import { maxPhone, phone } from "../../utils/media";
 
 const TransactionDetailContent = styled.section`
   max-width: 532px;
@@ -17,17 +17,17 @@ const TransactionDetailContent = styled.section`
       grid-gap: 30px;
 
       .hash-button {
-        color: ${(props) => props.theme.colors.green};
         background: transparent;
         height: 17px;
         font-size: 12px;
 
-        svg {
-          margin: 0 0 0 12px;
-        }
-
-        span {
-          margin: 0;
+        input {
+          padding-left: 0;
+          font-size: 12px;
+          color: ${(props) => props.theme.colors.green};
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
         }
       }
 
@@ -75,6 +75,16 @@ const TransactionDetailContent = styled.section`
         margin: 25px 0;
         h2 {
           display: block;
+        }
+      }
+    `)}
+
+    ${phone(css`
+      .tx-detail-row {
+        .hash-button {
+          input {
+            padding: 0 38px 0 0;
+          }
         }
       }
     `)}

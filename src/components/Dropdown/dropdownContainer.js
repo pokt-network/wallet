@@ -19,7 +19,6 @@ const DropdownButtonContainer = styled(ButtonBase)`
     font-weight: bold;
     line-height: 110%;
     margin-left: 55px;
-    font-family: 'Manrope';
   }
 
   img {

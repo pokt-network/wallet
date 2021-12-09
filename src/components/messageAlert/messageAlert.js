@@ -12,7 +12,7 @@ const MessageALert = styled.span`
   padding: 6px;
   z-index: 100;
   top: 0;
-  right: -60px;
+  right: -66px;
 
   &.active {
     display: block;

@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { ButtonBase, IconCopy } from "@pokt-foundation/ui";
+import { TextCopy } from "@pokt-foundation/ui";
 import CopyButtonContainer from "./container";
 import MessageALert from "../messageAlert/messageAlert";
 
 export default function CopyButton({ text, width, ...props }) {
   const [displayAlert, setDisplayAlert] = useState(false);
 
-  const onCopyClick = () => {
-    navigator.clipboard.writeText(text);
+  const onCopyClick = (message) => {
+    navigator.clipboard.writeText(message);
     setDisplayAlert(true);
-    console.log(555);
     if (props.onClick) props.onClick();
   };
 
@@ -23,13 +22,15 @@ export default function CopyButton({ text, width, ...props }) {
 
   return (
     <CopyButtonContainer width={width} {...props}>
-      <ButtonBase className="copy-button" onClick={onCopyClick}>
-        <span>{text}</span>
-        <IconCopy />
-        <MessageALert className={displayAlert ? "active" : ""}>
-          Copied!
-        </MessageALert>
-      </ButtonBase>
+      <TextCopy
+        className="copy-button"
+        value={text}
+        onCopy={onCopyClick}
+        message={text}
+      />
+      <MessageALert className={displayAlert ? "active" : ""}>
+        Copied!
+      </MessageALert>
     </CopyButtonContainer>
   );
 }

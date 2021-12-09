@@ -338,7 +338,13 @@ class ImportPocket extends React.Component {
 
               <div className="nimport-container">
                 <Accordion text="Key File"> 
-                  <TextInput adornment={<IconUpload color="white"/>} adornmentPosition="end" type="file" wide/>
+                  <label className="custom-file-input">
+                    Select File
+                   <TextInput 
+                    adornment={<IconUpload color="white"/>} 
+                    adornmentPosition="end" type="file" wide 
+                    className="upload-file-input"/>
+                  </label>
                   <TextInput adornment={<IconEye color="white"/>} adornmentPosition="end" type="password" wide placeholder="Keyfile Passphrase"/>
                   <Button mode="primary" className="import-button">Import</Button>
                 </Accordion>

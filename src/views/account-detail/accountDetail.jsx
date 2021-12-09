@@ -34,13 +34,13 @@ export default function AccountDetail() {
             <h3>
               <IconStatus type="staked" /> Staked
             </h3>
-            <p>Staking Status</p>
+            <p className="p-near-icon">Staking Status</p>
           </div>
           <div className="option-type">
             <h3>
               <IconAccount type="node" /> Node
             </h3>
-            <p>Account Type</p>
+            <p className="p-near-icon">Account Type</p>
           </div>
         </div>
 
@@ -55,13 +55,13 @@ export default function AccountDetail() {
             <h3>
               <IconStatus type="unstaking" /> unstaking
             </h3>
-            <p>Staking Status</p>
+            <p className="p-near-icon">Staking Status</p>
           </div>
           <div className="option-type">
             <h3>
               <IconAccount type="app" /> App
             </h3>
-            <p>Account Type</p>
+            <p className="p-near-icon">Account Type</p>
           </div>
         </div>
 

@@ -7,6 +7,7 @@ const CopyButtonContainer = styled.div`
   height: 56px;
   width: ${(props) => props.width}px;
   margin: 0 0 20px 0;
+  position: relative;
 
   .copy-button {
     height: 100%;
@@ -14,14 +15,11 @@ const CopyButtonContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background: transparent;
 
-    svg {
-      color: ${(props) => props.theme.colors.blue};
-      margin-right: 12px;
-    }
-
-    span {
-      margin-left: 12px;
+    input {
+      background: transparent;
+      font-size: 16px;
     }
   }
 
@@ -29,7 +27,7 @@ const CopyButtonContainer = styled.div`
     width: 100%;
 
     .copy-button {
-      span {
+      input {
         font-size: 12px;
       }
     }
@@ -37,7 +35,7 @@ const CopyButtonContainer = styled.div`
 
   ${phone(css`
     .copy-button {
-      span {
+      input {
         font-size: 11px;
       }
     }

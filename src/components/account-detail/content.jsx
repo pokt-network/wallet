@@ -35,6 +35,7 @@ const AccountContent = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(131px, 1fr));
     width: 100%;
+    padding-left: 20px;
 
     svg {
       height: 12px;
@@ -51,12 +52,15 @@ const AccountContent = styled.div`
       }
 
       p {
-        font-family: Manrope;
         font-style: normal;
         font-weight: normal;
         font-size: 12px;
         line-height: 140%;
         color: ${(props) => props.theme.colors.white};
+        
+        &.p-near-icon {
+          padding-left: 18px;
+        }
       }
     }
 
