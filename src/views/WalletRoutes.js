@@ -7,7 +7,7 @@ import Send from "./send/send";
 import Create from "./create/createWallet";
 import ConnectLedger from "./connect-ledger";
 import LogOut from "./log-out/index";
-import ImportPocket from "./import-pocket/index";
+import ImportPocket from "./import-pocket/importPocket";
 import TransactionDetail from "./transaction-detail/transactionDetail";
 import AccountDetail from "./account-detail/accountDetail";
 import Header from "../components/header";

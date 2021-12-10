@@ -70,7 +70,7 @@ const AccountContent = styled.div`
   }
 
   .separator {
-    background: linear-gradient(to right, #27a9e0 0%, #06202e 100%);
+    background: linear-gradient(to right, #27a9e0 100%, #06202e 100%);
     background-size: 100% 1px;
     width: 115%;
     height: 1px;
