@@ -4,7 +4,7 @@ import { maxPhone } from "../../utils/media";
 const AccountTableContainer = styled.div`
   width: 100%;
   background: rgba(255, 255, 255, 0.05);
-  height: 548px;
+  max-height: 548px;
   border-radius: 12px;
   margin: 50px 0 0 0;
   padding: 25px 9px;

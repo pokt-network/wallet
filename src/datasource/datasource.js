@@ -7,22 +7,20 @@ import {
   Hex,
 } from "@pokt-network/pocket-js";
 import { getGatewayClient } from "./gateway";
-import axios from 'axios';
+import axios from "axios";
 import Errors from "./errors";
 
 export class DataSource {
   constructor(config) {
-    const gatewayUrl = config ? (config.gatewayUrl || "") : "";
-    const httpConfig = config ? (config.http || {}) : {};
+    const gatewayUrl = config ? config.gatewayUrl || "" : "";
+    const httpConfig = config ? config.http || {} : {};
 
     if (gatewayUrl === "") {
-      throw Errors.ConfigErrors.RequiredParam('gatewayUrl');
+      throw Errors.ConfigErrors.RequiredParam("gatewayUrl");
     }
 
     if (Object.keys(httpConfig).length === 0) {
-      console.warn(
-        Errors.ConfigErrors.RequiredParam('http')
-      );
+      console.warn(Errors.ConfigErrors.RequiredParam("http"));
     }
 
     this.gwClient = getGatewayClient(gatewayUrl, httpConfig);
@@ -38,7 +36,7 @@ export class DataSource {
       undefined,
       false,
       false,
-      config.useLegacyCodec,
+      config.useLegacyCodec
     );
 
     this.__pocket = new Pocket([""], undefined, pocketClientConfiguration);
@@ -50,7 +48,6 @@ export class DataSource {
    * @returns {Account}
    */
   async exportPPKFromAccount(account, passphrase) {
-
     const ppkOrError = await this.__pocket.keybase.exportPPKfromAccount(
       account.addressHex,
       passphrase,
@@ -65,8 +62,9 @@ export class DataSource {
    * @returns {Account}
    */
   async createAccount(passphrase) {
-
-    const accountOrError = await this.__pocket.keybase.createAccount(passphrase);
+    const accountOrError = await this.__pocket.keybase.createAccount(
+      passphrase
+    );
 
     if (typeGuard(accountOrError, Error)) {
       return undefined;
@@ -97,7 +95,6 @@ export class DataSource {
    * @returns {Account}
    */
   async importAccount(privateKey, passphrase) {
-
     const accountOrError = await this.__pocket.keybase.importAccount(
       Buffer.from(privateKey, "hex"),
       passphrase
@@ -114,7 +111,6 @@ export class DataSource {
    * @returns {UnlockedAccount}
    */
   async getUnlockedAccount(addressHex, passphrase) {
-
     const unlockedOrError = await this.__pocket.keybase.getUnlockedAccount(
       addressHex,
       passphrase
@@ -131,7 +127,6 @@ export class DataSource {
    * @returns {object}
    */
   async exportPPK(privateKey, passphrase) {
-
     const ppkOrError = await this.__pocket.keybase.exportPPK(
       privateKey,
       passphrase,
@@ -151,27 +146,26 @@ export class DataSource {
   async getBalance(address) {
     let balanceResponse;
     try {
-      balanceResponse = await this.gwClient.makeQuery('getBalance', address, 0);
+      balanceResponse = await this.gwClient.makeQuery("getBalance", address, 0);
     } catch (error) {
       console.log(error);
       return 0;
     }
 
-    const uPOKT = Number(balanceResponse.balance.toString());
-    return uPOKT / 1000000;
+    const uPOKT = Number(balanceResponse?.balance?.toString());
+    return (uPOKT ? uPOKT : 0) / 1000000;
   }
 
   /**
    * @returns {Float}
    */
   async getPrice() {
-    let response = await axios.get('https://thunderheadotc.com/api/price/')
-    let data =  response["data"]
+    let response = await axios.get("https://thunderheadotc.com/api/price/");
+    let data = response["data"];
     if (data["status"] === "200") {
-      return parseFloat(data["price"])
-    }
-    else {
-      return -1
+      return parseFloat(data["price"]);
+    } else {
+      return -1;
     }
   }
 
@@ -181,7 +175,7 @@ export class DataSource {
   async getTx(txHash) {
     let txResponse;
     try {
-      txResponse = await this.gwClient.makeQuery('getTransaction', txHash);
+      txResponse = await this.gwClient.makeQuery("getTransaction", txHash);
     } catch (error) {
       console.log(error);
       return undefined;
@@ -197,7 +191,7 @@ export class DataSource {
     let app;
 
     try {
-      app = await this.gwClient.makeQuery('getApp', address, 0)
+      app = await this.gwClient.makeQuery("getApp", address, 0);
     } catch (error) {
       console.log(error);
       return undefined;
@@ -212,7 +206,7 @@ export class DataSource {
   async getNode(address) {
     let node;
     try {
-      node = await this.gwClient.makeQuery('getNode', address, 0);
+      node = await this.gwClient.makeQuery("getNode", address, 0);
     } catch (error) {
       console.log(error);
       return undefined;
@@ -235,8 +229,10 @@ export class DataSource {
     );
 
     if (typeGuard(accountOrUndefined, Error)) {
-      return new Error("Failed to import account due to wrong passphrase provided");
-    };
+      return new Error(
+        "Failed to import account due to wrong passphrase provided"
+      );
+    }
 
     const transactionSenderOrError = await this.__pocket.withImportedAccount(
       accountOrUndefined.address,
@@ -245,26 +241,31 @@ export class DataSource {
 
     if (typeGuard(transactionSenderOrError, RpcError)) {
       return new Error(transactionSenderOrError.message);
-    };
+    }
 
     const rawTxPayloadOrError = await transactionSenderOrError
       .send(accountOrUndefined.addressHex, toAddress, amount.toString())
-      .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
+      .createTransaction(
+        this.config.chainId,
+        defaultFee.toString(),
+        CoinDenom.Upokt,
+        "Pocket Wallet"
+      );
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
-      console.log(`Failed to process transaction with error: ${rawTxPayloadOrError}`);
+      console.log(
+        `Failed to process transaction with error: ${rawTxPayloadOrError}`
+      );
       return new Error(rawTxPayloadOrError.message);
     }
 
     let rawTxResponse;
     try {
-      rawTxResponse = await this
-        .gwClient
-        .makeQuery(
-          'sendRawTx',
-          rawTxPayloadOrError.address,
-          rawTxPayloadOrError.txHex
-        );
+      rawTxResponse = await this.gwClient.makeQuery(
+        "sendRawTx",
+        rawTxPayloadOrError.address,
+        rawTxPayloadOrError.txHex
+      );
     } catch (error) {
       console.log(`Failed to send transaction with error: ${error.raw_log}`);
       return new Error(error.raw_log);
@@ -276,7 +277,7 @@ export class DataSource {
   /**
    * @returns {Object}
    */
-   async unjailNode(ppk, passphrase) {
+  async unjailNode(ppk, passphrase) {
     // uPOKT
     const defaultFee = this.config.txFee || 10000;
 
@@ -287,8 +288,10 @@ export class DataSource {
     );
 
     if (typeGuard(accountOrUndefined, Error)) {
-      return new Error("Failed to import account due to wrong passphrase provided");
-    };
+      return new Error(
+        "Failed to import account due to wrong passphrase provided"
+      );
+    }
 
     const transactionSenderOrError = await this.__pocket.withImportedAccount(
       accountOrUndefined.address,
@@ -297,26 +300,31 @@ export class DataSource {
 
     if (typeGuard(transactionSenderOrError, RpcError)) {
       return new Error(transactionSenderOrError.message);
-    };
+    }
 
     const rawTxPayloadOrError = await transactionSenderOrError
       .nodeUnjail(accountOrUndefined.addressHex)
-      .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Unjail Node - Pocket Wallet");
+      .createTransaction(
+        this.config.chainId,
+        defaultFee.toString(),
+        CoinDenom.Upokt,
+        "Unjail Node - Pocket Wallet"
+      );
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
-      console.log(`Failed to process transaction with error: ${rawTxPayloadOrError.message}`);
+      console.log(
+        `Failed to process transaction with error: ${rawTxPayloadOrError.message}`
+      );
       return new Error(rawTxPayloadOrError.message);
     }
 
     let rawTxResponse;
     try {
-      rawTxResponse = await this
-        .gwClient
-        .makeQuery(
-          'sendRawTx',
-          rawTxPayloadOrError.address,
-          rawTxPayloadOrError.txHex
-        );
+      rawTxResponse = await this.gwClient.makeQuery(
+        "sendRawTx",
+        rawTxPayloadOrError.address,
+        rawTxPayloadOrError.txHex
+      );
     } catch (error) {
       console.log(`Failed to send transaction with error: ${error.raw_log}`);
       return new Error(error.raw_log);
@@ -328,7 +336,7 @@ export class DataSource {
   /**
    * @returns {Object}
    */
-   async unstakeNode(ppk, passphrase) {
+  async unstakeNode(ppk, passphrase) {
     // uPOKT
     const defaultFee = this.config.txFee || 10000;
 
@@ -339,8 +347,10 @@ export class DataSource {
     );
 
     if (typeGuard(accountOrUndefined, Error)) {
-      return new Error("Failed to import account due to wrong passphrase provided");
-    };
+      return new Error(
+        "Failed to import account due to wrong passphrase provided"
+      );
+    }
 
     const transactionSenderOrError = await this.__pocket.withImportedAccount(
       accountOrUndefined.address,
@@ -349,26 +359,31 @@ export class DataSource {
 
     if (typeGuard(transactionSenderOrError, RpcError)) {
       return new Error(transactionSenderOrError.message);
-    };
+    }
 
     const rawTxPayloadOrError = await transactionSenderOrError
       .nodeUnstake(accountOrUndefined.addressHex)
-      .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Unstake Node - Pocket Wallet");
+      .createTransaction(
+        this.config.chainId,
+        defaultFee.toString(),
+        CoinDenom.Upokt,
+        "Unstake Node - Pocket Wallet"
+      );
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
-      console.log(`Failed to process transaction with error: ${rawTxPayloadOrError}`);
+      console.log(
+        `Failed to process transaction with error: ${rawTxPayloadOrError}`
+      );
       return new Error(rawTxPayloadOrError.message);
     }
 
     let rawTxResponse;
     try {
-      rawTxResponse = await this
-        .gwClient
-        .makeQuery(
-          'sendRawTx',
-          rawTxPayloadOrError.address,
-          rawTxPayloadOrError.txHex
-        );
+      rawTxResponse = await this.gwClient.makeQuery(
+        "sendRawTx",
+        rawTxPayloadOrError.address,
+        rawTxPayloadOrError.txHex
+      );
     } catch (error) {
       console.log(`Failed to send transaction with error: ${error.raw_log}`);
       return new Error(error.raw_log);
@@ -437,9 +452,11 @@ export class DataSource {
 
     // Check if both arrays are not empty
     if (
-      receivedTxs && receivedTxs.txs &&
+      receivedTxs &&
+      receivedTxs.txs &&
       receivedTxs.txs.length > 0 &&
-      sentTxs && sentTxs.txs &&
+      sentTxs &&
+      sentTxs.txs &&
       sentTxs.txs.length > 0
     ) {
       return this.mergeTxs(receivedTxs, sentTxs);
@@ -461,9 +478,16 @@ export class DataSource {
     let receivedTxs;
 
     try {
-      receivedTxs = await this.gwClient.makeQuery('getAccountTxs', address, received, false, 1, maxTxs);
+      receivedTxs = await this.gwClient.makeQuery(
+        "getAccountTxs",
+        address,
+        received,
+        false,
+        1,
+        maxTxs
+      );
     } catch (error) {
-      console.log({ error  })
+      console.log({ error });
       return undefined;
     }
 

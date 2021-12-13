@@ -49,6 +49,7 @@ const AccountContent = styled.div`
         font-size: 24px;
         line-height: 110%;
         color: ${(props) => props.theme.colors.secondaryWhite};
+        text-transform: capitalize;
       }
 
       p {
@@ -57,7 +58,7 @@ const AccountContent = styled.div`
         font-size: 12px;
         line-height: 140%;
         color: ${(props) => props.theme.colors.white};
-        
+
         &.p-near-icon {
           padding-left: 18px;
         }
@@ -78,6 +79,8 @@ const AccountContent = styled.div`
   }
 
   ${maxPhone(css`
+    width: 100%;
+    max-width: 100%;
     .staking-options {
       display: flex;
       justify-content: space-evenly;

@@ -20,17 +20,18 @@ const AccountHeaderContainer = styled.div`
     line-height: 110%;
     margin: 14px 0 35px 0;
 
-    span {
+    a {
       font-size: 14px;
       line-height: 140%;
       font-weight: normal;
+      color: ${(props) => props.theme.colors.white};
     }
 
     ${maxPhone(css`
       font-size: 16px;
       font-weight: normal;
       line-height: 130%;
-      span {
+      a {
         display: none;
       }
     `)}
