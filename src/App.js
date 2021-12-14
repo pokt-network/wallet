@@ -3,14 +3,13 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import GlobalStyles from './components/global-style';
 
-import MaintenanceView from './views/maintenance/index';
-// import Home from './views/home/index';
-// import Send from './views/send/index';
-// import Create from './views/create/index';
-// import LogOut from './views/log-out/index';
-// import AccountLatest from './views/account-detail/index';
-// import ImportPocket from './views/import-pocket/index';
-// import TransactionDetail from './views/transaction-detail/index';
+import Home from './views/home/index';
+import Send from './views/send/index';
+import Create from './views/create/index';
+import LogOut from './views/log-out/index';
+import AccountLatest from './views/account-detail/index';
+import ImportPocket from './views/import-pocket/index';
+import TransactionDetail from './views/transaction-detail/index';
 import Header from "./components/header";
 import Footer from "./components/footer";
 import history from './history';
@@ -35,7 +34,13 @@ class App extends Component {
             <div className="page-container">
                 <GlobalStyles />
                 <Header />
-                <Route exact path="/" component={MaintenanceView}></Route>
+                <Route exact path="/" component={Home}></Route>
+                <Route exact path="/send" component={Send}></Route>
+                <Route exact path="/create" component={Create}></Route>
+                <Route exact path="/logout" component={LogOut}></Route>
+                <Route exact path="/import" component={ImportPocket}></Route>
+                <Route exact path="/account" component={AccountLatest}></Route>
+                <Route exact path="/transaction-detail" component={TransactionDetail}></Route>
                 <Footer />
             </div>
         </Router>
