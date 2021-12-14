@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { maxPhone } from "../../../utils/media";
+import { maxPhone } from "../../utils/media";
 import { Link } from "react-router-dom";
 
 const Button = styled(Link)`

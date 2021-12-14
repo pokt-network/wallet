@@ -1,11 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Banner,
-  Button,
-  ButtonBase,
-  Link,
-  TextInput,
-} from "@pokt-foundation/ui";
+import { Banner, Button, ButtonBase, TextInput } from "@pokt-foundation/ui";
+import Link from "../../components/link/link";
 
 import Layout from "../../components/layout";
 import CreateContainer from "../../components/create/container";
@@ -156,10 +151,7 @@ function Create({
         </Button>
 
         <p>
-          Already have a wallet?{" "}
-          <Link href="/import" external={false}>
-            Import Wallet
-          </Link>
+          Already have a wallet? <Link to="/import">Import Wallet</Link>
         </p>
       </CreateContainer>
     </Layout>

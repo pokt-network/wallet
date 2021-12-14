@@ -2,13 +2,14 @@ import React, { useCallback, useState } from "react";
 import Layout from "../../components/layout";
 import ImportPocketContent from "../../components/import-pocket/content";
 import Accordion from "../../components/accordion";
-import { Button, Link, TextInput } from "@pokt-foundation/ui";
+import { Button, TextInput } from "@pokt-foundation/ui";
 import IconUpload from "../../icons/iconUpload";
 import PasswordInput from "../../components/input/passwordInput";
 import { getDataSource } from "../../datasource";
 import { typeGuard } from "@pokt-network/pocket-js";
 import PocketService from "../../core/services/pocket-service";
 import { useHistory } from "react-router";
+import Link from "../../components/link/link";
 
 const dataSource = getDataSource();
 
@@ -205,10 +206,7 @@ export default function ImportPocket() {
           </Accordion>
 
           <p className="create-link">
-            Don't have a wallet?{" "}
-            <Link href="/create" external={false}>
-              Create Wallet
-            </Link>{" "}
+            Don't have a wallet? <Link to="/create">Create Wallet</Link>{" "}
           </p>
         </div>
       </ImportPocketContent>

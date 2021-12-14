@@ -2,7 +2,7 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 
 import LandingContent from "../../components/landing/landing-content";
-import Link from "../../components/public/button/button";
+import Link from "../../components/link/button";
 
 function Home() {
   return (
