@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Wrapper from '../wrapper';
+import Description from './description';
 import LandingContent from './landing-content';
 
 class MaintenanceLanding extends Component {
@@ -10,8 +11,11 @@ class MaintenanceLanding extends Component {
             <div className="top">
               <div className="title">
                 <h1><span> Pocket Wallet is under </span>
-                Maintenance
+                Temporary Maintenance
                 </h1>
+                <Description>
+                  We will be back soon
+                </Description>
               </div>
             </div>
           </Wrapper>
