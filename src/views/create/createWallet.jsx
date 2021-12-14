@@ -246,12 +246,12 @@ function Download({
 
 export default function CreateWallet() {
   const [step, setStep] = useState(0);
-  const [addressHex, setAddressHex] = useState();
-  const [publicKeyHex, setPublicKeyHex] = useState();
-  const [ppk, setPpk] = useState();
+  const [addressHex, setAddressHex] = useState("");
+  const [publicKeyHex, setPublicKeyHex] = useState("");
+  const [ppk, setPpk] = useState("");
   const [keyFileDownloaded, setKeyFileDownloaded] = useState(false);
-  const [passphrase, setPassphrase] = useState();
-  const [confirmPassphrase, setConfirmPassphrase] = useState();
+  const [passphrase, setPassphrase] = useState("");
+  const [confirmPassphrase, setConfirmPassphrase] = useState("");
 
   const goNext = () => setStep((prevStep) => prevStep + 1);
   const goBack = () => setStep((prevStep) => prevStep - 1);

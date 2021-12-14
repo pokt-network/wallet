@@ -16,13 +16,13 @@ const dataSource = getDataSource();
 export default function ImportPocket() {
   let history = useHistory();
   const [fileName, setFileName] = useState("");
-  const [ppk, setPpk] = useState();
-  const [privateKey, setPrivateKey] = useState();
-  const [ppkError, setppkError] = useState();
-  const [privateKeyError, setPrivateKeyError] = useState();
-  const [buttonError, setButtonError] = useState();
-  const [filePassphrase, setFilePassphrase] = useState();
-  const [privKeyPassphrase, setPrivKeyPassphrase] = useState();
+  const [ppk, setPpk] = useState("");
+  const [privateKey, setPrivateKey] = useState("");
+  const [ppkError, setppkError] = useState("");
+  const [privateKeyError, setPrivateKeyError] = useState("");
+  const [buttonError, setButtonError] = useState("");
+  const [filePassphrase, setFilePassphrase] = useState("");
+  const [privKeyPassphrase, setPrivKeyPassphrase] = useState("");
 
   const parseFileInputContent = async (input) => {
     if (input && input.files.length > 0) {
