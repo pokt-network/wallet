@@ -13,7 +13,7 @@ export default function PasswordInput({ placeholder, ...props }) {
     <TextInput
       adornment={
         <IconEye
-          color="white"
+          color={props?.color ? props.color : "white"}
           onClick={togglePasswordVisibility}
           type={showPassword ? "closed" : ""}
         />
