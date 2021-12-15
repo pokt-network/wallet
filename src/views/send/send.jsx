@@ -4,7 +4,10 @@ import { Button, Modal, TextInput, useTheme } from "@pokt-foundation/ui";
 import Layout from "../../components/layout";
 import SendHeaderContainer from "../../components/send/header";
 import SendContent from "../../components/send/content";
-import { SendTransactionModalContainer } from "../../components/send/confirmSend";
+import {
+  SendTransactionModalContainer,
+  SendTransactionViewContainer,
+} from "../../components/send/confirmSend";
 import PasswordInput from "../../components/input/passwordInput";
 import CopyButton from "../../components/copy/copy";
 import useWindowSize from "../../hooks/useWindowSize";
@@ -14,73 +17,158 @@ import { getDataSource } from "../../datasource";
 import pocketService from "../../core/services/pocket-service";
 import { typeGuard } from "@pokt-network/pocket-js";
 import { useHistory } from "react-router";
+import { isPassphraseValid } from "../../utils/validations";
 
 const dataSource = getDataSource();
 
-function ConfirmSend({ pokts, toAddress, step, setStep }) {
+function ConfirmSend({
+  pokts,
+  toAddress,
+  step,
+  setStep,
+  sendTransaction,
+  passphrase,
+  setPassphrase,
+}) {
   const theme = useTheme();
   const { width } = useWindowSize();
 
   const goBack = useCallback(() => setStep(0), [setStep]);
 
+  const onPassphraseChange = useCallback(
+    ({ target }) => {
+      const { value } = target;
+
+      if (!isPassphraseValid(value)) return;
+
+      setPassphrase(value);
+    },
+    [setPassphrase]
+  );
+
   return (
-    <Layout
-      title={
-        <SendHeaderContainer>
-          <h1
-            className="title"
-            style={{
-              color: theme.content,
-            }}
-          >
-            Confirm your Passphase to complete <br /> the transaction
-          </h1>
-        </SendHeaderContainer>
-      }
-    >
+    <>
       {width > 768 ? (
-        <Modal visible={step === 1} onClose={goBack} padding="44px 24px">
-          <SendTransactionModalContainer>
-            <h1 className="title">
-              Confirm your Passphase to complete <br /> the transaction
-            </h1>
+        <Layout
+          title={
+            <SendHeaderContainer>
+              <h1 className="title">Send Transaction</h1>
+              <div className="input-container">
+                <TextInput
+                  type="number"
+                  placeholder="00.00"
+                  step="0.01"
+                  name="pokt"
+                  min={0}
+                />
+                <label htmlFor="pokt">POKT</label>
+              </div>
+            </SendHeaderContainer>
+          }
+        >
+          <Modal visible={step === 1} onClose={goBack} padding="44px 24px">
+            <SendTransactionModalContainer>
+              <h1 className="title">
+                Confirm your Passphase to complete <br /> the transaction
+              </h1>
 
-            <div className="password-input-container">
-              <PasswordInput
-                placeholder="Keyfile Passphrase"
-                color={theme.accentAlternative}
-              />
-            </div>
+              <div className="password-input-container">
+                <PasswordInput
+                  placeholder="Keyfile Passphrase"
+                  color={theme.accentAlternative}
+                  onChange={(e) => onPassphraseChange(e)}
+                />
+              </div>
 
-            <div className="sending-container">
+              {/* <div className="sending-container"> */}
               <div className="you-are-sending">
                 <h2>You are sending</h2>
                 <p>{pokts} POKT</p>
               </div>
 
-              <CopyButton
-                width="100%"
-                text={toAddress}
-                className="to-address"
+              <CopyButton text={toAddress} className="to-address" />
+              {/* </div> */}
+
+              <Button
+                mode="primary"
+                className="send-button"
+                onClick={sendTransaction}
+              >
+                Send
+              </Button>
+
+              <button className="back-button" onClick={goBack}>
+                <IconBack />
+                <span>Back</span>
+              </button>
+            </SendTransactionModalContainer>
+          </Modal>
+        </Layout>
+      ) : (
+        <Layout
+          title={
+            <SendHeaderContainer>
+              <h1 className="secondary-title">
+                Confirm your Passphase to complete the transaction
+              </h1>
+            </SendHeaderContainer>
+          }
+        >
+          <SendTransactionViewContainer>
+            <div className="password-input-container">
+              <PasswordInput
+                placeholder="Keyfile Passphrase"
+                color={theme.accentAlternative}
+                onChange={(e) => onPassphraseChange(e)}
               />
             </div>
 
-            <Button mode="primary" className="send-button">
+            <h2>You are sending</h2>
+            <p>{pokts} POKT</p>
+
+            <CopyButton text={toAddress} className="to-address" />
+
+            <Button
+              mode="primary"
+              className="send-button"
+              wide
+              onClick={sendTransaction}
+            >
               Send
             </Button>
 
-            <button className="back-button" onClick={goBack}>
-              <IconBack />
-              <span>Back</span>
-            </button>
-          </SendTransactionModalContainer>
-        </Modal>
-      ) : null}
-    </Layout>
+            <div className="daback-button-container">
+              <button className="back-button" onClick={goBack}>
+                <IconBack />
+                <span>Back</span>
+              </button>
+            </div>
+          </SendTransactionViewContainer>
+        </Layout>
+      )}
+    </>
   );
 }
 
-function SendTransaction({ fees }) {
+function SendTransaction({
+  fees,
+  handlePoktValueChange,
+  poktAmount,
+  updateDestinationAddress,
+  validate,
+  setStep,
+}) {
+  const onSendClick = useCallback(() => {
+    const isValid = validate();
+
+    if (!isValid) {
+      //do some error
+      return;
+    }
+
+    setStep(1);
+  }, [validate, setStep]);
+
   return (
     <Layout
       title={
@@ -93,6 +181,8 @@ function SendTransaction({ fees }) {
               step="0.01"
               name="pokt"
               min={0}
+              value={poktAmount}
+              onChange={handlePoktValueChange}
             />
             <label htmlFor="pokt">POKT</label>
           </div>
@@ -100,34 +190,33 @@ function SendTransaction({ fees }) {
       }
     >
       <SendContent>
-        <TextInput placeholder="Send to Address" />
-        <p>TX Fee {fees}POKT</p>
-        <Button mode="primary">Send</Button>
+        <TextInput
+          placeholder="Send to Address"
+          onChange={updateDestinationAddress}
+        />
+        <p>TX Fee {Number(fees / 1000000).toLocaleString("en-US")} POKT</p>
+        <Button mode="primary" onClick={onSendClick}>
+          Send
+        </Button>
       </SendContent>
     </Layout>
   );
 }
 
-export default function Send() {
+export default function SendM() {
   let history = useHistory();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
   const [destinationAddress, setDestinationAddress] = useState(undefined);
   const [publicKeyHex, setPublicKeyHex] = useState(undefined);
   const [ppk, setPpk] = useState(undefined);
-  const [visibility, setVisibility] = useState(false);
-  const [isPassModalVisible, setIsPassModalVisible] = useState(false);
   const [amountToSend, setAmountToSend] = useState(0);
   const [upoktBalance, setUpoktBalance] = useState(0);
-  const [isAmountValid, setISAmountValid] = useState(false);
+  const [isAmountValid, setIsAmountValid] = useState(false);
   const [isAddressValid, setIsAddressValid] = useState(false);
   const [txFee, setTxFee] = useState(Number(Config.TX_FEE));
-  const [disableSendBtn, setDisableSendBtn] = useState(false);
   const [poktAmount, setPoktAmount] = useState(undefined);
   const [poktAmountUsd, setPoktAmountUsd] = useState(undefined);
-  const [modalAmountToSendPokt, setModalAmountToSendPokt] =
-    useState("0.00 POKT");
-  const [modalAmountToSendUsd, setModalAmountToSendUsd] = useState("0.00 USD");
   const [balanceError, setBalanceError] = useState(undefined);
   const [addressError, setAddressError] = useState(undefined);
   const [amountError, setAmountError] = useState(undefined);
@@ -170,19 +259,9 @@ export default function Send() {
   );
 
   const sendTransaction = useCallback(async () => {
-    // Enable loader indicator
     // this.enableLoaderIndicatory(true);
-
-    // const passphrase = document.getElementById("modal-passphrase");
-    // const destinationAddress = document.getElementById("destination-address");
-
     if (passphrase && destinationAddress && ppk && amountToSend > 0) {
-      // Update the state values for the addresses
-      // this.setState({
-      //   destinationAdress: destinationAddress.value,
-      //   disableSendBtn: true,
-      // });
-
+      console.log(ppk, passphrase, destinationAddress, amountToSend);
       const txResponse = await dataSource.sendTransaction(
         ppk,
         passphrase,
@@ -191,9 +270,7 @@ export default function Send() {
       );
 
       if (typeGuard(txResponse, Error)) {
-        // Disable loader indicator
         // this.enableLoaderIndicatory(false);
-        // Show error message
         // this.togglePassphraseError(
         //   txResponse.message !== undefined
         //     ? txResponse.message
@@ -202,10 +279,7 @@ export default function Send() {
         return;
       }
 
-      // Save the user information locally
       pocketService.saveUserInCache(addressHex, publicKeyHex, ppk);
-
-      // Save the tx information locally
       pocketService.saveTxInCache(
         "TokenTransfer",
         addressHex,
@@ -217,14 +291,10 @@ export default function Send() {
         "Pending"
       );
 
-      // Disable loader indicator
       // this.enableLoaderIndicatory(false);
-      // Push to transaction detail page
       pushToTxDetail(txResponse.txhash);
     } else {
-      // Disable loader indicator
       // this.enableLoaderIndicatory(false);
-      // Show error message
       // this.toggleAddressError(
       //   "Amount to send or the destination address are invalid."
       // );
@@ -239,6 +309,59 @@ export default function Send() {
     passphrase,
     pushToTxDetail,
   ]);
+
+  const handlePoktValueChange = useCallback(
+    ({ target }) => {
+      const { value } = target;
+      console.log(value);
+      if (value <= 0) {
+        // this.toggleAmountError("Amount to send is invalid.");
+        setPoktAmount(0);
+        setPoktAmountUsd(0);
+        setIsAmountValid(false);
+        return;
+      }
+
+      const upoktValue = Math.round(value * 1000000);
+      console.log("u: ", upoktValue);
+      if (upoktBalance < upoktValue + txFee) {
+        setAmountToSend(upoktValue);
+        setPoktAmount(value);
+        setIsAmountValid(false);
+        // this.enableLoaderIndicatory(false);
+        // this.toggleAmountError("Insufficient balance.");
+      } else {
+        // Save the values in the state
+        setAmountToSend(upoktValue);
+        setIsAmountValid(true);
+        setPoktAmount(value);
+        // this.toggleAmountError(undefined);
+      }
+    },
+    [txFee, upoktBalance]
+  );
+
+  const updateDestinationAddress = useCallback(
+    ({ target }) => {
+      const { value } = target;
+
+      if (addressHex.toLowerCase() === value.toLowerCase()) {
+        // this.toggleAddressError(
+        //   "Recipient address cannot be the same as the sender's address."
+        // );
+        setIsAddressValid(false);
+      } else if (dataSource.validateAddress(value)) {
+        setDestinationAddress(value);
+        setIsAddressValid(true);
+        // this.toggleAddressError(undefined);
+        return;
+      } else {
+        setIsAddressValid(false);
+        // this.toggleAddressError("Address is invalid.");
+      }
+    },
+    [addressHex]
+  );
 
   useEffect(() => {
     const { addressHex, publicKeyHex, ppk } = pocketService.getUserInfo();
@@ -261,13 +384,23 @@ export default function Send() {
   return (
     <>
       {step === 0 ? (
-        <SendTransaction />
+        <SendTransaction
+          fees={txFee}
+          handlePoktValueChange={handlePoktValueChange}
+          poktAmount={poktAmount}
+          validate={validate}
+          setStep={setStep}
+          updateDestinationAddress={updateDestinationAddress}
+        />
       ) : (
         <ConfirmSend
           step={step}
           setStep={setStep}
-          pokts="3,293,793.375212"
-          toAddress="3b21df976c27a39817aa35dc3235a5188d4d805f"
+          pokts={amountToSend}
+          toAddress={destinationAddress}
+          sendTransaction={sendTransaction}
+          passphrase={passphrase}
+          setPassphrase={setPassphrase}
         />
       )}
     </>

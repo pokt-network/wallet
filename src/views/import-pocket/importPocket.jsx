@@ -1,4 +1,7 @@
 import React, { useCallback, useState } from "react";
+import { useHistory } from "react-router";
+import { typeGuard } from "@pokt-network/pocket-js";
+
 import Layout from "../../components/layout";
 import ImportPocketContent from "../../components/import-pocket/content";
 import Accordion from "../../components/accordion";
@@ -6,9 +9,7 @@ import { Button, TextInput } from "@pokt-foundation/ui";
 import IconUpload from "../../icons/iconUpload";
 import PasswordInput from "../../components/input/passwordInput";
 import { getDataSource } from "../../datasource";
-import { typeGuard } from "@pokt-network/pocket-js";
 import PocketService from "../../core/services/pocket-service";
-import { useHistory } from "react-router";
 import Link from "../../components/link/link";
 
 const dataSource = getDataSource();
@@ -23,6 +24,7 @@ export default function ImportPocket() {
   const [buttonError, setButtonError] = useState("");
   const [filePassphrase, setFilePassphrase] = useState("");
   const [privKeyPassphrase, setPrivKeyPassphrase] = useState("");
+  const [currentImportOption, setCurrentImportOption] = useState(undefined);
 
   const parseFileInputContent = async (input) => {
     if (input && input.files.length > 0) {
@@ -150,13 +152,29 @@ export default function ImportPocket() {
     }
   }, []);
 
+  const onAccordionClick = useCallback(
+    (option = -1) => {
+      console.log(currentImportOption, option);
+      if (option === currentImportOption) {
+        setCurrentImportOption(-1);
+        return;
+      }
+      setCurrentImportOption(option);
+    },
+    [currentImportOption]
+  );
+
   return (
     <Layout title={<h1 className="title">Import Account</h1>}>
       <ImportPocketContent>
         <p className="description">Select a method to access your account</p>
 
         <div className="nimport-container">
-          <Accordion text="Key File">
+          <Accordion
+            text="Key File"
+            open={currentImportOption === 0}
+            onClick={() => onAccordionClick(0)}
+          >
             <label className="custom-file-input">
               {fileName ? fileName : "Select File"}
               <TextInput
@@ -181,7 +199,11 @@ export default function ImportPocket() {
             </Button>
           </Accordion>
 
-          <Accordion text="Private Key">
+          <Accordion
+            text="Private Key"
+            open={currentImportOption === 1}
+            onClick={() => onAccordionClick(1)}
+          >
             <TextInput
               type="password"
               placeholder="•••••••••••••••••••••"

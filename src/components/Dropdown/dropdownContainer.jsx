@@ -3,7 +3,7 @@ import { maxPhone } from "../../utils/media";
 import { ButtonBase } from "@pokt-foundation/ui";
 
 const DropdownButtonContainer = styled(ButtonBase)`
-  min-height: 52px;
+  min-height: 70px;
   min-width: 562px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.05);

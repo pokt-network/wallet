@@ -10,7 +10,7 @@ export default function DropdownButton({
   ...props
 }) {
   return (
-    <DropdownButtonContainer {...props}>
+    <DropdownButtonContainer {...props} onClick={onClick}>
       <p>{text}</p>
       <img src={icon} alt={alt} />
     </DropdownButtonContainer>

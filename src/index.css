@@ -13,31 +13,31 @@ code {
 }
 
 .fadeIn {
-  animation: 0.2s fadeIn forwards;
+  animation: 0.3s fadeIn forwards;
 }
 
 .fadeOut {
-  animation: 0.2s fadeOut forwards;
+  animation: 0.3s fadeOut forwards;
 }
 
 @keyframes fadeIn {
   from {
-    opacity: 0;
+    /* opacity: 0; */
     transform: translate(-20px, 0);
   }
   to {
-    opacity: 1;
+    /* opacity: 1; */
     transform: translate(0px, 0px);
   }
 }
 
 @keyframes fadeOut {
   from {
-    opacity: 1;
+    /* opacity: 1; */
     transform: translate(0px, 0px);
   }
   to {
     transform: translate(-20px, 0);
-    opacity: 0;
+    /* opacity: 0; */
   }
 }

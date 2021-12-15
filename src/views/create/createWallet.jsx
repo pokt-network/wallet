@@ -10,12 +10,9 @@ import Title from "../../components/public/title/title";
 import { getDataSource } from "../../datasource";
 import pocketService from "../../core/services/pocket-service";
 import { useHistory } from "react-router";
+import { isPassphraseValid } from "../../utils/validations";
 
 const dataSource = getDataSource();
-
-const passwordRegex = new RegExp(
-  "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
-);
 
 function Create({
   goNext,
@@ -37,7 +34,7 @@ function Create({
       if (value) {
         setPassphrase(value);
 
-        if (!passwordRegex.test(value)) {
+        if (!isPassphraseValid(value)) {
           setPassPhraseError(
             "Passphrase have 15 alphanumeric symbols, one capital letter, one lowercase, one special characters and one number."
           );

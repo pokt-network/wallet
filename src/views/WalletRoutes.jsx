@@ -14,44 +14,6 @@ import Footer from "../components/footer";
 
 import { TransportProvider } from "../context/transportContext";
 
-const routes = [
-  {
-    path: "/",
-    name: "Home",
-    Component: Home,
-  },
-  {
-    path: "/import",
-    name: "Import",
-    Component: ImportPocket,
-  },
-  {
-    path: "/create",
-    name: "Create",
-    Component: Create,
-  },
-  {
-    path: "/send",
-    name: "Send",
-    Component: Send,
-  },
-  {
-    path: "/logout",
-    name: "Logout",
-    Component: LogOut,
-  },
-  {
-    path: "/account",
-    name: "Account",
-    Component: AccountDetail,
-  },
-  {
-    path: "/transaction-detail",
-    name: "Transaction Detail",
-    Component: TransactionDetail,
-  },
-];
-
 export default function WalletRoutes() {
   const theme = useTheme();
   const location = useLocation();

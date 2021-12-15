@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Wrapper from '../../components/wrapper';
-import SendContent from './send';
+import SendContent from './old-send';
 import Title from '../../components/public/title/title';
 import Input from '../../components/public/input/input';
 import Button from '../../components/link/button';
@@ -15,7 +15,7 @@ import {typeGuard} from "@pokt-network/pocket-js";
 
 const dataSource = getDataSource();
 
-class Send extends Component {
+class SendT extends Component {
     constructor() {
         super();
         this.state = {
@@ -486,4 +486,4 @@ class Send extends Component {
     }
 }
 
-export default withRouter(Send);
+export default withRouter(SendT);

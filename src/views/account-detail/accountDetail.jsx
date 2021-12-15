@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { Button, Link, Table } from "@pokt-foundation/ui";
+import { useHistory } from "react-router";
+
 import AccountHeaderContainer from "../../components/account-detail/headerContainer";
 import Layout from "../../components/layout";
-import { Button, Link, Table } from "@pokt-foundation/ui";
 import AccountContent from "../../components/account-detail/content";
 import CopyButton from "../../components/copy/copy";
 import AccountTableContainer from "../../components/account-detail/tableContainer";
@@ -9,7 +11,6 @@ import { Config } from "../../config/config";
 import { getDataSource } from "../../datasource";
 import loadIcon from "../../utils/images/icons/load.svg";
 import sentReceivedIcon from "../../utils/images/icons/sentReceived.svg";
-import { useHistory } from "react-router";
 import pocketService from "../../core/services/pocket-service";
 import StakingOption from "../../components/account-detail/stakingOption";
 
@@ -124,7 +125,7 @@ export default function AccountDetail() {
                 ? sentImgSrc
                 : loadingImgSrc,
             amount: amount ? amount : 0,
-            type: transactionType,
+            type: tx.type === "Received" ? tx.type : transactionType,
             height: tx.height,
             options: {
               onClick: () => pushToTxDetail(tx.hash, false),

@@ -30,6 +30,15 @@ const SendHeaderContainer = styled.section`
     }
   }
 
+  .secondary-title {
+    font-weight: bold;
+    font-size: 24px;
+    line-height: 110%;
+    text-align: center;
+    color: ${(props) => props.theme.colors.secondaryWhite};
+    margin: 0 0 33px 0;
+  }
+
   ${maxPhone(css`
     .input-container {
       label,

@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 export const SendTransactionModalContainer = styled.div`
-  width: 488px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,36 +38,85 @@ export const SendTransactionModalContainer = styled.div`
     width: 100%;
   }
 
-  .sending-container {
-    display: flex;
-    justify-content: space-between;
+  .you-are-sending {
     width: 100%;
+    margin-bottom: 45px;
 
-    .you-are-sending {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: baseline;
-
-      h2 {
-        font-weight: normal;
-        font-size: 16px;
-        line-height: 140%;
-        text-align: center;
-        color: ${(props) => props.theme.secondaryWhite};
-      }
-
-      p {
-        font-weight: bold;
-        font-size: 18px;
-        line-height: 110%;
-        color: ${(props) => props.theme.secondaryWhite};
-      }
+    h2 {
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 140%;
+      text-align: center;
+      color: ${(props) => props.theme.secondaryWhite};
     }
+
+    p {
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 110%;
+      color: ${(props) => props.theme.secondaryWhite};
+      text-align: center;
+    }
+  }
+
+  .to-address {
+    width: 100%;
   }
 
   .send-button {
     width: 220px;
     margin: 45px 0 25px 0;
+  }
+`;
+
+export const SendTransactionViewContainer = styled.div`
+  width: 95%;
+
+  .back-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    .back-button {
+      background: transparent;
+      border: none;
+      margin: 25px 0 0 0;
+
+      svg {
+        vertical-align: middle;
+        margin-right: 8px;
+      }
+
+      :hover {
+        cursor: pointer;
+      }
+
+      :focus-visible {
+        outline: none;
+      }
+    }
+  }
+
+  .password-input-container {
+    margin: 0 0 34px 0;
+  }
+
+  h2 {
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 140%;
+    color: ${(props) => props.theme.secondaryWhite};
+  }
+
+  p {
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 110%;
+    color: ${(props) => props.theme.secondaryWhite};
+    margin: 7px 0;
+  }
+
+  .to-address {
+    margin-bottom: 44px;
   }
 `;

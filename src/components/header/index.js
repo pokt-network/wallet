@@ -1,23 +1,24 @@
 import React, { Component } from "react";
-import Wrapper from '../wrapper';
+import Wrapper from "../wrapper";
 import Menu from "./menu";
 import MobileButton from "./mobile-button";
 import Logo from "./logo";
 import StyledUl from "./ul";
 import StyledLi from "./li";
 import HeaderContainer from "./header";
-import logo from '../../utils/images/pokt-logo.png';
+import logo from "../../utils/images/pokt-logo.png";
 import PocketService from "../../core/services/pocket-service";
-import {Link, withRouter} from 'react-router-dom';
-import {Config} from "../../config/config";
+import { withRouter } from "react-router-dom";
+import { Config } from "../../config/config";
+import IconLogOut from "../../icons/iconLogout";
 
 class Header extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       isMenuHidden: true,
       isLoggedIn: false,
-    }
+    };
     this.props = props;
   }
 
@@ -25,7 +26,7 @@ class Header extends Component {
     this.setState((prevState) => {
       return { isMenuHidden: !prevState.isMenuHidden };
     });
-  };
+  }
 
   onLogOut() {
     // Remove any information related to the account
@@ -36,57 +37,64 @@ class Header extends Component {
     localStorage.clear();
     // Refresh the page
     window.location.reload();
-  };
+  }
 
   pushToDetails() {
     this.props.history.push("/account");
   }
 
   loggedInCheck() {
-    const {addressHex, publicKeyHex, ppk} = PocketService.getUserInfo();
-    const userInfo = addressHex && publicKeyHex && ppk; 
+    const { addressHex, publicKeyHex, ppk } = PocketService.getUserInfo();
+    const userInfo = addressHex && publicKeyHex && ppk;
 
     if (userInfo && !this.state.isLoggedIn) {
       this.setState({
-        isLoggedIn: true
+        isLoggedIn: true,
       });
     } else if (!userInfo && this.state.isLoggedIn) {
       this.setState({
-        isLoggedIn: false
-      })
+        isLoggedIn: false,
+      });
     }
   }
 
   componentDidUpdate() {
-    this.loggedInCheck()
+    this.loggedInCheck();
   }
 
   componentDidMount() {
-    this.loggedInCheck()
+    this.loggedInCheck();
   }
 
   render() {
-    const {isMenuHidden, isLoggedIn} = this.state;
-    
+    const { isMenuHidden, isLoggedIn } = this.state;
+
     return (
       <HeaderContainer isHidden={isMenuHidden}>
         <Wrapper className="header">
-          <Logo target="_target" href="https://www.pokt.network/"> <img src={logo} alt="Pocket Network logo" /></Logo>
+          <Logo target="_target" href="/">
+            {" "}
+            <img src={logo} alt="Pocket Network logo" />
+          </Logo>
           <Menu isHidden={isMenuHidden}>
             <StyledUl>
               <StyledLi>
-                <button className="nav-button" id="account-detail-nav" onClick={() => this.pushToDetails()} >Account Detail</button>
+                <a tartget="_target" href={Config.BUY_POKT_BASE_URL}>
+                  Buy POKT
+                </a>
               </StyledLi>
-              {isLoggedIn ?
+              {isLoggedIn ? (
                 <StyledLi>
-                  <Link to="/connect">Connect ledger</Link>
-                </StyledLi> : null}
-              <StyledLi>
-                <a tartget="_target" href={Config.BUY_POKT_BASE_URL}>Buy POKT</a>
-              </StyledLi>
-              <StyledLi>
-                <button className="nav-button" id="log-out-nav" onClick={this.onLogOut} >Log out</button>
-              </StyledLi>
+                  <button
+                    className="nav-button"
+                    id="log-out-nav"
+                    onClick={this.onLogOut}
+                  >
+                    Log out
+                    <IconLogOut className="log-out-icon" />
+                  </button>
+                </StyledLi>
+              ) : null}
             </StyledUl>
           </Menu>
           <MobileButton onClick={() => this.onToggleMenu()} />

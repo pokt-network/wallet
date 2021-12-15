@@ -3,13 +3,19 @@ import { tablet, maxPhone } from "../../utils/media";
 
 const HeaderContainer = styled.header`
   .nav-button {
-    display: none;
     cursor: pointer;
     border-style: none;
     background-color: transparent;
     font-weight: 300;
     font-size: 14px;
     color: #fff;
+  }
+
+  .log-out-icon {
+    margin: 0 0 0 5px;
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
   }
 
   ${tablet(css`

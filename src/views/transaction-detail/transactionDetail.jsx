@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { Banner } from "@pokt-foundation/ui";
 import { useHistory, useLocation } from "react-router";
+
 import CopyButton from "../../components/copy/copy";
 import Layout from "../../components/layout";
 import TransactionDetailContent from "../../components/transaction-detail/content";
