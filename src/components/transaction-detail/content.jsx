@@ -25,10 +25,10 @@ const TransactionDetailContent = styled.section`
           padding-left: 0;
           font-size: 12px;
           color: ${(props) => props.theme.colors.green};
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
-          width: 95%;
+
+          & + div {
+            right: -10px;
+          }
         }
       }
 
@@ -47,6 +47,11 @@ const TransactionDetailContent = styled.section`
         &.to-address {
           color: ${(props) => props.theme.colors.green};
         }
+      }
+
+      .secondary-status-icon {
+        margin: 0 13px 0 0;
+        vertical-align: middle;
       }
 
       img {

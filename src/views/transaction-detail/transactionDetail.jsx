@@ -5,13 +5,13 @@ import { useHistory, useLocation } from "react-router";
 import CopyButton from "../../components/copy/copy";
 import Layout from "../../components/layout";
 import TransactionDetailContent from "../../components/transaction-detail/content";
-import load from "../../utils/images/load.png";
 import { Config } from "../../config/config";
 import { getDataSource } from "../../datasource";
 import noneImg from "../../utils/images/none.png";
 import successImg from "../../utils/images/check_green.png";
 import failedImg from "../../utils/images/wrong_red.png";
 import pocketService from "../../core/services/pocket-service";
+import IconTXStatus from "../../icons/iconTxStatus";
 
 const dataSource = getDataSource();
 
@@ -23,6 +23,7 @@ export default function TransactionDetail() {
   );
   const [tx, setTx] = useState(undefined);
   const [statusImg, setStatusImg] = useState();
+  const [secondaryStatusImg, setSecondaryStatusImg] = useState();
 
   const updateTxInformation = useCallback(
     (txObj = undefined, tx = undefined) => {
@@ -31,12 +32,15 @@ export default function TransactionDetail() {
       switch (transaction.status.toLowerCase()) {
         case "success":
           setStatusImg(successImg);
+          setSecondaryStatusImg("success");
           break;
         case "failed":
           setStatusImg(failedImg);
+          setSecondaryStatusImg("failed");
           break;
         default:
           setStatusImg(noneImg);
+          setSecondaryStatusImg("load");
           break;
       }
     },
@@ -248,18 +252,20 @@ export default function TransactionDetail() {
             <h2>Status</h2>
             <div className="status-container">
               <p>
-                <img src={statusImg} alt="status" /> {tx?.status}
+                <IconTXStatus
+                  type={secondaryStatusImg}
+                  color="white"
+                  width="14px"
+                  height="14px"
+                  className="secondary-status-icon"
+                />
+                {tx?.sentStatus}
               </p>
               <p>
-                pending <img src={load} alt="status" />
+                {tx?.status} <img src={statusImg} alt="status" />
               </p>
             </div>
           </div>
-
-          {/* <div className="tx-detail-row">
-            <h2>Timestamp</h2>
-            <p>34 sec ago</p>
-          </div> */}
 
           <div className="tx-detail-row">
             <h2>Amount</h2>
@@ -280,16 +286,6 @@ export default function TransactionDetail() {
             <h2>To address</h2>
             <p className="to-address">{tx?.toAddress}</p>
           </div>
-
-          {/* <div className="tx-detail-row">
-            <h2>Balance before</h2>
-            <p>454,758.987 POKT </p>
-          </div>
-
-          <div className="tx-detail-row">
-            <h2>Balance after</h2>
-            <p>454,758.987 POKT </p>
-          </div> */}
 
           <div className="tx-detail-row">
             <h2>Block #</h2>

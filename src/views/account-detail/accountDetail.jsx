@@ -32,7 +32,7 @@ export default function AccountDetail() {
   const [nodeStakedTokens, setNodeStakedTokens] = useState(0);
   const [appStakingStatus, setAppStakingStatus] = useState("UNSTAKED");
   const [nodeStakingStatus, setNodeStakingStatus] = useState("UNSTAKED");
-  const [isPkRevealModalVisible, setIsPkRevealModalVisible] = useState(true);
+  const [isPkRevealModalVisible, setIsPkRevealModalVisible] = useState(false);
   // const [isUnjailModalVisible, setIsUnjailModalVisible] = useState(false);
   // const [isUnstakeModalVisible, setIsUnstakeModalVisible] = useState(false);
   const [maxTxListCount, setMaxTxListCount] = useState(
@@ -408,7 +408,7 @@ export default function AccountDetail() {
           >
             {txList &&
               txList.map(({ options: { onClick }, ...tx }) => (
-                <tr>
+                <tr key={tx.hash}>
                   <td>
                     <img
                       src={tx.imageSrc}
