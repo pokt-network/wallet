@@ -13,14 +13,15 @@ import loadIcon from "../../utils/images/icons/load.svg";
 import sentReceivedIcon from "../../utils/images/icons/sentReceived.svg";
 import pocketService from "../../core/services/pocket-service";
 import StakingOption from "../../components/account-detail/stakingOption";
+import RevealPrivateKey from "../../components/modals/private-key/RevealPrivateKey";
 
 const dataSource = getDataSource();
 
 export default function AccountDetail() {
   let history = useHistory();
 
-  const [app, setApp] = useState(undefined);
-  const [node, setNode] = useState(undefined);
+  // const [app, setApp] = useState(undefined);
+  // const [node, setNode] = useState(undefined);
   const [addressHex, setAddressHex] = useState("");
   const [publicKeyHex, setPublicKeyHex] = useState("");
   const [ppk, setPpk] = useState("");
@@ -31,8 +32,7 @@ export default function AccountDetail() {
   const [nodeStakedTokens, setNodeStakedTokens] = useState(0);
   const [appStakingStatus, setAppStakingStatus] = useState("UNSTAKED");
   const [nodeStakingStatus, setNodeStakingStatus] = useState("UNSTAKED");
-  // const [privateKey, setPrivateKey] = useState(undefined);
-  // const [isPkRevealModalVisible, setIsPkRevealModalVisible] = useState(false);
+  const [isPkRevealModalVisible, setIsPkRevealModalVisible] = useState(true);
   // const [isUnjailModalVisible, setIsUnjailModalVisible] = useState(false);
   // const [isUnstakeModalVisible, setIsUnstakeModalVisible] = useState(false);
   const [maxTxListCount, setMaxTxListCount] = useState(
@@ -177,7 +177,7 @@ export default function AccountDetail() {
     setPrice(price);
   }, []);
 
-  const addNode = useCallback(() => {
+  const addNode = useCallback((node) => {
     let obj = {
       stakingStatus: "UNSTAKED",
       stakedTokens: 0,
@@ -212,9 +212,9 @@ export default function AccountDetail() {
 
     setNodeStakedTokens(obj.stakedTokens);
     setNodeStakingStatus(obj.stakingStatus);
-  }, [node]);
+  }, []);
 
-  const addApp = useCallback(() => {
+  const addApp = useCallback((app) => {
     let obj = {
       stakingStatus: "UNSTAKED",
       stakedTokens: 0,
@@ -237,23 +237,23 @@ export default function AccountDetail() {
 
     setAppStakedTokens(obj.stakedTokens);
     setAppStakingStatus(obj.stakingStatus);
-  }, [app]);
+  }, []);
 
   const getAccountType = useCallback(
     async (addressHex) => {
       const appOrError = await dataSource.getApp(addressHex);
 
       if (appOrError !== undefined) {
-        setApp(appOrError);
-        addApp();
+        // setApp(appOrError);
+        addApp(appOrError);
       }
 
       // Try to get the node information
       const nodeOrError = await dataSource.getNode(addressHex);
 
       if (nodeOrError !== undefined) {
-        setNode(nodeOrError);
-        addNode();
+        // setNode(nodeOrError);
+        addNode(nodeOrError);
       }
 
       // If not and app or node, load normal account
@@ -369,7 +369,12 @@ export default function AccountDetail() {
 
         <CopyButton text={publicKeyHex} width={488} />
 
-        <Button className="reveal-private-key">Reveal Private Key</Button>
+        <Button
+          className="reveal-private-key"
+          onClick={() => setIsPkRevealModalVisible(true)}
+        >
+          Reveal Private Key
+        </Button>
 
         <AccountTableContainer>
           <Table
@@ -391,7 +396,7 @@ export default function AccountDetail() {
                     <tr>
                       <th className="column-title"></th>
                       <th className="column-title">STATUS</th>
-                      <th className="column-title">TIMESTAMP</th>
+                      <th className="column-title">BLOCK HEIGHT</th>
                       <th className="column-title">TX HASH</th>
                     </tr>
                   </>
@@ -425,6 +430,12 @@ export default function AccountDetail() {
               ))}
           </Table>
         </AccountTableContainer>
+
+        <RevealPrivateKey
+          ppk={ppk}
+          visible={isPkRevealModalVisible}
+          onClose={() => setIsPkRevealModalVisible(false)}
+        />
       </AccountContent>
     </Layout>
   );

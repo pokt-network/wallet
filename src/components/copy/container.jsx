@@ -19,7 +19,8 @@ const CopyButtonContainer = styled.div`
 
     input {
       background: transparent;
-      /* font-size: 16px; */
+      max-width: 95%;
+      text-overflow: unset !important;
     }
   }
 

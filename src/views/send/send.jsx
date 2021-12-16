@@ -80,14 +80,11 @@ function ConfirmSend({
                 />
               </div>
 
-              {/* <div className="sending-container"> */}
-              <div className="you-are-sending">
-                <h2>You are sending</h2>
-                <p>{pokts} POKT</p>
-              </div>
+              <h2 className="you-are-sending">
+                You are sending {pokts} POKT to:
+              </h2>
 
               <CopyButton text={toAddress} className="to-address" />
-              {/* </div> */}
 
               <Button
                 mode="primary"
@@ -251,7 +248,7 @@ export default function SendM() {
     (txHash) => {
       history.push({
         pathname: "/transaction-detail",
-        data: { txHash },
+        data: { txHash, comesFromSend: true },
         loadFromCache: true,
       });
     },
@@ -261,7 +258,6 @@ export default function SendM() {
   const sendTransaction = useCallback(async () => {
     // this.enableLoaderIndicatory(true);
     if (passphrase && destinationAddress && ppk && amountToSend > 0) {
-      console.log(ppk, passphrase, destinationAddress, amountToSend);
       const txResponse = await dataSource.sendTransaction(
         ppk,
         passphrase,
@@ -313,7 +309,6 @@ export default function SendM() {
   const handlePoktValueChange = useCallback(
     ({ target }) => {
       const { value } = target;
-      console.log(value);
       if (value <= 0) {
         // this.toggleAmountError("Amount to send is invalid.");
         setPoktAmount(0);
@@ -323,7 +318,6 @@ export default function SendM() {
       }
 
       const upoktValue = Math.round(value * 1000000);
-      console.log("u: ", upoktValue);
       if (upoktBalance < upoktValue + txFee) {
         setAmountToSend(upoktValue);
         setPoktAmount(value);

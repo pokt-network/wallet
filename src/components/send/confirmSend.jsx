@@ -39,24 +39,12 @@ export const SendTransactionModalContainer = styled.div`
   }
 
   .you-are-sending {
-    width: 100%;
-    margin-bottom: 45px;
-
-    h2 {
-      font-weight: normal;
-      font-size: 16px;
-      line-height: 140%;
-      text-align: center;
-      color: ${(props) => props.theme.secondaryWhite};
-    }
-
-    p {
-      font-weight: bold;
-      font-size: 18px;
-      line-height: 110%;
-      color: ${(props) => props.theme.secondaryWhite};
-      text-align: center;
-    }
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 110%;
+    text-align: center;
+    color: ${(props) => props.theme.secondaryWhite};
+    margin-bottom: 17px;
   }
 
   .to-address {
@@ -65,7 +53,7 @@ export const SendTransactionModalContainer = styled.div`
 
   .send-button {
     width: 220px;
-    margin: 45px 0 25px 0;
+    margin: 39px 0 25px 0;
   }
 `;
 

@@ -154,7 +154,6 @@ export default function ImportPocket() {
 
   const onAccordionClick = useCallback(
     (option = -1) => {
-      console.log(currentImportOption, option);
       if (option === currentImportOption) {
         setCurrentImportOption(-1);
         return;

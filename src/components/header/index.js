@@ -72,7 +72,7 @@ class Header extends Component {
     return (
       <HeaderContainer isHidden={isMenuHidden}>
         <Wrapper className="header">
-          <Logo target="_target" href="/">
+          <Logo href="/account">
             {" "}
             <img src={logo} alt="Pocket Network logo" />
           </Logo>

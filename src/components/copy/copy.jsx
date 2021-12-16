@@ -3,7 +3,7 @@ import { TextCopy } from "@pokt-foundation/ui";
 import CopyButtonContainer from "./container";
 import MessageALert from "../messageAlert/messageAlert";
 
-export default function CopyButton({ text, width, ...props }) {
+export default function CopyButton({ text, width, hideAlert, ...props }) {
   const [displayAlert, setDisplayAlert] = useState(false);
 
   const onCopyClick = (message) => {
@@ -25,7 +25,7 @@ export default function CopyButton({ text, width, ...props }) {
       <TextCopy
         className="copy-button"
         value={text}
-        onCopy={onCopyClick}
+        onCopy={hideAlert ? null : onCopyClick}
         message={text}
       />
       <MessageALert className={displayAlert ? "active" : ""}>

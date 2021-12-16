@@ -28,6 +28,7 @@ const TransactionDetailContent = styled.section`
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
+          width: 95%;
         }
       }
 

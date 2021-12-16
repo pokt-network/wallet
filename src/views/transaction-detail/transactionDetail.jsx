@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Banner } from "@pokt-foundation/ui";
 import { useHistory, useLocation } from "react-router";
 
@@ -16,24 +16,13 @@ import pocketService from "../../core/services/pocket-service";
 const dataSource = getDataSource();
 
 export default function TransactionDetail() {
-  let location = useLocation();
-  let history = useHistory();
+  const location = useLocation();
+  const history = useHistory();
   const [txHash, setTxHash] = useState(
     location && location.data ? location.data.txHash : undefined
   );
-  // const [loadFromCache, setLoadFromCache] = useState(location.loadFromCache);
   const [tx, setTx] = useState(undefined);
-  const [statusImg, setStatusImg] = useState(noneImg);
-
-  const txEplorerLink = useMemo(
-    () => `${Config.BLOCK_EXPLORER_BASE_URL}/tx/${tx?.tx?.hash}`,
-    [tx]
-  );
-
-  const openExplorer = useCallback((address) => {
-    const url = `${Config.BLOCK_EXPLORER_BASE_URL}/account/${address}`;
-    window.open(url);
-  }, []);
+  const [statusImg, setStatusImg] = useState();
 
   const updateTxInformation = useCallback(
     (txObj = undefined, tx = undefined) => {
@@ -105,7 +94,6 @@ export default function TransactionDetail() {
           amount,
         } = getTransactionData(txResponse.stdTx);
 
-        // Update the UI with the retrieved tx
         const txSummary = {
           from: fromAddress,
           to: toAddress,
@@ -117,17 +105,15 @@ export default function TransactionDetail() {
         };
 
         setTx({
-          tx: {
-            sentAmount: txSummary.amount,
-            hash: txSummary.hash,
-            fee: Number(Config.TX_FEE) / 1000000,
-            type: txSummary.type,
-            fromAddress: txSummary.from,
-            toAddress: txSummary.to,
-            status: txSummary.status,
-            sentStatus: "Sent",
-            height: txSummary.height,
-          },
+          sentAmount: txSummary.amount,
+          hash: txSummary.hash,
+          fee: Number(Config.TX_FEE) / 1000000,
+          type: txSummary.type,
+          fromAddress: txSummary.from,
+          toAddress: txSummary.to,
+          status: txSummary.status,
+          sentStatus: "Sent",
+          height: txSummary.height,
         });
 
         pocketService.saveTxInCache(
@@ -142,17 +128,15 @@ export default function TransactionDetail() {
         );
 
         updateTxInformation(undefined, {
-          tx: {
-            sentAmount: txSummary.amount,
-            hash: txSummary.hash,
-            fee: Number(Config.TX_FEE) / 1000000,
-            type: txSummary.type,
-            fromAddress: txSummary.from,
-            toAddress: txSummary.to,
-            status: txSummary.status,
-            sentStatus: "Sent",
-            height: txSummary.height,
-          },
+          sentAmount: txSummary.amount,
+          hash: txSummary.hash,
+          fee: Number(Config.TX_FEE) / 1000000,
+          type: txSummary.type,
+          fromAddress: txSummary.from,
+          toAddress: txSummary.to,
+          status: txSummary.status,
+          sentStatus: "Sent",
+          height: txSummary.height,
         });
       } catch (error) {
         console.log(error);
@@ -163,14 +147,42 @@ export default function TransactionDetail() {
   );
 
   useEffect(() => {
-    // Scroll to top
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     if (txHash !== undefined) {
-      // Retrieve the tx information from the network
+      if (location?.data?.comesFromSend) {
+        const {
+          fromAddress,
+          height,
+          sentAmount,
+          sentStatus,
+          status,
+          toAddress,
+          txFee,
+          txHash,
+          type,
+        } = pocketService.getTxInfo();
+
+        const transaction = {
+          sentAmount: sentAmount,
+          hash: txHash,
+          fee: txFee,
+          type: type,
+          fromAddress,
+          toAddress,
+          status,
+          sentStatus,
+          height,
+        };
+
+        setTx(transaction);
+        updateTxInformation(undefined, transaction);
+
+        return;
+      }
+
       getTx(txHash);
     } else {
-      // Retrieve the tx information from cached
       const {
         type,
         fromAddress,
@@ -182,7 +194,6 @@ export default function TransactionDetail() {
         sentStatus,
         height,
       } = pocketService.getTxInfo();
-      // Check if values are set
       if (
         type &&
         fromAddress &&
@@ -194,55 +205,50 @@ export default function TransactionDetail() {
       ) {
         const sentAmountFormatted = sentAmount * 1000000;
 
-        const obj = {
-          tx: {
-            type,
-            fromAddress,
-            toAddress,
-            sentAmount: sentAmountFormatted,
-            hash: txHash,
-            fee: txFee,
-            status,
-            sentStatus,
-            height,
-          },
+        const transaction = {
+          type,
+          fromAddress,
+          toAddress,
+          sentAmount: sentAmountFormatted,
+          hash: txHash,
+          fee: txFee,
+          status,
+          sentStatus,
+          height,
         };
 
-        // Save information to the state
-        setTx(obj);
+        setTx(transaction);
         setTxHash(txHash);
-        // this.setState(obj);
-        // Update the tx information
-        updateTxInformation(obj.tx);
+        updateTxInformation(transaction);
       } else {
-        // Clear before redirecting to the login page
         localStorage.clear();
-        // Redirect to the home page
         history.push({
           pathname: "/",
         });
       }
     }
-  }, [txHash, getTx, updateTxInformation, history]);
+  }, [txHash, updateTxInformation, history, getTx, location]);
 
   return (
     <Layout title={<h1 className="title">Transaction Detail</h1>}>
       <TransactionDetailContent>
-        <Banner mode="info" title="Transaction Status">
-          Your tx will be confirmed on the next block, which is estimated to
-          take [Insert Block time from Pocket Scan] mins.
-        </Banner>
+        {location?.data?.comesFromSend ? (
+          <Banner mode="info" title="Transaction Status">
+            Your tx will be confirmed on the next block, which is estimated to
+            take 15 mins.
+          </Banner>
+        ) : null}
 
         <div className="details">
           <div className="tx-detail-row">
             <h2>Transaction hash</h2>
-            <CopyButton width="100%" text={txHash} className="hash-button" />
+            <CopyButton text={txHash} className="hash-button" />
           </div>
           <div className="tx-detail-row">
             <h2>Status</h2>
             <div className="status-container">
               <p>
-                <img src={statusImg} alt="status" /> {tx?.tx?.status}
+                <img src={statusImg} alt="status" /> {tx?.status}
               </p>
               <p>
                 pending <img src={load} alt="status" />
@@ -250,32 +256,32 @@ export default function TransactionDetail() {
             </div>
           </div>
 
-          <div className="tx-detail-row">
+          {/* <div className="tx-detail-row">
             <h2>Timestamp</h2>
             <p>34 sec ago</p>
-          </div>
+          </div> */}
 
           <div className="tx-detail-row">
             <h2>Amount</h2>
-            <p>{tx?.tx?.sentAmount / 1000000} POKT</p>
+            <p>{tx?.sentAmount / 1000000} POKT</p>
           </div>
 
           <div className="tx-detail-row">
             <h2>TX fee</h2>
-            <p>{tx?.tx?.fee} POKT</p>
+            <p>{tx?.fee} POKT</p>
           </div>
 
           <div className="tx-detail-row">
             <h2>TX type</h2>
-            <p>{tx?.tx?.type}</p>
+            <p>{tx?.type}</p>
           </div>
 
           <div className="tx-detail-row">
             <h2>To address</h2>
-            <p className="to-address">{tx?.tx?.toAddress}</p>
+            <p className="to-address">{tx?.toAddress}</p>
           </div>
 
-          <div className="tx-detail-row">
+          {/* <div className="tx-detail-row">
             <h2>Balance before</h2>
             <p>454,758.987 POKT </p>
           </div>
@@ -283,11 +289,11 @@ export default function TransactionDetail() {
           <div className="tx-detail-row">
             <h2>Balance after</h2>
             <p>454,758.987 POKT </p>
-          </div>
+          </div> */}
 
           <div className="tx-detail-row">
             <h2>Block #</h2>
-            <p>{tx?.tx?.height}</p>
+            <p>{tx?.height}</p>
           </div>
         </div>
       </TransactionDetailContent>
