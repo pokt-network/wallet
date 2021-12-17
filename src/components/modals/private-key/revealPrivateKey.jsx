@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Banner, Button, Modal } from "@pokt-foundation/ui";
+import { Banner, Button, Modal, useTheme } from "@pokt-foundation/ui";
 
 import PrivateKeyContainer from "./container";
 import PasswordInput from "../../input/passwordInput";
@@ -11,6 +11,7 @@ const dataSource = getDataSource();
 
 export default function RevealPrivateKey({ visible, onClose, ppk }) {
   const { width } = useWindowSize();
+  const theme = useTheme();
   const [privateKey, setPrivateKey] = useState("");
   const [passphrase, setPassphrase] = useState("");
 
@@ -70,6 +71,7 @@ export default function RevealPrivateKey({ visible, onClose, ppk }) {
           name="passphrase"
           className="passphrase-input"
           onChange={({ target }) => onPassphraseChange(target)}
+          color={theme.accentAlternative}
         />
 
         {privateKey && privateKey.length > 0 ? (
@@ -78,14 +80,11 @@ export default function RevealPrivateKey({ visible, onClose, ppk }) {
             <CopyButton text={privateKey} width="488px" hideAlert />
           </div>
         ) : (
-          <Button
-            className="reveal-button"
-            onClick={reveal}
-            wide
-            mode="primary"
-          >
-            Reveal
-          </Button>
+          <div className="reveal-button-container">
+            <Button className="reveal-button" onClick={reveal} mode="primary">
+              Reveal
+            </Button>
+          </div>
         )}
       </PrivateKeyContainer>
     </Modal>

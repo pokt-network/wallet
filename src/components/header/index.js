@@ -8,7 +8,7 @@ import StyledLi from "./li";
 import HeaderContainer from "./header";
 import logo from "../../utils/images/pokt-logo.png";
 import PocketService from "../../core/services/pocket-service";
-import { withRouter } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { Config } from "../../config/config";
 import IconLogOut from "../../icons/iconLogout";
 
@@ -84,16 +84,21 @@ class Header extends Component {
                 </a>
               </StyledLi>
               {isLoggedIn ? (
-                <StyledLi>
-                  <button
-                    className="nav-button"
-                    id="log-out-nav"
-                    onClick={this.onLogOut}
-                  >
-                    Log out
-                    <IconLogOut className="log-out-icon" />
-                  </button>
-                </StyledLi>
+                <>
+                  <StyledLi>
+                    <Link to="/account">Account Detail</Link>
+                  </StyledLi>
+                  <StyledLi>
+                    <button
+                      className="nav-button"
+                      id="log-out-nav"
+                      onClick={this.onLogOut}
+                    >
+                      Log out
+                      <IconLogOut className="log-out-icon" />
+                    </button>
+                  </StyledLi>
+                </>
               ) : null}
             </StyledUl>
           </Menu>

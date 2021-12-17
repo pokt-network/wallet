@@ -13,7 +13,8 @@ import loadIcon from "../../utils/images/icons/load.svg";
 import sentReceivedIcon from "../../utils/images/icons/sentReceived.svg";
 import pocketService from "../../core/services/pocket-service";
 import StakingOption from "../../components/account-detail/stakingOption";
-import RevealPrivateKey from "../../components/modals/private-key/RevealPrivateKey";
+import RevealPrivateKey from "../../components/modals/private-key/revealPrivateKey";
+import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake";
 
 const dataSource = getDataSource();
 
@@ -27,19 +28,17 @@ export default function AccountDetail() {
   const [ppk, setPpk] = useState("");
   const [poktsBalance, setPoktsBalance] = useState(0);
   const [, setUsdBalance] = useState(0);
-  // const [noTransactions, setNoTransactions] = useState(true);
   const [appStakedTokens, setAppStakedTokens] = useState(0);
   const [nodeStakedTokens, setNodeStakedTokens] = useState(0);
   const [appStakingStatus, setAppStakingStatus] = useState("UNSTAKED");
   const [nodeStakingStatus, setNodeStakingStatus] = useState("UNSTAKED");
   const [isPkRevealModalVisible, setIsPkRevealModalVisible] = useState(false);
-  // const [isUnjailModalVisible, setIsUnjailModalVisible] = useState(false);
-  // const [isUnstakeModalVisible, setIsUnstakeModalVisible] = useState(false);
+  const [isUnjailModalVisible, setIsUnjailModalVisible] = useState(false);
+  const [isUnstakeModalVisible, setIsUnstakeModalVisible] = useState(false);
   const [maxTxListCount, setMaxTxListCount] = useState(
     Number(Config.MIN_TRANSACTION_LIST_COUNT)
   );
   const [txList, setTxList] = useState([]);
-  // const [passphraseInput, setPassphraseInput] = useState("");
   const [price, setPrice] = useState(0);
 
   const increaseMaxTxListCount = useCallback(() => {
@@ -314,7 +313,7 @@ export default function AccountDetail() {
     <Layout
       title={
         <AccountHeaderContainer>
-          <h1>{poktsBalance} POKT</h1>
+          <h1>{Number(poktsBalance).toLocaleString("en-US")} POKT</h1>
           <h2>
             ${parseFloat(price * poktsBalance).toFixed(2)} USD{" "}
             <Link href="https://thunderheadotc.com">Price by Thunderhead</Link>
@@ -322,7 +321,22 @@ export default function AccountDetail() {
         </AccountHeaderContainer>
       }
     >
-      <AccountContent>
+      <AccountContent isStaked={nodeStakingStatus === "STAKED"}>
+        {nodeStakingStatus === "JAILED" ? (
+          <section className="unjail-container">
+            <div className="unjail-description">
+              <h2>Jailed Node</h2>
+              <p>Currently not dispaching Data</p>
+            </div>
+            <Button
+              className="unjail-button"
+              onClick={() => setIsUnjailModalVisible(true)}
+            >
+              Unjail
+            </Button>
+          </section>
+        ) : null}
+
         {nodeStakingStatus === "UNSTAKED" && appStakingStatus === "UNSTAKED" ? (
           <StakingOption
             className="none-options"
@@ -357,9 +371,20 @@ export default function AccountDetail() {
           </>
         )}
 
-        <Button mode="primary" className="send-button" onClick={pushToSend}>
-          Send
-        </Button>
+        <section className="unstake-send-container">
+          {nodeStakingStatus === "STAKED" ? (
+            <Button
+              className="unstake-button"
+              onClick={() => setIsUnstakeModalVisible(true)}
+            >
+              Unstake
+            </Button>
+          ) : null}
+
+          <Button mode="primary" className="send-button" onClick={pushToSend}>
+            Send
+          </Button>
+        </section>
 
         <h3 className="copy-title">Address</h3>
 
@@ -435,6 +460,22 @@ export default function AccountDetail() {
           ppk={ppk}
           visible={isPkRevealModalVisible}
           onClose={() => setIsPkRevealModalVisible(false)}
+        />
+
+        <UnjailUnstake
+          type="unjail"
+          ppk={ppk}
+          visible={isUnjailModalVisible}
+          onClose={() => setIsUnjailModalVisible(false)}
+          pushToTxDetail={pushToTxDetail}
+        />
+
+        <UnjailUnstake
+          type="unstake"
+          ppk={ppk}
+          visible={isUnstakeModalVisible}
+          onClose={() => setIsUnstakeModalVisible(false)}
+          pushToTxDetail={pushToTxDetail}
         />
       </AccountContent>
     </Layout>

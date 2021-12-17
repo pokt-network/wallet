@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import { maxPhone } from "../../../utils/media";
 
 const PrivateKeyContainer = styled.div`
   width: 100%;
@@ -15,13 +16,26 @@ const PrivateKeyContainer = styled.div`
     color: ${(props) => props.theme.colors.blue};
   }
 
-  .reveal-button {
-    margin: 30px 0 10px 0;
+  .reveal-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    .reveal-button {
+      margin: 30px 0 10px 0;
+      width: 228px;
+    }
   }
 
   .private-key-container {
     margin: 30px 0;
   }
+
+  ${maxPhone(css`
+    .reveal-button {
+      width: 100% !important;
+    }
+  `)}
 `;
 
 export default PrivateKeyContainer;

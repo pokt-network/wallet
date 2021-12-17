@@ -7,15 +7,19 @@ const AccountContent = styled.div`
   flex-direction: column;
   align-items: center;
 
-  .send-button {
-    width: 220px;
-    height: 48px;
+  .unstake-send-container {
+    width: 100%;
+    display: flex;
+    justify-content: ${(props) =>
+      props.isStaked ? "space-between" : "center"};
+    flex-wrap: wrap;
     margin: 61px 0 63px 0;
 
-    ${maxPhone(css`
-      width: 280px;
-      margin: 28px 0 59px 0;
-    `)}
+    .send-button,
+    .unstake-button {
+      width: 220px;
+      height: 48px;
+    }
   }
 
   .copy-title {
@@ -78,6 +82,39 @@ const AccountContent = styled.div`
     margin: 31px 0;
   }
 
+  .unjail-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    width: 100%;
+    height: 91px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin: 0 0 47px 0;
+
+    .unjail-description {
+      h2 {
+        font-weight: bold;
+        font-size: 24px;
+        line-height: 110%;
+        color: ${(props) => props.theme.colors.secondaryWhite};
+      }
+
+      p {
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 140%;
+        text-align: center;
+        color: ${(props) => props.theme.colors.secondaryWhite};
+      }
+    }
+
+    .unjail-button {
+      width: 228px;
+    }
+  }
+
   ${maxPhone(css`
     width: 100%;
     max-width: 100%;
@@ -99,6 +136,21 @@ const AccountContent = styled.div`
 
     .separator {
       width: 100%;
+    }
+
+    .unjail-container {
+      width: 100%;
+      height: 154px;
+    }
+
+    .unstake-send-container {
+      margin: 28px 0 59px 0;
+      flex-direction: column;
+      align-items: center;
+
+      .unstake-button {
+        margin-bottom: 39px;
+      }
     }
   `)}
 `;

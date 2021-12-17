@@ -32,8 +32,8 @@ export default function WalletRoutes() {
   }, [location, displayLocation]);
 
   useEffect(() => {
-    console.log("xd")
-  })
+    console.log("xd");
+  });
 
   return (
     <div
