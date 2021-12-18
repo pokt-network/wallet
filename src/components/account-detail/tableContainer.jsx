@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { maxPhone } from "../../utils/media";
+import { maxPhone, phone } from "../../utils/media";
 
 const AccountTableContainer = styled.div`
   width: 100%;
@@ -110,6 +110,11 @@ const AccountTableContainer = styled.div`
 
     .hash-button {
       font-weight: 300;
+    }
+  `)}
+
+  ${phone(css`
+    .hash-button {
       max-width: 75px;
     }
   `)}

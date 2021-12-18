@@ -19,10 +19,7 @@ import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake"
 const dataSource = getDataSource();
 
 export default function AccountDetail() {
-  let history = useHistory();
-
-  // const [app, setApp] = useState(undefined);
-  // const [node, setNode] = useState(undefined);
+  const history = useHistory();
   const [addressHex, setAddressHex] = useState("");
   const [publicKeyHex, setPublicKeyHex] = useState("");
   const [ppk, setPpk] = useState("");
@@ -46,10 +43,6 @@ export default function AccountDetail() {
       setMaxTxListCount((prevMax) => prevMax + 50);
     }
   }, [maxTxListCount]);
-
-  // const maxListCountExceeded = () => {
-  //   return maxTxListCount > Number(Config.MAX_TRANSACTION_LIST_COUNT);
-  // };
 
   const pushToTxDetail = useCallback(
     (txHash, useCache) => {
@@ -133,11 +126,8 @@ export default function AccountDetail() {
         };
         const renderedTxs = rTxs.map(renderTxs).filter((i) => i);
         setTxList(renderedTxs);
-
-        // this.enableLoaderIndicatory(false);
       } catch (error) {
         console.log(error);
-        // this.enableLoaderIndicatory(false);
       }
     },
     [getTransactionData, pushToTxDetail]
@@ -150,13 +140,7 @@ export default function AccountDetail() {
     );
 
     if (allTxs !== undefined) {
-      // setVisibility(true);
-      // setNoTransactions(false);
       updateTransactionList(allTxs);
-    } else {
-      // setVisibility(false);
-      // setNoTransactions(true);
-      // this.enableLoaderIndicatory(false);
     }
   }, [addressHex, maxTxListCount, updateTransactionList]);
 
@@ -185,7 +169,6 @@ export default function AccountDetail() {
     if (node !== undefined) {
       const isUnjailing = localStorage.getItem("unjailing");
 
-      // Update the staked amount
       if (node.tokens) {
         obj.stakedTokens = (Number(node.tokens.toString()) / 1000000).toFixed(
           3
@@ -243,22 +226,13 @@ export default function AccountDetail() {
       const appOrError = await dataSource.getApp(addressHex);
 
       if (appOrError !== undefined) {
-        // setApp(appOrError);
         addApp(appOrError);
       }
 
-      // Try to get the node information
       const nodeOrError = await dataSource.getNode(addressHex);
 
       if (nodeOrError !== undefined) {
-        // setNode(nodeOrError);
         addNode(nodeOrError);
-      }
-
-      // If not and app or node, load normal account
-      if (appOrError === undefined && nodeOrError === undefined) {
-        // Account type, amount staked and staking status
-        // this.setState({ displayNormalAccount: true });
       }
     },
     [addApp, addNode]
@@ -266,7 +240,6 @@ export default function AccountDetail() {
 
   const refreshView = useCallback(
     (addressHex, loadMore = false) => {
-      // enableLoaderIndicatory(true);
       getBalance(addressHex);
       getPrice();
       getAccountType(addressHex);
@@ -313,9 +286,18 @@ export default function AccountDetail() {
     <Layout
       title={
         <AccountHeaderContainer>
-          <h1>{Number(poktsBalance).toLocaleString("en-US")} POKT</h1>
+          <h1>
+            {Number(poktsBalance).toLocaleString("en-US", {
+              maximumFractionDigits: 2,
+            })}{" "}
+            POKT
+          </h1>
           <h2>
-            ${parseFloat(price * poktsBalance).toFixed(2)} USD{" "}
+            $
+            {parseFloat(price * poktsBalance).toLocaleString("en-US", {
+              maximumFractionDigits: 2,
+            })}{" "}
+            USD{" "}
             <Link href="https://thunderheadotc.com">Price by Thunderhead</Link>
           </h2>
         </AccountHeaderContainer>
@@ -434,19 +416,21 @@ export default function AccountDetail() {
             {txList &&
               txList.map(({ options: { onClick }, ...tx }) => (
                 <tr key={tx.hash}>
-                  <td>
+                  <td width="10%">
                     <img
                       src={tx.imageSrc}
                       alt={tx.type.toLowerCase()}
                       className="tx-icon"
                     />
                   </td>
-                  <td>
+                  <td width="30%">
                     <p className="qty">{tx.amount} POKT</p>
                     <p className="status">{tx.type.toLowerCase()}</p>
                   </td>
-                  <td className="timestamp">{tx.height}</td>
-                  <td>
+                  <td className="timestamp" width="30%">
+                    {tx.height}
+                  </td>
+                  <td width="30%">
                     <button className="hash-button" onClick={onClick}>
                       {tx.hash}
                     </button>

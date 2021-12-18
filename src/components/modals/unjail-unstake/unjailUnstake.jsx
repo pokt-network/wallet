@@ -6,6 +6,7 @@ import PasswordInput from "../../input/passwordInput";
 import { getDataSource } from "../../../datasource";
 import pocketService from "../../../core/services/pocket-service";
 import { Config } from "../../../config/config";
+import ErrorLabel from "../../error-label/error";
 
 const dataSource = getDataSource();
 
@@ -18,6 +19,7 @@ export default function UnjailUnstake({
 }) {
   const theme = useTheme();
   const [passphrase, setPassphrase] = useState("");
+  const [passphraseError, setPassphraseError] = useState("");
 
   const unjailNode = useCallback(async () => {
     if (ppk && passphrase) {
@@ -26,12 +28,8 @@ export default function UnjailUnstake({
         ppk,
         passphrase
       );
-
       if (account === undefined) {
-        // this.setState({
-        //   displayError: true,
-        //   errorMessage: "Invalid passphrase.",
-        // });
+        setPassphraseError("Invalid passphrase");
         return;
       }
 
@@ -41,11 +39,7 @@ export default function UnjailUnstake({
       );
 
       if (unlockedAccount === undefined) {
-        // this.setState({
-        //   displayError: true,
-        //   errorMessage: "Invalid passphrase.",
-        // });
-        // this.enableLoaderIndicatory(false);
+        setPassphraseError("Invalid passphrase");
         return;
       }
 
@@ -67,22 +61,17 @@ export default function UnjailUnstake({
         );
         localStorage.setItem("unjailing", true);
         pushToTxDetail(txResponse.txhash, true);
-
         return;
       } else {
-        // this.setState({
-        //   visibility: false,
-        //   displayError: true,
-        //   errorMessage: "Failed to submit unjail tx.",
-        // });
-        // this.enableLoaderIndicatory(false);
+        setPassphrase("Failed to submit unjail tx");
         return;
       }
+    } else {
+      setPassphraseError("Invalid passphrase");
     }
   }, [ppk, passphrase, pushToTxDetail]);
 
   const unstakeNode = useCallback(async () => {
-    // Check for ppk and the element
     if (ppk && passphrase) {
       const account = await dataSource.importPortablePrivateKey(
         passphrase,
@@ -91,11 +80,7 @@ export default function UnjailUnstake({
       );
 
       if (account === undefined) {
-        // this.setState({
-        //   displayError: true,
-        //   errorMessage: "Invalid passphrase.",
-        // });
-
+        setPassphraseError("Invalid passphrase");
         return;
       }
 
@@ -105,10 +90,7 @@ export default function UnjailUnstake({
       );
 
       if (unlockedAccount === undefined) {
-        // this.setState({
-        //   displayError: true,
-        //   errorMessage: "Invalid passphrase.",
-        // });
+        setPassphraseError("Invalid passphrase");
         return;
       }
 
@@ -134,15 +116,17 @@ export default function UnjailUnstake({
         pushToTxDetail(txResponse.txhash, true);
         return;
       } else {
-        // this.setState({
-        //   visibility: false,
-        //   displayError: true,
-        //   errorMessage: "Failed to submit unstake tx.",
-        // });
+        setPassphraseError("Invalid passphrase");
         return;
       }
+    } else {
+      setPassphraseError("Invalid passphrase");
     }
   }, [passphrase, ppk, pushToTxDetail]);
+
+  const onPassphraseChange = useCallback(({ value }) => {
+    setPassphrase(value);
+  }, []);
 
   return (
     <Modal visible={visible} onClose={onClose}>
@@ -153,7 +137,12 @@ export default function UnjailUnstake({
         <PasswordInput
           placeholder="Keyfile Passphrase"
           color={theme.accentAlternative}
+          onChange={({ target }) => onPassphraseChange(target)}
+          style={{
+            border: passphraseError ? `2px solid ${theme.negative}` : undefined,
+          }}
         />
+        <ErrorLabel message={passphraseError} show={passphraseError} />
         <Button
           className="send-button"
           mode="primary"

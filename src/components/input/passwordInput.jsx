@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { TextInput } from "@pokt-foundation/ui";
-import IconEye from "../../icons/iconEye";
+import IconEye from "../../icons/iconEye.jsx";
 
 export default function PasswordInput({ placeholder, ...props }) {
   const [showPassword, setShowPassword] = useState(false);

@@ -10,6 +10,24 @@ const ImportPocketContent = styled.section`
     margin-bottom: 32px;
   }
 
+  .error-label-container {
+    width: 100%;
+    max-width: 488px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+  }
+
   .nimport-container {
     width: 100%;
     display: flex;
@@ -39,7 +57,7 @@ const ImportPocketContent = styled.section`
 
     .custom-file-input {
       width: 100%;
-      margin: 0 0 40px 0;
+      /* margin: 0 0 40px 0; */
       border: 2px solid ${(props) => props.theme.surfaceInteractiveBorder};
       color: ${(props) => props.theme.placeholder};
       height: 56px;

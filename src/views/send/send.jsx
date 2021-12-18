@@ -18,6 +18,8 @@ import pocketService from "../../core/services/pocket-service";
 import { typeGuard } from "@pokt-network/pocket-js";
 import { useHistory } from "react-router";
 import { isPassphraseValid } from "../../utils/validations";
+import ErrorLabel from "../../components/error-label/error";
+import { isAddress } from "../../utils/isAddress";
 
 const dataSource = getDataSource();
 
@@ -27,10 +29,10 @@ function ConfirmSend({
   step,
   setStep,
   sendTransaction,
-  passphrase,
   setPassphrase,
+  passphraseError,
+  theme,
 }) {
-  const theme = useTheme();
   const { width } = useWindowSize();
 
   const goBack = useCallback(() => setStep(0), [setStep]);
@@ -78,10 +80,12 @@ function ConfirmSend({
                   color={theme.accentAlternative}
                   onChange={(e) => onPassphraseChange(e)}
                 />
+
+                <ErrorLabel message={passphraseError} show={passphraseError} />
               </div>
 
               <h2 className="you-are-sending">
-                You are sending {pokts} POKT to:
+                You are sending {pokts / 1000000} POKT to:
               </h2>
 
               <CopyButton text={toAddress} className="to-address" />
@@ -118,10 +122,11 @@ function ConfirmSend({
                 color={theme.accentAlternative}
                 onChange={(e) => onPassphraseChange(e)}
               />
+              <ErrorLabel message={passphraseError} show={passphraseError} />
             </div>
 
             <h2>You are sending</h2>
-            <p>{pokts} POKT</p>
+            <p>{pokts / 1000000} POKT</p>
 
             <CopyButton text={toAddress} className="to-address" />
 
@@ -154,12 +159,15 @@ function SendTransaction({
   updateDestinationAddress,
   validate,
   setStep,
+  amountError,
+  addressError,
+  destinationAddress,
+  theme,
 }) {
   const onSendClick = useCallback(() => {
     const isValid = validate();
 
     if (!isValid) {
-      //do some error
       return;
     }
 
@@ -178,8 +186,8 @@ function SendTransaction({
               step="0.01"
               name="pokt"
               min={0}
-              value={poktAmount}
               onChange={handlePoktValueChange}
+              value={poktAmount}
             />
             <label htmlFor="pokt">POKT</label>
           </div>
@@ -190,8 +198,15 @@ function SendTransaction({
         <TextInput
           placeholder="Send to Address"
           onChange={updateDestinationAddress}
+          value={destinationAddress}
+          style={{
+            border: addressError ? `2px solid ${theme.negative}` : undefined,
+          }}
         />
         <p>TX Fee {Number(fees / 1000000).toLocaleString("en-US")} POKT</p>
+        <ErrorLabel message={addressError} show={addressError} />
+        <ErrorLabel message={amountError} show={amountError} />
+
         <Button mode="primary" onClick={onSendClick}>
           Send
         </Button>
@@ -200,8 +215,9 @@ function SendTransaction({
   );
 }
 
-export default function SendM() {
-  let history = useHistory();
+export default function Send() {
+  const history = useHistory();
+  const theme = useTheme();
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
   const [destinationAddress, setDestinationAddress] = useState(undefined);
@@ -211,10 +227,9 @@ export default function SendM() {
   const [upoktBalance, setUpoktBalance] = useState(0);
   const [isAmountValid, setIsAmountValid] = useState(false);
   const [isAddressValid, setIsAddressValid] = useState(false);
-  const [txFee, setTxFee] = useState(Number(Config.TX_FEE));
+  const [txFee] = useState(Number(Config.TX_FEE));
   const [poktAmount, setPoktAmount] = useState(undefined);
-  const [poktAmountUsd, setPoktAmountUsd] = useState(undefined);
-  const [balanceError, setBalanceError] = useState(undefined);
+  const [, setPoktAmountUsd] = useState(undefined);
   const [addressError, setAddressError] = useState(undefined);
   const [amountError, setAmountError] = useState(undefined);
   const [passphraseError, setPassphraseError] = useState(undefined);
@@ -227,17 +242,12 @@ export default function SendM() {
 
   const validate = useCallback(() => {
     if (isAddressValid === false) {
-      // this.setState({
-      //   isPassModalVisible: false,
-      //   addressError: "Invalid Address.",
-      // });
+      setAddressError("Invalid address");
       return false;
     }
 
     if (isAmountValid === false) {
-      // this.setState({
-      //   isPassModalVisible: false,
-      // });
+      setAmountError("Invalid amount");
       return false;
     }
 
@@ -256,7 +266,6 @@ export default function SendM() {
   );
 
   const sendTransaction = useCallback(async () => {
-    // this.enableLoaderIndicatory(true);
     if (passphrase && destinationAddress && ppk && amountToSend > 0) {
       const txResponse = await dataSource.sendTransaction(
         ppk,
@@ -266,12 +275,11 @@ export default function SendM() {
       );
 
       if (typeGuard(txResponse, Error)) {
-        // this.enableLoaderIndicatory(false);
-        // this.togglePassphraseError(
-        //   txResponse.message !== undefined
-        //     ? txResponse.message
-        //     : "Failed to send the transaction, please verify the information."
-        // );
+        setPassphraseError(
+          txResponse?.message
+            ? txResponse.message
+            : "Failed to send the transaction, please verify the information."
+        );
         return;
       }
 
@@ -287,13 +295,9 @@ export default function SendM() {
         "Pending"
       );
 
-      // this.enableLoaderIndicatory(false);
       pushToTxDetail(txResponse.txhash);
     } else {
-      // this.enableLoaderIndicatory(false);
-      // this.toggleAddressError(
-      //   "Amount to send or the destination address are invalid."
-      // );
+      setAddressError("Amount to send or the destination address are invalid.");
     }
   }, [
     addressHex,
@@ -310,7 +314,7 @@ export default function SendM() {
     ({ target }) => {
       const { value } = target;
       if (value <= 0) {
-        // this.toggleAmountError("Amount to send is invalid.");
+        setAmountError("Amount to send is invalid.");
         setPoktAmount(0);
         setPoktAmountUsd(0);
         setIsAmountValid(false);
@@ -322,14 +326,12 @@ export default function SendM() {
         setAmountToSend(upoktValue);
         setPoktAmount(value);
         setIsAmountValid(false);
-        // this.enableLoaderIndicatory(false);
-        // this.toggleAmountError("Insufficient balance.");
+        setAmountError("Insufficient balance.");
       } else {
-        // Save the values in the state
         setAmountToSend(upoktValue);
         setIsAmountValid(true);
         setPoktAmount(value);
-        // this.toggleAmountError(undefined);
+        setAmountError("");
       }
     },
     [txFee, upoktBalance]
@@ -340,18 +342,18 @@ export default function SendM() {
       const { value } = target;
 
       if (addressHex.toLowerCase() === value.toLowerCase()) {
-        // this.toggleAddressError(
-        //   "Recipient address cannot be the same as the sender's address."
-        // );
+        setAddressError(
+          "Recipient address cannot be the same as the sender's address."
+        );
         setIsAddressValid(false);
-      } else if (dataSource.validateAddress(value)) {
+      } else if (isAddress(value)) {
         setDestinationAddress(value);
         setIsAddressValid(true);
-        // this.toggleAddressError(undefined);
+        setAddressError("");
         return;
       } else {
         setIsAddressValid(false);
-        // this.toggleAddressError("Address is invalid.");
+        setAddressError("Address is invalid.");
       }
     },
     [addressHex]
@@ -366,9 +368,7 @@ export default function SendM() {
       setPpk(ppk);
       getAccountBalance(addressHex);
     } else {
-      // Clear before redirecting to the login page
       localStorage.clear();
-      // Redirect to the home page
       history.push({
         pathname: "/",
       });
@@ -385,6 +385,10 @@ export default function SendM() {
           validate={validate}
           setStep={setStep}
           updateDestinationAddress={updateDestinationAddress}
+          amountError={amountError}
+          addressError={addressError}
+          destinationAddress={destinationAddress}
+          theme={theme}
         />
       ) : (
         <ConfirmSend
@@ -393,8 +397,9 @@ export default function SendM() {
           pokts={amountToSend}
           toAddress={destinationAddress}
           sendTransaction={sendTransaction}
-          passphrase={passphrase}
           setPassphrase={setPassphrase}
+          passphraseError={passphraseError}
+          theme={theme}
         />
       )}
     </>

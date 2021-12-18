@@ -7,6 +7,10 @@ const CreateContainer = styled.div`
   flex-direction: column;
   align-items: center;
 
+  .download-button-container {
+    width: 100%;
+  }
+
   .notification {
     margin: 32px 0;
 
@@ -16,7 +20,8 @@ const CreateContainer = styled.div`
     }
   }
 
-  .passphrase-input {
+  .passphrase-input-container {
+    width: 100%;
     margin-bottom: 26px;
   }
 

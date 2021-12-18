@@ -36,10 +36,10 @@ const AccountContent = styled.div`
   }
 
   .staking-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(131px, 1fr));
     width: 100%;
     padding-left: 20px;
+    display: flex;
+    justify-content: space-evenly;
 
     svg {
       height: 12px;

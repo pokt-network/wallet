@@ -11,6 +11,7 @@ import { getDataSource } from "../../datasource";
 import pocketService from "../../core/services/pocket-service";
 import { useHistory } from "react-router";
 import { isPassphraseValid } from "../../utils/validations";
+import ErrorLabel from "../../components/error-label/error";
 
 const dataSource = getDataSource();
 
@@ -36,7 +37,7 @@ function Create({
 
         if (!isPassphraseValid(value)) {
           setPassPhraseError(
-            "Passphrase have 15 alphanumeric symbols, one capital letter, one lowercase, one special characters and one number."
+            "Passphrase must have 15 alphanumeric symbols, one capital letter, one lowercase, one special characters and one number."
           );
         } else {
           setPassPhraseError(undefined);
@@ -86,6 +87,8 @@ function Create({
 
         goNext();
       }
+    } else {
+      setConfirmPassphraseError("The passphrase does not fit the requirements");
     }
   }, [
     confirmPassphrase,
@@ -119,20 +122,32 @@ function Create({
             </p>
           </Banner>
         </div>
-        <TextInput
-          className="passphrase-input"
-          type="password"
-          placeholder="Passphrase"
-          wide
-          onChange={({ target }) => onPassphraseChange(target)}
-        />
-        <TextInput
-          className="passphrase-input"
-          type="password"
-          placeholder="Confirm Passphrase"
-          wide
-          onChange={({ target }) => onConfirmPassphraseChange(target)}
-        />
+
+        <div className="passphrase-input-container">
+          <TextInput
+            className="passphrase-input"
+            type="password"
+            placeholder="Passphrase"
+            wide
+            onChange={({ target }) => onPassphraseChange(target)}
+          />
+          <ErrorLabel message={passPhraseError} show={passPhraseError} />
+        </div>
+
+        <div className="passphrase-input-container">
+          <TextInput
+            className="passphrase-input"
+            type="password"
+            placeholder="Confirm Passphrase"
+            wide
+            onChange={({ target }) => onConfirmPassphraseChange(target)}
+          />
+          <ErrorLabel
+            message={confirmPassphraseError}
+            show={confirmPassphraseError}
+          />
+        </div>
+
         <p className="disclaimer">
           Make sure yout password has minimum 15 alphanumeric symbols, one
           capital letter, one lowercase, one special characters and one number.
@@ -163,11 +178,12 @@ function Download({
   addressHex,
   publicKeyHex,
 }) {
-  let history = useHistory();
+  const history = useHistory();
+  const [downloadError, setDownloadError] = useState("");
 
   const handleDownload = useCallback(async () => {
-    if (ppk === undefined) {
-      console.error("Can't download if no account was created.");
+    if (!ppk) {
+      setDownloadError("Can't download if no account was created.");
       return;
     }
 
@@ -185,6 +201,7 @@ function Download({
 
   const pushToAccountDetail = useCallback(() => {
     if (!keyFileDownloaded) {
+      setDownloadError("Please download your key file before proceeding.");
       return;
     }
 
@@ -193,9 +210,11 @@ function Download({
       publicKeyHex.length === 0 ||
       ppk.length === 0
     ) {
+      setDownloadError("No account available, please create an account");
       return;
     }
 
+    setDownloadError("");
     history.push({
       pathname: "/account",
     });
@@ -213,10 +232,13 @@ function Download({
           </Banner>
         </div>
 
-        <ButtonBase className="download-button" onClick={handleDownload}>
-          <span>keyfile.json</span>
-          <IconDownload />
-        </ButtonBase>
+        <div className="download-button-container">
+          <ButtonBase className="download-button" onClick={handleDownload}>
+            <span>keyfile.json</span>
+            <IconDownload />
+          </ButtonBase>
+          <ErrorLabel message={downloadError} show={downloadError} />
+        </div>
 
         <p className="disclaimer">
           If you lose the keyfile or passphrase, you should use the private key

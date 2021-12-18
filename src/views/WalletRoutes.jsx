@@ -31,10 +31,6 @@ export default function WalletRoutes() {
     if (location !== displayLocation) setTransistionStage("fadeOut");
   }, [location, displayLocation]);
 
-  useEffect(() => {
-    console.log("xd");
-  });
-
   return (
     <div
       className={transitionStage}

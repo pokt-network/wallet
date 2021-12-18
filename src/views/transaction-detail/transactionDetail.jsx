@@ -1,8 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Banner } from "@pokt-foundation/ui";
+import { Banner, IconCopy, Link } from "@pokt-foundation/ui";
 import { useHistory, useLocation } from "react-router";
 
-import CopyButton from "../../components/copy/copy";
 import Layout from "../../components/layout";
 import TransactionDetailContent from "../../components/transaction-detail/content";
 import { Config } from "../../config/config";
@@ -12,8 +11,10 @@ import successImg from "../../utils/images/check_green.png";
 import failedImg from "../../utils/images/wrong_red.png";
 import pocketService from "../../core/services/pocket-service";
 import IconTXStatus from "../../icons/iconTxStatus";
+import ButtonIcon from "@pokt-foundation/ui/dist/ButtonIcon";
 
 const dataSource = getDataSource();
+const POKT_SCAN_BASE_URL = "https://poktscan.com/public/";
 
 export default function TransactionDetail() {
   const location = useLocation();
@@ -235,7 +236,7 @@ export default function TransactionDetail() {
 
   return (
     <Layout title={<h1 className="title">Transaction Detail</h1>}>
-      <TransactionDetailContent>
+      <TransactionDetailContent tx={tx}>
         {location?.data?.comesFromSend ? (
           <Banner mode="info" title="Transaction Status">
             Your tx will be confirmed on the next block, which is estimated to
@@ -246,7 +247,22 @@ export default function TransactionDetail() {
         <div className="details">
           <div className="tx-detail-row">
             <h2>Transaction hash</h2>
-            <CopyButton text={txHash} className="hash-button" />
+
+            <div className="hash-container">
+              <Link
+                href={`${POKT_SCAN_BASE_URL}/tx/${txHash}`}
+                className="hash"
+              >
+                {txHash}
+              </Link>
+
+              <ButtonIcon
+                className="copy-icon-button"
+                onClick={() => navigator.clipboard.writeText(txHash)}
+              >
+                <IconCopy size="small" />
+              </ButtonIcon>
+            </div>
           </div>
           <div className="tx-detail-row">
             <h2>Status</h2>
@@ -284,12 +300,19 @@ export default function TransactionDetail() {
 
           <div className="tx-detail-row">
             <h2>To address</h2>
-            <p className="to-address">{tx?.toAddress}</p>
+            <Link
+              href={`${POKT_SCAN_BASE_URL}/account/${tx?.toAddress}`}
+              className="to-address"
+            >
+              {tx?.toAddress}
+            </Link>
           </div>
 
           <div className="tx-detail-row">
             <h2>Block #</h2>
-            <p>{tx?.height}</p>
+            <p className="block-height">
+              {tx?.height ? tx.height : "Waiting for confirmation"}
+            </p>
           </div>
         </div>
       </TransactionDetailContent>

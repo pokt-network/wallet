@@ -5,23 +5,28 @@ import { typeGuard } from "@pokt-network/pocket-js";
 import Layout from "../../components/layout";
 import ImportPocketContent from "../../components/import-pocket/content";
 import Accordion from "../../components/accordion";
-import { Button, TextInput } from "@pokt-foundation/ui";
+import { Button, TextInput, useTheme } from "@pokt-foundation/ui";
 import IconUpload from "../../icons/iconUpload";
 import PasswordInput from "../../components/input/passwordInput";
 import { getDataSource } from "../../datasource";
 import PocketService from "../../core/services/pocket-service";
 import Link from "../../components/link/link";
+import ErrorLabel from "../../components/error-label/error";
+import { isPassphraseValid } from "../../utils/validations";
 
 const dataSource = getDataSource();
 
 export default function ImportPocket() {
-  let history = useHistory();
+  const history = useHistory();
+  const theme = useTheme();
   const [fileName, setFileName] = useState("");
   const [ppk, setPpk] = useState("");
   const [privateKey, setPrivateKey] = useState("");
   const [ppkError, setppkError] = useState("");
   const [privateKeyError, setPrivateKeyError] = useState("");
-  const [buttonError, setButtonError] = useState("");
+  const [ppkPassphraseError, setPpkPassphraseError] = useState("");
+  const [privateKeyPassphraseError, setPrivateKeyPassphraseError] =
+    useState("");
   const [filePassphrase, setFilePassphrase] = useState("");
   const [privKeyPassphrase, setPrivKeyPassphrase] = useState("");
   const [currentImportOption, setCurrentImportOption] = useState(undefined);
@@ -53,10 +58,11 @@ export default function ImportPocket() {
     const isValidPrivateKey = dataSource.validatePrivateKey(privateKey);
 
     if (!isValidPrivateKey) {
-      // Some error handling
+      setPrivateKeyError("Invalid private key input.");
       return;
     }
 
+    setPrivateKeyError("");
     setPrivateKey(privateKey);
   };
 
@@ -64,15 +70,21 @@ export default function ImportPocket() {
     const fileInputValue = await parseFileInputContent(target);
 
     if (!fileInputValue) {
-      console.error("Error parsing file");
+      setppkError("Error parsing PPK contents.");
       return;
     }
 
+    setppkError("");
     setPpk(fileInputValue);
   };
 
   const importAccountFromFile = useCallback(async () => {
-    if (filePassphrase.length === 0) return;
+    if (filePassphrase.length === 0 || !isPassphraseValid(filePassphrase)) {
+      setPpkPassphraseError("Invalid Passphrase");
+      return;
+    }
+
+    setPpkPassphraseError("");
 
     try {
       const account = await dataSource.importPortablePrivateKey(
@@ -97,15 +109,24 @@ export default function ImportPocket() {
         data: true,
       });
     } catch (error) {
+      setppkError(
+        "There was an error importing your Key File, please try again."
+      );
       console.error(error);
     }
   }, [history, filePassphrase, ppk]);
 
   const importAccountFromPrivateKey = useCallback(async () => {
-    if (privKeyPassphrase.length === 0) return;
+    if (privKeyPassphrase.length === 0) {
+      setPrivateKeyPassphraseError("Invalid Passphrase");
+      return;
+    }
+
+    setPrivateKeyPassphraseError("");
 
     try {
       if (!dataSource.validatePrivateKey(privateKey)) {
+        setPrivateKeyError("Your private key is invalid, please try again.");
         return false;
       }
 
@@ -122,6 +143,9 @@ export default function ImportPocket() {
       const ppk = await dataSource.exportPPK(privateKey, privKeyPassphrase);
 
       if (!ppk) {
+        setPrivateKeyError(
+          "There was an error decoding your private key, please try again."
+        );
         console.error(account);
         return false;
       }
@@ -137,6 +161,9 @@ export default function ImportPocket() {
         data: true,
       });
     } catch (error) {
+      setPrivateKeyError(
+        "There was an error decoding your private key, please try again."
+      );
       console.error(error);
       return false;
     }
@@ -174,21 +201,42 @@ export default function ImportPocket() {
             open={currentImportOption === 0}
             onClick={() => onAccordionClick(0)}
           >
-            <label className="custom-file-input">
-              {fileName ? fileName : "Select File"}
-              <TextInput
-                adornment={<IconUpload color="white" />}
-                adornmentPosition="end"
-                type="file"
-                wide
-                className="upload-file-input"
-                onChange={onFileUploadChange}
+            <div className="error-label-container">
+              <label
+                className="custom-file-input"
+                style={{
+                  border: ppkError ? `2px solid ${theme.negative}` : undefined,
+                }}
+              >
+                {fileName ? fileName : "Select File"}
+                <TextInput
+                  adornment={<IconUpload color="white" />}
+                  adornmentPosition="end"
+                  type="file"
+                  wide
+                  className="upload-file-input"
+                  onChange={onFileUploadChange}
+                  accept=".json"
+                />
+              </label>
+              <ErrorLabel message={ppkError} show={ppkError} />
+            </div>
+
+            <div className="error-label-container">
+              <PasswordInput
+                placeholder="Keyfile Passphrase"
+                onChange={(e) => passPhraseChange("file", e)}
+                style={{
+                  border: ppkPassphraseError
+                    ? `2px solid ${theme.negative}`
+                    : undefined,
+                }}
               />
-            </label>
-            <PasswordInput
-              placeholder="Keyfile Passphrase"
-              onChange={(e) => passPhraseChange("file", e)}
-            />
+              <ErrorLabel
+                message={ppkPassphraseError}
+                show={ppkPassphraseError}
+              />
+            </div>
             <Button
               mode="primary"
               className="import-button"
@@ -203,20 +251,40 @@ export default function ImportPocket() {
             open={currentImportOption === 1}
             onClick={() => onAccordionClick(1)}
           >
-            <TextInput
-              type="password"
-              placeholder="•••••••••••••••••••••"
-              wide
-              onChange={privKeyInputChange}
-            />
+            <div className="error-label-container">
+              <TextInput
+                type="password"
+                placeholder="•••••••••••••••••••••"
+                wide
+                onChange={privKeyInputChange}
+                style={{
+                  border: privateKeyError
+                    ? `2px solid ${theme.negative}`
+                    : undefined,
+                }}
+              />
+              <ErrorLabel message={privateKeyError} show={privateKeyError} />
+            </div>
             <p className="temporary-passphrase">
               Please create a temporary passphrase to encrypt your Private key
               during this session. It will be required to confirm transactions.
             </p>
-            <PasswordInput
-              placeholder="Private Key Session Passphrase"
-              onChange={(e) => passPhraseChange("private", e)}
-            />
+
+            <div className="error-label-container">
+              <PasswordInput
+                placeholder="Private Key Session Passphrase"
+                onChange={(e) => passPhraseChange("private", e)}
+                style={{
+                  border: privateKeyPassphraseError
+                    ? `2px solid ${theme.negative}`
+                    : undefined,
+                }}
+              />
+              <ErrorLabel
+                message={privateKeyPassphraseError}
+                show={privateKeyPassphraseError}
+              />
+            </div>
             <Button
               mode="primary"
               className="import-button"

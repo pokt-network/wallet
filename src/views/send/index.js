@@ -15,7 +15,7 @@ import {typeGuard} from "@pokt-network/pocket-js";
 
 const dataSource = getDataSource();
 
-class SendT extends Component {
+class Send extends Component {
     constructor() {
         super();
         this.state = {
@@ -486,4 +486,4 @@ class SendT extends Component {
     }
 }
 
-export default withRouter(SendT);
+export default withRouter(Send);

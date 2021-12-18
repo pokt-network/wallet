@@ -19,7 +19,7 @@ function Home() {
       <div className="bottom">
         <h2>Do you have a Pocket account?</h2>
         <div className="btns">
-          <Link to="/create" transparent>
+          <Link to="/create" transparent="true">
             Create
           </Link>
           <Link to="/import">Import</Link>

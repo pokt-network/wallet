@@ -78,27 +78,27 @@ class Header extends Component {
           </Logo>
           <Menu isHidden={isMenuHidden}>
             <StyledUl>
+              {isLoggedIn ? (
+                <StyledLi>
+                  <Link to="/account">Account Detail</Link>
+                </StyledLi>
+              ) : null}
               <StyledLi>
                 <a tartget="_target" href={Config.BUY_POKT_BASE_URL}>
                   Buy POKT
                 </a>
               </StyledLi>
               {isLoggedIn ? (
-                <>
-                  <StyledLi>
-                    <Link to="/account">Account Detail</Link>
-                  </StyledLi>
-                  <StyledLi>
-                    <button
-                      className="nav-button"
-                      id="log-out-nav"
-                      onClick={this.onLogOut}
-                    >
-                      Log out
-                      <IconLogOut className="log-out-icon" />
-                    </button>
-                  </StyledLi>
-                </>
+                <StyledLi>
+                  <button
+                    className="nav-button"
+                    id="log-out-nav"
+                    onClick={this.onLogOut}
+                  >
+                    Log out
+                    <IconLogOut className="log-out-icon" />
+                  </button>
+                </StyledLi>
               ) : null}
             </StyledUl>
           </Menu>

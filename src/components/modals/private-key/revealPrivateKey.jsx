@@ -6,6 +6,7 @@ import PasswordInput from "../../input/passwordInput";
 import CopyButton from "../../copy/copy";
 import { getDataSource } from "../../../datasource";
 import useWindowSize from "../../../hooks/useWindowSize";
+import ErrorLabel from "../../error-label/error";
 
 const dataSource = getDataSource();
 
@@ -14,6 +15,7 @@ export default function RevealPrivateKey({ visible, onClose, ppk }) {
   const theme = useTheme();
   const [privateKey, setPrivateKey] = useState("");
   const [passphrase, setPassphrase] = useState("");
+  const [passphraseError, setPassphraseError] = useState("");
 
   const reveal = useCallback(async () => {
     if (ppk) {
@@ -24,7 +26,7 @@ export default function RevealPrivateKey({ visible, onClose, ppk }) {
       );
 
       if (account === undefined) {
-        //error
+        setPassphraseError("Invalid passphrase");
         return;
       }
 
@@ -34,10 +36,11 @@ export default function RevealPrivateKey({ visible, onClose, ppk }) {
       );
 
       if (unlockedAccount === undefined) {
-        //passphrase
+        setPassphraseError("Invalid passphrase");
         return;
       }
 
+      setPassphraseError("");
       setPrivateKey(unlockedAccount.privateKey.toString("hex"));
       setPassphrase("");
     }
@@ -72,7 +75,12 @@ export default function RevealPrivateKey({ visible, onClose, ppk }) {
           className="passphrase-input"
           onChange={({ target }) => onPassphraseChange(target)}
           color={theme.accentAlternative}
+          style={{
+            border: passphraseError ? `2px solid ${theme.negative}` : undefined,
+          }}
         />
+
+        <ErrorLabel message={passphraseError} show={passphraseError} />
 
         {privateKey && privateKey.length > 0 ? (
           <div className="private-key-container">

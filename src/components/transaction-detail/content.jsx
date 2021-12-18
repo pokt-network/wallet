@@ -1,8 +1,9 @@
 import styled, { css } from "styled-components";
-import { maxPhone, phone } from "../../utils/media";
+import { maxPhone } from "../../utils/media";
 
 const TransactionDetailContent = styled.section`
   max-width: 532px;
+  width: 100%;
 
   .details {
     width: 100%;
@@ -16,22 +17,6 @@ const TransactionDetailContent = styled.section`
       grid-template-columns: 99px calc(100% - 130px);
       grid-gap: 30px;
 
-      .hash-button {
-        background: transparent;
-        height: 17px;
-        font-size: 12px;
-
-        input {
-          padding-left: 0;
-          font-size: 12px;
-          color: ${(props) => props.theme.colors.green};
-
-          & + div {
-            right: -10px;
-          }
-        }
-      }
-
       h2 {
         font-style: normal;
         font-weight: bold;
@@ -40,12 +25,41 @@ const TransactionDetailContent = styled.section`
         color: ${(props) => props.theme.colors.secondaryWhite};
       }
 
-      p {
+      p,
+      .to-address,
+      .hash {
         font-size: 12px;
         line-height: 140%;
+      }
 
-        &.to-address {
-          color: ${(props) => props.theme.colors.green};
+      .block-height {
+        color: ${(props) => (props.tx?.height ? "inherit" : "#C50DB")};
+      }
+
+      .to-address,
+      .hash {
+        color: ${(props) => props.theme.colors.green};
+        text-align: left;
+      }
+
+      .hash-container {
+        display: flex;
+        align-items: center;
+
+        .hash {
+          display: block;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          width: 90%;
+        }
+
+        .copy-icon-button {
+          height: 17px;
+          svg {
+            color: ${(props) => props.theme.colors.blue};
+            vertical-align: middle;
+          }
         }
       }
 
@@ -81,16 +95,6 @@ const TransactionDetailContent = styled.section`
         margin: 25px 0;
         h2 {
           display: block;
-        }
-      }
-    `)}
-
-    ${phone(css`
-      .tx-detail-row {
-        .hash-button {
-          input {
-            padding: 0 38px 0 0;
-          }
         }
       }
     `)}
