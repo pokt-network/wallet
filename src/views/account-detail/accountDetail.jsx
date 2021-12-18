@@ -15,6 +15,7 @@ import pocketService from "../../core/services/pocket-service";
 import StakingOption from "../../components/account-detail/stakingOption";
 import RevealPrivateKey from "../../components/modals/private-key/revealPrivateKey";
 import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake";
+import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 
 const dataSource = getDataSource();
 
@@ -37,6 +38,7 @@ export default function AccountDetail() {
   );
   const [txList, setTxList] = useState([]);
   const [price, setPrice] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const increaseMaxTxListCount = useCallback(() => {
     if (maxTxListCount < Number(Config.MAX_TRANSACTION_LIST_COUNT)) {
@@ -260,6 +262,7 @@ export default function AccountDetail() {
   );
 
   useEffect(() => {
+    setLoading(true);
     const { addressHex, publicKeyHex, ppk } = pocketService.getUserInfo();
 
     if (addressHex && publicKeyHex && ppk) {
@@ -275,12 +278,20 @@ export default function AccountDetail() {
     }
   }, [refreshView, history]);
 
+  useEffect(() => {
+    if (poktsBalance && price && txList && publicKeyHex && addressHex) {
+      setLoading(false);
+    }
+  }, [poktsBalance, price, txList, publicKeyHex, addressHex]);
+
   if (addressHex === undefined || publicKeyHex === undefined) {
     localStorage.clear();
     history.push({
       pathname: "/",
     });
   }
+
+  if (loading) return <AnimatedLogo />;
 
   return (
     <Layout

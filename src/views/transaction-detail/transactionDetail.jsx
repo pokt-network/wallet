@@ -12,6 +12,7 @@ import failedImg from "../../utils/images/wrong_red.png";
 import pocketService from "../../core/services/pocket-service";
 import IconTXStatus from "../../icons/iconTxStatus";
 import ButtonIcon from "@pokt-foundation/ui/dist/ButtonIcon";
+import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 
 const dataSource = getDataSource();
 const POKT_SCAN_BASE_URL = "https://poktscan.com/public/";
@@ -25,6 +26,7 @@ export default function TransactionDetail() {
   const [tx, setTx] = useState(undefined);
   const [statusImg, setStatusImg] = useState();
   const [secondaryStatusImg, setSecondaryStatusImg] = useState();
+  const [loading, setLoading] = useState(false);
 
   const updateTxInformation = useCallback(
     (txObj = undefined, tx = undefined) => {
@@ -152,6 +154,7 @@ export default function TransactionDetail() {
   );
 
   useEffect(() => {
+    setLoading(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     if (txHash !== undefined) {
@@ -233,6 +236,14 @@ export default function TransactionDetail() {
       }
     }
   }, [txHash, updateTxInformation, history, getTx, location]);
+
+  useEffect(() => {
+    if (txHash && tx && secondaryStatusImg && statusImg) {
+      setLoading(false);
+    }
+  }, [tx, txHash, secondaryStatusImg, statusImg]);
+
+  if (loading) return <AnimatedLogo />;
 
   return (
     <Layout title={<h1 className="title">Transaction Detail</h1>}>
