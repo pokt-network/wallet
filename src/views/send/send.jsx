@@ -68,7 +68,12 @@ function ConfirmSend({
             </SendHeaderContainer>
           }
         >
-          <Modal visible={step === 1} onClose={goBack} padding="44px 24px">
+          <Modal
+            visible={step === 1}
+            onClose={goBack}
+            padding="44px 24px"
+            className="pocket-modal"
+          >
             <SendTransactionModalContainer>
               <h1 className="title">
                 Confirm your Passphase to complete <br /> the transaction

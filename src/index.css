@@ -13,27 +13,35 @@ code {
 }
 
 .fadeIn {
-  animation: 0.3s fadeIn forwards;
+  animation: 0.7s fadeIn forwards;
 }
 
 .fadeOut {
-  animation: 0.3s fadeOut forwards;
+  animation: 0.2s fadeOut forwards;
 }
 
 @keyframes fadeIn {
   from {
-    transform: translate(-20px, 0);
+    transform: translate3d(0, 8px, 0);
+    opacity: 0;
   }
   to {
-    transform: translate(0px, 0px);
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
   }
 }
 
 @keyframes fadeOut {
   from {
-    transform: translate(0px, 0px);
+    transform: translate3d(0, 0, 0);
+    opacity: 0.1;
   }
   to {
-    transform: translate(-20px, 0);
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
   }
+}
+
+.pocket-modal {
+  background: rgba(17,29,39,0.5) !important;
 }

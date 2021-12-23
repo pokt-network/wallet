@@ -129,7 +129,7 @@ export default function UnjailUnstake({
   }, []);
 
   return (
-    <Modal visible={visible} onClose={onClose}>
+    <Modal visible={visible} onClose={onClose} className="pocket-modal">
       <UnjailUnstakeContainer>
         <h1 className="title">
           You are about to send <br /> an {type} transaction{" "}

@@ -5,7 +5,6 @@ import { Route, Switch, useLocation } from "react-router-dom";
 import Home from "./home/index";
 import Send from "./send/send";
 import Create from "./create/createWallet";
-import LogOut from "./log-out/index";
 import ImportPocket from "./import-pocket/importPocket";
 import TransactionDetail from "./transaction-detail/transactionDetail";
 import AccountDetail from "./account-detail/accountDetail";
@@ -33,7 +32,6 @@ export default function WalletRoutes() {
 
   return (
     <div
-      className={transitionStage}
       style={{
         minWidth: "100vw",
         height: "100vh",
@@ -46,24 +44,24 @@ export default function WalletRoutes() {
         display: "flex",
         flexDirection: "column",
       }}
-      onAnimationEnd={onAnimationEnd}
     >
       <Header />
       <Switch location={displayLocation}>
-        <Route exact path="/" component={Home}></Route>
-        <Route exact path="/import" component={ImportPocket}></Route>
-        <Route exact path="/create" component={Create}></Route>
+        <div onAnimationEnd={onAnimationEnd} className={transitionStage}>
+          <Route exact path="/" component={Home}></Route>
+          <Route exact path="/import" component={ImportPocket}></Route>
+          <Route exact path="/create" component={Create}></Route>
 
-        <TransportProvider>
-          <Route exact path="/send" component={Send}></Route>
-          <Route exact path="/logout" component={LogOut}></Route>
-          <Route exact path="/account" component={AccountDetail}></Route>
-          <Route
-            exact
-            path="/transaction-detail"
-            component={TransactionDetail}
-          ></Route>
-        </TransportProvider>
+          <TransportProvider>
+            <Route exact path="/send" component={Send}></Route>
+            <Route exact path="/account" component={AccountDetail}></Route>
+            <Route
+              exact
+              path="/transaction-detail"
+              component={TransactionDetail}
+            ></Route>
+          </TransportProvider>
+        </div>
       </Switch>
       <Footer />
     </div>

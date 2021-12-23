@@ -55,6 +55,7 @@ export default function RevealPrivateKey({ visible, onClose, ppk }) {
       visible={visible}
       onClose={onClose}
       width={width > 768 ? undefined : "100%"}
+      className="pocket-modal"
     >
       <PrivateKeyContainer>
         <div className="save-banner">
