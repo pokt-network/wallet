@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Modal, TextInput, useTheme } from "@pokt-foundation/ui";
 
 import Layout from "../../components/layout";
@@ -168,6 +168,7 @@ function SendTransaction({
   addressError,
   destinationAddress,
   theme,
+  poktAmountRef,
 }) {
   const onSendClick = useCallback(() => {
     const isValid = validate();
@@ -186,11 +187,10 @@ function SendTransaction({
           <h1 className="title">Send Transaction</h1>
           <div className="input-container">
             <TextInput
-              type="number"
+              ref={poktAmountRef}
+              type="text"
               placeholder="00.00"
-              step="0.01"
               name="pokt"
-              min={0}
               onChange={handlePoktValueChange}
               value={poktAmount}
             />
@@ -223,6 +223,7 @@ function SendTransaction({
 export default function Send() {
   const history = useHistory();
   const theme = useTheme();
+  const poktAmountRef = useRef(null);
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
   const [destinationAddress, setDestinationAddress] = useState(undefined);
@@ -239,6 +240,10 @@ export default function Send() {
   const [amountError, setAmountError] = useState(undefined);
   const [passphraseError, setPassphraseError] = useState(undefined);
   const [passphrase, setPassphrase] = useState(undefined);
+  const [cursorCoordinates, setCursorCoordinates] = useState({
+    start: 0,
+    end: 0,
+  });
 
   const getAccountBalance = useCallback(async (addressHex) => {
     const upoktBalance = (await dataSource.getBalance(addressHex)) * 1000000;
@@ -269,6 +274,16 @@ export default function Send() {
     },
     [history]
   );
+
+  const toCurrency = useCallback((number) => {
+    const formatter = new Intl.NumberFormat("en-US", {
+      style: "decimal",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+    return formatter.format(number);
+  }, []);
 
   const sendTransaction = useCallback(async () => {
     if (passphrase && destinationAddress && ppk && amountToSend > 0) {
@@ -318,7 +333,9 @@ export default function Send() {
   const handlePoktValueChange = useCallback(
     ({ target }) => {
       const { value } = target;
-      if (value <= 0) {
+      const normalizedValue = parseFloat(String(value).replace(/,/g, ""));
+
+      if (value <= 0 || !normalizedValue) {
         setAmountError("Amount to send is invalid.");
         setPoktAmount(0);
         setPoktAmountUsd(0);
@@ -326,20 +343,25 @@ export default function Send() {
         return;
       }
 
-      const upoktValue = Math.round(value * 1000000);
+      const upoktValue = Math.round(normalizedValue * 1000000);
       if (upoktBalance < upoktValue + txFee) {
         setAmountToSend(upoktValue);
-        setPoktAmount(value);
+        setPoktAmount(toCurrency(normalizedValue));
         setIsAmountValid(false);
         setAmountError("Insufficient balance.");
       } else {
         setAmountToSend(upoktValue);
         setIsAmountValid(true);
-        setPoktAmount(value);
+        setPoktAmount(toCurrency(normalizedValue));
         setAmountError("");
       }
+
+      setCursorCoordinates({
+        start: target.selectionStart,
+        end: target.selectionEnd,
+      });
     },
-    [txFee, upoktBalance]
+    [txFee, upoktBalance, toCurrency]
   );
 
   const updateDestinationAddress = useCallback(
@@ -380,6 +402,11 @@ export default function Send() {
     }
   }, [history, getAccountBalance]);
 
+  useEffect(() => {
+    poktAmountRef.current.selectionStart = cursorCoordinates.start;
+    poktAmountRef.current.selectionEnd = cursorCoordinates.end;
+  }, [poktAmount, cursorCoordinates]);
+
   return (
     <>
       {step === 0 ? (
@@ -394,6 +421,7 @@ export default function Send() {
           addressError={addressError}
           destinationAddress={destinationAddress}
           theme={theme}
+          poktAmountRef={poktAmountRef}
         />
       ) : (
         <ConfirmSend

@@ -131,7 +131,8 @@ export default function TransactionDetail() {
           txSummary.hash,
           Number(Config.TX_FEE) / 1000000,
           txSummary.status,
-          "sent"
+          "sent",
+          txSummary.height
         );
 
         updateTxInformation(undefined, {
