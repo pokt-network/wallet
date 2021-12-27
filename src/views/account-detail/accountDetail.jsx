@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Link, Table } from "@pokt-foundation/ui";
 import { useHistory } from "react-router";
-
 import AccountHeaderContainer from "../../components/account-detail/headerContainer";
 import Layout from "../../components/layout";
 import AccountContent from "../../components/account-detail/content";

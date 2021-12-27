@@ -1,6 +1,5 @@
+import React, { useMemo } from "react";
 import { useTheme } from "@pokt-foundation/ui";
-import React from "react";
-import { useMemo } from "react";
 import { ThemeProvider as Theme } from "styled-components";
 
 function ThemeProvider({ children }) {

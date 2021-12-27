@@ -1,11 +1,10 @@
 import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router";
 import { typeGuard } from "@pokt-network/pocket-js";
-
+import { Button, TextInput, useTheme } from "@pokt-foundation/ui";
 import Layout from "../../components/layout";
 import ImportPocketContent from "../../components/import-pocket/content";
 import Accordion from "../../components/accordion";
-import { Button, TextInput, useTheme } from "@pokt-foundation/ui";
 import IconUpload from "../../icons/iconUpload";
 import PasswordInput from "../../components/input/passwordInput";
 import { getDataSource } from "../../datasource";

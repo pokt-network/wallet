@@ -1,6 +1,5 @@
 import React from "react";
 import { useTheme } from "@pokt-foundation/ui";
-
 import IconError from "../../icons/iconError";
 import ErrorLabelContainer from "./container";
 

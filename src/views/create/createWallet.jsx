@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Banner, Button, ButtonBase, TextInput } from "@pokt-foundation/ui";
+import { useHistory } from "react-router";
 import Link from "../../components/link/link";
-
 import Layout from "../../components/layout";
 import CreateContainer from "../../components/create/container";
 import IconDownload from "../../icons/iconDownload";
@@ -9,7 +9,6 @@ import IconBack from "../../icons/iconBack";
 import Title from "../../components/public/title/title";
 import { getDataSource } from "../../datasource";
 import pocketService from "../../core/services/pocket-service";
-import { useHistory } from "react-router";
 import { isPassphraseValid } from "../../utils/validations";
 import ErrorLabel from "../../components/error-label/error";
 
@@ -37,7 +36,7 @@ function Create({
 
         if (!isPassphraseValid(value)) {
           setPassPhraseError(
-            "Passphrase must have 15 alphanumeric symbols, one capital letter, one lowercase, one special characters and one number."
+            "Passphrase must be minimum 15 characters, 1 min uppercase letter and 1 special character."
           );
         } else {
           setPassPhraseError(undefined);
@@ -149,7 +148,7 @@ function Create({
         </div>
 
         <p className="disclaimer">
-          Make sure yout password has minimum 15 alphanumeric symbols, one
+          Make sure your password has minimum 15 alphanumeric symbols, one
           capital letter, one lowercase, one special characters and one number.
         </p>
 

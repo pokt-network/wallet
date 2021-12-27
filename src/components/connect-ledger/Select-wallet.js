@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import AppPokt from "hw-app-pokt";
+import ReactPaginate from "react-paginate";
 import { walletMockData } from "../../utils/dummyData";
 import Input from "../public/input/input";
 import Button from "../public/secondaryButton/button";
 import SelectWalletContent from "./select-wallet-container";
-import ReactPaginate from "react-paginate";
 import ConfirmSelectModal from "./confirm-action";
-import AppPokt from "hw-app-pokt";
 import MessageAlert from "../messageAlert/messageAlert";
 
 const ITEMS_PER_PAGE = 6;
@@ -87,7 +87,6 @@ export default function SelectWallet({ transport }) {
     try {
       const pokt = new AppPokt(transport);
       const pk = await pokt.getPublicKey("0");
-      console.log(pk);
       return true;
     } catch (error) {
       return false;

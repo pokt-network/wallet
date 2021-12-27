@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTheme } from "@pokt-foundation/ui";
 import { Route, Switch, useLocation } from "react-router-dom";
-
 import Home from "./home/index";
 import Send from "./send/send";
 import Create from "./create/createWallet";

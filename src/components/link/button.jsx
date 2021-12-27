@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
-import { maxPhone } from "../../utils/media";
 import { Link } from "react-router-dom";
+import { maxPhone } from "../../utils/media";
 
 const Button = styled(Link)`
   background: ${(props) =>

@@ -1,6 +1,5 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-
 import LandingContent from "../../components/landing/landing-content";
 import Link from "../../components/link/button";
 

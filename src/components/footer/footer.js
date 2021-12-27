@@ -1,10 +1,8 @@
 import styled, { css } from "styled-components";
 import { desktop, tablet, tabletLandscape, maxPhone } from "../../utils/media";
-import { colors } from "../../utils/colors";
 
 const FooterContent = styled.footer`
   width: 100%;
-  /* height: 173px; */
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -39,7 +37,7 @@ const FooterContent = styled.footer`
       p {
         font-weight: 300;
         font-size: 12px;
-        color: ${colors.white};
+        color: ${props => props.theme.colors.white};
         line-height: 14px;
         margin-bottom: 17px;
         font-family: lato;

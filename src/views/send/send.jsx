@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Modal, TextInput, useTheme } from "@pokt-foundation/ui";
-
+import { typeGuard } from "@pokt-network/pocket-js";
+import { useHistory } from "react-router";
 import Layout from "../../components/layout";
 import SendHeaderContainer from "../../components/send/header";
 import SendContent from "../../components/send/content";
@@ -15,8 +16,6 @@ import IconBack from "../../icons/iconBack";
 import { Config } from "../../config/config";
 import { getDataSource } from "../../datasource";
 import pocketService from "../../core/services/pocket-service";
-import { typeGuard } from "@pokt-network/pocket-js";
-import { useHistory } from "react-router";
 import { isPassphraseValid } from "../../utils/validations";
 import ErrorLabel from "../../components/error-label/error";
 import { isAddress } from "../../utils/isAddress";

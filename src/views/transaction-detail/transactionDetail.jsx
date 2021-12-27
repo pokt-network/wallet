@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Banner, IconCopy, Link } from "@pokt-foundation/ui";
 import { useHistory, useLocation } from "react-router";
-
+import ButtonIcon from "@pokt-foundation/ui/dist/ButtonIcon";
 import Layout from "../../components/layout";
 import TransactionDetailContent from "../../components/transaction-detail/content";
 import { Config } from "../../config/config";
@@ -11,7 +11,6 @@ import successImg from "../../utils/images/check_green.png";
 import failedImg from "../../utils/images/wrong_red.png";
 import pocketService from "../../core/services/pocket-service";
 import IconTXStatus from "../../icons/iconTxStatus";
-import ButtonIcon from "@pokt-foundation/ui/dist/ButtonIcon";
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 
 const dataSource = getDataSource();

@@ -1,11 +1,9 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import { Main } from "@pokt-foundation/ui";
-
-
+import JSBI from "jsbi";
 import history from "./history";
 import "./normalize.css";
-import JSBI from "jsbi";
 import ThemeProvider from "./context/themeContext";
 import WalletRoutes from "./views/WalletRoutes";
 
