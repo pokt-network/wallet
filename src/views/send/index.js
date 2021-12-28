@@ -39,9 +39,7 @@ class Send extends Component {
             balanceError: undefined,
             addressError: undefined,
             amountError: undefined,
-            passphraseError: undefined,
-            memoTextCount: 0,
-            memoTextValue: ""
+            passphraseError: undefined
         };
 
         this.toggleNotBalanceError = this.toggleNotBalanceError.bind(this);
@@ -61,7 +59,6 @@ class Send extends Component {
         this.validate = this.validate.bind(this);
         this.getAccountBalance = this.getAccountBalance.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
-        this.onMemoChange = this.onMemoChange.bind(this);
     }
 
     async getAccountBalance(addressHex) {
@@ -125,7 +122,7 @@ class Send extends Component {
         // Enable loader indicator
         this.enableLoaderIndicatory(true);
 
-        const {addressHex, publicKeyHex, ppk, amountToSend, txFee, memoTextValue} = this.state;
+        const {addressHex, publicKeyHex, ppk, amountToSend, txFee} = this.state;
 
         const passphrase = document.getElementById("modal-passphrase");
         const destinationAddress = document.getElementById("destination-address");
@@ -141,8 +138,7 @@ class Send extends Component {
                 ppk,
                 passphrase.value,
                 destinationAddress.value,
-                amountToSend,
-                memoTextValue ? memoTextValue : undefined
+                amountToSend
             );
 
             if (typeGuard(txResponse, Error)) {
@@ -365,14 +361,6 @@ class Send extends Component {
         });
     }
 
-    onMemoChange({ target }) {
-        const { value } = target
-        this.setState({
-            memoTextCount: value.length,
-            memoTextValue: value
-        })
-    }
-
     // Render
     render() {
         const {
@@ -386,8 +374,7 @@ class Send extends Component {
             amountError,
             passphraseError,
             destinationAddress,
-            disableSendBtn,
-            memoTextCount
+            disableSendBtn
         } = this.state;
 
         return (
@@ -415,11 +402,6 @@ class Send extends Component {
                                         opacity: amountError !== undefined ? "1" : "0",
                                         display: "block"
                                     }} id="amount-error" className="error"> <img src={altertR} alt="alert" /> {amountError}</span>
-                                    <label className="tx-memo-label" htmlFor="tx-memo">Tx Memo</label>
-                                    <textarea className="tx-memo-area" name="tx-memo" maxLength={75} 
-                                        onChange={this.onMemoChange} 
-                                        placeholder="XXXXXXXXXXXXXXXXX (Optional)"/>
-                                    <p className="tx-memo-counter">{memoTextCount}/75</p>
                                     <label>TX Fee {this.state.txFee / 1000000} POKT</label>
                                     <Button style={{display: "inline-block", marginTop: "20px"}} 
                                         onClick={()=> this.validate() === true ? this.showPassModal(true) : this.showPassModal(false)} className="button" >Send</Button>

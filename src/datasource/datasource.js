@@ -224,7 +224,7 @@ export class DataSource {
   /**
    * @returns {Object}
    */
-  async sendTransaction(ppk, passphrase, toAddress, amount, memo="Pocket Wallet") {
+  async sendTransaction(ppk, passphrase, toAddress, amount) {
     // uPOKT
     const defaultFee = this.config.txFee || 10000;
 
@@ -249,7 +249,7 @@ export class DataSource {
 
     const rawTxPayloadOrError = await transactionSenderOrError
       .send(accountOrUndefined.addressHex, toAddress, amount.toString())
-      .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, memo);
+      .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, "Pocket Wallet");
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
       console.log(`Failed to process transaction with error: ${rawTxPayloadOrError}`);

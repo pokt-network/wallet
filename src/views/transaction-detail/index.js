@@ -37,8 +37,7 @@ class TransactionDetail extends Component {
                 sentAmount: undefined,
                 fee: undefined,
                 fromAddress: undefined,
-                toAddress: undefined,
-                memo: undefined,
+                toAddress: undefined
             }
         };
 
@@ -131,8 +130,7 @@ class TransactionDetail extends Component {
                amount: amount,
                status: txResponse.tx_result.code === 0 ? "Success" : "Failure",
                hash: txResponse.hash,
-               type: transactiontype,
-               memo: txResponse.stdTx.memo
+               type: transactiontype
             }
 
             this.setState({
@@ -144,8 +142,7 @@ class TransactionDetail extends Component {
                     fromAddress: txSummary.from,
                     toAddress: txSummary.to,
                     status: txSummary.status,
-                    sentStatus: "Sent",
-                    memo: txSummary.memo
+                    sentStatus: "Sent"
                 }
             });
 
@@ -157,8 +154,7 @@ class TransactionDetail extends Component {
                 txSummary.hash,
                 Number(Config.TX_FEE) / 1000000,
                 txSummary.status,
-                "Sent",
-                txSummary.memo
+                "Sent"
             )
 
             this.updateTxInformation();
@@ -197,8 +193,7 @@ class TransactionDetail extends Component {
                 txHash,
                 txFee,
                 status,
-                sentStatus,
-                memo
+                sentStatus
             } = PocketService.getTxInfo();
             // Check if values are set
             if (
@@ -209,8 +204,7 @@ class TransactionDetail extends Component {
                 txHash &&
                 txFee &&
                 status &&
-                sentStatus &&
-                memo
+                sentStatus
             ) {
                 const sentAmountFormatted = sentAmount * 1000000;
 
@@ -223,8 +217,7 @@ class TransactionDetail extends Component {
                         hash: txHash,
                         fee: txFee,
                         status,
-                        sentStatus,
-                        memo
+                        sentStatus
                     }
                 }
 
@@ -300,10 +293,6 @@ class TransactionDetail extends Component {
                                     cursor: "pointer"
                                 }} id="toAddress" onClick={() => this.openExplorer(tx.toAddress)} >{tx.toAddress}</Td>
                             </Tr>
-                            <Tr>
-                                <Th>TX MEMO</Th>
-                                <Td id="txMemo">{tx.memo}</Td>
-                            </Tr>
                         </TBody>
                     </T>
                     <T className="detail-table mobile">
@@ -358,12 +347,6 @@ class TransactionDetail extends Component {
                             </Tr>
                             <Tr>
                                 <Td id="toAddressMobile">{tx.toAddress}</Td>
-                            </Tr>
-                            <Tr>
-                                <Th>TX MEMO</Th>
-                            </Tr>
-                            <Tr>
-                                <Td id="txMemo">{tx.memo}</Td>
                             </Tr>
                         </TBody>
                     </T>
