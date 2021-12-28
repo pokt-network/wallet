@@ -177,6 +177,7 @@ const SendContent = styled.section`
       width: 100%;
       height: 75px;
       border-color: ${colors.blue};
+      padding: 15px;
     }
     .tx-memo-counter {
       font-weight: normal;
