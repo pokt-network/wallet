@@ -158,6 +158,26 @@ const SendContent = styled.section`
         margin-right: 0px;
       }
     }
+    
+    .tx-memo-label {
+      text-align: left;
+      padding: 0;
+      margin: 0 0 5px 0;
+    }
+
+    .tx-memo-area {
+      width: 100%;
+      height: 75px;
+      border-color: ${colors.blue};
+      padding: 15px;
+    }
+    .tx-memo-counter {
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 16px;
+      text-align: right;
+      color: ${colors.gray};
+    }
   }
 `;
 

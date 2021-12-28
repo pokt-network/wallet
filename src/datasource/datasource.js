@@ -218,7 +218,13 @@ export class DataSource {
   /**
    * @returns {Object}
    */
-  async sendTransaction(ppk, passphrase, toAddress, amount) {
+  async sendTransaction(
+    ppk,
+    passphrase,
+    toAddress,
+    amount,
+    memo = "Pocket Wallet"
+  ) {
     // uPOKT
     const defaultFee = this.config.txFee || 10000;
 
@@ -249,7 +255,7 @@ export class DataSource {
         this.config.chainId,
         defaultFee.toString(),
         CoinDenom.Upokt,
-        "Pocket Wallet"
+        memo
       );
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {

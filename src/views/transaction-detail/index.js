@@ -115,7 +115,7 @@ class TransactionDetail extends Component {
     async getTx(txHash) {
         try {
           const txResponse = await dataSource.getTx(txHash.toLowerCase());
-
+          
             if (txResponse.stdTx === undefined) {
                 console.log("Couldn't retrieve the transaction using the provided tx hash");
                 return;

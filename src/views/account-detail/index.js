@@ -266,9 +266,9 @@ class AccountLatest extends Component {
             }
             
             const txResponse = await dataSource.unjailNode(ppk, passphraseInput);
+            console.log('TxResponse:', txResponse)
 
             if (txResponse.txhash !== undefined) {
-
                 this.setState({
                     visibility: true
                 });
@@ -356,6 +356,7 @@ class AccountLatest extends Component {
             }
             
             const txResponse = await dataSource.unstakeNode(ppk, passphraseInput);
+            console.log('TxResponse:', txResponse)
             
             if (txResponse.txhash !== undefined) {
                 this.setState({
@@ -616,7 +617,6 @@ class AccountLatest extends Component {
         price
     })
   }
-  
   pushToTxDetail(txHash, useCache) {
       const {addressHex, publicKeyHex, ppk} = this.state;
 
