@@ -167,7 +167,8 @@ class Send extends Component {
                 txResponse.txhash,
                 (txFee / 1000000),
                 "Pending",
-                "Pending"
+                "Pending",
+                memoTextValue ? memoTextValue : "Pocket wallet"
             );
 
             // Disable loader indicator
