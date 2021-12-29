@@ -108,6 +108,7 @@ export default function TransactionDetail() {
           hash: txResponse.hash,
           type: transactiontype,
           height: txResponse.height,
+          memo: txResponse.stdTx.memo,
         };
 
         setTx({
@@ -120,6 +121,7 @@ export default function TransactionDetail() {
           status: txSummary.status,
           sentStatus: "Sent",
           height: txSummary.height,
+          memo: txSummary.memo,
         });
 
         pocketService.saveTxInCache(
@@ -131,7 +133,8 @@ export default function TransactionDetail() {
           Number(Config.TX_FEE) / 1000000,
           txSummary.status,
           "sent",
-          txSummary.height
+          txSummary.height,
+          txSummary.memo
         );
 
         updateTxInformation(undefined, {
@@ -144,6 +147,7 @@ export default function TransactionDetail() {
           status: txSummary.status,
           sentStatus: "Sent",
           height: txSummary.height,
+          memo: txSummary.memo,
         });
       } catch (error) {
         console.log(error);
@@ -169,6 +173,7 @@ export default function TransactionDetail() {
           txFee,
           txHash,
           type,
+          memo,
         } = pocketService.getTxInfo();
 
         const transaction = {
@@ -181,6 +186,7 @@ export default function TransactionDetail() {
           status,
           sentStatus,
           height,
+          memo,
         };
 
         setTx(transaction);
@@ -201,6 +207,7 @@ export default function TransactionDetail() {
         status,
         sentStatus,
         height,
+        memo,
       } = pocketService.getTxInfo();
       if (
         type &&
@@ -209,7 +216,8 @@ export default function TransactionDetail() {
         sentAmount !== undefined &&
         txHash &&
         txFee &&
-        status
+        status &&
+        memo
       ) {
         const sentAmountFormatted = sentAmount * 1000000;
 
@@ -223,6 +231,7 @@ export default function TransactionDetail() {
           status,
           sentStatus,
           height,
+          memo,
         };
 
         setTx(transaction);
@@ -324,6 +333,10 @@ export default function TransactionDetail() {
             <p className="block-height">
               {tx?.height ? tx.height : "Waiting for confirmation"}
             </p>
+          </div>
+          <div className="tx-detail-row">
+            <h2>Tx Memo</h2>
+            <p className="tx-memo">{tx?.memo}</p>
           </div>
         </div>
       </TransactionDetailContent>

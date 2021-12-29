@@ -168,6 +168,8 @@ function SendTransaction({
   destinationAddress,
   theme,
   poktAmountRef,
+  memoText,
+  setMemoText,
 }) {
   const onSendClick = useCallback(() => {
     const isValid = validate();
@@ -178,6 +180,14 @@ function SendTransaction({
 
     setStep(1);
   }, [validate, setStep]);
+
+  const onMemoChange = useCallback(
+    ({ target }) => {
+      const { value } = target;
+      setMemoText(value);
+    },
+    [setMemoText]
+  );
 
   return (
     <Layout
@@ -207,7 +217,22 @@ function SendTransaction({
             border: addressError ? `2px solid ${theme.negative}` : undefined,
           }}
         />
-        <p>TX Fee {Number(fees / 1000000).toLocaleString("en-US")} POKT</p>
+
+        <label className="tx-memo-label" htmlFor="tx-memo">
+          Tx Memo
+        </label>
+        <TextInput
+          multiline
+          placeholder="XXXXXXXXXXXXXXXXX (Optional)"
+          className="tx-memo-area"
+          name="tx-memo"
+          maxLength={75}
+          onChange={onMemoChange}
+        />
+        <p className="tx-memo-counter">{memoText.length}/75</p>
+        <p className="tx-fee">
+          TX Fee {Number(fees / 1000000).toLocaleString("en-US")} POKT
+        </p>
         <ErrorLabel message={addressError} show={addressError} />
         <ErrorLabel message={amountError} show={amountError} />
 
@@ -243,6 +268,7 @@ export default function Send() {
     start: 0,
     end: 0,
   });
+  const [memoText, setMemoText] = useState("");
 
   const getAccountBalance = useCallback(async (addressHex) => {
     const upoktBalance = (await dataSource.getBalance(addressHex)) * 1000000;
@@ -290,7 +316,8 @@ export default function Send() {
         ppk,
         passphrase,
         destinationAddress,
-        amountToSend
+        amountToSend,
+        memoText ? memoText : undefined
       );
 
       if (typeGuard(txResponse, Error)) {
@@ -311,7 +338,9 @@ export default function Send() {
         txResponse.txhash,
         txFee / 1000000,
         "Pending",
-        "Pending"
+        "Pending",
+        undefined,
+        memoText ? memoText : "Pocket wallet"
       );
 
       pushToTxDetail(txResponse.txhash);
@@ -327,6 +356,7 @@ export default function Send() {
     txFee,
     passphrase,
     pushToTxDetail,
+    memoText,
   ]);
 
   const handlePoktValueChange = useCallback(
@@ -421,6 +451,8 @@ export default function Send() {
           destinationAddress={destinationAddress}
           theme={theme}
           poktAmountRef={poktAmountRef}
+          memoText={memoText}
+          setMemoText={setMemoText}
         />
       ) : (
         <ConfirmSend

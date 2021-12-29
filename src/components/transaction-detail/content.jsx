@@ -85,6 +85,10 @@ const TransactionDetailContent = styled.section`
           }
         }
       }
+
+      .tx-memo {
+        color: ${(props) => props.theme.placeholder};
+      }
     }
 
     ${maxPhone(css`
