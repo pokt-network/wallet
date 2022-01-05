@@ -145,10 +145,6 @@ class Send extends Component {
                 memoTextValue ? memoTextValue : undefined
             );
 
-            console.log("txResponse: ", txResponse)
-            console.log("destination: ", destinationAddress.value)
-            console.log("amount: ", amountToSend)
-
             if (typeGuard(txResponse, Error)) {
                 // Disable loader indicator
                 this.enableLoaderIndicatory(false);
