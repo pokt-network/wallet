@@ -234,7 +234,6 @@ export class DataSource {
       passphrase
     );
     
-    console.log("Error Account: ", typeGuard(accountOrUndefined, RpcError))
 
     if (typeGuard(accountOrUndefined, Error)) {
       return new Error("Failed to import account due to wrong passphrase provided");
@@ -245,20 +244,15 @@ export class DataSource {
       passphrase
     );
 
-      console.log("Send TX result address: ", accountOrUndefined.address)
-      console.log("Error tx: ", typeGuard(transactionSenderOrError, RpcError))
-
     if (typeGuard(transactionSenderOrError, RpcError)) {
       return new Error(transactionSenderOrError.message);
     };
 
-    console.log("to address: ", toAddress)
 
     const rawTxPayloadOrError = await transactionSenderOrError
       .send(accountOrUndefined.addressHex, toAddress, amount.toString())
       .createTransaction(this.config.chainId, defaultFee.toString(), CoinDenom.Upokt, memo);
 
-    console.log("Raw tx: ", rawTxPayloadOrError)
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
       console.log(`Failed to process transaction with error: ${rawTxPayloadOrError}`);
