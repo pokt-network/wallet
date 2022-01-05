@@ -34,7 +34,6 @@ import exit from '../../utils/images/exit.png';
 import altertT from '../../utils/images/alert-triangle.png';
 import PocketService from "../../core/services/pocket-service";
 import { getDataSource } from "../../datasource";
-import { QueryAppResponse, QueryNodeResponse, typeGuard } from '@pokt-network/pocket-js';
 
 const dataSource = getDataSource();
 
@@ -574,7 +573,7 @@ class AccountLatest extends Component {
       // Try to get the app information
       const appOrError = await dataSource.getApp(addressHex);
 
-      if (appOrError !== undefined && typeGuard(appOrError, QueryAppResponse)) {
+      if (appOrError !== undefined && appOrError?.address) {
           this.setState({app: appOrError});
           this.addApp();
       }
@@ -582,15 +581,14 @@ class AccountLatest extends Component {
       // Try to get the node information
       const nodeOrError = await dataSource.getNode(addressHex);
 
-      if (nodeOrError !== undefined && typeGuard(nodeOrError, QueryNodeResponse)) {
+      if (nodeOrError !== undefined && nodeOrError?.address) {
           this.setState({node: nodeOrError});
           this.addNode();
       }
 
       // If not and app or node, load normal account
       if ((appOrError === undefined && nodeOrError === undefined) ||
-         (!typeGuard(nodeOrError, QueryNodeResponse) 
-         && !typeGuard(appOrError, QueryAppResponse))) {
+       (!nodeOrError?.address && !appOrError?.address)) {
           // Account type, amount staked and staking status
           this.setState({displayNormalAccount: true});
       }
