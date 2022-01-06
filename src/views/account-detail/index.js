@@ -34,7 +34,6 @@ import exit from '../../utils/images/exit.png';
 import altertT from '../../utils/images/alert-triangle.png';
 import PocketService from "../../core/services/pocket-service";
 import { getDataSource } from "../../datasource";
-import { QueryAppResponse, QueryNodeResponse, typeGuard } from '@pokt-network/pocket-js';
 
 const dataSource = getDataSource();
 
