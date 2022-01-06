@@ -94,6 +94,7 @@ export default function ImportPocket() {
 
       if (typeGuard(account, Error)) {
         console.error(account);
+        setPpkPassphraseError(account.message)
         return false;
       }
 

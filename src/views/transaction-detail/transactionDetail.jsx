@@ -177,7 +177,7 @@ export default function TransactionDetail() {
         } = pocketService.getTxInfo();
 
         const transaction = {
-          sentAmount: sentAmount,
+          sentAmount: sentAmount * 1000000,
           hash: txHash,
           fee: txFee,
           type: type,

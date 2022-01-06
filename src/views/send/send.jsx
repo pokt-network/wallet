@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Modal, TextInput, useTheme } from "@pokt-foundation/ui";
 import { typeGuard } from "@pokt-network/pocket-js";
 import { useHistory } from "react-router";
+import NumberFormat from "react-number-format";
 import Layout from "../../components/layout";
 import SendHeaderContainer from "../../components/send/header";
 import SendContent from "../../components/send/content";
@@ -167,7 +168,6 @@ function SendTransaction({
   addressError,
   destinationAddress,
   theme,
-  poktAmountRef,
   memoText,
   setMemoText,
 }) {
@@ -195,13 +195,14 @@ function SendTransaction({
         <SendHeaderContainer>
           <h1 className="title">Send Transaction</h1>
           <div className="input-container">
-            <TextInput
-              ref={poktAmountRef}
-              type="text"
+            <NumberFormat
               placeholder="00.00"
               name="pokt"
-              onChange={handlePoktValueChange}
               value={poktAmount}
+              onValueChange={handlePoktValueChange}
+              thousandSeparator
+              decimalSeparator="."
+              allowNegative={false}
             />
             <label htmlFor="pokt">POKT</label>
           </div>
@@ -247,7 +248,6 @@ function SendTransaction({
 export default function Send() {
   const history = useHistory();
   const theme = useTheme();
-  const poktAmountRef = useRef(null);
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
   const [destinationAddress, setDestinationAddress] = useState(undefined);
@@ -264,10 +264,6 @@ export default function Send() {
   const [amountError, setAmountError] = useState(undefined);
   const [passphraseError, setPassphraseError] = useState(undefined);
   const [passphrase, setPassphrase] = useState(undefined);
-  const [cursorCoordinates, setCursorCoordinates] = useState({
-    start: 0,
-    end: 0,
-  });
   const [memoText, setMemoText] = useState("");
 
   const getAccountBalance = useCallback(async (addressHex) => {
@@ -299,16 +295,6 @@ export default function Send() {
     },
     [history]
   );
-
-  const toCurrency = useCallback((number) => {
-    const formatter = new Intl.NumberFormat("en-US", {
-      style: "decimal",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-
-    return formatter.format(number);
-  }, []);
 
   const sendTransaction = useCallback(async () => {
     if (passphrase && destinationAddress && ppk && amountToSend > 0) {
@@ -360,9 +346,8 @@ export default function Send() {
   ]);
 
   const handlePoktValueChange = useCallback(
-    ({ target }) => {
-      const { value } = target;
-      const normalizedValue = parseFloat(String(value).replace(/,/g, ""));
+    ({ value, formattedValue }) => {
+      const normalizedValue = Number(value);
 
       if (value <= 0 || !normalizedValue) {
         setAmountError("Amount to send is invalid.");
@@ -375,22 +360,17 @@ export default function Send() {
       const upoktValue = Math.round(normalizedValue * 1000000);
       if (upoktBalance < upoktValue + txFee) {
         setAmountToSend(upoktValue);
-        setPoktAmount(toCurrency(normalizedValue));
+        setPoktAmount(formattedValue);
         setIsAmountValid(false);
         setAmountError("Insufficient balance.");
       } else {
         setAmountToSend(upoktValue);
         setIsAmountValid(true);
-        setPoktAmount(toCurrency(normalizedValue));
+        setPoktAmount(formattedValue);
         setAmountError("");
       }
-
-      setCursorCoordinates({
-        start: target.selectionStart,
-        end: target.selectionEnd,
-      });
     },
-    [txFee, upoktBalance, toCurrency]
+    [txFee, upoktBalance]
   );
 
   const updateDestinationAddress = useCallback(
@@ -431,11 +411,6 @@ export default function Send() {
     }
   }, [history, getAccountBalance]);
 
-  useEffect(() => {
-    poktAmountRef.current.selectionStart = cursorCoordinates.start;
-    poktAmountRef.current.selectionEnd = cursorCoordinates.end;
-  }, [poktAmount, cursorCoordinates]);
-
   return (
     <>
       {step === 0 ? (
@@ -450,7 +425,6 @@ export default function Send() {
           addressError={addressError}
           destinationAddress={destinationAddress}
           theme={theme}
-          poktAmountRef={poktAmountRef}
           memoText={memoText}
           setMemoText={setMemoText}
         />
