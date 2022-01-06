@@ -1,14 +1,14 @@
 import React from "react";
 import styled, { css } from "styled-components";
 import { tablet, maxPhone } from "../../utils/media";
-import { colors } from '../../utils/colors';
+import { colors } from "../../utils/colors";
 
 import StyledLink from "./link";
 
-  const MenuButton = styled(StyledLink).attrs({
-    height: null,
-    width: null
-  })`
+const MenuButton = styled(StyledLink).attrs({
+  height: null,
+  width: null,
+})`
   height: 16px;
   position: absolute;
   right: 0;
@@ -29,4 +29,9 @@ import StyledLink from "./link";
   `)};
 `;
 
-export default props => <MenuButton {...props}>&#9776;</MenuButton>;
+export default (props) =>
+  props.isOpen ? (
+    <MenuButton {...props}>&#88;</MenuButton>
+  ) : (
+    <MenuButton {...props}>&#9776;</MenuButton>
+  );

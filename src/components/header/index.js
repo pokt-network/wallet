@@ -77,6 +77,7 @@ class Header extends Component {
           </Logo>
           <Menu isHidden={isMenuHidden}>
             <StyledUl>
+              <div className="separator"/>
               {isLoggedIn ? (
                 <StyledLi>
                   <Link to="/account">Account Detail</Link>
@@ -101,7 +102,7 @@ class Header extends Component {
               ) : null}
             </StyledUl>
           </Menu>
-          <MobileButton onClick={() => this.onToggleMenu()} />
+          <MobileButton onClick={() => this.onToggleMenu()} isOpen={!isMenuHidden} />
         </Wrapper>
       </HeaderContainer>
     );
