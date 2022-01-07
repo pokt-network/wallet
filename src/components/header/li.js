@@ -12,15 +12,7 @@ const StyledLi = styled.li`
     padding: 20px 30px;
     text-align: left;
     &:first-of-type {
-      background:
-      linear-gradient(
-        to right, 
-        ${colors.white} 27%,
-        #27a9e0 100%
-      )
-      right 
-      top    
-      no-repeat; 
+      background: ${(props) => props.theme.backgroundBorder};
       background-size: 100% 1px;
       padding-top: 30px;
     }

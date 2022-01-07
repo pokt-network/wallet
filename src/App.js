@@ -1,51 +1,32 @@
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { BrowserRouter as Router } from "react-router-dom";
+import { Main } from "@pokt-foundation/ui";
+import JSBI from "jsbi";
+import history from "./history";
+import "./normalize.css";
+import ThemeProvider from "./context/themeContext";
+import WalletRoutes from "./views/WalletRoutes";
 
-import GlobalStyles from './components/global-style';
-
-import Home from './views/home/index';
-import Send from './views/send/index';
-import Create from './views/create/index';
-import LogOut from './views/log-out/index';
-import AccountLatest from './views/account-detail/index';
-import ImportPocket from './views/import-pocket/index';
-import TransactionDetail from './views/transaction-detail/index';
-import Header from "./components/header";
-import Footer from "./components/footer";
-import history from './history';
-import './normalize.css';
-import JSBI from 'jsbi';
-
-class App extends Component {
-  constructor(props) {
-    super(props)
+function App() {
+  useEffect(() => {
     // BigInt polyfill for iOS devices
     if (window.BigInt === undefined) {
       window.BigInt = JSBI.BigInt;
     }
-  }
+  }, []);
 
-  render() {
-    return (
-        <Router history={history}>
-            <div className="loader-container" id="loader">
-                <div className="loader"></div>
-            </div>
-            <div className="page-container">
-                <GlobalStyles />
-                <Header />
-                <Route exact path="/" component={Home}></Route>
-                <Route exact path="/send" component={Send}></Route>
-                <Route exact path="/create" component={Create}></Route>
-                <Route exact path="/logout" component={LogOut}></Route>
-                <Route exact path="/import" component={ImportPocket}></Route>
-                <Route exact path="/account" component={AccountLatest}></Route>
-                <Route exact path="/transaction-detail" component={TransactionDetail}></Route>
-                <Footer />
-            </div>
-        </Router>
-    )
-  }
+  return (
+    <Router history={history}>
+      <ThemeProvider>
+        <div className="loader-container" id="loader">
+          <div className="loader"></div>
+        </div>
+        <Main>
+          <WalletRoutes />
+        </Main>
+      </ThemeProvider>
+    </Router>
+  );
 }
 
 export default App;

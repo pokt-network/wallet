@@ -3,13 +3,10 @@ import { maxPhone } from "../utils/media";
 
 const GlobalStyles = createGlobalStyle`
   body {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Manrope', sans-serif;
   }
   .page-container {
-    background-image: linear-gradient(126deg, #27a9e0 19%, #092e40 94%, #06202e 100%);
-    ${maxPhone(css`
-      background-image: linear-gradient(161deg, #27a9e0 -3%, #092e40 93%, #06202e 100%);
-    `)};
+    background: linear-gradient(123.23deg, #141C24 11.81%, #262A34 98.51%);
   }
   .loader-container {
     position: fixed;

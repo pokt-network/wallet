@@ -5,7 +5,6 @@ import { maxPhone } from "../../../utils/media";
 const Title = styled.h1`
   font-size: 30px;
   font-weight: 700;
-  text-transform: uppercase;
   color: ${colors.white};
   line-height: 1;
   text-align: center;

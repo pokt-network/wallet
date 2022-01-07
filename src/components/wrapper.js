@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 import { maxPhone } from "../utils/media";
 
-const Wrapper = styled.div`
+const Wrapper = styled.main`
   width: 100%;
   max-width: 96%;
   margin: 0 auto;

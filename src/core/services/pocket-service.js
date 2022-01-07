@@ -97,6 +97,7 @@ class PocketService {
      * @param {string} txFee Portable Private Key.
      * @param {string} status Portable Private Key.
      * @param {string} sentStatus Portable Private Key.
+     * @param {string} height of the block string.
      * @param {string} memo string
      */
     saveTxInCache(
@@ -108,6 +109,7 @@ class PocketService {
         txFee,
         status,
         sentStatus,
+        height,
         memo
     ) {
         try {
@@ -119,6 +121,7 @@ class PocketService {
             this.ls.set("tx_fee", {data: txFee});
             this.ls.set("status", {data: status});
             this.ls.set("sent_status", {data: sentStatus});
+            this.ls.set("height", {data: height});
             this.ls.set("memo", {data: memo});
         } catch (error) {
             console.log(error);
@@ -137,6 +140,7 @@ class PocketService {
         this.ls.remove("tx_fee");
         this.ls.remove("status");
         this.ls.remove("sent_status");
+        this.ls.remove("height");
         this.ls.remove("memo");
     }
 
@@ -154,6 +158,7 @@ class PocketService {
             txFee: this.ls.get("tx_fee").data,
             status: this.ls.get("status").data,
             sentStatus: this.ls.get("sent_status").data,
+            height: this.ls.get("height").data,
             memo: this.ls.get("memo").data
         };
     }
