@@ -216,8 +216,7 @@ export default function TransactionDetail() {
         sentAmount !== undefined &&
         txHash &&
         txFee &&
-        status &&
-        memo
+        status
       ) {
         const sentAmountFormatted = sentAmount * 1000000;
 

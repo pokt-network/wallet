@@ -299,6 +299,7 @@ export default function AccountDetail() {
           <h1>
             {Number(poktsBalance).toLocaleString("en-US", {
               maximumFractionDigits: 2,
+              minimumFractionDigits: 2
             })}{" "}
             POKT
           </h1>
@@ -306,6 +307,7 @@ export default function AccountDetail() {
             $
             {parseFloat(price * poktsBalance).toLocaleString("en-US", {
               maximumFractionDigits: 2,
+              minimumFractionDigits: 2
             })}{" "}
             USD{" "}
             <Link href="https://thunderheadotc.com">Price by Thunderhead</Link>
