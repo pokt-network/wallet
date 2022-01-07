@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import Wrapper from '../../components/wrapper';
-import SendContent from './send';
+import SendContent from './old-send';
 import Title from '../../components/public/title/title';
 import Input from '../../components/public/input/input';
-import Button from '../../components/public/button/button';
+import Button from '../../components/link/button';
 import exit from '../../utils/images/exit.png';
 import PopupContent from './popup-content';
 import altertR from '../../utils/images/alert-circle-red.png';

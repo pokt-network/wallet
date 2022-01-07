@@ -1,36 +1,60 @@
 import React from "react";
 import styled, { css } from "styled-components";
 import { tablet, maxPhone } from "../../utils/media";
-import { colors } from '../../utils/colors';
 
 const MenuWrapper = styled.nav`
   overflow: hidden;
   display: none;
+
   ${maxPhone(css`
-    background-color: ${colors.blue};
+    background: ${(props) =>
+      `linear-gradient(126.96deg, ${props.theme.backgroundGradient1} -5.41%, ${props.theme.backgroundGradient2} 1001.86%)`};
     padding-bottom: 30px;
+
+    .separator {
+      background: ${(props) => props.theme.backgroundBorder};
+      height: 2px;
+      width: 100%;
+      margin: 35px 0 0 0;
+    }
+
+    li,
+    button,
+    a {
+      font-weight: 500 !important;
+      font-size: 22px !important;
+      line-height: 26px !important;
+      color: ${(props) => props.theme.colors.white} !important;
+    }
+
+    .nav-button {
+      padding: 0;
+    }
+
+    li:first-of-type {
+      background: transparent;
+    }
   `)};
 
   ${tablet(css`
-    display:block;
+    display: block;
     text-align: right;
     overflow: visible;
   `)};
 
-  ${props =>
+  ${(props) =>
     maxPhone(
       props.isHidden ||
         css`
-        display:block;
-        width: 100%;
-        top: 0;
-        padding-top: 50px;
-        position: fixed;
-        left: 0;
-        z-index: 9999;
-        height: 100vh;
-        background-image: linear-gradient(161deg, #27a9e0 -2%, #092e40 93%, #06202e 100%);
-      `
+          display: block;
+          width: 100%;
+          top: 0;
+          padding-top: 50px;
+          position: fixed;
+          left: 0;
+          z-index: 9999;
+          height: 100vh;
+        `
     )};
 `;
 
@@ -39,7 +63,7 @@ function Menu(props) {
 
   return (
     <MenuWrapper isHidden={props.isHidden}>
-      {React.Children.map(children, child =>
+      {React.Children.map(children, (child) =>
         React.cloneElement(child, { isHidden: props.isHidden })
       )}
     </MenuWrapper>

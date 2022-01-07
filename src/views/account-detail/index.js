@@ -898,10 +898,10 @@ class AccountLatest extends Component {
                       </div>
                       {/* / APP Section */}
                       <div className="btn-subm">
-                          <Button target="_target" href={Config.BUY_POKT_BASE_URL} dark>Buy POKT</Button>
+                          <Button target="_target" href={Config.BUY_POKT_BASE_URL} transparent>Buy POKT</Button>
                           {/* Node Staked */}
-                          {nodeStakingStatus === 'JAILED' && <Button id="unjail-node" onClick={this.showUnjailModal} dark>Unjail</Button>}
-                          {nodeStakingStatus === 'STAKED' && <Button id="unstake-node" onClick={this.showUnstakeModal} dark>Unstake</Button>}
+                          {nodeStakingStatus === 'JAILED' && <Button id="unjail-node" onClick={this.showUnjailModal} transparent>Unjail</Button>}
+                          {nodeStakingStatus === 'STAKED' && <Button id="unstake-node" onClick={this.showUnstakeModal} transparent>Unstake</Button>}
                           {/* Shared */}
                           <Button id="send-pokt" onClick={this.pushToSend}>Send</Button>
                       </div>

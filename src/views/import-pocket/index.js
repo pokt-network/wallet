@@ -1,9 +1,7 @@
 import React from "react";
 import Wrapper from "../../components/wrapper";
 import ImportPocketContent from "./import-pocket";
-import Title from "../../components/public/title/title";
 import Input from "../../components/public/input/input";
-import Button from "../../components/public/button/button";
 import altertR from "../../utils/images/alert-circle-red.png";
 import exit from '../../utils/images/exit.png';
 import Modal from "simple-react-modal";
@@ -13,6 +11,10 @@ import {
 import PocketService from "../../core/services/pocket-service";
 import {getDataSource} from "../../datasource";
 import {typeGuard} from "@pokt-network/pocket-js";
+import Accordion from "../../components/accordion/index";
+import { Button, Link, TextInput } from "@pokt-foundation/ui";
+import IconEye from "../../icons/iconEye.js";
+import IconUpload from "../../icons/iconUpload";
 
 const dataSource = getDataSource();
 
@@ -327,10 +329,39 @@ class ImportPocket extends React.Component {
             passphraseError
         } = this.state;
 
+
         return (
           <ImportPocketContent>
             <Wrapper className="wide-block-wr">
-              <Title>Import a pocket account</Title>
+              <h1 className="title">Import Account</h1>
+              <p className="description">Select a method to access your account</p>
+
+              <div className="nimport-container">
+                <Accordion text="Key File"> 
+                  <label className="custom-file-input">
+                    Select File
+                   <TextInput 
+                    adornment={<IconUpload color="white"/>} 
+                    adornmentPosition="end" type="file" wide 
+                    className="upload-file-input"/>
+                  </label>
+                  <TextInput adornment={<IconEye color="white"/>} adornmentPosition="end" type="password" wide placeholder="Keyfile Passphrase"/>
+                  <Button mode="primary" className="import-button">Import</Button>
+                </Accordion>
+
+                <Accordion text="Private Key">
+                  <TextInput type="password" placeholder="•••••••••••••••••••••" wide/>
+                  <p className="temporary-passphrase">
+                    Please create a temporary passphrase to encrypt your Private key during this session. 
+                    It will be required to confirm transactions.
+                  </p>
+                   <TextInput adornment={<IconEye color="white"/>} adornmentPosition="end" type="password" placeholder="Private Key Session Passphrase" wide/>
+                   <Button mode="primary" className="import-button">Import</Button>
+                </Accordion>
+              </div>
+
+              <p className="create-link">Don't have a wallet? <Link href="/create" external={false}>Create Wallet</Link> </p>
+
               <div className="quantity">
                 <form className="import-p-form">
                   <div className="container">
@@ -410,7 +441,7 @@ class ImportPocket extends React.Component {
                   </div>
                   <div className="btn-subm">
                     <Button
-                      disabled={ppk !== undefined || privateKey !== undefined}
+                      disabled={ppk === undefined && privateKey === undefined}
                       onClick={this.showModal.bind(this)}
                     >
                       Import Account
