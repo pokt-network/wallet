@@ -17,7 +17,6 @@ import IconBack from "../../icons/iconBack";
 import { Config } from "../../config/config";
 import { getDataSource } from "../../datasource";
 import pocketService from "../../core/services/pocket-service";
-import { isPassphraseValid } from "../../utils/validations";
 import ErrorLabel from "../../components/error-label/error";
 import { isAddress } from "../../utils/isAddress";
 
@@ -40,9 +39,6 @@ function ConfirmSend({
   const onPassphraseChange = useCallback(
     ({ target }) => {
       const { value } = target;
-
-      if (!isPassphraseValid(value)) return;
-
       setPassphrase(value);
     },
     [setPassphrase]
