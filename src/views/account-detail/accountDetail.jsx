@@ -278,10 +278,10 @@ export default function AccountDetail() {
   }, [refreshView, history]);
 
   useEffect(() => {
-    if (poktsBalance && price && txList && publicKeyHex && addressHex) {
+    if (poktsBalance && txList && publicKeyHex && addressHex) {
       setLoading(false);
     }
-  }, [poktsBalance, price, txList, publicKeyHex, addressHex]);
+  }, [poktsBalance, txList, publicKeyHex, addressHex]);
 
   if (addressHex === undefined || publicKeyHex === undefined) {
     localStorage.clear();
