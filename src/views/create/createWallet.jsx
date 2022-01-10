@@ -9,7 +9,10 @@ import IconBack from "../../icons/iconBack";
 import Title from "../../components/public/title/title";
 import { getDataSource } from "../../datasource";
 import pocketService from "../../core/services/pocket-service";
-import { isPassphraseValid } from "../../utils/validations";
+import {
+  passPhraseErrorType,
+  getPassphraseError,
+} from "../../utils/validations";
 import ErrorLabel from "../../components/error-label/error";
 
 const dataSource = getDataSource();
@@ -24,7 +27,7 @@ function Create({
   setPublicKeyHex,
   setPpk,
 }) {
-  const [passPhraseError, setPassPhraseError] = useState(undefined);
+  const [passPhraseError, setPassPhraseError] = useState(0);
   const [confirmPassphraseError, setConfirmPassphraseError] =
     useState(undefined);
   const [isCreateDisabled, setIsCreateDisabled] = useState(true);
@@ -33,14 +36,9 @@ function Create({
     ({ value }) => {
       if (value) {
         setPassphrase(value);
-
-        if (!isPassphraseValid(value)) {
-          setPassPhraseError(
-            "Passphrase must be minimum 15 characters, 1 min uppercase letter and 1 special character."
-          );
-        } else {
-          setPassPhraseError(undefined);
-        }
+        setPassPhraseError(getPassphraseError(value));
+      } else {
+        setPassPhraseError(0);
       }
     },
     [setPassphrase]
@@ -130,7 +128,28 @@ function Create({
             wide
             onChange={({ target }) => onPassphraseChange(target)}
           />
-          <ErrorLabel message={passPhraseError} show={passPhraseError} />
+          <ErrorLabel
+            message={"Password must contain at least 15 characters."}
+            show={passPhraseError & passPhraseErrorType.length}
+          />
+          <ErrorLabel
+            message={"Password must contain at least one capital letter."}
+            show={passPhraseError & passPhraseErrorType.capital}
+          />
+          <ErrorLabel
+            message={"Password must contain at least one lowercase letter."}
+            show={passPhraseError & passPhraseErrorType.lowercase}
+          />
+          <ErrorLabel
+            message={"Password must contain at least one number."}
+            show={passPhraseError & passPhraseErrorType.number}
+          />
+          <ErrorLabel
+            message={
+              "Password must contain at least one of the following: !@#$%^&*"
+            }
+            show={passPhraseError & passPhraseErrorType.symbol}
+          />
         </div>
 
         <div className="passphrase-input-container">
