@@ -6,6 +6,12 @@ const MenuWrapper = styled.nav`
   overflow: hidden;
   display: none;
 
+  li,
+  button,
+  a {
+    font-weight: 700 !important;
+  }
+
   ${maxPhone(css`
     background: ${(props) =>
       `linear-gradient(126.96deg, ${props.theme.backgroundGradient1} -5.41%, ${props.theme.backgroundGradient2} 1001.86%)`};
@@ -21,7 +27,6 @@ const MenuWrapper = styled.nav`
     li,
     button,
     a {
-      font-weight: 500 !important;
       font-size: 22px !important;
       line-height: 26px !important;
       color: ${(props) => props.theme.colors.white} !important;

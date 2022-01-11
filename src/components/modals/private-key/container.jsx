@@ -31,6 +31,36 @@ const PrivateKeyContainer = styled.div`
     margin: 30px 0;
   }
 
+  .custom-pk-container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    padding: 12px;
+    justify-content: space-between;
+    position: relative;
+
+    span.active {
+      top: -40px;
+      right: 0;
+    }
+
+    p {
+      word-break: break-all;
+      width: 90%;
+      font-size: 12px;
+    }
+
+    svg {
+      color: ${(props) => props.theme.colors.blue};
+
+      :hover {
+        cursor: pointer;
+      }
+    }
+  }
+
   ${maxPhone(css`
     .reveal-button {
       width: 100% !important;
