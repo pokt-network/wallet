@@ -4,68 +4,46 @@
   </a>
 </div>
 
-# Project Title
+# wallet
 
-One sentence summary of project
-<div>
-  <a  href="https://godoc.org/github.com/pokt-network/pocket-core"><img src="https://img.shields.io/badge/godoc-reference-blue.svg"/></a>
-  <a  href="https://goreportcard.com/report/github.com/pokt-network/pocket-core"><img src="https://goreportcard.com/badge/github.com/pokt-network/pocket-core"/></a>
-  <a href="https://golang.org"><img  src="https://img.shields.io/badge/golang-v1.11-red.svg"/></a>
-  <a  href="https://github.com/tools/godep" ><img src="https://img.shields.io/badge/godep-dependency-71a3d9.svg"/></a>
-</div>
+React web app for creating and interacting with the POKT Wallet.
 
-## Overview
 <div>
-    <a  href="https://github.com/pokt-network/pocket-core/releases"><img src="https://img.shields.io/github/release-pre/pokt-network/pocket-core.svg"/></a>
-    <a href="https://circleci.com/gh/pokt-network/pocket-core/tree/staging"><img src="https://circleci.com/gh/pokt-network/pocket-core/tree/staging.svg?style=svg"/></a>
-    <a  href="https://github.com/pokt-network/pocket-core/pulse"><img src="https://img.shields.io/github/contributors/pokt-network/pocket-core.svg"/></a>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg"/></a>
-    <a href="https://github.com/pokt-network/pocket-core/pulse"><img src="https://img.shields.io/github/last-commit/pokt-network/pocket-core.svg"/></a>
-    <a href="https://github.com/pokt-network/pocket-core/pulls"><img src="https://img.shields.io/github/issues-pr/pokt-network/pocket-core.svg"/></a>
-    <a href="https://github.com/pokt-network/pocket-core/releases"><img src="https://img.shields.io/badge/platform-linux%20%7C%20windows%20%7C%20macos-pink.svg"/></a>
-    <a href="https://github.com/pokt-network/pocket-core/issues"><img src="https://img.shields.io/github/issues-closed/pokt-network/pocket-core.svg"/></a>
+    <a href="https://github.com/pokt-foundation/wallet/pulse"><img src="https://img.shields.io/github/last-commit/pokt-foundation/wallet.svg"/></a>
+    <a href="https://github.com/pokt-foundation/wallet/pulls"><img src="https://img.shields.io/github/issues-pr/pokt-foundation/wallet.svg"/></a>
+    <a href="https://github.com/pokt-foundation/wallet/releases"><img src="https://img.shields.io/badge/platform-linux%20%7C%20windows%20%7C%20macos-pink.svg"/></a>
+    <a href="https://github.com/pokt-foundation/wallet/issues"><img src="https://img.shields.io/github/issues-closed/pokt-foundation/wallet.svg"/></a>
 </div>
 
-Full Description
 
-## Getting Started
+## Quickstart
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+Clone the repository.
 
-### Example usage
-
-```
-The most basic example of how you would use the project
+```sh
+$ git clone https://github.com/pokt-foundation/wallet.git && cd wallet
 ```
 
-### Installation
+Install dependencies and update the Browserlist.
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the step
+```sh
+$ npm install
+$ npx browserslist@latest --update-db
 ```
 
-And repeat
+Configure your `.env` file. An example can be found at `.env.example`
 
+Then to run the development build:
+
+```sh
+$ npm run start
 ```
-until finished
-```
-
-End with an example of getting data out of the system or using it for a demo
-
-## Documentation
-
-Full usage and options or a link to the docs.pokt.network site
 
 ## Running the tests
 
-Explain how to run the automated tests
-
-```
-Give an example
+```sh
+$ npm run test
 ```
 
 ## Contributing
