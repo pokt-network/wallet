@@ -11,6 +11,7 @@ import { getDataSource } from "../../datasource";
 import pocketService from "../../core/services/pocket-service";
 import { isPassphraseValid } from "../../utils/validations";
 import ErrorLabel from "../../components/error-label/error";
+import ConfirmActionModal from "../../components/modals/confirm-action/confirmAction";
 
 const dataSource = getDataSource();
 
@@ -148,8 +149,8 @@ function Create({
         </div>
 
         <p className="disclaimer">
-          Make sure your password has minimum 15 alphanumeric symbols, one
-          capital letter, one lowercase, one special characters and one number.
+          Make sure your passphrase has minimum 15 alphanumeric symbols, one
+          capital letter, one lowercase, one special character and one number.
         </p>
 
         <Button
@@ -179,6 +180,7 @@ function Download({
 }) {
   const history = useHistory();
   const [downloadError, setDownloadError] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(true);
 
   const handleDownload = useCallback(async () => {
     if (!ppk) {
@@ -225,8 +227,9 @@ function Download({
         <div className="notification">
           <Banner mode="warning" title="Save your Key File">
             <p>
-              To import this wallet elsewhere, you will need the passphrase that
-              you have just created, so please back it up securely.
+              To import this wallet elsewhere, you will need this key file and
+              the passphrase that you have just created, so please back it up
+              securely.
             </p>
           </Banner>
         </div>
@@ -240,8 +243,9 @@ function Download({
         </div>
 
         <p className="disclaimer">
-          If you lose the keyfile or passphrase, you should use the private key
-          option instead.
+          If you lose the key file or passphrase, your only other method of
+          accessing the wallet will be to use the private key. Be sure to Reveal
+          Private Key on the next page and save it securely.
         </p>
 
         <Button
@@ -257,13 +261,20 @@ function Download({
           <IconBack />
           <span>Back</span>
         </button>
+
+        <ConfirmActionModal
+          visible={confirmOpen}
+          onClose={() => setConfirmOpen(false)}
+          onContinue={goBack}
+          onCancel={() => setConfirmOpen(false)}
+        />
       </CreateContainer>
     </Layout>
   );
 }
 
 export default function CreateWallet() {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   const [addressHex, setAddressHex] = useState("");
   const [publicKeyHex, setPublicKeyHex] = useState("");
   const [ppk, setPpk] = useState("");
