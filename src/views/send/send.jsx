@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Modal, TextInput, useTheme } from "@pokt-foundation/ui";
 import { typeGuard } from "@pokt-network/pocket-js";
 import { useHistory } from "react-router";
@@ -31,6 +31,7 @@ function ConfirmSend({
   setPassphrase,
   passphraseError,
   theme,
+  sendRef,
 }) {
   const { width } = useWindowSize();
 
@@ -43,6 +44,13 @@ function ConfirmSend({
     },
     [setPassphrase]
   );
+
+  const onSendClick = useCallback(() => {
+    if (sendRef.current) {
+      sendRef.current.disabled = true;
+      sendTransaction();
+    }
+  }, [sendTransaction, sendRef]);
 
   return (
     <>
@@ -94,7 +102,8 @@ function ConfirmSend({
               <Button
                 mode="primary"
                 className="send-button"
-                onClick={sendTransaction}
+                onClick={onSendClick}
+                innerRef={sendRef}
               >
                 Send
               </Button>
@@ -135,7 +144,8 @@ function ConfirmSend({
               mode="primary"
               className="send-button"
               wide
-              onClick={sendTransaction}
+              onClick={onSendClick}
+              innerRef={sendRef}
             >
               Send
             </Button>
@@ -244,6 +254,7 @@ function SendTransaction({
 export default function Send() {
   const history = useHistory();
   const theme = useTheme();
+  const sendRef = useRef(null);
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
   const [destinationAddress, setDestinationAddress] = useState(undefined);
@@ -308,6 +319,7 @@ export default function Send() {
             ? txResponse.message
             : "Failed to send the transaction, please verify the information."
         );
+        if (sendRef.current) sendRef.current.disabled = false;
         return;
       }
 
@@ -328,6 +340,7 @@ export default function Send() {
       pushToTxDetail(txResponse.txhash);
     } else {
       setAddressError("Amount to send or the destination address are invalid.");
+      if (sendRef.current) sendRef.current.disabled = false;
     }
   }, [
     addressHex,
@@ -434,6 +447,7 @@ export default function Send() {
           setPassphrase={setPassphrase}
           passphraseError={passphraseError}
           theme={theme}
+          sendRef={sendRef}
         />
       )}
     </>

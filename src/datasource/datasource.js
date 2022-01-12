@@ -160,10 +160,12 @@ export class DataSource {
    * @returns {Float}
    */
   async getPrice() {
-    let response = await axios.get("https://thunderheadotc.com/api/price/");
-    let data = response["data"];
-    if (data["status"] === "200") {
-      return parseFloat(data["price"]);
+    const response = await axios.get(
+      "https://supply.research.pokt.network:8192/price"
+    );
+    const data = response["data"];
+    if (response["status"] === 200 && data) {
+      return data;
     } else {
       return -1;
     }
@@ -233,7 +235,6 @@ export class DataSource {
       ppk,
       passphrase
     );
-    
 
     if (typeGuard(accountOrUndefined, Error)) {
       return new Error(
@@ -250,7 +251,6 @@ export class DataSource {
       return new Error(transactionSenderOrError.message);
     }
 
-
     const rawTxPayloadOrError = await transactionSenderOrError
       .send(accountOrUndefined.addressHex, toAddress, amount.toString())
       .createTransaction(
@@ -259,7 +259,6 @@ export class DataSource {
         CoinDenom.Upokt,
         memo
       );
-
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
       console.log(
