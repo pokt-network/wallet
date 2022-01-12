@@ -38,6 +38,8 @@ export default function AccountDetail() {
   const [txList, setTxList] = useState([]);
   const [price, setPrice] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [priceProvider, setPriceProvider] = useState("");
+  const [priceProviderLink, setPriceProviderLink] = useState("");
 
   const increaseMaxTxListCount = useCallback(() => {
     if (maxTxListCount < Number(Config.MAX_TRANSACTION_LIST_COUNT)) {
@@ -157,8 +159,10 @@ export default function AccountDetail() {
   }, []);
 
   const getPrice = useCallback(async () => {
-    const price = await dataSource.getPrice();
-    setPrice(price);
+    const priceData = await dataSource.getPrice();
+    setPrice(priceData.price);
+    setPriceProvider(priceData.priceSourceText);
+    setPriceProviderLink(priceData.priceSourceURL);
   }, []);
 
   const addNode = useCallback((node) => {
@@ -299,19 +303,20 @@ export default function AccountDetail() {
           <h1>
             {Number(poktsBalance).toLocaleString("en-US", {
               maximumFractionDigits: 2,
-              minimumFractionDigits: 2
+              minimumFractionDigits: 2,
             })}{" "}
             POKT
           </h1>
-          <h2>
-            $
-            {parseFloat(price * poktsBalance).toLocaleString("en-US", {
-              maximumFractionDigits: 2,
-              minimumFractionDigits: 2
-            })}{" "}
-            USD{" "}
-            <Link href="https://thunderheadotc.com">Price by Thunderhead</Link>
-          </h2>
+          {price ? (
+            <h2>
+              $
+              {parseFloat(price * poktsBalance).toLocaleString("en-US", {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2,
+              })}{" "}
+              USD <Link href={priceProviderLink}>Price by {priceProvider}</Link>
+            </h2>
+          ) : null}
         </AccountHeaderContainer>
       }
     >
