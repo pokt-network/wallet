@@ -17,15 +17,7 @@ const CreatePKContent = styled.section`
     text-align: center;
     padding-bottom: 35px;
     margin-bottom: 50px;
-    background:
-      linear-gradient(
-        to right, 
-        #fff 27%,
-        #27a9e0 100%
-      )
-      right 
-      bottom    
-      no-repeat;
+    background: ${(props) => props.theme.backgroundBorder};
     background-size: 100% 1px;
     ${maxPhone(css`
       margin-bottom: 20px;
