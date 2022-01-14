@@ -8,14 +8,19 @@ const SendContent = styled.section`
   align-items: center;
   justify-content: center;
 
+  .amount-error-container {
+    width: 100%;
+    margin-top: -35px;
+  }
+
   input {
     width: 448px;
-    margin: 79px 0 15px 0;
+    margin: 64px 0 0 0;
   }
 
   button {
     width: 220px;
-    margin: 79px 0 0 0;
+    margin: 24px 0 0 0;
   }
 
   p {
@@ -54,12 +59,12 @@ const SendContent = styled.section`
     line-height: 16px;
     text-align: right;
     color: ${(props) => props.theme.colors.white};
-    width: 98%; 
-    margin: 5px 0 20px 0;
+    width: 98%;
+    margin: 4px 0;
   }
 
   ${maxPhone(css`
-    width: 100%;
+    width: 95%;
 
     input,
     button {

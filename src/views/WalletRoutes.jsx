@@ -9,8 +9,8 @@ import TransactionDetail from "./transaction-detail/transactionDetail";
 import AccountDetail from "./account-detail/accountDetail";
 import Header from "../components/header";
 import Footer from "../components/footer";
-
 import { TransportProvider } from "../context/transportContext";
+import { ROUTES } from "../utils/routes";
 
 export default function WalletRoutes() {
   const theme = useTheme();
@@ -47,16 +47,20 @@ export default function WalletRoutes() {
       <Header />
       <Switch location={displayLocation}>
         <div onAnimationEnd={onAnimationEnd} className={transitionStage}>
-          <Route exact path="/" component={Home}></Route>
-          <Route exact path="/import" component={ImportPocket}></Route>
-          <Route exact path="/create" component={Create}></Route>
+          <Route exact path={ROUTES.home} component={Home}></Route>
+          <Route exact path={ROUTES.import} component={ImportPocket}></Route>
+          <Route exact path={ROUTES.create} component={Create}></Route>
 
           <TransportProvider>
-            <Route exact path="/send" component={Send}></Route>
-            <Route exact path="/account" component={AccountDetail}></Route>
+            <Route exact path={ROUTES.send} component={Send}></Route>
             <Route
               exact
-              path="/transaction-detail"
+              path={ROUTES.account}
+              component={AccountDetail}
+            ></Route>
+            <Route
+              exact
+              path={ROUTES.txDetail}
               component={TransactionDetail}
             ></Route>
           </TransportProvider>

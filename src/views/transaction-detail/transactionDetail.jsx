@@ -265,7 +265,7 @@ export default function TransactionDetail() {
 
         <div className="details">
           <div className="tx-detail-row">
-            <h2>Transaction hash</h2>
+            <h2 className="tx-hash">Transaction hash</h2>
 
             <div className="hash-container">
               <Link
