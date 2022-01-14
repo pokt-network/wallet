@@ -7,6 +7,10 @@ import { getDataSource } from "../../../datasource";
 import pocketService from "../../../core/services/pocket-service";
 import { Config } from "../../../config/config";
 import ErrorLabel from "../../error-label/error";
+import {
+  validationError,
+  VALIDATION_ERROR_TYPES,
+} from "../../../utils/validations";
 
 const dataSource = getDataSource();
 
@@ -138,9 +142,11 @@ export default function UnjailUnstake({
           placeholder="Keyfile Passphrase"
           color={theme.accentAlternative}
           onChange={({ target }) => onPassphraseChange(target)}
-          style={{
-            border: passphraseError ? `2px solid ${theme.negative}` : undefined,
-          }}
+          style={
+            passphraseError
+              ? validationError(VALIDATION_ERROR_TYPES.input)
+              : undefined
+          }
         />
         <ErrorLabel message={passphraseError} show={passphraseError} />
         <Button

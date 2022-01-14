@@ -54,7 +54,7 @@ function Create({
 
         if (passphrase !== value) {
           setConfirmPassphraseError(
-            "Passphrase and Confirm passphrase are not identical."
+            "Passphrases do not match."
           );
         } else {
           setConfirmPassphraseError(undefined);
@@ -149,8 +149,9 @@ function Create({
         </div>
 
         <p className="disclaimer">
-          Make sure your passphrase has minimum 8 alphanumeric symbols, one
-          capital letter, one lowercase, one special character and one number.
+          Make sure your passphrase has minimum 8 characters, a mixture of
+          letters and numbers including at least one uppercase letter and
+          include at least one special character, e.g., ! @ # ? ]
         </p>
 
         <Button

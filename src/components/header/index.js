@@ -11,6 +11,7 @@ import PocketService from "../../core/services/pocket-service";
 import { Link, withRouter } from "react-router-dom";
 import { Config } from "../../config/config";
 import IconLogOut from "../../icons/iconLogout";
+import { ROUTES } from "../../utils/routes";
 
 class Header extends Component {
   constructor(props) {
@@ -40,7 +41,7 @@ class Header extends Component {
   }
 
   pushToDetails() {
-    this.props.history.push("/account");
+    this.props.history.push(ROUTES.account);
   }
 
   loggedInCheck() {
@@ -68,19 +69,29 @@ class Header extends Component {
 
   render() {
     const { isMenuHidden, isLoggedIn } = this.state;
+    const {
+      location: { pathname },
+    } = this.props;
 
     return (
       <HeaderContainer isHidden={isMenuHidden}>
         <Wrapper className="header">
-          <Logo href="/">
+          <Logo href={ROUTES.home}>
             <img src={logo} alt="Pocket Network logo" />
           </Logo>
           <Menu isHidden={isMenuHidden}>
             <StyledUl>
-              <div className="separator"/>
+              <div className="separator" />
               {isLoggedIn ? (
                 <StyledLi>
-                  <Link to="/account">Account Detail</Link>
+                  <Link
+                    to={ROUTES.account}
+                    className={
+                      pathname === ROUTES.account ? "active" : undefined
+                    }
+                  >
+                    Account Detail
+                  </Link>
                 </StyledLi>
               ) : null}
               <StyledLi>
@@ -102,7 +113,10 @@ class Header extends Component {
               ) : null}
             </StyledUl>
           </Menu>
-          <MobileButton onClick={() => this.onToggleMenu()} isOpen={!isMenuHidden} />
+          <MobileButton
+            onClick={() => this.onToggleMenu()}
+            isOpen={!isMenuHidden}
+          />
         </Wrapper>
       </HeaderContainer>
     );

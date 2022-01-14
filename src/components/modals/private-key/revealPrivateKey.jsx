@@ -6,6 +6,10 @@ import { getDataSource } from "../../../datasource";
 import useWindowSize from "../../../hooks/useWindowSize";
 import ErrorLabel from "../../error-label/error";
 import MessageALert from "../../messageAlert/messageAlert";
+import {
+  validationError,
+  VALIDATION_ERROR_TYPES,
+} from "../../../utils/validations";
 
 const dataSource = getDataSource();
 
@@ -58,6 +62,14 @@ export default function RevealPrivateKey({ visible, onClose, ppk }) {
     setPassphrase(value);
   }, []);
 
+  const onCloseCleanup = useCallback(() => {
+    onClose();
+    setPrivateKey("");
+    setPassphrase("");
+    setPassphraseError("");
+    setDisplayAlert(false);
+  }, [onClose]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDisplayAlert(false);
@@ -69,7 +81,7 @@ export default function RevealPrivateKey({ visible, onClose, ppk }) {
   return (
     <Modal
       visible={visible}
-      onClose={onClose}
+      onClose={onCloseCleanup}
       width={width > 768 ? undefined : "100%"}
       className="pocket-modal"
     >
@@ -82,20 +94,20 @@ export default function RevealPrivateKey({ visible, onClose, ppk }) {
           </Banner>
         </div>
 
-        <label className="passphrase label" htmlFor="passphrase">
-          Passphrase
-        </label>
-
-        <PasswordInput
-          placeholder="Passphrase"
-          name="passphrase"
-          className="passphrase-input"
-          onChange={({ target }) => onPassphraseChange(target)}
-          color={theme.accentAlternative}
-          style={{
-            border: passphraseError ? `2px solid ${theme.negative}` : undefined,
-          }}
-        />
+        {privateKey && privateKey.length > 0 ? null : (
+          <PasswordInput
+            placeholder="Passphrase"
+            name="passphrase"
+            className="passphrase-input"
+            onChange={({ target }) => onPassphraseChange(target)}
+            color={theme.accentAlternative}
+            style={
+              passphraseError
+                ? validationError(VALIDATION_ERROR_TYPES.input)
+                : undefined
+            }
+          />
+        )}
 
         <ErrorLabel message={passphraseError} show={passphraseError} />
 

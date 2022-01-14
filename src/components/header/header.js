@@ -18,6 +18,11 @@ const HeaderContainer = styled.header`
     vertical-align: middle;
   }
 
+  .active {
+    color: ${props => props.theme.colors.blue};
+    border-bottom: none !important;
+  }
+
   ${tablet(css`
     height: 75px;
     padding-top: 5px;

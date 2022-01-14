@@ -6,6 +6,7 @@ const AccountContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 8px;
 
   .unstake-send-container {
     width: 100%;
@@ -13,7 +14,7 @@ const AccountContent = styled.div`
     justify-content: ${(props) =>
       props.isStaked ? "space-between" : "center"};
     flex-wrap: wrap;
-    margin: 61px 0 63px 0;
+    margin: 40px 0 40px 0;
 
     .send-button,
     .unstake-button {
@@ -32,7 +33,7 @@ const AccountContent = styled.div`
   }
 
   .reveal-private-key {
-    margin: 51px 0 0 0;
+    margin: 20px 0 0 0;
   }
 
   .staking-options {
