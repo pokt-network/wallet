@@ -19,6 +19,10 @@ import { getDataSource } from "../../datasource";
 import pocketService from "../../core/services/pocket-service";
 import ErrorLabel from "../../components/error-label/error";
 import { isAddress } from "../../utils/isAddress";
+import {
+  validationError,
+  VALIDATION_ERROR_TYPES,
+} from "../../utils/validations";
 
 const dataSource = getDataSource();
 
@@ -216,14 +220,20 @@ function SendTransaction({
       }
     >
       <SendContent>
+        <div className="amount-error-container">
+          <ErrorLabel message={amountError} show={amountError} />
+        </div>
         <TextInput
           placeholder="Send to Address"
           onChange={updateDestinationAddress}
           value={destinationAddress}
-          style={{
-            border: addressError ? `2px solid ${theme.negative}` : undefined,
-          }}
+          style={
+            addressError
+              ? validationError(VALIDATION_ERROR_TYPES.input)
+              : undefined
+          }
         />
+        <ErrorLabel message={addressError} show={addressError} />
 
         <label className="tx-memo-label" htmlFor="tx-memo">
           Tx Memo
@@ -240,8 +250,6 @@ function SendTransaction({
         <p className="tx-fee">
           TX Fee {Number(fees / 1000000).toLocaleString("en-US")} POKT
         </p>
-        <ErrorLabel message={addressError} show={addressError} />
-        <ErrorLabel message={amountError} show={amountError} />
 
         <Button mode="primary" onClick={onSendClick}>
           Send
@@ -280,12 +288,12 @@ export default function Send() {
 
   const validate = useCallback(() => {
     if (isAddressValid === false) {
-      setAddressError("Invalid address");
+      setAddressError("Invalid address.");
       return false;
     }
 
     if (isAmountValid === false) {
-      setAmountError("Invalid amount");
+      setAmountError("Invalid amount.");
       return false;
     }
 

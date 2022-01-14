@@ -17,7 +17,7 @@ const ErrorLabelContainer = styled.div`
     font-weight: normal;
     font-size: 12px;
     line-height: 16px;
-    color: ${(props) => props.theme.placeholder};
+    color: ${(props) => props.theme.colors.error};
   }
 `;
 
