@@ -17,7 +17,10 @@ function ThemeProvider({ children }) {
         transparent: "transparent",
         gray: "#5F6569",
         secondaryGray: poktTheme.placeholder,
+<<<<<<< HEAD
         error: "#F93232",
+=======
+>>>>>>> master
       },
       backgroundBorder: `linear-gradient(to right, ${poktTheme.accent} 27%, ${poktTheme.accent} 27%) right bottom no-repeat`,
       ...poktTheme,
