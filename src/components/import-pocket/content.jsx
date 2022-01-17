@@ -24,8 +24,7 @@ const ImportPocketContent = styled.section`
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-}
-
+    margin-bottom: 30px !important;
   }
 
   .nimport-container {
@@ -40,7 +39,7 @@ const ImportPocketContent = styled.section`
       font-style: normal;
       font-weight: normal;
       line-height: 140%;
-      margin: 40px 0 20px 0;
+      margin: 0 0 30px 0;
 
       ${maxPhone(css`
         width: 100%;
@@ -57,9 +56,9 @@ const ImportPocketContent = styled.section`
 
     .custom-file-input {
       width: 100%;
-      /* margin: 0 0 40px 0; */
       border: 2px solid ${(props) => props.theme.surfaceInteractiveBorder};
-      color: ${(props) => props.theme.placeholder};
+      color: ${(props) =>
+        props.hasFile ? props.theme.colors.white : props.theme.placeholder};
       height: 56px;
       line-height: 56px;
       padding: 0 12px;

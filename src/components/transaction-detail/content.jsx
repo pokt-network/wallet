@@ -23,6 +23,7 @@ const TransactionDetailContent = styled.section`
         font-size: 12px;
         line-height: 140%;
         color: ${(props) => props.theme.colors.secondaryWhite};
+        white-space: nowrap;
       }
 
       p,

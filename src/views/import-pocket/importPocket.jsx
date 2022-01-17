@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router";
 import { typeGuard } from "@pokt-network/pocket-js";
-import { Button, TextInput, useTheme } from "@pokt-foundation/ui";
+import { Button, TextInput } from "@pokt-foundation/ui";
 import Layout from "../../components/layout";
 import ImportPocketContent from "../../components/import-pocket/content";
 import Accordion from "../../components/accordion";
@@ -11,13 +11,16 @@ import { getDataSource } from "../../datasource";
 import PocketService from "../../core/services/pocket-service";
 import Link from "../../components/link/link";
 import ErrorLabel from "../../components/error-label/error";
-import { isPassphraseValid } from "../../utils/validations";
+import {
+  isPassphraseValid,
+  validationError,
+  VALIDATION_ERROR_TYPES,
+} from "../../utils/validations";
 
 const dataSource = getDataSource();
 
 export default function ImportPocket() {
   const history = useHistory();
-  const theme = useTheme();
   const [fileName, setFileName] = useState("");
   const [ppk, setPpk] = useState("");
   const [privateKey, setPrivateKey] = useState("");
@@ -94,7 +97,7 @@ export default function ImportPocket() {
 
       if (typeGuard(account, Error)) {
         console.error(account);
-        setPpkPassphraseError(account.message)
+        setPpkPassphraseError(account.message);
         return false;
       }
 
@@ -192,7 +195,7 @@ export default function ImportPocket() {
 
   return (
     <Layout title={<h1 className="title">Import Account</h1>}>
-      <ImportPocketContent>
+      <ImportPocketContent hasFile={fileName ? true : false}>
         <p className="description">Select a method to access your account</p>
 
         <div className="nimport-container">
@@ -204,9 +207,11 @@ export default function ImportPocket() {
             <div className="error-label-container">
               <label
                 className="custom-file-input"
-                style={{
-                  border: ppkError ? `2px solid ${theme.negative}` : undefined,
-                }}
+                style={
+                  ppkError
+                    ? validationError(VALIDATION_ERROR_TYPES.input)
+                    : undefined
+                }
               >
                 {fileName ? fileName : "Select File"}
                 <TextInput
@@ -226,11 +231,11 @@ export default function ImportPocket() {
               <PasswordInput
                 placeholder="Keyfile Passphrase"
                 onChange={(e) => passPhraseChange("file", e)}
-                style={{
-                  border: ppkPassphraseError
-                    ? `2px solid ${theme.negative}`
-                    : undefined,
-                }}
+                style={
+                  ppkPassphraseError
+                    ? validationError(VALIDATION_ERROR_TYPES.input)
+                    : undefined
+                }
               />
               <ErrorLabel
                 message={ppkPassphraseError}
@@ -257,11 +262,11 @@ export default function ImportPocket() {
                 placeholder="•••••••••••••••••••••"
                 wide
                 onChange={privKeyInputChange}
-                style={{
-                  border: privateKeyError
-                    ? `2px solid ${theme.negative}`
-                    : undefined,
-                }}
+                style={
+                  privateKeyError
+                    ? validationError(VALIDATION_ERROR_TYPES.input)
+                    : undefined
+                }
               />
               <ErrorLabel message={privateKeyError} show={privateKeyError} />
             </div>
@@ -272,13 +277,14 @@ export default function ImportPocket() {
 
             <div className="error-label-container">
               <PasswordInput
+                className="pk-passphrase"
                 placeholder="Private Key Session Passphrase"
                 onChange={(e) => passPhraseChange("private", e)}
-                style={{
-                  border: privateKeyPassphraseError
-                    ? `2px solid ${theme.negative}`
-                    : undefined,
-                }}
+                style={
+                  privateKeyPassphraseError
+                    ? validationError(VALIDATION_ERROR_TYPES.input)
+                    : undefined
+                }
               />
               <ErrorLabel
                 message={privateKeyPassphraseError}

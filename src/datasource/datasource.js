@@ -235,7 +235,6 @@ export class DataSource {
       ppk,
       passphrase
     );
-    
 
     if (typeGuard(accountOrUndefined, Error)) {
       return new Error(
@@ -252,7 +251,6 @@ export class DataSource {
       return new Error(transactionSenderOrError.message);
     }
 
-
     const rawTxPayloadOrError = await transactionSenderOrError
       .send(accountOrUndefined.addressHex, toAddress, amount.toString())
       .createTransaction(
@@ -261,7 +259,6 @@ export class DataSource {
         CoinDenom.Upokt,
         memo
       );
-
 
     if (typeGuard(rawTxPayloadOrError, RpcError)) {
       console.log(
