@@ -195,7 +195,7 @@ export default function ImportPocket() {
 
   return (
     <Layout title={<h1 className="title">Import Account</h1>}>
-      <ImportPocketContent>
+      <ImportPocketContent hasFile={fileName ? true : false}>
         <p className="description">Select a method to access your account</p>
 
         <div className="nimport-container">
