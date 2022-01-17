@@ -405,6 +405,7 @@ export default function Send() {
         setAddressError("");
         return;
       } else {
+        setDestinationAddress(value)
         setIsAddressValid(false);
         setAddressError("Address is invalid.");
       }
