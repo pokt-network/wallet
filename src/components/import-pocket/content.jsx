@@ -57,7 +57,8 @@ const ImportPocketContent = styled.section`
     .custom-file-input {
       width: 100%;
       border: 2px solid ${(props) => props.theme.surfaceInteractiveBorder};
-      color: ${(props) => props.theme.placeholder};
+      color: ${(props) =>
+        props.hasFile ? props.theme.colors.white : props.theme.placeholder};
       height: 56px;
       line-height: 56px;
       padding: 0 12px;
