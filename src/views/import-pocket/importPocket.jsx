@@ -12,7 +12,6 @@ import PocketService from "../../core/services/pocket-service";
 import Link from "../../components/link/link";
 import ErrorLabel from "../../components/error-label/error";
 import {
-  isPassphraseValid,
   validationError,
   VALIDATION_ERROR_TYPES,
 } from "../../utils/validations";
@@ -81,7 +80,7 @@ export default function ImportPocket() {
   };
 
   const importAccountFromFile = useCallback(async () => {
-    if (filePassphrase.length === 0 || !isPassphraseValid(filePassphrase)) {
+    if (filePassphrase.length === 0) {
       setPpkPassphraseError("Invalid Passphrase");
       return;
     }
