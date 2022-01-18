@@ -84,7 +84,7 @@ function ConfirmSend({
           >
             <SendTransactionModalContainer>
               <h1 className="title">
-                Confirm your Passphase to complete <br /> the transaction
+                Confirm your passphrase to complete <br /> the transaction
               </h1>
 
               <div className="password-input-container">

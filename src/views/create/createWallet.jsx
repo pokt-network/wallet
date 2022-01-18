@@ -151,7 +151,7 @@ function Create({
         <p className="disclaimer">
           Make sure your passphrase has minimum 8 characters, a mixture of
           letters and numbers including at least one uppercase letter and
-          include at least one special character, e.g., ! @ # ? ]
+          include at least one special character, e.g., ! @ #
         </p>
 
         <Button
