@@ -2,6 +2,8 @@ import styled, { css } from "styled-components";
 import { tablet, maxPhone } from "../../utils/media";
 
 const HeaderContainer = styled.header`
+  margin: 24px 0 0 0;
+  
   .nav-button {
     cursor: pointer;
     border-style: none;
@@ -19,7 +21,7 @@ const HeaderContainer = styled.header`
   }
 
   .active {
-    color: ${props => props.theme.colors.blue};
+    color: ${(props) => props.theme.colors.blue};
     border-bottom: none !important;
   }
 
