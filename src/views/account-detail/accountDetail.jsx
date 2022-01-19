@@ -400,7 +400,7 @@ export default function AccountDetail() {
           Reveal Private Key
         </Button>
 
-        <AccountTableContainer>
+        <AccountTableContainer isEmpty={txList.length < 1}>
           <Table
             header={
               <>
