@@ -9,6 +9,7 @@ import { getDataSource } from "../../datasource";
 import noneImg from "../../utils/images/none.png";
 import successImg from "../../utils/images/check_green.png";
 import failedImg from "../../utils/images/wrong_red.png";
+import pendingImg from "../../utils/images/pending.png";
 import pocketService from "../../core/services/pocket-service";
 import IconTXStatus from "../../icons/iconTxStatus";
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
@@ -39,6 +40,10 @@ export default function TransactionDetail() {
         case "failed":
           setStatusImg(failedImg);
           setSecondaryStatusImg("failed");
+          break;
+        case "pending":
+          setStatusImg(pendingImg);
+          setSecondaryStatusImg("load");
           break;
         default:
           setStatusImg(noneImg);
@@ -104,7 +109,7 @@ export default function TransactionDetail() {
           from: fromAddress,
           to: toAddress,
           amount: amount,
-          status: txResponse.tx_result.code === 0 ? "Success" : "Failure",
+          status: txResponse.tx_result.code === 0 ? "Success" : "Failed",
           hash: txResponse.hash,
           type: transactiontype,
           height: txResponse.height,
@@ -256,7 +261,7 @@ export default function TransactionDetail() {
   return (
     <Layout title={<h1 className="title">Transaction Detail</h1>}>
       <TransactionDetailContent tx={tx}>
-        {location?.data?.comesFromSend ? (
+        {location?.data?.comesFromSend || statusImg === pendingImg ? (
           <Banner mode="info" title="Transaction Status">
             Your tx will be confirmed on the next block, which is estimated to
             take 15 mins.

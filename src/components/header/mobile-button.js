@@ -21,7 +21,7 @@ const MenuButton = styled(StyledLink).attrs({
     display: none;
   `)};
   ${maxPhone(css`
-    font-size: 25px;
+    font-size: 30px;
     right: 5%;
     top: 28px;
     color: ${colors.white};
