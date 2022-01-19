@@ -2,6 +2,8 @@ import styled, { css } from "styled-components";
 import { maxPhone } from "../../utils/media";
 
 const ImportPocketContent = styled.section`
+  width: 100%;
+
   .description {
     font-size: 16px;
     text-align: center;
@@ -40,6 +42,7 @@ const ImportPocketContent = styled.section`
       font-weight: normal;
       line-height: 140%;
       margin: 0 0 30px 0;
+      max-width: 488px;
 
       ${maxPhone(css`
         width: 100%;

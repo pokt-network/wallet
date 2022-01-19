@@ -31,7 +31,7 @@ const MenuButton = styled(StyledLink).attrs({
 
 export default (props) =>
   props.isOpen ? (
-    <MenuButton {...props}>&#88;</MenuButton>
+    <MenuButton {...props}>&#215;</MenuButton>
   ) : (
     <MenuButton {...props}>&#9776;</MenuButton>
   );
