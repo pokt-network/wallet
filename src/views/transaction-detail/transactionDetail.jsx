@@ -15,7 +15,7 @@ import IconTXStatus from "../../icons/iconTxStatus";
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 
 const dataSource = getDataSource();
-const POKT_SCAN_BASE_URL = "https://poktscan.com/public/";
+const EXPLORER_BASE_URL = "https://pokt.watch";
 
 export default function TransactionDetail() {
   const location = useLocation();
@@ -274,7 +274,7 @@ export default function TransactionDetail() {
 
             <div className="hash-container">
               <Link
-                href={`${POKT_SCAN_BASE_URL}/tx/${txHash}`}
+                href={`${EXPLORER_BASE_URL}/tx/${txHash}`}
                 className="hash"
               >
                 {txHash}
@@ -325,7 +325,7 @@ export default function TransactionDetail() {
           <div className="tx-detail-row">
             <h2>To address</h2>
             <Link
-              href={`${POKT_SCAN_BASE_URL}/account/${tx?.toAddress}`}
+              href={`${EXPLORER_BASE_URL}/address/${tx?.toAddress}`}
               className="to-address"
             >
               {tx?.toAddress}
