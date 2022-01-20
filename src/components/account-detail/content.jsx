@@ -123,6 +123,7 @@ const AccountContent = styled.div`
       display: flex;
       justify-content: space-evenly;
       flex-wrap: wrap;
+      padding-left: 0;
 
       &.node-options {
         margin: 0 0 28px 0;
@@ -148,6 +149,10 @@ const AccountContent = styled.div`
       margin: 28px 0 59px 0;
       flex-direction: column;
       align-items: center;
+
+      .send-button {
+        width: 280px;
+      }
 
       .unstake-button {
         margin-bottom: 39px;

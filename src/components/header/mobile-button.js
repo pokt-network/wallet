@@ -21,7 +21,7 @@ const MenuButton = styled(StyledLink).attrs({
     display: none;
   `)};
   ${maxPhone(css`
-    font-size: 25px;
+    font-size: 30px;
     right: 5%;
     top: 28px;
     color: ${colors.white};
@@ -31,7 +31,7 @@ const MenuButton = styled(StyledLink).attrs({
 
 export default (props) =>
   props.isOpen ? (
-    <MenuButton {...props}>&#88;</MenuButton>
+    <MenuButton {...props}>&#215;</MenuButton>
   ) : (
     <MenuButton {...props}>&#9776;</MenuButton>
   );

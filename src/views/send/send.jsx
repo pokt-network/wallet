@@ -154,7 +154,7 @@ function ConfirmSend({
               Send
             </Button>
 
-            <div className="daback-button-container">
+            <div className="back-button-container">
               <button className="back-button" onClick={goBack}>
                 <IconBack />
                 <span>Back</span>
