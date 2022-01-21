@@ -8,18 +8,19 @@ import Accordion from "../../components/accordion";
 import IconUpload from "../../icons/iconUpload";
 import PasswordInput from "../../components/input/passwordInput";
 import { getDataSource } from "../../datasource";
-import PocketService from "../../core/services/pocket-service";
 import Link from "../../components/link/link";
 import ErrorLabel from "../../components/error-label/error";
 import {
   validationError,
   VALIDATION_ERROR_TYPES,
 } from "../../utils/validations";
+import { useUser } from "../../context/userContext";
 
 const dataSource = getDataSource();
 
 export default function ImportPocket() {
   const history = useHistory();
+  const { updateUser } = useUser();
   const [fileName, setFileName] = useState("");
   const [ppk, setPpk] = useState("");
   const [privateKey, setPrivateKey] = useState("");
@@ -100,7 +101,7 @@ export default function ImportPocket() {
         return false;
       }
 
-      PocketService.saveUserInCache(
+      updateUser(
         account.addressHex,
         account.publicKey.toString("hex"),
         ppk.toString()
@@ -116,7 +117,7 @@ export default function ImportPocket() {
       );
       console.error(error);
     }
-  }, [history, filePassphrase, ppk]);
+  }, [history, filePassphrase, ppk, updateUser]);
 
   const importAccountFromPrivateKey = useCallback(async () => {
     if (privKeyPassphrase.length === 0) {
@@ -152,7 +153,7 @@ export default function ImportPocket() {
         return false;
       }
 
-      PocketService.saveUserInCache(
+      updateUser(
         account.addressHex,
         account.publicKey.toString("hex"),
         ppk.toString()
@@ -169,7 +170,7 @@ export default function ImportPocket() {
       console.error(error);
       return false;
     }
-  }, [history, privKeyPassphrase, privateKey]);
+  }, [history, privKeyPassphrase, privateKey, updateUser]);
 
   const passPhraseChange = useCallback((type, { target }) => {
     const { value } = target;

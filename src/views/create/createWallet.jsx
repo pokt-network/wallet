@@ -8,10 +8,11 @@ import IconDownload from "../../icons/iconDownload";
 import IconBack from "../../icons/iconBack";
 import Title from "../../components/public/title/title";
 import { getDataSource } from "../../datasource";
-import pocketService from "../../core/services/pocket-service";
 import { isPassphraseValid } from "../../utils/validations";
 import ErrorLabel from "../../components/error-label/error";
 import ConfirmActionModal from "../../components/modals/confirm-action/confirmAction";
+import { useUser } from "../../context/userContext";
+import { useTx } from "../../context/txContext";
 
 const dataSource = getDataSource();
 
@@ -25,6 +26,7 @@ function Create({
   setPublicKeyHex,
   setPpk,
 }) {
+  const { updateUser } = useUser();
   const [passPhraseError, setPassPhraseError] = useState(undefined);
   const [confirmPassphraseError, setConfirmPassphraseError] =
     useState(undefined);
@@ -53,9 +55,7 @@ function Create({
         setConfirmPassphrase(value);
 
         if (passphrase !== value) {
-          setConfirmPassphraseError(
-            "Passphrases do not match."
-          );
+          setConfirmPassphraseError("Passphrases do not match.");
         } else {
           setConfirmPassphraseError(undefined);
         }
@@ -79,7 +79,7 @@ function Create({
         setPublicKeyHex(account.publicKey.toString("hex"));
         setPpk(ppkOrError.toString());
 
-        pocketService.saveUserInCache(
+        updateUser(
           account.addressHex,
           account.publicKey.toString("hex"),
           ppkOrError.toString()
@@ -97,6 +97,7 @@ function Create({
     setAddressHex,
     setPpk,
     setPublicKeyHex,
+    updateUser,
   ]);
 
   useEffect(() => {
@@ -180,6 +181,8 @@ function Download({
   publicKeyHex,
 }) {
   const history = useHistory();
+  const { removeUser } = useUser();
+  const { removeTx } = useTx();
   const [downloadError, setDownloadError] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -227,11 +230,11 @@ function Download({
   }, []);
 
   const handleContinue = useCallback(() => {
-    pocketService.removeUserFromCached();
-    pocketService.removeTxFromCached();
+    removeUser();
+    removeTx();
     localStorage.clear();
     goBack();
-  }, [goBack]);
+  }, [goBack, removeUser, removeTx]);
 
   return (
     <Layout title={<Title className="title">Download Key File</Title>}>
