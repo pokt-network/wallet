@@ -1,0 +1,41 @@
+{
+  "home": {
+    "title 1": "Welcome to",
+    "title 2": "Pocket Wallet",
+    "description": "This is an open-source interface to provide easy access and management of your POKT cryptocurrency.",
+    "subtitle": "Do you have a Pocket account?",
+    "create": "Create",
+    "import": "Import"
+  },
+  "createWallet": {
+    "title": "Create Wallet",
+    "description": "Create a passphrase to protect your wallet.",
+    "warning": "You will need it to import the keyfile elsewhere, so please back it up securely. It can not be recovered if you lose it.",
+    "warningTitle": "Save your Passphrase",
+    "disclaimer": "Make sure your passphrase has minimum 8 characters, a mixture of letters and numbers including at least one uppercase letter and include at least one special character, e.g., ! @ #",
+    "create": "Create",
+    "haveWallet": "Already have a wallet?",
+    "importWallet": "Import Wallet",
+    "errorPassphraseCondition": "Passphrase must be minimum 8 characters, 1 min uppercase letter and 1 special character.",
+    "errorPassphraseMatch": "Passphrases do not match.",
+    "errorPassphraseRequirements": "The passphrase does not fit the requirements"
+  },
+  "download": {
+    "title": "Download Key File",
+    "warning": "To import this wallet elsewhere, you will need this key file and the passphrase that you have just created, so please back it up securely.",
+    "warningTitle": "Save your Key File",
+    "disclaimer": "If you lose the key file or passphrase, your only other method of accessing the wallet will be to use the private key. Be sure to Reveal Private Key on the next page and save it securely.",
+    "continue": "Continue",
+    "back": "Back",
+    "confirmAction": {
+      "title": "Confirm action",
+      "description1": "Are you sure you want to complete this action?",
+      "description2": "All your progress will be lost if not saved.",
+      "cancel": "Cancel",
+      "continue": "Continue"
+    }
+  },
+  "import": {
+      
+  }
+}

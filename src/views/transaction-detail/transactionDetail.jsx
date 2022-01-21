@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Banner, IconCopy, Link } from "@pokt-foundation/ui";
-import { useHistory, useLocation } from "react-router";
+import { useLocation } from "react-router";
 import ButtonIcon from "@pokt-foundation/ui/dist/ButtonIcon";
 import Layout from "../../components/layout";
 import TransactionDetailContent from "../../components/transaction-detail/content";
@@ -10,23 +10,20 @@ import noneImg from "../../utils/images/none.png";
 import successImg from "../../utils/images/check_green.png";
 import failedImg from "../../utils/images/wrong_red.png";
 import pendingImg from "../../utils/images/pending.png";
-import pocketService from "../../core/services/pocket-service";
 import IconTXStatus from "../../icons/iconTxStatus";
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
+import { useTx } from "../../context/txContext";
 
 const dataSource = getDataSource();
 const EXPLORER_BASE_URL = "https://pokt.watch";
 
 export default function TransactionDetail() {
   const location = useLocation();
-  const history = useHistory();
-  const [txHash, setTxHash] = useState(
-    location && location.data ? location.data.txHash : undefined
-  );
-  const [tx, setTx] = useState(undefined);
+  const { updateTx, tx } = useTx();
   const [statusImg, setStatusImg] = useState();
   const [secondaryStatusImg, setSecondaryStatusImg] = useState();
   const [loading, setLoading] = useState(false);
+  const [getTxWasCalled, setGetTxWasCalled] = useState(false);
 
   const updateTxInformation = useCallback(
     (txObj = undefined, tx = undefined) => {
@@ -116,20 +113,7 @@ export default function TransactionDetail() {
           memo: txResponse.stdTx.memo,
         };
 
-        setTx({
-          sentAmount: txSummary.amount,
-          hash: txSummary.hash,
-          fee: Number(Config.TX_FEE) / 1000000,
-          type: txSummary.type,
-          fromAddress: txSummary.from,
-          toAddress: txSummary.to,
-          status: txSummary.status,
-          sentStatus: "Sent",
-          height: txSummary.height,
-          memo: txSummary.memo,
-        });
-
-        pocketService.saveTxInCache(
+        updateTx(
           txSummary.type,
           txSummary.from,
           txSummary.to,
@@ -154,107 +138,37 @@ export default function TransactionDetail() {
           height: txSummary.height,
           memo: txSummary.memo,
         });
+
+        setGetTxWasCalled(true);
       } catch (error) {
         console.log(error);
         console.log("Failed to retrieve the transaction information.");
       }
     },
-    [updateTxInformation, getTransactionData]
+    [updateTxInformation, getTransactionData, updateTx]
   );
 
   useEffect(() => {
+    if (tx && tx?.txHash && secondaryStatusImg && statusImg) {
+      setLoading(false);
+    }
+  }, [secondaryStatusImg, statusImg, tx]);
+
+  useEffect(() => {
+    if (getTxWasCalled) return;
+
     setLoading(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
 
-    if (txHash !== undefined) {
-      if (location?.data?.comesFromSend) {
-        const {
-          fromAddress,
-          height,
-          sentAmount,
-          sentStatus,
-          status,
-          toAddress,
-          txFee,
-          txHash,
-          type,
-          memo,
-        } = pocketService.getTxInfo();
-
-        const transaction = {
-          sentAmount: sentAmount * 1000000,
-          hash: txHash,
-          fee: txFee,
-          type: type,
-          fromAddress,
-          toAddress,
-          status,
-          sentStatus,
-          height,
-          memo,
-        };
-
-        setTx(transaction);
-        updateTxInformation(undefined, transaction);
-
-        return;
-      }
-
-      getTx(txHash);
-    } else {
-      const {
-        type,
-        fromAddress,
-        toAddress,
-        sentAmount,
-        txHash,
-        txFee,
-        status,
-        sentStatus,
-        height,
-        memo,
-      } = pocketService.getTxInfo();
-      if (
-        type &&
-        fromAddress &&
-        toAddress &&
-        sentAmount !== undefined &&
-        txHash &&
-        txFee &&
-        status
-      ) {
-        const sentAmountFormatted = sentAmount * 1000000;
-
-        const transaction = {
-          type,
-          fromAddress,
-          toAddress,
-          sentAmount: sentAmountFormatted,
-          hash: txHash,
-          fee: txFee,
-          status,
-          sentStatus,
-          height,
-          memo,
-        };
-
-        setTx(transaction);
-        setTxHash(txHash);
-        updateTxInformation(transaction);
-      } else {
-        localStorage.clear();
-        history.push({
-          pathname: "/",
-        });
-      }
+    if (location?.data?.comesFromSend) {
+      updateTxInformation(undefined, tx);
+      return;
     }
-  }, [txHash, updateTxInformation, history, getTx, location]);
 
-  useEffect(() => {
-    if (txHash && tx && secondaryStatusImg && statusImg) {
-      setLoading(false);
+    if (location && location.data && location.data.txHash) {
+      getTx(location.data.txHash);
     }
-  }, [tx, txHash, secondaryStatusImg, statusImg]);
+  }, [getTx, location, tx, updateTxInformation, getTxWasCalled]);
 
   if (loading) return <AnimatedLogo />;
 
@@ -274,15 +188,15 @@ export default function TransactionDetail() {
 
             <div className="hash-container">
               <Link
-                href={`${EXPLORER_BASE_URL}/tx/${txHash}`}
+                href={`${EXPLORER_BASE_URL}/tx/${tx?.txHash}`}
                 className="hash"
               >
-                {txHash}
+                {tx?.txHash}
               </Link>
 
               <ButtonIcon
                 className="copy-icon-button"
-                onClick={() => navigator.clipboard.writeText(txHash)}
+                onClick={() => navigator.clipboard.writeText(tx?.txHash)}
               >
                 <IconCopy size="small" />
               </ButtonIcon>
@@ -309,7 +223,12 @@ export default function TransactionDetail() {
 
           <div className="tx-detail-row">
             <h2>Amount</h2>
-            <p>{tx?.sentAmount / 1000000} POKT</p>
+            <p>
+              {location?.data?.comesFromSend
+                ? tx?.sentAmount
+                : tx?.sentAmount / 1000000}
+              POKT
+            </p>
           </div>
 
           <div className="tx-detail-row">

@@ -10,16 +10,17 @@ import { Config } from "../../config/config";
 import { getDataSource } from "../../datasource";
 import loadIcon from "../../utils/images/icons/load.svg";
 import sentReceivedIcon from "../../utils/images/icons/sentReceived.svg";
-import pocketService from "../../core/services/pocket-service";
 import StakingOption from "../../components/account-detail/stakingOption";
 import RevealPrivateKey from "../../components/modals/private-key/revealPrivateKey";
 import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake";
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
+import { useUser } from "../../context/userContext";
 
 const dataSource = getDataSource();
 
 export default function AccountDetail() {
   const history = useHistory();
+  const { user } = useUser();
   const [addressHex, setAddressHex] = useState("");
   const [publicKeyHex, setPublicKeyHex] = useState("");
   const [ppk, setPpk] = useState("");
@@ -266,7 +267,7 @@ export default function AccountDetail() {
 
   useEffect(() => {
     setLoading(true);
-    const { addressHex, publicKeyHex, ppk } = pocketService.getUserInfo();
+    const { addressHex, ppk, publicKeyHex } = user;
 
     if (addressHex && publicKeyHex && ppk) {
       setAddressHex(addressHex);
@@ -279,7 +280,7 @@ export default function AccountDetail() {
         pathname: "/",
       });
     }
-  }, [refreshView, history]);
+  }, [refreshView, history, user]);
 
   useEffect(() => {
     if (poktsBalance && txList && publicKeyHex && addressHex) {
