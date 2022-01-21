@@ -149,7 +149,7 @@ export default function TransactionDetail() {
   );
 
   useEffect(() => {
-    if (tx && tx?.txHash && secondaryStatusImg && statusImg) {
+    if (tx?.txHash && secondaryStatusImg && statusImg) {
       setLoading(false);
     }
   }, [secondaryStatusImg, statusImg, tx]);

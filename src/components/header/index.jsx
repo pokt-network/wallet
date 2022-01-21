@@ -30,8 +30,8 @@ export default function Header() {
   const onLogOut = useCallback(() => {
     removeUser();
     removeTx();
-    window.location.reload();
-  }, [removeUser, removeTx]);
+    history.push(ROUTES.import);
+  }, [removeUser, removeTx, history]);
 
   const loggedInCheck = useCallback(() => {
     const { addressHex, publicKeyHex, ppk } = user;
