@@ -6,6 +6,8 @@ import history from "./history";
 import "./normalize.css";
 import ThemeProvider from "./context/themeContext";
 import WalletRoutes from "./views/WalletRoutes";
+import { UserContextProvider } from "./context/userContext";
+import { TxContextProvider } from "./context/txContext";
 
 function App() {
   useEffect(() => {
@@ -17,14 +19,18 @@ function App() {
 
   return (
     <Router history={history}>
-      <ThemeProvider>
-        <div className="loader-container" id="loader">
-          <div className="loader"></div>
-        </div>
-        <Main>
-          <WalletRoutes />
-        </Main>
-      </ThemeProvider>
+      <UserContextProvider>
+        <TxContextProvider>
+          <ThemeProvider>
+            <div className="loader-container" id="loader">
+              <div className="loader"></div>
+            </div>
+            <Main>
+              <WalletRoutes />
+            </Main>
+          </ThemeProvider>
+        </TxContextProvider>
+      </UserContextProvider>
     </Router>
   );
 }

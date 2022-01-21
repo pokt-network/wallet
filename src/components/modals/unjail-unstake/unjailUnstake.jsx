@@ -4,13 +4,14 @@ import { Button, Modal, useTheme } from "@pokt-foundation/ui";
 import UnjailUnstakeContainer from "./container";
 import PasswordInput from "../../input/passwordInput";
 import { getDataSource } from "../../../datasource";
-import pocketService from "../../../core/services/pocket-service";
 import { Config } from "../../../config/config";
 import ErrorLabel from "../../error-label/error";
 import {
   validationError,
   VALIDATION_ERROR_TYPES,
 } from "../../../utils/validations";
+import { useUser } from "../../../context/userContext";
+import { useTx } from "../../../context/txContext";
 
 const dataSource = getDataSource();
 
@@ -22,6 +23,8 @@ export default function UnjailUnstake({
   pushToTxDetail,
 }) {
   const theme = useTheme();
+  const { updateUser } = useUser();
+  const { updateTx } = useTx();
   const [passphrase, setPassphrase] = useState("");
   const [passphraseError, setPassphraseError] = useState("");
 
@@ -52,8 +55,8 @@ export default function UnjailUnstake({
       if (txResponse.txhash !== undefined) {
         setPassphrase("");
         const publicKeyHex = unlockedAccount.privateKey.toString("hex");
-        pocketService.saveUserInCache(account.addressHex, publicKeyHex, ppk);
-        pocketService.saveTxInCache(
+        updateUser(account.addressHex, publicKeyHex, ppk.toString());
+        updateTx(
           "Unjail",
           account.addressHex,
           account.addressHex,
@@ -73,7 +76,7 @@ export default function UnjailUnstake({
     } else {
       setPassphraseError("Invalid passphrase");
     }
-  }, [ppk, passphrase, pushToTxDetail]);
+  }, [ppk, passphrase, pushToTxDetail, updateUser, updateTx]);
 
   const unstakeNode = useCallback(async () => {
     if (ppk && passphrase) {
@@ -104,9 +107,9 @@ export default function UnjailUnstake({
         setPassphrase("");
         const publicKeyHex = unlockedAccount.privateKey.toString("hex");
 
-        pocketService.saveUserInCache(account.addressHex, publicKeyHex, ppk);
+        updateUser(account.addressHex, publicKeyHex, ppk.toString());
 
-        pocketService.saveTxInCache(
+        updateTx(
           "Unstake",
           account.addressHex,
           account.addressHex,
@@ -126,7 +129,7 @@ export default function UnjailUnstake({
     } else {
       setPassphraseError("Invalid passphrase");
     }
-  }, [passphrase, ppk, pushToTxDetail]);
+  }, [passphrase, ppk, pushToTxDetail, updateUser, updateTx]);
 
   const onPassphraseChange = useCallback(({ value }) => {
     setPassphrase(value);

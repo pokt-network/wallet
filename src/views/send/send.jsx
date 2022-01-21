@@ -16,13 +16,14 @@ import useWindowSize from "../../hooks/useWindowSize";
 import IconBack from "../../icons/iconBack";
 import { Config } from "../../config/config";
 import { getDataSource } from "../../datasource";
-import pocketService from "../../core/services/pocket-service";
 import ErrorLabel from "../../components/error-label/error";
 import { isAddress } from "../../utils/isAddress";
 import {
   validationError,
   VALIDATION_ERROR_TYPES,
 } from "../../utils/validations";
+import { useUser } from "../../context/userContext";
+import { useTx } from "../../context/txContext";
 
 const dataSource = getDataSource();
 
@@ -154,7 +155,7 @@ function ConfirmSend({
               Send
             </Button>
 
-            <div className="daback-button-container">
+            <div className="back-button-container">
               <button className="back-button" onClick={goBack}>
                 <IconBack />
                 <span>Back</span>
@@ -262,6 +263,8 @@ function SendTransaction({
 export default function Send() {
   const history = useHistory();
   const theme = useTheme();
+  const { updateUser, user } = useUser();
+  const { updateTx } = useTx();
   const sendRef = useRef(null);
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
@@ -331,8 +334,9 @@ export default function Send() {
         return;
       }
 
-      pocketService.saveUserInCache(addressHex, publicKeyHex, ppk);
-      pocketService.saveTxInCache(
+      updateUser(addressHex, publicKeyHex, ppk);
+
+      updateTx(
         "TokenTransfer",
         addressHex,
         destinationAddress,
@@ -360,6 +364,8 @@ export default function Send() {
     passphrase,
     pushToTxDetail,
     memoText,
+    updateUser,
+    updateTx,
   ]);
 
   const handlePoktValueChange = useCallback(
@@ -405,7 +411,7 @@ export default function Send() {
         setAddressError("");
         return;
       } else {
-        setDestinationAddress(value)
+        setDestinationAddress(value);
         setIsAddressValid(false);
         setAddressError("Address is invalid.");
       }
@@ -414,7 +420,7 @@ export default function Send() {
   );
 
   useEffect(() => {
-    const { addressHex, publicKeyHex, ppk } = pocketService.getUserInfo();
+    const { addressHex, ppk, publicKeyHex } = user;
 
     if (addressHex && publicKeyHex && ppk) {
       setAddressHex(addressHex);
@@ -427,7 +433,7 @@ export default function Send() {
         pathname: "/",
       });
     }
-  }, [history, getAccountBalance]);
+  }, [history, getAccountBalance, user]);
 
   return (
     <>

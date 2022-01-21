@@ -87,7 +87,7 @@ const AccountTableContainer = styled.div`
   }
 
   ${maxPhone(css`
-    height: 305px;
+    height: ${(props) => (props.isEmpty ? "fit-content" : "305px")};
 
     .table-title {
       font-size: 18px;
