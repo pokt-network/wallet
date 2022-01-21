@@ -6,3 +6,5 @@ export const ROUTES = {
   account: "/account",
   txDetail: "/transaction-detail",
 };
+
+export const PUBLIC_ROUTES = [ROUTES.home, ROUTES.import, ROUTES.create];
