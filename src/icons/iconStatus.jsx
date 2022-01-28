@@ -43,7 +43,7 @@ export default function IconStatus({ type, ...props }) {
         </g>
       </svg>
     );
-  } else if (type === "unstaked") {
+  } else {
     return (
       <svg
         width="12"

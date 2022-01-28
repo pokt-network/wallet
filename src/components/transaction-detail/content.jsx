@@ -20,7 +20,7 @@ const TransactionDetailContent = styled.section`
       h2 {
         font-style: normal;
         font-weight: bold;
-        font-size: 12px;
+        font-size: 14px;
         line-height: 140%;
         color: ${(props) => props.theme.colors.secondaryWhite};
         white-space: nowrap;
@@ -29,7 +29,7 @@ const TransactionDetailContent = styled.section`
       p,
       .to-address,
       .hash {
-        font-size: 12px;
+        font-size: 14px;
         line-height: 140%;
       }
 
@@ -41,6 +41,13 @@ const TransactionDetailContent = styled.section`
       .hash {
         color: ${(props) => props.theme.colors.green};
         text-align: left;
+      }
+
+      .to-address {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        display: block;
       }
 
       .hash-container {

@@ -61,7 +61,7 @@ export default function IconAccount({ type, ...props }) {
         />
       </svg>
     );
-  } else if (type === "none") {
+  } else {
     return (
       <svg
         width="12"

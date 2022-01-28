@@ -259,7 +259,7 @@ export default function ImportPocket() {
             <div className="error-label-container">
               <TextInput
                 type="password"
-                placeholder="•••••••••••••••••••••"
+                placeholder="Private Key"
                 wide
                 onChange={privKeyInputChange}
                 style={
@@ -278,7 +278,7 @@ export default function ImportPocket() {
             <div className="error-label-container">
               <PasswordInput
                 className="pk-passphrase"
-                placeholder="Private Key Session Passphrase"
+                placeholder="Session Passphrase"
                 onChange={(e) => passPhraseChange("private", e)}
                 style={
                   privateKeyPassphraseError
