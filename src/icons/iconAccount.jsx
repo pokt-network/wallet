@@ -109,4 +109,6 @@ export default function IconAccount({ type, ...props }) {
       </svg>
     );
   }
+
+  return <></>;
 }

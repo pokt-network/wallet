@@ -226,7 +226,7 @@ export default function TransactionDetail() {
             <p>
               {location?.data?.comesFromSend
                 ? tx?.sentAmount
-                : tx?.sentAmount / 1000000}
+                : tx?.sentAmount / 1000000}{" "}
               POKT
             </p>
           </div>

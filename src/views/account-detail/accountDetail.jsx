@@ -21,9 +21,7 @@ const dataSource = getDataSource();
 export default function AccountDetail() {
   const history = useHistory();
   const { user } = useUser();
-  const [addressHex, setAddressHex] = useState("");
-  const [publicKeyHex, setPublicKeyHex] = useState("");
-  const [ppk, setPpk] = useState("");
+  const { addressHex, ppk, publicKeyHex } = user;
   const [poktsBalance, setPoktsBalance] = useState(0);
   const [, setUsdBalance] = useState(0);
   const [appStakedTokens, setAppStakedTokens] = useState(0);
@@ -65,7 +63,7 @@ export default function AccountDetail() {
         });
       }
     },
-    [history, addressHex, ppk, publicKeyHex]
+    [history, addressHex, publicKeyHex, ppk]
   );
 
   const pushToSend = useCallback(() => {
@@ -77,7 +75,7 @@ export default function AccountDetail() {
     history.push({
       pathname: "/send",
     });
-  }, [addressHex, history, ppk, publicKeyHex]);
+  }, [history, addressHex, publicKeyHex, ppk]);
 
   const getTransactionData = useCallback((stdTx) => {
     if (stdTx.msg.type === "pos/MsgUnjail") {
@@ -175,19 +173,19 @@ export default function AccountDetail() {
     if (node !== undefined) {
       const isUnjailing = localStorage.getItem("unjailing");
 
-      if (node.tokens) {
+      if (node?.tokens) {
         obj.stakedTokens = (Number(node.tokens.toString()) / 1000000).toFixed(
           3
         );
       }
 
-      if (node.status === 1) {
+      if (node?.status === 1) {
         obj.stakingStatus = "UNSTAKING";
-      } else if (node.status === 2) {
+      } else if (node?.status === 2) {
         obj.stakingStatus = "STAKED";
       }
 
-      if (node.jailed) {
+      if (node?.jailed) {
         if (isUnjailing) {
           obj.stakingStatus = "UNJAILING";
         } else {
@@ -210,13 +208,13 @@ export default function AccountDetail() {
 
     if (app !== undefined) {
       // Update the staked amount
-      if (app.staked_tokens) {
+      if (app?.staked_tokens) {
         obj.stakedTokens = (
           Number(app.staked_tokens.toString()) / 1000000
         ).toFixed(3);
       }
 
-      if (app.status === 1) {
+      if (app?.status === 1) {
         obj.stakingStatus = "UNSTAKING";
       } else if (app.status === 2) {
         obj.stakingStatus = "STAKED";
@@ -267,12 +265,7 @@ export default function AccountDetail() {
 
   useEffect(() => {
     setLoading(true);
-    const { addressHex, ppk, publicKeyHex } = user;
-
     if (addressHex && publicKeyHex && ppk) {
-      setAddressHex(addressHex);
-      setPublicKeyHex(publicKeyHex);
-      setPpk(ppk);
       refreshView(addressHex);
     } else {
       localStorage.clear();
@@ -280,7 +273,7 @@ export default function AccountDetail() {
         pathname: "/",
       });
     }
-  }, [refreshView, history, user]);
+  }, [refreshView, history, addressHex, publicKeyHex, ppk]);
 
   useEffect(() => {
     if (poktsBalance && txList && publicKeyHex && addressHex) {
@@ -288,7 +281,7 @@ export default function AccountDetail() {
     }
   }, [poktsBalance, txList, publicKeyHex, addressHex]);
 
-  if (addressHex === undefined || publicKeyHex === undefined) {
+  if (!addressHex || !publicKeyHex) {
     localStorage.clear();
     history.push({
       pathname: "/",

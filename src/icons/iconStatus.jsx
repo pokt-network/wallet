@@ -62,4 +62,6 @@ export default function IconStatus({ type, ...props }) {
       </svg>
     );
   }
+
+  return <></>;
 }
