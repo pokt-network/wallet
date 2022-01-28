@@ -6,7 +6,6 @@ const Layout = styled(Wrapper)`
   flex-direction: column;
   margin: 80px auto;
   align-items: center;
-
   .title-container {
     background: ${(props) => props.theme.backgroundBorder};
     background-size: 100% 1px;

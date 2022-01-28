@@ -33,7 +33,7 @@ export default function WalletRoutes() {
     <div
       style={{
         minWidth: "100vw",
-        height: "100vh",
+        minHeight: "100vh",
         background: `linear-gradient(
             126.96deg,
             ${theme.backgroundGradient1} -5.41%,
@@ -46,7 +46,13 @@ export default function WalletRoutes() {
     >
       <Header />
       <Switch location={displayLocation}>
-        <div onAnimationEnd={onAnimationEnd} className={transitionStage}>
+        <div
+          onAnimationEnd={onAnimationEnd}
+          className={transitionStage}
+          style={{
+            minHeight: "100vh",
+          }}
+        >
           <Route exact path={ROUTES.home} component={Home}></Route>
           <Route exact path={ROUTES.import} component={ImportPocket}></Route>
           <Route exact path={ROUTES.create} component={Create}></Route>

@@ -129,10 +129,10 @@ const AccountContent = styled.div`
         margin: 0 0 28px 0;
       }
 
-      .option-type {
-        flex-basis: 100%;
-        text-align: center;
-        margin: 8px 0 0 0;
+      .option-type,
+      .option-status,
+      .option-pokt {
+        width: 140px;
       }
     }
 
