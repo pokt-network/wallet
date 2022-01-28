@@ -170,30 +170,32 @@ export default function AccountDetail() {
       stakedTokens: 0,
     };
 
-    if (node !== undefined) {
-      const isUnjailing = localStorage.getItem("unjailing");
+    if (node === undefined) {
+      setNodeStakedTokens(obj.stakedTokens);
+      setNodeStakingStatus(obj.stakingStatus);
+      return;
+    }
 
-      if (node?.tokens) {
-        obj.stakedTokens = (Number(node.tokens.toString()) / 1000000).toFixed(
-          3
-        );
-      }
+    const isUnjailing = localStorage.getItem("unjailing");
 
-      if (node?.status === 1) {
-        obj.stakingStatus = "UNSTAKING";
-      } else if (node?.status === 2) {
-        obj.stakingStatus = "STAKED";
-      }
+    if (node?.tokens) {
+      obj.stakedTokens = (Number(node.tokens.toString()) / 1000000).toFixed(3);
+    }
 
-      if (node?.jailed) {
-        if (isUnjailing) {
-          obj.stakingStatus = "UNJAILING";
-        } else {
-          obj.stakingStatus = "JAILED";
-        }
+    if (node?.status === 1) {
+      obj.stakingStatus = "UNSTAKING";
+    } else if (node?.status === 2) {
+      obj.stakingStatus = "STAKED";
+    }
+
+    if (node?.jailed) {
+      if (isUnjailing) {
+        obj.stakingStatus = "UNJAILING";
       } else {
-        localStorage.setItem("unjailing", false);
+        obj.stakingStatus = "JAILED";
       }
+    } else {
+      localStorage.setItem("unjailing", false);
     }
 
     setNodeStakedTokens(obj.stakedTokens);
@@ -206,19 +208,23 @@ export default function AccountDetail() {
       stakedTokens: 0,
     };
 
-    if (app !== undefined) {
-      // Update the staked amount
-      if (app?.staked_tokens) {
-        obj.stakedTokens = (
-          Number(app.staked_tokens.toString()) / 1000000
-        ).toFixed(3);
-      }
+    if (app === undefined) {
+      setAppStakedTokens(obj.stakedTokens);
+      setAppStakingStatus(obj.stakingStatus);
+      return;
+    }
+    
+    // Update the staked amount
+    if (app?.staked_tokens) {
+      obj.stakedTokens = (
+        Number(app.staked_tokens.toString()) / 1000000
+      ).toFixed(3);
+    }
 
-      if (app?.status === 1) {
-        obj.stakingStatus = "UNSTAKING";
-      } else if (app.status === 2) {
-        obj.stakingStatus = "STAKED";
-      }
+    if (app?.status === 1) {
+      obj.stakingStatus = "UNSTAKING";
+    } else if (app.status === 2) {
+      obj.stakingStatus = "STAKED";
     }
 
     setAppStakedTokens(obj.stakedTokens);
