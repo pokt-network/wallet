@@ -15,12 +15,17 @@ import {
   VALIDATION_ERROR_TYPES,
 } from "../../utils/validations";
 import { useUser } from "../../context/userContext";
+import LedgerIcon from "../../utils/images/ledger.png";
+import useTransport from "../../hooks/useTransport";
+import { LEDGER_CONFIG } from "../../utils/hardwareWallet";
+import { getAddressFromPublicKey } from "../../utils/publicKeyToAddress";
 
 const dataSource = getDataSource();
 
 export default function ImportPocket() {
   const history = useHistory();
   const { updateUser } = useUser();
+  const { onSelectDevice, pocketApp, setPocketApp } = useTransport();
   const [fileName, setFileName] = useState("");
   const [ppk, setPpk] = useState("");
   const [privateKey, setPrivateKey] = useState("");
@@ -172,6 +177,27 @@ export default function ImportPocket() {
     }
   }, [history, privKeyPassphrase, privateKey, updateUser]);
 
+  const importAccountFromLedger = useCallback(async () => {
+    const app = await onSelectDevice();
+    if (app) {
+      setPocketApp(app);
+
+      try {
+        const { publicKey } = await app.getPublicKey(
+          LEDGER_CONFIG.derivationPath
+        );
+        const address = await getAddressFromPublicKey(publicKey);
+        updateUser(address, publicKey, null);
+      } catch (error) {
+        console.error("ERROR: ", error);
+      }
+
+      return;
+    }
+
+    //Display some error message
+  }, [onSelectDevice, setPocketApp, updateUser]);
+
   const passPhraseChange = useCallback((type, { target }) => {
     const { value } = target;
 
@@ -298,6 +324,35 @@ export default function ImportPocket() {
             >
               Import
             </Button>
+          </Accordion>
+
+          <Accordion
+            text={
+              <>
+                {" "}
+                Connect{" "}
+                <img
+                  src={LedgerIcon}
+                  alt="Ledger wallet"
+                  className="ledger-icon"
+                />
+              </>
+            }
+            open={currentImportOption === 2}
+            onClick={() => onAccordionClick(2)}
+          >
+            <div className="error-label-container">
+              <p className="ledger-description">
+                Connect your hardware Wallet directly to your computer.
+              </p>
+              <Button
+                mode="primary"
+                className="connect-button"
+                onClick={importAccountFromLedger}
+              >
+                Connect
+              </Button>
+            </div>
           </Accordion>
 
           <p className="create-link">

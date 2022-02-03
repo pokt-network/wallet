@@ -22,7 +22,7 @@ const Wrapper = styled.main`
   }
   &.header {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 3fr;
     align-items: center;
     ${maxPhone(css`
       height: 70px;
