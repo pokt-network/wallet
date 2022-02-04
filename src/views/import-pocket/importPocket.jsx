@@ -25,7 +25,7 @@ const dataSource = getDataSource();
 export default function ImportPocket() {
   const history = useHistory();
   const { updateUser } = useUser();
-  const { onSelectDevice, pocketApp, setPocketApp } = useTransport();
+  const { onSelectDevice, setPocketApp } = useTransport();
   const [fileName, setFileName] = useState("");
   const [ppk, setPpk] = useState("");
   const [privateKey, setPrivateKey] = useState("");
@@ -37,6 +37,7 @@ export default function ImportPocket() {
   const [filePassphrase, setFilePassphrase] = useState("");
   const [privKeyPassphrase, setPrivKeyPassphrase] = useState("");
   const [currentImportOption, setCurrentImportOption] = useState(undefined);
+  const [ledgerError, setLedgerError] = useState("");
 
   const parseFileInputContent = async (input) => {
     if (input && input.files.length > 0) {
@@ -178,8 +179,9 @@ export default function ImportPocket() {
   }, [history, privKeyPassphrase, privateKey, updateUser]);
 
   const importAccountFromLedger = useCallback(async () => {
-    const app = await onSelectDevice();
-    if (app) {
+    const [success, appOrError] = await onSelectDevice();
+    if (success) {
+      const app = appOrError;
       setPocketApp(app);
 
       try {
@@ -188,14 +190,16 @@ export default function ImportPocket() {
         );
         const address = await getAddressFromPublicKey(publicKey);
         updateUser(address, publicKey, null);
+        setLedgerError("");
       } catch (error) {
         console.error("ERROR: ", error);
+        setLedgerError(error);
       }
 
       return;
     }
 
-    //Display some error message
+    setLedgerError(appOrError);
   }, [onSelectDevice, setPocketApp, updateUser]);
 
   const passPhraseChange = useCallback((type, { target }) => {
@@ -345,6 +349,7 @@ export default function ImportPocket() {
               <p className="ledger-description">
                 Connect your hardware Wallet directly to your computer.
               </p>
+              <ErrorLabel message={ledgerError} show={ledgerError} />
               <Button
                 mode="primary"
                 className="connect-button"

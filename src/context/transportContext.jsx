@@ -8,7 +8,7 @@ import { LEDGER_CONFIG } from "../utils/hardwareWallet";
 const DEFAULT_TRANSPORT_STATE = {
   pocketApp: null,
   setPocketApp: null,
-  onSelectDevice: () => null,
+  onSelectDevice: () => [null, null],
 };
 
 export const TransportContext = createContext(DEFAULT_TRANSPORT_STATE);
@@ -24,30 +24,35 @@ export function TransportProvider({ children }) {
 
   const onSelectDevice = useCallback(async () => {
     let transport;
+    let error;
+
     try {
       transport = await WebHIDTransport.create();
-      return initializePocketApp(transport);
-    } catch (error) {
-      console.error(`HID Transport is not supported: ${error}`);
+      return [true, initializePocketApp(transport)];
+    } catch (e) {
+      console.error(`HID Transport is not supported: ${e}`);
+      error = e;
     }
 
     if (window.USB) {
       try {
         transport = await WebUSBTransport.create();
-        return initializePocketApp(transport);
-      } catch (error) {
-        console.error(`WebUSB Transport is not supported: ${error}`);
+        return [true, initializePocketApp(transport)];
+      } catch (e) {
+        console.error(`WebUSB Transport is not supported: ${e}`);
+        error = e;
       }
     } else {
       try {
         transport = await U2FTransport.create();
-        return initializePocketApp(transport);
-      } catch (error) {
-        console.error(`U2F Transport is not supported: ${error}`);
+        return [true, initializePocketApp(transport)];
+      } catch (e) {
+        console.error(`U2F Transport is not supported: ${e}`);
+        error = e;
       }
     }
 
-    return false;
+    return [false, error];
   }, [initializePocketApp]);
 
   return (
