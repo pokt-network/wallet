@@ -15,6 +15,7 @@ import RevealPrivateKey from "../../components/modals/private-key/revealPrivateK
 import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake";
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 import { useUser } from "../../context/userContext";
+import useTransport from "../../hooks/useTransport";
 
 const dataSource = getDataSource();
 
@@ -22,6 +23,7 @@ export default function AccountDetail() {
   const history = useHistory();
   const { user } = useUser();
   const { addressHex, ppk, publicKeyHex } = user;
+  const { pocketApp } = useTransport();
   const [poktsBalance, setPoktsBalance] = useState(0);
   const [, setUsdBalance] = useState(0);
   const [appStakedTokens, setAppStakedTokens] = useState(0);
@@ -213,7 +215,7 @@ export default function AccountDetail() {
       setAppStakingStatus(obj.stakingStatus);
       return;
     }
-    
+
     // Update the staked amount
     if (app?.staked_tokens) {
       obj.stakedTokens = (
@@ -271,7 +273,7 @@ export default function AccountDetail() {
 
   useEffect(() => {
     setLoading(true);
-    if (addressHex && publicKeyHex && ppk) {
+    if (addressHex && publicKeyHex) {
       refreshView(addressHex);
     } else {
       localStorage.clear();
@@ -396,6 +398,7 @@ export default function AccountDetail() {
         <Button
           className="reveal-private-key"
           onClick={() => setIsPkRevealModalVisible(true)}
+          disabled={pocketApp}
         >
           Reveal Private Key
         </Button>

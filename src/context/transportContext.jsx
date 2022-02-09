@@ -9,6 +9,7 @@ const DEFAULT_TRANSPORT_STATE = {
   pocketApp: null,
   setPocketApp: null,
   onSelectDevice: () => [null, null],
+  removeTransport: () => null,
 };
 
 export const TransportContext = createContext(DEFAULT_TRANSPORT_STATE);
@@ -23,6 +24,10 @@ export function TransportProvider({ children }) {
   }, []);
 
   const onSelectDevice = useCallback(async () => {
+    if (pocketApp?.transport) {
+      return [true, initializePocketApp(pocketApp.transport)];
+    }
+
     let transport;
     let error;
 
@@ -53,11 +58,20 @@ export function TransportProvider({ children }) {
     }
 
     return [false, error];
-  }, [initializePocketApp]);
+  }, [initializePocketApp, pocketApp]);
+
+  const removeTransport = useCallback(async () => {
+    try {
+      await pocketApp.transport.close();
+      setPocketApp("");
+    } catch (e) {
+      console.error(`Error closing device: ${e}`);
+    }
+  }, [pocketApp]);
 
   return (
     <TransportContext.Provider
-      value={{ onSelectDevice, pocketApp, setPocketApp }}
+      value={{ onSelectDevice, pocketApp, setPocketApp, removeTransport }}
     >
       {children}
     </TransportContext.Provider>

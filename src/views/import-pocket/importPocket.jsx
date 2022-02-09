@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router";
 import { typeGuard } from "@pokt-network/pocket-js";
-import { Button, TextInput } from "@pokt-foundation/ui";
+import { Banner, Button, TextInput } from "@pokt-foundation/ui";
 import Layout from "../../components/layout";
 import ImportPocketContent from "../../components/import-pocket/content";
 import Accordion from "../../components/accordion";
@@ -38,6 +38,7 @@ export default function ImportPocket() {
   const [privKeyPassphrase, setPrivKeyPassphrase] = useState("");
   const [currentImportOption, setCurrentImportOption] = useState(undefined);
   const [ledgerError, setLedgerError] = useState("");
+  const [ledgerLoading, setLedgerLoading] = useState(false);
 
   const parseFileInputContent = async (input) => {
     if (input && input.files.length > 0) {
@@ -179,28 +180,35 @@ export default function ImportPocket() {
   }, [history, privKeyPassphrase, privateKey, updateUser]);
 
   const importAccountFromLedger = useCallback(async () => {
+    setLedgerLoading(true);
+    setLedgerError("");
     const [success, appOrError] = await onSelectDevice();
-    if (success) {
-      const app = appOrError;
-      setPocketApp(app);
 
-      try {
-        const { publicKey } = await app.getPublicKey(
-          LEDGER_CONFIG.derivationPath
-        );
-        const address = await getAddressFromPublicKey(publicKey);
-        updateUser(address, publicKey, null);
-        setLedgerError("");
-      } catch (error) {
-        console.error("ERROR: ", error);
-        setLedgerError(error);
-      }
-
+    if (!success) {
+      setLedgerError(appOrError.message);
+      setLedgerLoading(false);
       return;
     }
 
-    setLedgerError(appOrError);
-  }, [onSelectDevice, setPocketApp, updateUser]);
+    setPocketApp(appOrError);
+
+    try {
+      const { publicKey } = await appOrError.getPublicKey(
+        LEDGER_CONFIG.derivationPath
+      );
+      const address = await getAddressFromPublicKey(publicKey);
+      updateUser(address, publicKey, "");
+      setLedgerError("");
+      history.push({
+        pathname: "/account",
+        data: true,
+      });
+    } catch (error) {
+      console.error(error);
+      setLedgerError(error.message);
+      setLedgerLoading(false);
+    }
+  }, [onSelectDevice, setPocketApp, updateUser, history]);
 
   const passPhraseChange = useCallback((type, { target }) => {
     const { value } = target;
@@ -345,17 +353,29 @@ export default function ImportPocket() {
             open={currentImportOption === 2}
             onClick={() => onAccordionClick(2)}
           >
+            {ledgerLoading ? (
+              <Banner title="Confirm action on your ledger" mode="info">
+                We need you to confirm this action on your ledger device so that
+                we can complete the connection.
+              </Banner>
+            ) : null}
+
             <div className="error-label-container">
               <p className="ledger-description">
                 Connect your hardware Wallet directly to your computer.
               </p>
-              <ErrorLabel message={ledgerError} show={ledgerError} />
+              <ErrorLabel
+                message={ledgerError}
+                show={ledgerError}
+                className="ledger-error"
+              />
               <Button
                 mode="primary"
                 className="connect-button"
                 onClick={importAccountFromLedger}
+                disabled={ledgerLoading}
               >
-                Connect
+                {ledgerLoading ? "Verifying" : "Connect"}
               </Button>
             </div>
           </Accordion>

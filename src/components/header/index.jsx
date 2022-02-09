@@ -14,11 +14,13 @@ import { PUBLIC_ROUTES, ROUTES } from "../../utils/routes";
 import { useUser } from "../../context/userContext";
 import { useTx } from "../../context/txContext";
 import { useHistory } from "react-router-dom";
+import useTransport from "../../hooks/useTransport";
 
 export default function Header() {
   const location = useLocation();
   const history = useHistory();
   const { user, removeUser } = useUser();
+  const { pocketApp, removeTransport } = useTransport();
   const { removeTx } = useTx();
   const [isMenuHidden, setIsMenuHidden] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,12 +32,16 @@ export default function Header() {
   const onLogOut = useCallback(() => {
     removeUser();
     removeTx();
+    removeTransport();
     history.push(ROUTES.import);
-  }, [removeUser, removeTx, history]);
+  }, [removeUser, removeTx, removeTransport, history]);
 
   const loggedInCheck = useCallback(() => {
     const { addressHex, publicKeyHex, ppk } = user;
-    const userInfo = addressHex && publicKeyHex && ppk;
+    const userInfo =
+      pocketApp?.transport && addressHex
+        ? true
+        : addressHex && publicKeyHex && ppk;
 
     if (userInfo) {
       setIsLoggedIn(true);
@@ -45,7 +51,7 @@ export default function Header() {
         history.push(ROUTES.home);
       }
     }
-  }, [user, history, location]);
+  }, [user, history, location, pocketApp]);
 
   useEffect(() => {
     loggedInCheck();

@@ -27,6 +27,12 @@ const ImportPocketContent = styled.section`
     -ms-flex-align: center;
     align-items: center;
     margin-bottom: 30px !important;
+
+    .ledger-error {
+      display: flex;
+      justify-content: center;
+      margin: 0 0 8px 0;
+    }
   }
 
   .nimport-container {
