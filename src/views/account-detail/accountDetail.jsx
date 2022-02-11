@@ -69,7 +69,7 @@ export default function AccountDetail() {
   );
 
   const pushToSend = useCallback(() => {
-    if (!addressHex || !publicKeyHex || !ppk) {
+    if (!addressHex || !publicKeyHex || (!ppk && !pocketApp?.transport)) {
       console.error("No account available, please create an account");
       return;
     }
@@ -77,7 +77,7 @@ export default function AccountDetail() {
     history.push({
       pathname: "/send",
     });
-  }, [history, addressHex, publicKeyHex, ppk]);
+  }, [history, addressHex, publicKeyHex, ppk, pocketApp]);
 
   const getTransactionData = useCallback((stdTx) => {
     if (stdTx.msg.type === "pos/MsgUnjail") {
@@ -273,7 +273,7 @@ export default function AccountDetail() {
 
   useEffect(() => {
     setLoading(true);
-    if (addressHex && publicKeyHex) {
+    if (addressHex && publicKeyHex && (ppk || pocketApp?.transport)) {
       refreshView(addressHex);
     } else {
       localStorage.clear();
@@ -281,7 +281,7 @@ export default function AccountDetail() {
         pathname: "/",
       });
     }
-  }, [refreshView, history, addressHex, publicKeyHex, ppk]);
+  }, [refreshView, history, addressHex, publicKeyHex, ppk, pocketApp]);
 
   useEffect(() => {
     if (poktsBalance && txList && publicKeyHex && addressHex) {
@@ -289,7 +289,7 @@ export default function AccountDetail() {
     }
   }, [poktsBalance, txList, publicKeyHex, addressHex]);
 
-  if (!addressHex || !publicKeyHex) {
+  if (!addressHex || !publicKeyHex || (!ppk && !pocketApp?.transport)) {
     localStorage.clear();
     history.push({
       pathname: "/",

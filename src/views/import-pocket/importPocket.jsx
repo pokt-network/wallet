@@ -185,7 +185,7 @@ export default function ImportPocket() {
     const [success, appOrError] = await onSelectDevice();
 
     if (!success) {
-      setLedgerError(appOrError.message);
+      setLedgerError(`${appOrError.name}: ${appOrError.message}`);
       setLedgerLoading(false);
       return;
     }
@@ -205,7 +205,7 @@ export default function ImportPocket() {
       });
     } catch (error) {
       console.error(error);
-      setLedgerError(error.message);
+      setLedgerError(`${error.name}: ${error.message}`);
       setLedgerLoading(false);
     }
   }, [onSelectDevice, setPocketApp, updateUser, history]);
@@ -353,7 +353,7 @@ export default function ImportPocket() {
             open={currentImportOption === 2}
             onClick={() => onAccordionClick(2)}
           >
-            {ledgerLoading ? (
+            {ledgerLoading && !ledgerError ? (
               <Banner title="Confirm action on your ledger" mode="info">
                 We need you to confirm this action on your ledger device so that
                 we can complete the connection.

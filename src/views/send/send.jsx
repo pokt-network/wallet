@@ -24,6 +24,7 @@ import {
 } from "../../utils/validations";
 import { useUser } from "../../context/userContext";
 import { useTx } from "../../context/txContext";
+import useTransport from "../../hooks/useTransport";
 
 const dataSource = getDataSource();
 
@@ -265,6 +266,7 @@ export default function Send() {
   const theme = useTheme();
   const { updateUser, user } = useUser();
   const { updateTx } = useTx();
+  const { pocketApp } = useTransport();
   const sendRef = useRef(null);
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
@@ -421,11 +423,16 @@ export default function Send() {
 
   useEffect(() => {
     const { addressHex, ppk, publicKeyHex } = user;
+    const { transport } = pocketApp;
 
     if (addressHex && publicKeyHex && ppk) {
       setAddressHex(addressHex);
       setPublicKeyHex(publicKeyHex);
       setPpk(ppk);
+      getAccountBalance(addressHex);
+    } else if (addressHex && publicKeyHex && transport) {
+      setAddressHex(addressHex);
+      setPublicKeyHex(publicKeyHex);
       getAccountBalance(addressHex);
     } else {
       localStorage.clear();
@@ -433,7 +440,7 @@ export default function Send() {
         pathname: "/",
       });
     }
-  }, [history, getAccountBalance, user]);
+  }, [history, getAccountBalance, user, pocketApp]);
 
   return (
     <>

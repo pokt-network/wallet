@@ -6,16 +6,16 @@ import AppPokt from "hw-app-pokt";
 import { LEDGER_CONFIG } from "../utils/hardwareWallet";
 
 const DEFAULT_TRANSPORT_STATE = {
-  pocketApp: null,
+  pocketApp: "",
   setPocketApp: null,
-  onSelectDevice: () => [null, null],
+  onSelectDevice: () => Promise(),
   removeTransport: () => null,
 };
 
 export const TransportContext = createContext(DEFAULT_TRANSPORT_STATE);
 
 export function TransportProvider({ children }) {
-  const [pocketApp, setPocketApp] = useState(null);
+  const [pocketApp, setPocketApp] = useState("");
 
   const initializePocketApp = useCallback((transport) => {
     transport.setExchangeTimeout = LEDGER_CONFIG.exchangeTimeout;

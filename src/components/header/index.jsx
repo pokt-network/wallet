@@ -38,10 +38,9 @@ export default function Header() {
 
   const loggedInCheck = useCallback(() => {
     const { addressHex, publicKeyHex, ppk } = user;
+    const { transport } = pocketApp;
     const userInfo =
-      pocketApp?.transport && addressHex
-        ? true
-        : addressHex && publicKeyHex && ppk;
+      transport && addressHex ? true : addressHex && publicKeyHex && ppk;
 
     if (userInfo) {
       setIsLoggedIn(true);
