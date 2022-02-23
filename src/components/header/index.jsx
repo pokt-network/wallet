@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
 import Wrapper from "../wrapper";
 import Menu from "./menu";
 import MobileButton from "./mobile-button";
@@ -13,7 +13,6 @@ import IconLogOut from "../../icons/iconLogout";
 import { PUBLIC_ROUTES, ROUTES } from "../../utils/routes";
 import { useUser } from "../../context/userContext";
 import { useTx } from "../../context/txContext";
-import { useHistory } from "react-router-dom";
 import useTransport from "../../hooks/useTransport";
 
 export default function Header() {
