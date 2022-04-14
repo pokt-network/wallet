@@ -213,7 +213,7 @@ export default function AccountDetail() {
       setAppStakingStatus(obj.stakingStatus);
       return;
     }
-    
+
     // Update the staked amount
     if (app?.staked_tokens) {
       obj.stakedTokens = (
@@ -307,7 +307,7 @@ export default function AccountDetail() {
             })}{" "}
             POKT
           </h1>
-          {price ? (
+          {process.env.REACT_APP_CHAIN_ID !== "testnet" && price && (
             <h2>
               $
               {parseFloat(price * poktsBalance).toLocaleString("en-US", {
@@ -316,7 +316,7 @@ export default function AccountDetail() {
               })}{" "}
               USD <Link href={priceProviderLink}>Price by {priceProvider}</Link>
             </h2>
-          ) : null}
+          )}
         </AccountHeaderContainer>
       }
     >
