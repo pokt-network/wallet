@@ -307,14 +307,21 @@ export default function AccountDetail() {
             })}{" "}
             POKT
           </h1>
-          {process.env.REACT_APP_CHAIN_ID !== "testnet" && price && (
+          {price && (
             <h2>
               $
               {parseFloat(price * poktsBalance).toLocaleString("en-US", {
                 maximumFractionDigits: 2,
                 minimumFractionDigits: 2,
               })}{" "}
-              USD <Link href={priceProviderLink}>Price by {priceProvider}</Link>
+              USD{" "}
+              {process.env.REACT_APP_CHAIN_ID !== "testnet" ? (
+                <Link href={priceProviderLink}>Price by {priceProvider}</Link>
+              ) : (
+                <p>
+                  Testing tokens
+                </p>
+              )}
             </h2>
           )}
         </AccountHeaderContainer>
