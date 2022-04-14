@@ -91,7 +91,7 @@ function ConfirmSend({
 
               <div className="password-input-container">
                 <PasswordInput
-                  placeholder="Keyfile Passphrase"
+                  placeholder="Passphrase"
                   color={theme.accentAlternative}
                   onChange={(e) => onPassphraseChange(e)}
                 />
@@ -100,7 +100,12 @@ function ConfirmSend({
               </div>
 
               <h2 className="you-are-sending">
-                You are sending {pokts / 1000000} POKT to:
+                You are sending{" "}
+                {(pokts / 1000000).toLocaleString("en-US", {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 2,
+                })}{" "}
+                POKT to:
               </h2>
 
               <CopyButton text={toAddress} className="to-address" />
@@ -134,7 +139,7 @@ function ConfirmSend({
           <SendTransactionViewContainer>
             <div className="password-input-container">
               <PasswordInput
-                placeholder="Keyfile Passphrase"
+                placeholder="Passphrase"
                 color={theme.accentAlternative}
                 onChange={(e) => onPassphraseChange(e)}
               />
@@ -142,7 +147,13 @@ function ConfirmSend({
             </div>
 
             <h2>You are sending</h2>
-            <p>{pokts / 1000000} POKT</p>
+            <p>
+              {(pokts / 1000000).toLocaleString("en-US", {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2,
+              })}{" "}
+              POKT
+            </p>
 
             <CopyButton text={toAddress} className="to-address" />
 
@@ -241,6 +252,7 @@ function SendTransaction({
           Tx Memo
         </label>
         <TextInput
+          value={memoText}
           multiline
           placeholder="XXXXXXXXXXXXXXXXX (Optional)"
           className="tx-memo-area"
