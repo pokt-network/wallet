@@ -71,6 +71,7 @@ function ConfirmSend({
                   step="0.01"
                   name="pokt"
                   min={0}
+                  value={pokts / 1000000}
                 />
                 <label htmlFor="pokt">POKT</label>
               </div>
