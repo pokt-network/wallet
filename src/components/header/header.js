@@ -1,9 +1,9 @@
 import styled, { css } from "styled-components";
-import { tablet, maxPhone } from "../../utils/media";
+import { tablet } from "../../utils/media";
 
 const HeaderContainer = styled.header`
   margin: 24px 0 0 0;
-  
+
   .nav-button {
     cursor: pointer;
     border-style: none;
@@ -36,16 +36,6 @@ const HeaderContainer = styled.header`
   `)};
   position: relative;
   width: 100%;
-  ${(props) =>
-    maxPhone(
-      props.isHidden ||
-        css`
-          position: fixed;
-          border-bottom: 1px solid #fff;
-          height: 100vh;
-          z-index: 99999999;
-        `
-    )};
 `;
 
 export default HeaderContainer;
