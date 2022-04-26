@@ -17,17 +17,10 @@ const MenuWrapper = styled.nav`
       `linear-gradient(126.96deg, ${props.theme.backgroundGradient1} -5.41%, ${props.theme.backgroundGradient2} 1001.86%)`};
     padding-bottom: 30px;
 
-    .separator {
-      background: ${(props) => props.theme.backgroundBorder};
-      height: 2px;
-      width: 100%;
-      margin: 35px 0 0 0;
-    }
-
     li,
     button,
     a {
-      font-size: 22px !important;
+      font-size: 14px !important;
       line-height: 26px !important;
       color: ${(props) => props.theme.colors.white} !important;
     }
@@ -52,13 +45,15 @@ const MenuWrapper = styled.nav`
       props.isHidden ||
         css`
           display: block;
-          width: 100%;
+          width: 230px;
           top: 0;
           padding-top: 50px;
           position: fixed;
-          left: 0;
+          right: 0;
           z-index: 9999;
-          height: 100vh;
+          height: 315px;
+          background: ${(props) => props.theme.colors.black};
+          border: 1px solid ${(props) => props.theme.colors.blue};
         `
     )};
 `;

@@ -1,25 +1,37 @@
 import styled, { css } from "styled-components";
 import { maxPhone, tablet } from "../../utils/media";
-import { colors } from '../../utils/colors'; 
-import arrow from '../../utils/images/down-arrow.png'
+import { colors } from "../../utils/colors";
+import arrow from "../../utils/images/down-arrow.png";
 
 const StyledLi = styled.li`
   display: inline-block;
   text-align: center;
   padding: 15px 25px;
+
+  .mobile-menu-icon {
+    margin: 0 8px 4px 0;
+    vertical-align: middle;
+  }
+
   ${maxPhone(css`
     display: block;
-    padding: 20px 30px;
+    padding: 16px 20px;
     text-align: left;
+    font-size: 14px;
+
     &:first-of-type {
       background: ${(props) => props.theme.backgroundBorder};
       background-size: 100% 1px;
-      padding-top: 30px;
     }
     &:last-of-type {
       a {
-        color: ${colors.white};        
+        color: ${colors.white};
       }
+    }
+
+    &.active {
+      background: rgb(196, 196, 196, 0.1) !important;
+      border-left: 2px solid ${(props) => props.theme.colors.green};
     }
   `)};
   a {
@@ -33,27 +45,18 @@ const StyledLi = styled.li`
       text-align: left;
       color: ${colors.white};
       font-size: 22px;
-      line-height: 1.5;  
+      line-height: 1.5;
       display: initial;
       &.active {
         border-bottom: none !important;
         padding-bottom: 0 !important;
-        &:after {
-          position: absolute;
-          content: "";
-          width: 20px;
-          height: 1px;
-          border-top: 1px solid ${colors.white};
-          left: -30px;
-          top: 11px;
-        }
       }
       img {
         display: none;
       }
     `)};
-    
-    &:last-of-type{
+
+    &:last-of-type {
       padding-right: 0;
       vertical-align: middle;
     }

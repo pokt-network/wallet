@@ -10,14 +10,18 @@ import HeaderContainer from "./header";
 import logo from "../../utils/images/pokt-logo.png";
 import { Config } from "../../config/config";
 import IconLogOut from "../../icons/iconLogout";
+import IconWallet from "../../icons/iconWallet";
+import IconDollarSign from "../../icons/iconDollarSign";
 import { PUBLIC_ROUTES, ROUTES } from "../../utils/routes";
 import { useUser } from "../../context/userContext";
 import { useTx } from "../../context/txContext";
 import { useHistory } from "react-router-dom";
+import useWindowSize from "../../hooks/useWindowSize";
 
 export default function Header() {
   const location = useLocation();
   const history = useHistory();
+  const { width } = useWindowSize();
   const { user, removeUser } = useUser();
   const { removeTx } = useTx();
   const [isMenuHidden, setIsMenuHidden] = useState(true);
@@ -61,19 +65,27 @@ export default function Header() {
           <StyledUl>
             <div className="separator" />
             {isLoggedIn ? (
-              <StyledLi>
+              <StyledLi
+                className={
+                  location.pathname === ROUTES.account ? "active" : undefined
+                }
+              >
                 <Link
                   to={ROUTES.account}
                   className={
                     location.pathname === ROUTES.account ? "active" : undefined
                   }
                 >
+                  {width <= 767 && <IconWallet className="mobile-menu-icon" />}
                   Account Detail
                 </Link>
               </StyledLi>
             ) : null}
             <StyledLi>
               <a tartget="_target" href={Config.BUY_POKT_BASE_URL}>
+                {width <= 767 && (
+                  <IconDollarSign className="mobile-menu-icon" />
+                )}
                 Buy POKT
               </a>
             </StyledLi>
@@ -84,8 +96,9 @@ export default function Header() {
                   id="log-out-nav"
                   onClick={onLogOut}
                 >
+                  {!isMenuHidden && <IconLogOut className="mobile-menu-icon" />}
                   Log out
-                  <IconLogOut className="log-out-icon" />
+                  {isMenuHidden && <IconLogOut className="log-out-icon" />}
                 </button>
               </StyledLi>
             ) : null}
