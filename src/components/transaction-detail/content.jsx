@@ -1,9 +1,28 @@
 import styled, { css } from "styled-components";
-import { maxPhone } from "../../utils/media";
+import { maxPhone, tablet } from "../../utils/media";
 
 const TransactionDetailContent = styled.section`
   max-width: 532px;
   width: 100%;
+
+  > div {
+    ${tablet(css`
+      h2,
+      p {
+        margin: 0;
+      }
+    `)}
+
+    ${maxPhone(css`
+      > div {
+        > div {
+          > div {
+            height: 16px;
+          }
+        }
+      }
+    `)}
+  }
 
   .details {
     width: 100%;
