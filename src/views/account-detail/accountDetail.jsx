@@ -15,6 +15,7 @@ import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake"
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 import { useUser } from "../../context/userContext";
 import TransactionsTable from "../../components/transactionsTable/transactionsTable";
+import ExportKeyfile from "../../components/modals/export-keyfile/exportKeyfile";
 
 const dataSource = getDataSource();
 
@@ -39,6 +40,7 @@ export default function AccountDetail() {
   const [loading, setLoading] = useState(false);
   const [priceProvider, setPriceProvider] = useState("");
   const [priceProviderLink, setPriceProviderLink] = useState("");
+  const [isExportKeyfileVisible, setIsExportKeyfileVisible] = useState(false);
 
   const increaseMaxTxListCount = useCallback(() => {
     if (maxTxListCount < Number(Config.MAX_TRANSACTION_LIST_COUNT)) {
@@ -398,12 +400,21 @@ export default function AccountDetail() {
 
         <CopyButton text={publicKeyHex} width={488} />
 
-        <Button
-          className="reveal-private-key"
-          onClick={() => setIsPkRevealModalVisible(true)}
-        >
-          Reveal Private Key
-        </Button>
+        <section className="actions">
+          <Button
+            className="reveal-private-key"
+            onClick={() => setIsPkRevealModalVisible(true)}
+          >
+            Reveal Private Key
+          </Button>
+
+          <Button
+            className="export-keyfile"
+            onClick={() => setIsExportKeyfileVisible(true)}
+          >
+            Export Keyfile
+          </Button>
+        </section>
 
         <TransactionsTable txList={txList} />
 
@@ -411,6 +422,11 @@ export default function AccountDetail() {
           ppk={ppk}
           visible={isPkRevealModalVisible}
           onClose={() => setIsPkRevealModalVisible(false)}
+        />
+
+        <ExportKeyfile
+          visible={isExportKeyfileVisible}
+          onClose={() => setIsExportKeyfileVisible(false)}
         />
 
         <UnjailUnstake
