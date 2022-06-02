@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Link, Table } from "@pokt-foundation/ui";
+import { Button, Link } from "@pokt-foundation/ui";
 import { useHistory } from "react-router";
 import AccountHeaderContainer from "../../components/account-detail/headerContainer";
 import Layout from "../../components/layout";
 import AccountContent from "../../components/account-detail/content";
 import CopyButton from "../../components/copy/copy";
-import AccountTableContainer from "../../components/account-detail/tableContainer";
 import { Config } from "../../config/config";
 import { getDataSource } from "../../datasource";
 import loadIcon from "../../utils/images/icons/load.svg";
@@ -15,6 +14,7 @@ import RevealPrivateKey from "../../components/modals/private-key/revealPrivateK
 import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake";
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 import { useUser } from "../../context/userContext";
+import TransactionsTable from "../../components/transactionsTable/transactionsTable";
 
 const dataSource = getDataSource();
 
@@ -318,9 +318,7 @@ export default function AccountDetail() {
               {process.env.REACT_APP_CHAIN_ID !== "testnet" ? (
                 <Link href={priceProviderLink}>Price by {priceProvider}</Link>
               ) : (
-                <p>
-                  Testing tokens
-                </p>
+                <p>Testing tokens</p>
               )}
             </h2>
           )}
@@ -407,62 +405,7 @@ export default function AccountDetail() {
           Reveal Private Key
         </Button>
 
-        <AccountTableContainer isEmpty={txList.length < 1}>
-          <Table
-            header={
-              <>
-                {txList.length < 1 ? (
-                  <tr>
-                    <th className="table-title" colSpan={4}>
-                      No transactions
-                    </th>
-                  </tr>
-                ) : (
-                  <>
-                    <tr>
-                      <th className="table-title" colSpan={4}>
-                        Latest Transactions
-                      </th>
-                    </tr>
-                    <tr>
-                      <th className="column-title"></th>
-                      <th className="column-title">STATUS</th>
-                      <th className="column-title">BLOCK HEIGHT</th>
-                      <th className="column-title">TX HASH</th>
-                    </tr>
-                  </>
-                )}
-              </>
-            }
-            noSideBorders
-            noTopBorders
-          >
-            {txList &&
-              txList.map(({ options: { onClick }, ...tx }) => (
-                <tr key={tx.hash}>
-                  <td width="10%">
-                    <img
-                      src={tx.imageSrc}
-                      alt={tx.type.toLowerCase()}
-                      className="tx-icon"
-                    />
-                  </td>
-                  <td width="30%">
-                    <p className="qty">{tx.amount} POKT</p>
-                    <p className="status">{tx.type.toLowerCase()}</p>
-                  </td>
-                  <td className="timestamp" width="30%">
-                    {tx.height}
-                  </td>
-                  <td width="30%">
-                    <button className="hash-button" onClick={onClick}>
-                      {tx.hash}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-          </Table>
-        </AccountTableContainer>
+        <TransactionsTable txList={txList} />
 
         <RevealPrivateKey
           ppk={ppk}
