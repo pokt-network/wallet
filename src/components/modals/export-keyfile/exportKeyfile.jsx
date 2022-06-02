@@ -51,6 +51,7 @@ export default function ExportKeyfile({ visible, onClose }) {
 
   const onCloseCleanup = useCallback(() => {
     setPrivateKeyError("");
+    setPassphraseError("");
     setPrivateKey("");
     setPassphrase("");
     onClose();
