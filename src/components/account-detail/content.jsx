@@ -1,3 +1,4 @@
+import { GU } from "@pokt-foundation/ui";
 import styled, { css } from "styled-components";
 import { maxPhone } from "../../utils/media";
 
@@ -7,6 +8,13 @@ const AccountContent = styled.div`
   flex-direction: column;
   align-items: center;
   margin-top: 8px;
+
+  .actions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
 
   .unstake-send-container {
     width: 100%;
@@ -32,8 +40,10 @@ const AccountContent = styled.div`
     align-self: baseline;
   }
 
-  .reveal-private-key {
-    margin: 20px 0 0 0;
+  .reveal-private-key,
+  .export-keyfile {
+    margin: ${GU * 2.5}px 0 0 0;
+    width: ${GU * 25}px;
   }
 
   .staking-options {
