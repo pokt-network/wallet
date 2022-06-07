@@ -138,15 +138,12 @@ export default function AccountDetail() {
   );
 
   const getTransactions = useCallback(async () => {
-    const allTxs = await dataSource.getAllTransactions(
-      addressHex,
-      maxTxListCount
-    );
+    const allTxs = await dataSource.getAllTransactions(addressHex);
 
     if (allTxs !== undefined) {
       updateTransactionList(allTxs);
     }
-  }, [addressHex, maxTxListCount, updateTransactionList]);
+  }, [addressHex, updateTransactionList]);
 
   const getBalance = useCallback(async (addressHex) => {
     if (addressHex) {
