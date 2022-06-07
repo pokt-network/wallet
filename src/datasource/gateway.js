@@ -55,7 +55,7 @@ class PocketQueriesController {
         height,
       }
     }),
-    getAccountTxs: (address, received, prove, page, per_page) => ({
+    getAccountTxs: (address, received, prove, page, per_page, order) => ({
       url: '/v1/query/accounttxs',
       method: 'post',
       data: {
@@ -64,6 +64,7 @@ class PocketQueriesController {
         received,
         page,
         per_page,
+        order,
       }
     }),
     sendRawTx: (fromAddress, tx) => ({
@@ -131,7 +132,7 @@ class PocketQueriesController {
   _getTransaction = (id) => this.perform.call(this, 'getTransaction', id)
   _getApp = (address, height) => this.perform.call(this, 'getApp', address, height)
   _getNode = (address, height) => this.perform.call(this, 'getNode', address, height)
-  _getAccountTxs = (address, received, prove, page, per_page) => this.perform.call(this, 'getAccountTxs', address, received, prove, page, per_page)
+  _getAccountTxs = (address, received, prove, page, per_page, order) => this.perform.call(this, 'getAccountTxs', address, received, prove, page, per_page, order)
   _sendRawTx = (fromAddress, tx) => this.perform.call(this, 'sendRawTx', fromAddress, tx)
 
   // For semantic separation, and for "ease of middlewaring" when necessary.

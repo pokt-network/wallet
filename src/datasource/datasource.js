@@ -235,7 +235,6 @@ export class DataSource {
       ppk,
       passphrase
     );
-    
 
     if (typeGuard(accountOrUndefined, Error)) {
       return new Error(
@@ -493,7 +492,8 @@ export class DataSource {
         received,
         false,
         1,
-        maxTxs
+        maxTxs,
+        "asc"
       );
     } catch (error) {
       console.log({ error });
