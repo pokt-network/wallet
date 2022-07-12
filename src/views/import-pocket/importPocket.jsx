@@ -182,18 +182,17 @@ export default function ImportPocket() {
   const importAccountFromLedger = useCallback(async () => {
     setLedgerLoading(true);
     setLedgerError("");
-    const [success, appOrError] = await onSelectDevice();
-
+    const [success, app] = await onSelectDevice();
     if (!success) {
-      setLedgerError(`${appOrError.name}: ${appOrError.message}`);
+      setLedgerError(`${app.name}: ${app.message}`);
       setLedgerLoading(false);
       return;
     }
 
-    setPocketApp(appOrError);
+    setPocketApp(app);
 
     try {
-      const { publicKey } = await appOrError.getPublicKey(
+      const { publicKey } = await app.getPublicKey(
         LEDGER_CONFIG.derivationPath
       );
       const address = await getAddressFromPublicKey(publicKey);
