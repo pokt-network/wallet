@@ -99,7 +99,7 @@ export default function Header() {
                       : undefined
                   }
                 >
-                  Delegated Accounts
+                  Custodial Nodes
                 </Link>
               </StyledLi>
             )}

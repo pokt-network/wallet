@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const ErrorLabelContainer = styled.div`
+const IconWithLabelContainer = styled.div`
   width: 100%;
   margin: 10px 0 0 0;
   display: grid;
@@ -17,8 +17,15 @@ const ErrorLabelContainer = styled.div`
     font-weight: normal;
     font-size: 12px;
     line-height: 16px;
-    color: ${(props) => props.theme.colors.error};
+
+    &.error {
+      color: ${(props) => props.theme.colors.error};
+    }
+
+    &.loading {
+      color: #e8e6f8;
+    }
   }
 `;
 
-export default ErrorLabelContainer;
+export default IconWithLabelContainer;

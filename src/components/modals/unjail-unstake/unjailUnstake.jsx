@@ -5,7 +5,7 @@ import UnjailUnstakeContainer from "./container";
 import PasswordInput from "../../input/passwordInput";
 import { getDataSource } from "../../../datasource";
 import { Config } from "../../../config/config";
-import ErrorLabel from "../../error-label/error";
+import IconWithLabel from "../../iconWithLabel/iconWithLabel";
 import {
   validationError,
   VALIDATION_ERROR_TYPES,
@@ -151,7 +151,11 @@ export default function UnjailUnstake({
               : undefined
           }
         />
-        <ErrorLabel message={passphraseError} show={passphraseError} />
+        <IconWithLabel
+          message={passphraseError}
+          show={passphraseError}
+          type="error"
+        />
         <Button
           className="send-button"
           mode="primary"

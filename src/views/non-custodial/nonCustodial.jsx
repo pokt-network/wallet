@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Button, TextInput } from "@pokt-foundation/ui";
+import { Button, Link, TextInput } from "@pokt-foundation/ui";
 import Layout from "../../components/layout";
 import {
   DetailContent,
@@ -9,6 +9,8 @@ import { getDataSource } from "../../datasource";
 import JailedStatus from "../../components/jailed/jailed";
 import CopyButton from "../../components/copy/copy";
 import NodeAppStatus from "../../components/NodeAppStatus/nodeAppStatus";
+import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
+import { useUser } from "../../context/userContext";
 
 const dataSource = getDataSource();
 
@@ -18,7 +20,16 @@ function Validate({
   setAddress,
   address,
   goNext,
+  user,
 }) {
+  const [validateStatus, setValidateStatus] = useState("");
+  const validateStatusMessage =
+    validateStatus === "error"
+      ? "Sorry, your account does not have access to interact with this node"
+      : validateStatus === "loading"
+      ? "loading"
+      : "";
+
   const addNode = useCallback(
     (node) => {
       let obj = {
@@ -64,28 +75,45 @@ function Validate({
   );
 
   const validate = useCallback(async () => {
+    setValidateStatus("loading");
     const nodeOrError = await dataSource.getNode(address);
     if (nodeOrError === undefined) {
       // SOME ERROR MESSAGE
+      setValidateStatus("error");
       return;
     }
+
+    // if (nodeOrError.output_address !== user.user.addressHex) {
+    //   setValidateStatus("error");
+    //   return;
+    // }
 
     const wasNodeAdded = addNode(nodeOrError);
     if (!wasNodeAdded) {
       // SOME ERROR MESSAGE
+      setValidateStatus("error");
       return;
     }
 
+    setValidateStatus("");
     goNext();
-  }, [addNode, address, goNext]);
+  }, [addNode, address, goNext, user.user]);
 
   return (
     <Layout title={<h1 className="title">Validate Access</h1>}>
       <ValidateContent>
-        <p>What is the address you want to interact with</p>
+        <p>
+          Please enter the node address. Note that you must have custodial
+          access to this node to view details about this node.
+        </p>
         <TextInput
           onChange={({ target }) => setAddress(target.value)}
-          placeholder="Address"
+          placeholder="Custodial Node Address"
+        />
+        <IconWithLabel
+          message={validateStatusMessage}
+          type={validateStatus}
+          show={validateStatus}
         />
         <Button mode="primary" onClick={validate}>
           Validate
@@ -97,11 +125,19 @@ function Validate({
 
 function Detail({ nodeStakingStatus, nodeStakedTokens, address, goPrevious }) {
   return (
-    <Layout title={<h1 className="title">Delegated Account</h1>}>
+    <Layout title={<h1 className="title">Custodial Nodes</h1>}>
       <DetailContent>
+        <p>
+          Your account is a custodian of the below node. Through this interface.
+          you can only view and unstake the node. For more information and
+          additional commands, please see the{" "}
+          <Link href="https://docs.pokt.network/core/specs/cli/node">
+            documentation
+          </Link>
+        </p>
         <JailedStatus nodeStakingStatus={nodeStakingStatus} />
         <h3 className="copy-title">Address</h3>
-        <CopyButton text={address} width={488} />
+        <CopyButton className="address-input" text={address} width={488} />
         <NodeAppStatus
           nodeStakingStatus={nodeStakingStatus}
           nodeStakedTokens={nodeStakedTokens}
@@ -115,6 +151,7 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, goPrevious }) {
 }
 
 export default function NonCustodial() {
+  const user = useUser();
   const [step, setStep] = useState(0);
   const [address, setAddress] = useState("");
   const [nodeStakedTokens, setNodeStakedTokens] = useState(0);
@@ -133,6 +170,7 @@ export default function NonCustodial() {
           setAddress={setAddress}
           address={address}
           goNext={goNext}
+          user={user}
         />
       ) : (
         <Detail

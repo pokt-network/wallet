@@ -16,7 +16,7 @@ import useWindowSize from "../../hooks/useWindowSize";
 import IconBack from "../../icons/iconBack";
 import { Config } from "../../config/config";
 import { getDataSource } from "../../datasource";
-import ErrorLabel from "../../components/error-label/error";
+import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 import { isAddress } from "../../utils/isAddress";
 import {
   validationError,
@@ -96,7 +96,11 @@ function ConfirmSend({
                   onChange={(e) => onPassphraseChange(e)}
                 />
 
-                <ErrorLabel message={passphraseError} show={passphraseError} />
+                <IconWithLabel
+                  message={passphraseError}
+                  show={passphraseError}
+                  type="error"
+                />
               </div>
 
               <h2 className="you-are-sending">
@@ -143,7 +147,11 @@ function ConfirmSend({
                 color={theme.accentAlternative}
                 onChange={(e) => onPassphraseChange(e)}
               />
-              <ErrorLabel message={passphraseError} show={passphraseError} />
+              <IconWithLabel
+                message={passphraseError}
+                show={passphraseError}
+                type="error"
+              />
             </div>
 
             <h2>You are sending</h2>
@@ -234,7 +242,11 @@ function SendTransaction({
     >
       <SendContent>
         <div className="amount-error-container">
-          <ErrorLabel message={amountError} show={amountError} />
+          <IconWithLabel
+            message={amountError}
+            show={amountError}
+            type="error"
+          />
         </div>
         <TextInput
           placeholder="Send to Address"
@@ -246,7 +258,11 @@ function SendTransaction({
               : undefined
           }
         />
-        <ErrorLabel message={addressError} show={addressError} />
+        <IconWithLabel
+          message={addressError}
+          show={addressError}
+          type="error"
+        />
 
         <label className="tx-memo-label" htmlFor="tx-memo">
           Tx Memo

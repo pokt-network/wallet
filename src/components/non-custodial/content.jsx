@@ -19,7 +19,7 @@ export const ValidateContent = styled.div`
 `;
 
 export const DetailContent = styled.div`
-  width: 100%;
+  width: 527px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,5 +34,9 @@ export const DetailContent = styled.div`
     color: #1d8aed;
     font-size: 18px;
     font-weight: 700;
+  }
+
+  .address-input {
+    width: 100%;
   }
 `;
