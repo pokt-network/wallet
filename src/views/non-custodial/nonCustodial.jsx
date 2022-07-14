@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Button, Link, TextInput } from "@pokt-foundation/ui";
+import { Banner, Button, Link, TextInput } from "@pokt-foundation/ui";
 import Layout from "../../components/layout";
 import {
   DetailContent,
@@ -11,6 +11,8 @@ import CopyButton from "../../components/copy/copy";
 import NodeAppStatus from "../../components/NodeAppStatus/nodeAppStatus";
 import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 import { useUser } from "../../context/userContext";
+import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake";
+import { useHistory } from "react-router-dom";
 
 const dataSource = getDataSource();
 
@@ -21,6 +23,7 @@ function Validate({
   address,
   goNext,
   user,
+  setNode,
 }) {
   const [validateStatus, setValidateStatus] = useState("");
   const validateStatusMessage =
@@ -69,28 +72,27 @@ function Validate({
 
       setNodeStakedTokens(obj.stakedTokens);
       setNodeStakingStatus(obj.stakingStatus);
+      setNode(node);
       return true;
     },
-    [setNodeStakedTokens, setNodeStakingStatus]
+    [setNodeStakedTokens, setNodeStakingStatus, setNode]
   );
 
   const validate = useCallback(async () => {
     setValidateStatus("loading");
     const nodeOrError = await dataSource.getNode(address);
     if (nodeOrError === undefined) {
-      // SOME ERROR MESSAGE
       setValidateStatus("error");
       return;
     }
 
-    // if (nodeOrError.output_address !== user.user.addressHex) {
-    //   setValidateStatus("error");
-    //   return;
-    // }
+    if (nodeOrError.output_address !== user.user.addressHex) {
+      setValidateStatus("error");
+      return;
+    }
 
     const wasNodeAdded = addNode(nodeOrError);
     if (!wasNodeAdded) {
-      // SOME ERROR MESSAGE
       setValidateStatus("error");
       return;
     }
@@ -102,7 +104,7 @@ function Validate({
   return (
     <Layout title={<h1 className="title">Validate Access</h1>}>
       <ValidateContent>
-        <p>
+        <p className="description">
           Please enter the node address. Note that you must have custodial
           access to this node to view details about this node.
         </p>
@@ -111,6 +113,7 @@ function Validate({
           placeholder="Custodial Node Address"
         />
         <IconWithLabel
+          className="status"
           message={validateStatusMessage}
           type={validateStatus}
           show={validateStatus}
@@ -123,16 +126,50 @@ function Validate({
   );
 }
 
-function Detail({ nodeStakingStatus, nodeStakedTokens, address, goPrevious }) {
+function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
+  const history = useHistory();
+  const {
+    user: { ppk, addressHex, publicKeyHex },
+  } = user;
+  const [isUnjailModalVisible, setIsUnjailModalVisible] = useState(false);
+  const [isUnstakeModalVisible, setIsUnstakeModalVisible] = useState(false);
+  const isUnstakeDisabled = node.status !== 2;
+
+  const pushToTxDetail = useCallback(
+    (txHash, useCache) => {
+      if (!addressHex || !publicKeyHex || !ppk) {
+        console.error(
+          "No account available, please create or import an account"
+        );
+        return;
+      }
+
+      if (txHash) {
+        history.push({
+          pathname: "/transaction-detail",
+          data: { txHash },
+          loadFromCache: useCache,
+        });
+      }
+    },
+    [history, addressHex, publicKeyHex, ppk]
+  );
+
   return (
     <Layout title={<h1 className="title">Custodial Nodes</h1>}>
       <DetailContent>
-        <p>
+        {nodeStakingStatus === "UNSTAKING" && (
+          <Banner mode="info" title="Node Unstake In Progress">
+            This node is currently being unstaked. After this is complete, the
+            POKT balance from this node will be available in your account.
+          </Banner>
+        )}
+        <p className="description">
           Your account is a custodian of the below node. Through this interface.
           you can only view and unstake the node. For more information and
           additional commands, please see the{" "}
           <Link href="https://docs.pokt.network/core/specs/cli/node">
-            documentation
+            documentation.
           </Link>
         </p>
         <JailedStatus nodeStakingStatus={nodeStakingStatus} />
@@ -142,9 +179,30 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, goPrevious }) {
           nodeStakingStatus={nodeStakingStatus}
           nodeStakedTokens={nodeStakedTokens}
         />
-        <Button className="unstake-btn" mode="primary">
+        <Button
+          className="unstake-btn"
+          mode="primary"
+          onClick={() => setIsUnstakeModalVisible(true)}
+          disabled={isUnstakeDisabled}
+        >
           Unstake
         </Button>
+
+        <UnjailUnstake
+          type="unjail"
+          ppk={ppk}
+          visible={isUnjailModalVisible}
+          onClose={() => setIsUnjailModalVisible(false)}
+          pushToTxDetail={pushToTxDetail}
+        />
+
+        <UnjailUnstake
+          type="unstake"
+          ppk={ppk}
+          visible={isUnstakeModalVisible}
+          onClose={() => setIsUnstakeModalVisible(false)}
+          pushToTxDetail={pushToTxDetail}
+        />
       </DetailContent>
     </Layout>
   );
@@ -154,12 +212,11 @@ export default function NonCustodial() {
   const user = useUser();
   const [step, setStep] = useState(0);
   const [address, setAddress] = useState("");
+  const [node, setNode] = useState("");
   const [nodeStakedTokens, setNodeStakedTokens] = useState(0);
   const [nodeStakingStatus, setNodeStakingStatus] = useState("UNSTAKED");
 
   const goNext = () => setStep((prevStep) => prevStep + 1);
-  const goPrevious = () =>
-    setStep((prevStep) => (prevStep === 0 ? prevStep : prevStep - 1));
 
   return (
     <React.Fragment>
@@ -171,13 +228,15 @@ export default function NonCustodial() {
           address={address}
           goNext={goNext}
           user={user}
+          setNode={setNode}
         />
       ) : (
         <Detail
           nodeStakingStatus={nodeStakingStatus}
           nodeStakedTokens={nodeStakedTokens}
           address={address}
-          goPrevious={goPrevious}
+          user={user}
+          node={node}
         />
       )}
     </React.Fragment>
