@@ -194,6 +194,7 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
           visible={isUnjailModalVisible}
           onClose={() => setIsUnjailModalVisible(false)}
           pushToTxDetail={pushToTxDetail}
+          nodeAddress={address}
         />
 
         <UnjailUnstake
@@ -202,6 +203,7 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
           visible={isUnstakeModalVisible}
           onClose={() => setIsUnstakeModalVisible(false)}
           pushToTxDetail={pushToTxDetail}
+          nodeAddress={address}
         />
       </DetailContent>
     </Layout>
