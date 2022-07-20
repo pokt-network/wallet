@@ -147,8 +147,8 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
       if (txHash) {
         history.push({
           pathname: "/transaction-detail",
-          data: { txHash },
-          loadFromCache: useCache,
+          data: { txHash, comesFromSend: true },
+          loadFromCache: true,
         });
       }
     },

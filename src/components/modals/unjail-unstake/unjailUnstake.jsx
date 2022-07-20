@@ -64,15 +64,17 @@ export default function UnjailUnstake({
         updateTx(
           "Unjail",
           account.addressHex,
-          account.addressHex,
+          nodeAddress,
           0,
           txResponse.txhash,
           Number(Config.TX_FEE) / 1000000,
           "Pending",
-          "Pending"
+          "Pending",
+          undefined,
+          "Pocket Wallet"
         );
         localStorage.setItem("unjailing", true);
-        pushToTxDetail(txResponse.txhash, true);
+        pushToTxDetail(txResponse.txhash);
         return;
       } else {
         setPassphrase("Failed to submit unjail tx");
@@ -121,15 +123,17 @@ export default function UnjailUnstake({
         updateTx(
           "Unstake",
           account.addressHex,
-          account.addressHex,
+          nodeAddress,
           0,
           txResponse.txhash,
           Number(Config.TX_FEE) / 1000000,
           "Pending",
-          "Pending"
+          "Pending",
+          undefined,
+          "Pocket Wallet"
         );
 
-        pushToTxDetail(txResponse.txhash, true);
+        pushToTxDetail(txResponse.txhash);
         return;
       } else {
         setPassphraseError("Invalid passphrase");
