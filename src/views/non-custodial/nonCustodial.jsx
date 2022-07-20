@@ -136,7 +136,7 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
   const isUnstakeDisabled = node.status !== 2;
 
   const pushToTxDetail = useCallback(
-    (txHash, useCache) => {
+    (txHash) => {
       if (!addressHex || !publicKeyHex || !ppk) {
         console.error(
           "No account available, please create or import an account"
