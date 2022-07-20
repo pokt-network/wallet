@@ -9,7 +9,7 @@ import IconBack from "../../icons/iconBack";
 import Title from "../../components/public/title/title";
 import { getDataSource } from "../../datasource";
 import { isPassphraseValid } from "../../utils/validations";
-import ErrorLabel from "../../components/error-label/error";
+import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 import ConfirmActionModal from "../../components/modals/confirm-action/confirmAction";
 import { useUser } from "../../context/userContext";
 import { useTx } from "../../context/txContext";
@@ -132,7 +132,11 @@ function Create({
             wide
             onChange={({ target }) => onPassphraseChange(target)}
           />
-          <ErrorLabel message={passPhraseError} show={passPhraseError} />
+          <IconWithLabel
+            message={passPhraseError}
+            show={passPhraseError}
+            type="error"
+          />
         </div>
 
         <div className="passphrase-input-container">
@@ -143,9 +147,10 @@ function Create({
             wide
             onChange={({ target }) => onConfirmPassphraseChange(target)}
           />
-          <ErrorLabel
+          <IconWithLabel
             message={confirmPassphraseError}
             show={confirmPassphraseError}
+            type="error"
           />
         </div>
 
@@ -254,7 +259,11 @@ function Download({
             <span>keyfile.json</span>
             <IconDownload />
           </ButtonBase>
-          <ErrorLabel message={downloadError} show={downloadError} />
+          <IconWithLabel
+            message={downloadError}
+            show={downloadError}
+            type="error"
+          />
         </div>
 
         <p className="disclaimer">

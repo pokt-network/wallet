@@ -432,6 +432,7 @@ export default function AccountDetail() {
           visible={isUnjailModalVisible}
           onClose={() => setIsUnjailModalVisible(false)}
           pushToTxDetail={pushToTxDetail}
+          nodeAddress={addressHex}
         />
 
         <UnjailUnstake
@@ -440,6 +441,7 @@ export default function AccountDetail() {
           visible={isUnstakeModalVisible}
           onClose={() => setIsUnstakeModalVisible(false)}
           pushToTxDetail={pushToTxDetail}
+          nodeAddress={addressHex}
         />
       </AccountContent>
     </Layout>

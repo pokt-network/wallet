@@ -64,7 +64,7 @@ export default function Header() {
         <Menu isHidden={isMenuHidden}>
           <StyledUl>
             <div className="separator" />
-            {isLoggedIn ? (
+            {isLoggedIn && (
               <StyledLi
                 className={
                   location.pathname === ROUTES.account ? "active" : undefined
@@ -80,7 +80,7 @@ export default function Header() {
                   Account Detail
                 </Link>
               </StyledLi>
-            ) : null}
+            )}
             <StyledLi>
               <a tartget="_target" href={Config.BUY_POKT_BASE_URL}>
                 {width <= 767 && (
@@ -89,7 +89,21 @@ export default function Header() {
                 Buy POKT
               </a>
             </StyledLi>
-            {isLoggedIn ? (
+            {isLoggedIn && (
+              <StyledLi>
+                <Link
+                  to={ROUTES.nonCustodial}
+                  className={
+                    location.pathname === ROUTES.nonCustodial
+                      ? "active"
+                      : undefined
+                  }
+                >
+                  Custodial Nodes
+                </Link>
+              </StyledLi>
+            )}
+            {isLoggedIn && (
               <StyledLi>
                 <button
                   className="nav-button"
@@ -101,7 +115,7 @@ export default function Header() {
                   {isMenuHidden && <IconLogOut className="log-out-icon" />}
                 </button>
               </StyledLi>
-            ) : null}
+            )}
           </StyledUl>
         </Menu>
         <MobileButton onClick={onToggleMenu} isOpen={!isMenuHidden} />

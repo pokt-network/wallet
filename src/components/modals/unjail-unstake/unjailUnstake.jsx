@@ -5,7 +5,7 @@ import UnjailUnstakeContainer from "./container";
 import PasswordInput from "../../input/passwordInput";
 import { getDataSource } from "../../../datasource";
 import { Config } from "../../../config/config";
-import ErrorLabel from "../../error-label/error";
+import IconWithLabel from "../../iconWithLabel/iconWithLabel";
 import {
   validationError,
   VALIDATION_ERROR_TYPES,
@@ -21,6 +21,7 @@ export default function UnjailUnstake({
   ppk,
   type,
   pushToTxDetail,
+  nodeAddress,
 }) {
   const theme = useTheme();
   const { updateUser } = useUser();
@@ -50,7 +51,11 @@ export default function UnjailUnstake({
         return;
       }
 
-      const txResponse = await dataSource.unjailNode(ppk, passphrase);
+      const txResponse = await dataSource.unjailNode(
+        ppk,
+        passphrase,
+        nodeAddress
+      );
 
       if (txResponse.txhash !== undefined) {
         setPassphrase("");
@@ -59,15 +64,17 @@ export default function UnjailUnstake({
         updateTx(
           "Unjail",
           account.addressHex,
-          account.addressHex,
+          nodeAddress,
           0,
           txResponse.txhash,
           Number(Config.TX_FEE) / 1000000,
           "Pending",
-          "Pending"
+          "Pending",
+          undefined,
+          "Pocket Wallet"
         );
         localStorage.setItem("unjailing", true);
-        pushToTxDetail(txResponse.txhash, true);
+        pushToTxDetail(txResponse.txhash);
         return;
       } else {
         setPassphrase("Failed to submit unjail tx");
@@ -76,7 +83,7 @@ export default function UnjailUnstake({
     } else {
       setPassphraseError("Invalid passphrase");
     }
-  }, [ppk, passphrase, pushToTxDetail, updateUser, updateTx]);
+  }, [ppk, passphrase, pushToTxDetail, updateUser, updateTx, nodeAddress]);
 
   const unstakeNode = useCallback(async () => {
     if (ppk && passphrase) {
@@ -101,7 +108,11 @@ export default function UnjailUnstake({
         return;
       }
 
-      const txResponse = await dataSource.unstakeNode(ppk, passphrase);
+      const txResponse = await dataSource.unstakeNode(
+        ppk,
+        passphrase,
+        nodeAddress
+      );
 
       if (txResponse.txhash !== undefined) {
         setPassphrase("");
@@ -112,15 +123,17 @@ export default function UnjailUnstake({
         updateTx(
           "Unstake",
           account.addressHex,
-          account.addressHex,
+          nodeAddress,
           0,
           txResponse.txhash,
           Number(Config.TX_FEE) / 1000000,
           "Pending",
-          "Pending"
+          "Pending",
+          undefined,
+          "Pocket Wallet"
         );
 
-        pushToTxDetail(txResponse.txhash, true);
+        pushToTxDetail(txResponse.txhash);
         return;
       } else {
         setPassphraseError("Invalid passphrase");
@@ -129,7 +142,7 @@ export default function UnjailUnstake({
     } else {
       setPassphraseError("Invalid passphrase");
     }
-  }, [passphrase, ppk, pushToTxDetail, updateUser, updateTx]);
+  }, [passphrase, ppk, pushToTxDetail, updateUser, updateTx, nodeAddress]);
 
   const onPassphraseChange = useCallback(({ value }) => {
     setPassphrase(value);
@@ -151,7 +164,11 @@ export default function UnjailUnstake({
               : undefined
           }
         />
-        <ErrorLabel message={passphraseError} show={passphraseError} />
+        <IconWithLabel
+          message={passphraseError}
+          show={passphraseError}
+          type="error"
+        />
         <Button
           className="send-button"
           mode="primary"

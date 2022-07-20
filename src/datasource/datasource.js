@@ -285,7 +285,7 @@ export class DataSource {
   /**
    * @returns {Object}
    */
-  async unjailNode(ppk, passphrase) {
+  async unjailNode(ppk, passphrase, nodeAddress) {
     // uPOKT
     const defaultFee = this.config.txFee || 10000;
 
@@ -311,7 +311,7 @@ export class DataSource {
     }
 
     const rawTxPayloadOrError = await transactionSenderOrError
-      .nodeUnjail(accountOrUndefined.addressHex)
+      .nodeUnjail(nodeAddress, accountOrUndefined.addressHex)
       .createTransaction(
         this.config.chainId,
         defaultFee.toString(),
@@ -344,7 +344,7 @@ export class DataSource {
   /**
    * @returns {Object}
    */
-  async unstakeNode(ppk, passphrase) {
+  async unstakeNode(ppk, passphrase, nodeAddress) {
     // uPOKT
     const defaultFee = this.config.txFee || 10000;
 
@@ -370,7 +370,7 @@ export class DataSource {
     }
 
     const rawTxPayloadOrError = await transactionSenderOrError
-      .nodeUnstake(accountOrUndefined.addressHex)
+      .nodeUnstake(nodeAddress, accountOrUndefined.addressHex)
       .createTransaction(
         this.config.chainId,
         defaultFee.toString(),
