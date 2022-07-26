@@ -5,6 +5,9 @@ import {
   RpcError,
   CoinDenom,
   Hex,
+  TxSignature,
+  TransactionSender,
+  ProtoTransactionSigner,
 } from "@pokt-network/pocket-js";
 import { getGatewayClient } from "./gateway";
 import axios from "axios";
@@ -235,7 +238,6 @@ export class DataSource {
       ppk,
       passphrase
     );
-    
 
     if (typeGuard(accountOrUndefined, Error)) {
       return new Error(
@@ -274,6 +276,78 @@ export class DataSource {
         "sendRawTx",
         rawTxPayloadOrError.address,
         rawTxPayloadOrError.txHex
+      );
+    } catch (error) {
+      console.log(`Failed to send transaction with error: ${error.raw_log}`);
+      return new Error(error.raw_log);
+    }
+
+    return rawTxResponse;
+  }
+
+  async sendTransactionFromLedger(publicKey, signature, tx) {
+    console.log("publicKey: ", publicKey)
+    const {
+      chain_id: chainID,
+      fee,
+      memo,
+      msg: {
+        value: { amount, from_address: fromAddress, to_address: toAddress },
+      },
+    } = tx;
+
+    const txSignature = new TxSignature(
+      Buffer.from(publicKey, "hex"),
+      Buffer.from(signature, "hex")
+    );
+
+    const transactionSender = new TransactionSender(
+      this.__pocket,
+      null,
+      null,
+      true
+    );
+
+    const ItxSender = transactionSender.send(fromAddress, toAddress, amount);
+
+    const unsignedTransaction = ItxSender.createUnsignedTransaction(
+      chainID,
+      fee[0].amount,
+      "Upokt",
+      memo
+    );
+
+    console.log("2.5: ", chainID, fee[0].amount, fee[0].denom, memo);
+    console.log("3: ", unsignedTransaction);
+    if (typeGuard(unsignedTransaction, RpcError)) {
+      console.log(
+        `Failed to process transaction with error: ${unsignedTransaction}`
+      );
+      return new Error(unsignedTransaction);
+    }
+
+    const { bytesToSign, stdTxMsgObj } = unsignedTransaction;
+
+    console.log("bobolandia: ", stdTxMsgObj, bytesToSign, txSignature);
+
+    const rawTxOrError = ProtoTransactionSigner.signTransaction(
+      stdTxMsgObj,
+      bytesToSign,
+      txSignature
+    );
+    if (typeGuard(rawTxOrError, RpcError)) {
+      console.log(`Failed to process transaction with error: ${rawTxOrError}`);
+      return new Error(rawTxOrError.message);
+    }
+
+    console.log("rawTxOrError: ", rawTxOrError)
+
+    let rawTxResponse;
+    try {
+      rawTxResponse = await this.gwClient.makeQuery(
+        "sendRawTx",
+        rawTxOrError.address,
+        rawTxOrError.txHex
       );
     } catch (error) {
       console.log(`Failed to send transaction with error: ${error.raw_log}`);

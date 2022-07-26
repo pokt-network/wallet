@@ -9,6 +9,7 @@ import WalletRoutes from "./views/WalletRoutes";
 import { UserContextProvider } from "./context/userContext";
 import { TxContextProvider } from "./context/txContext";
 import { TransportProvider } from "./context/transportContext";
+import { LedgerProvider } from "./context/ledgerContext";
 
 function App() {
   useEffect(() => {
@@ -22,16 +23,18 @@ function App() {
     <Router history={history}>
       <TransportProvider>
         <UserContextProvider>
-          <TxContextProvider>
-            <ThemeProvider>
-              <div className="loader-container" id="loader">
-                <div className="loader"></div>
-              </div>
-              <Main>
-                <WalletRoutes />
-              </Main>
-            </ThemeProvider>
-          </TxContextProvider>
+          <LedgerProvider>
+            <TxContextProvider>
+              <ThemeProvider>
+                <div className="loader-container" id="loader">
+                  <div className="loader"></div>
+                </div>
+                <Main>
+                  <WalletRoutes />
+                </Main>
+              </ThemeProvider>
+            </TxContextProvider>
+          </LedgerProvider>
         </UserContextProvider>
       </TransportProvider>
     </Router>

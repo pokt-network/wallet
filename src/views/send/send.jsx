@@ -25,6 +25,7 @@ import {
 import { useUser } from "../../context/userContext";
 import { useTx } from "../../context/txContext";
 import useTransport from "../../hooks/useTransport";
+import { useLedger } from "../../context/ledgerContext";
 
 const dataSource = getDataSource();
 
@@ -266,7 +267,8 @@ export default function Send() {
   const theme = useTheme();
   const { updateUser, user } = useUser();
   const { updateTx } = useTx();
-  const { pocketApp } = useTransport();
+  const { pocketApp, isUsingHardwareWallet } = useTransport();
+  const { signTransaction } = useLedger();
   const sendRef = useRef(null);
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
@@ -317,6 +319,43 @@ export default function Send() {
   );
 
   const sendTransaction = useCallback(async () => {
+    if (isUsingHardwareWallet) {
+      const ledgerTxResponse = await signTransaction(
+        memoText,
+        "pos/Send",
+        amountToSend,
+        destinationAddress
+      );
+
+      console.log("hello: ", ledgerTxResponse);
+
+      if (typeGuard(ledgerTxResponse, Error)) {
+        setPassphraseError(
+          ledgerTxResponse?.message
+            ? ledgerTxResponse.message
+            : "Failed to send the transaction, please verify the information."
+        );
+        if (sendRef.current) sendRef.current.disabled = false;
+        return;
+      }
+
+      console.log("hello2: ", ledgerTxResponse);
+
+      updateTx(
+        "TokenTransfer",
+        addressHex,
+        destinationAddress,
+        amountToSend / 1000000,
+        ledgerTxResponse.txhash,
+        txFee / 1000000,
+        "Pending",
+        "Pending",
+        undefined,
+        memoText ? memoText : "Pocket wallet"
+      );
+      return;
+    }
+
     if (passphrase && destinationAddress && ppk && amountToSend > 0) {
       const txResponse = await dataSource.sendTransaction(
         ppk,
@@ -357,6 +396,8 @@ export default function Send() {
       if (sendRef.current) sendRef.current.disabled = false;
     }
   }, [
+    isUsingHardwareWallet,
+    signTransaction,
     addressHex,
     amountToSend,
     destinationAddress,

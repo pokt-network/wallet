@@ -96,13 +96,17 @@ export default function ImportPocket() {
     setPpkPassphraseError("");
 
     try {
+
+      console.log("xdddddd")
       const account = await dataSource.importPortablePrivateKey(
         filePassphrase,
         ppk,
         filePassphrase
       );
+      console.log('a: ', account)
 
       if (typeGuard(account, Error)) {
+        console.log("I see")
         console.error(account);
         setPpkPassphraseError(account.message);
         return false;
@@ -353,9 +357,8 @@ export default function ImportPocket() {
             onClick={() => onAccordionClick(2)}
           >
             {ledgerLoading && !ledgerError ? (
-              <Banner title="Confirm action on your ledger" mode="info">
-                We need you to confirm this action on your ledger device so that
-                we can complete the connection.
+              <Banner title="Action Required" mode="info">
+                Please confirm on your ledger device to complete the connection.
               </Banner>
             ) : null}
 
