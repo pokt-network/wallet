@@ -3,22 +3,22 @@ import WebHIDTransport from "@ledgerhq/hw-transport-webhid";
 import WebUSBTransport from "@ledgerhq/hw-transport-webusb";
 import U2FTransport from "@ledgerhq/hw-transport-u2f";
 import AppPokt from "hw-app-pokt";
-import { LEDGER_CONFIG } from "../utils/hardwareWallet";
 
 const DEFAULT_TRANSPORT_STATE = {
   pocketApp: "",
   setPocketApp: null,
   onSelectDevice: () => Promise(),
   removeTransport: () => null,
+  isUsingHardwareWallet: false,
 };
 
 export const TransportContext = createContext(DEFAULT_TRANSPORT_STATE);
 
 export function TransportProvider({ children }) {
   const [pocketApp, setPocketApp] = useState("");
+  const isUsingHardwareWallet = pocketApp?.transport ? true : false;
 
   const initializePocketApp = useCallback((transport) => {
-    transport.setExchangeTimeout = LEDGER_CONFIG.exchangeTimeout;
     const pocket = new AppPokt(transport);
     return pocket;
   }, []);
@@ -71,7 +71,13 @@ export function TransportProvider({ children }) {
 
   return (
     <TransportContext.Provider
-      value={{ onSelectDevice, pocketApp, setPocketApp, removeTransport }}
+      value={{
+        onSelectDevice,
+        pocketApp,
+        setPocketApp,
+        removeTransport,
+        isUsingHardwareWallet,
+      }}
     >
       {children}
     </TransportContext.Provider>
