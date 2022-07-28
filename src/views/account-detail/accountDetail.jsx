@@ -23,7 +23,7 @@ export default function AccountDetail() {
   const history = useHistory();
   const { user } = useUser();
   const { addressHex, ppk, publicKeyHex } = user;
-  const { pocketApp } = useTransport();
+  const { pocketApp, isUsingHardwareWallet } = useTransport();
   const [poktsBalance, setPoktsBalance] = useState(0);
   const [, setUsdBalance] = useState(0);
   const [appStakedTokens, setAppStakedTokens] = useState(0);
@@ -50,7 +50,7 @@ export default function AccountDetail() {
 
   const pushToTxDetail = useCallback(
     (txHash, useCache) => {
-      if (!addressHex || !publicKeyHex || !ppk) {
+      if (!isUsingHardwareWallet && (!addressHex || !publicKeyHex || !ppk)) {
         console.error(
           "No account available, please create or import an account"
         );
@@ -65,7 +65,7 @@ export default function AccountDetail() {
         });
       }
     },
-    [history, addressHex, publicKeyHex, ppk]
+    [history, addressHex, publicKeyHex, ppk, isUsingHardwareWallet]
   );
 
   const pushToSend = useCallback(() => {
@@ -395,13 +395,14 @@ export default function AccountDetail() {
 
         <CopyButton text={publicKeyHex} width={488} />
 
-        <Button
-          className="reveal-private-key"
-          onClick={() => setIsPkRevealModalVisible(true)}
-          disabled={pocketApp}
-        >
-          Reveal Private Key
-        </Button>
+        {!isUsingHardwareWallet && (
+          <Button
+            className="reveal-private-key"
+            onClick={() => setIsPkRevealModalVisible(true)}
+          >
+            Reveal Private Key
+          </Button>
+        )}
 
         <AccountTableContainer isEmpty={txList.length < 1}>
           <Table
