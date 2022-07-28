@@ -22,11 +22,7 @@ export function LedgerProvider({ children }) {
     amount,
     toAddress
   ) => {
-    window.BigInt.prototype.toJSON = function () {
-      return this.toString();
-    };
-
-    const entropy = Math.floor(Math.random() * 99999999999999999);
+    const entropy = Number(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString().toString()
 
     const tx = {
       chain_id: Config.CHAIN_ID,
@@ -51,14 +47,10 @@ export function LedgerProvider({ children }) {
     try {
       const stringifiedTx = JSON.stringify(tx);
       const hexTx = Buffer.from(stringifiedTx, "utf-8").toString("hex");
-      console.log("stringify: ", stringifiedTx);
-      console.log("hex: ", hexTx);
-
       const sig = await pocketApp.signTransaction(
         LEDGER_CONFIG.derivationPath,
         hexTx
       );
-      console.log("sig: ", sig);
 
       const ledgerTxResponse = await dataSource.sendTransactionFromLedger(
         publicKey,

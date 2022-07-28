@@ -286,9 +286,9 @@ export class DataSource {
   }
 
   async sendTransactionFromLedger(publicKey, signature, tx) {
-    console.log("publicKey: ", publicKey)
     const {
       chain_id: chainID,
+      entropy,
       fee,
       memo,
       msg: {
@@ -313,12 +313,11 @@ export class DataSource {
     const unsignedTransaction = ItxSender.createUnsignedTransaction(
       chainID,
       fee[0].amount,
+      entropy,
       "Upokt",
       memo
     );
 
-    console.log("2.5: ", chainID, fee[0].amount, fee[0].denom, memo);
-    console.log("3: ", unsignedTransaction);
     if (typeGuard(unsignedTransaction, RpcError)) {
       console.log(
         `Failed to process transaction with error: ${unsignedTransaction}`
@@ -327,9 +326,6 @@ export class DataSource {
     }
 
     const { bytesToSign, stdTxMsgObj } = unsignedTransaction;
-
-    console.log("bobolandia: ", stdTxMsgObj, bytesToSign, txSignature);
-
     const rawTxOrError = ProtoTransactionSigner.signTransaction(
       stdTxMsgObj,
       bytesToSign,
@@ -339,8 +335,6 @@ export class DataSource {
       console.log(`Failed to process transaction with error: ${rawTxOrError}`);
       return new Error(rawTxOrError.message);
     }
-
-    console.log("rawTxOrError: ", rawTxOrError)
 
     let rawTxResponse;
     try {

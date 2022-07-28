@@ -327,8 +327,6 @@ export default function Send() {
         destinationAddress
       );
 
-      console.log("hello: ", ledgerTxResponse);
-
       if (typeGuard(ledgerTxResponse, Error)) {
         setPassphraseError(
           ledgerTxResponse?.message
@@ -338,8 +336,6 @@ export default function Send() {
         if (sendRef.current) sendRef.current.disabled = false;
         return;
       }
-
-      console.log("hello2: ", ledgerTxResponse);
 
       updateTx(
         "TokenTransfer",
