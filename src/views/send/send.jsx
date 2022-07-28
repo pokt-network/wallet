@@ -25,7 +25,6 @@ import {
 import { useUser } from "../../context/userContext";
 import { useTx } from "../../context/txContext";
 import useTransport from "../../hooks/useTransport";
-import { useLedger } from "../../context/ledgerContext";
 
 const dataSource = getDataSource();
 
@@ -267,8 +266,7 @@ export default function Send() {
   const theme = useTheme();
   const { updateUser, user } = useUser();
   const { updateTx } = useTx();
-  const { pocketApp, isUsingHardwareWallet } = useTransport();
-  const { signTransaction } = useLedger();
+  const { pocketApp, isUsingHardwareWallet, signTransaction } = useTransport();
   const sendRef = useRef(null);
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
@@ -349,6 +347,8 @@ export default function Send() {
         undefined,
         memoText ? memoText : "Pocket wallet"
       );
+
+      pushToTxDetail(ledgerTxResponse.txhash);
       return;
     }
 
