@@ -4,7 +4,7 @@ import PrivateKeyContainer from "./container";
 import PasswordInput from "../../input/passwordInput";
 import { getDataSource } from "../../../datasource";
 import useWindowSize from "../../../hooks/useWindowSize";
-import ErrorLabel from "../../error-label/error";
+import IconWithLabel from "../../iconWithLabel/iconWithLabel";
 import MessageALert from "../../messageAlert/messageAlert";
 import {
   validationError,
@@ -109,7 +109,11 @@ export default function RevealPrivateKey({ visible, onClose, ppk }) {
           />
         )}
 
-        <ErrorLabel message={passphraseError} show={passphraseError} />
+        <IconWithLabel
+          message={passphraseError}
+          show={passphraseError}
+          type="error"
+        />
 
         {privateKey && privateKey.length > 0 ? (
           <div className="private-key-container">

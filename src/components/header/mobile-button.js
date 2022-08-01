@@ -22,8 +22,8 @@ const MenuButton = styled(StyledLink).attrs({
   `)};
   ${maxPhone(css`
     font-size: 30px;
-    right: 5%;
-    top: 28px;
+    right: ${(props) => (props.isOpen ? "24px" : "5%")};
+    top: ${(props) => (props.isOpen ? "0" : "28px")};
     color: ${colors.white};
     z-index: 999999;
   `)};

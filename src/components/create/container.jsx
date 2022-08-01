@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { maxPhone } from "../../utils/media";
+import { maxPhone, tablet } from "../../utils/media";
 
 const CreateContainer = styled.div`
   max-width: 491px;
@@ -14,10 +14,22 @@ const CreateContainer = styled.div`
   .notification {
     margin: 32px 0;
 
-    svg {
-      width: 16px;
-      height: 16px;
-    }
+    ${tablet(css`
+      h2,
+      p {
+        margin: 0;
+      }
+    `)}
+
+    ${maxPhone(css`
+      > div {
+        > div {
+          > div {
+            height: 16px;
+          }
+        }
+      }
+    `)}
   }
 
   .passphrase-input-container {

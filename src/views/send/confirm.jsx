@@ -7,7 +7,7 @@ import {
 } from "@pokt-foundation/ui";
 import React, { useCallback } from "react";
 import CopyButton from "../../components/copy/copy";
-import ErrorLabel from "../../components/error-label/error";
+import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 import PasswordInput from "../../components/input/passwordInput";
 import Layout from "../../components/layout";
 import {
@@ -90,9 +90,10 @@ export default function ConfirmSend({
                       onChange={(e) => onPassphraseChange(e)}
                     />
 
-                    <ErrorLabel
+                    <IconWithLabel
                       message={passphraseError}
                       show={passphraseError}
+                      type="error"
                     />
                   </div>
                 </>
@@ -143,7 +144,11 @@ export default function ConfirmSend({
                   color={theme.accentAlternative}
                   onChange={(e) => onPassphraseChange(e)}
                 />
-                <ErrorLabel message={passphraseError} show={passphraseError} />
+                <IconWithLabel
+                  message={passphraseError}
+                  show={passphraseError}
+                  type="error"
+                />
               </div>
             ) : (
               <Banner title="Action Required" mode="info">

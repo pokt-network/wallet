@@ -10,6 +10,7 @@ import AccountDetail from "./account-detail/accountDetail";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import { ROUTES } from "../utils/routes";
+import NonCustodial from "./non-custodial/nonCustodial";
 
 export default function WalletRoutes() {
   const theme = useTheme();
@@ -62,6 +63,11 @@ export default function WalletRoutes() {
             exact
             path={ROUTES.txDetail}
             component={TransactionDetail}
+          ></Route>
+          <Route
+            exact
+            path={ROUTES.nonCustodial}
+            component={NonCustodial}
           ></Route>
         </div>
       </Switch>

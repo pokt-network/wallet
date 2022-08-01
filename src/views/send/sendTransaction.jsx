@@ -1,7 +1,7 @@
 import { Button, TextInput } from "@pokt-foundation/ui";
 import React, { useCallback } from "react";
 import NumberFormat from "react-number-format";
-import ErrorLabel from "../../components/error-label/error";
+import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 import Layout from "../../components/layout";
 import SendContent from "../../components/send/content";
 import SendHeaderContainer from "../../components/send/header";
@@ -63,7 +63,11 @@ export default function SendTransaction({
     >
       <SendContent>
         <div className="amount-error-container">
-          <ErrorLabel message={amountError} show={amountError} />
+          <IconWithLabel
+            message={amountError}
+            show={amountError}
+            type="error"
+          />
         </div>
         <TextInput
           placeholder="Send to Address"
@@ -75,7 +79,11 @@ export default function SendTransaction({
               : undefined
           }
         />
-        <ErrorLabel message={addressError} show={addressError} />
+        <IconWithLabel
+          message={addressError}
+          show={addressError}
+          type="error"
+        />
 
         <label className="tx-memo-label" htmlFor="tx-memo">
           Tx Memo

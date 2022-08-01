@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Link, Table } from "@pokt-foundation/ui";
+import { Button, Link } from "@pokt-foundation/ui";
 import { useHistory } from "react-router";
 import AccountHeaderContainer from "../../components/account-detail/headerContainer";
 import Layout from "../../components/layout";
 import AccountContent from "../../components/account-detail/content";
 import CopyButton from "../../components/copy/copy";
-import AccountTableContainer from "../../components/account-detail/tableContainer";
 import { Config } from "../../config/config";
 import { getDataSource } from "../../datasource";
 import loadIcon from "../../utils/images/icons/load.svg";
@@ -16,6 +15,8 @@ import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake"
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 import { useUser } from "../../context/userContext";
 import useTransport from "../../hooks/useTransport";
+import TransactionsTable from "../../components/transactionsTable/transactionsTable";
+import ExportKeyfile from "../../components/modals/export-keyfile/exportKeyfile";
 
 const dataSource = getDataSource();
 
@@ -41,6 +42,7 @@ export default function AccountDetail() {
   const [loading, setLoading] = useState(false);
   const [priceProvider, setPriceProvider] = useState("");
   const [priceProviderLink, setPriceProviderLink] = useState("");
+  const [isExportKeyfileVisible, setIsExportKeyfileVisible] = useState(false);
 
   const increaseMaxTxListCount = useCallback(() => {
     if (maxTxListCount < Number(Config.MAX_TRANSACTION_LIST_COUNT)) {
@@ -138,15 +140,12 @@ export default function AccountDetail() {
   );
 
   const getTransactions = useCallback(async () => {
-    const allTxs = await dataSource.getAllTransactions(
-      addressHex,
-      maxTxListCount
-    );
+    const allTxs = await dataSource.getAllTransactions(addressHex);
 
     if (allTxs !== undefined) {
       updateTransactionList(allTxs);
     }
-  }, [addressHex, maxTxListCount, updateTransactionList]);
+  }, [addressHex, updateTransactionList]);
 
   const getBalance = useCallback(async (addressHex) => {
     if (addressHex) {
@@ -309,16 +308,21 @@ export default function AccountDetail() {
             })}{" "}
             POKT
           </h1>
-          {price ? (
+          {price && (
             <h2>
               $
               {parseFloat(price * poktsBalance).toLocaleString("en-US", {
                 maximumFractionDigits: 2,
                 minimumFractionDigits: 2,
               })}{" "}
-              USD <Link href={priceProviderLink}>Price by {priceProvider}</Link>
+              USD{" "}
+              {process.env.REACT_APP_CHAIN_ID !== "testnet" ? (
+                <Link href={priceProviderLink}>Price by {priceProvider}</Link>
+              ) : (
+                <p>Testing tokens</p>
+              )}
             </h2>
-          ) : null}
+          )}
         </AccountHeaderContainer>
       }
     >
@@ -395,76 +399,35 @@ export default function AccountDetail() {
 
         <CopyButton text={publicKeyHex} width={488} />
 
-        {!isUsingHardwareWallet && (
-          <Button
-            className="reveal-private-key"
-            onClick={() => setIsPkRevealModalVisible(true)}
-          >
-            Reveal Private Key
-          </Button>
-        )}
+        <section className="actions">
+          {!isUsingHardwareWallet && (
+            <Button
+              className="reveal-private-key"
+              onClick={() => setIsPkRevealModalVisible(true)}
+            >
+              Reveal Private Key
+            </Button>
+          )}
 
-        <AccountTableContainer isEmpty={txList.length < 1}>
-          <Table
-            header={
-              <>
-                {txList.length < 1 ? (
-                  <tr>
-                    <th className="table-title" colSpan={4}>
-                      No transactions
-                    </th>
-                  </tr>
-                ) : (
-                  <>
-                    <tr>
-                      <th className="table-title" colSpan={4}>
-                        Latest Transactions
-                      </th>
-                    </tr>
-                    <tr>
-                      <th className="column-title"></th>
-                      <th className="column-title">STATUS</th>
-                      <th className="column-title">BLOCK HEIGHT</th>
-                      <th className="column-title">TX HASH</th>
-                    </tr>
-                  </>
-                )}
-              </>
-            }
-            noSideBorders
-            noTopBorders
+          <Button
+            className="export-keyfile"
+            onClick={() => setIsExportKeyfileVisible(true)}
           >
-            {txList &&
-              txList.map(({ options: { onClick }, ...tx }) => (
-                <tr key={tx.hash}>
-                  <td width="10%">
-                    <img
-                      src={tx.imageSrc}
-                      alt={tx.type.toLowerCase()}
-                      className="tx-icon"
-                    />
-                  </td>
-                  <td width="30%">
-                    <p className="qty">{tx.amount} POKT</p>
-                    <p className="status">{tx.type.toLowerCase()}</p>
-                  </td>
-                  <td className="timestamp" width="30%">
-                    {tx.height}
-                  </td>
-                  <td width="30%">
-                    <button className="hash-button" onClick={onClick}>
-                      {tx.hash}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-          </Table>
-        </AccountTableContainer>
+            Export Keyfile
+          </Button>
+        </section>
+
+        <TransactionsTable txList={txList} />
 
         <RevealPrivateKey
           ppk={ppk}
           visible={isPkRevealModalVisible}
           onClose={() => setIsPkRevealModalVisible(false)}
+        />
+
+        <ExportKeyfile
+          visible={isExportKeyfileVisible}
+          onClose={() => setIsExportKeyfileVisible(false)}
         />
 
         <UnjailUnstake
@@ -473,6 +436,7 @@ export default function AccountDetail() {
           visible={isUnjailModalVisible}
           onClose={() => setIsUnjailModalVisible(false)}
           pushToTxDetail={pushToTxDetail}
+          nodeAddress={addressHex}
         />
 
         <UnjailUnstake
@@ -481,6 +445,7 @@ export default function AccountDetail() {
           visible={isUnstakeModalVisible}
           onClose={() => setIsUnstakeModalVisible(false)}
           pushToTxDetail={pushToTxDetail}
+          nodeAddress={addressHex}
         />
       </AccountContent>
     </Layout>

@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { maxPhone } from "../../../utils/media";
+import { maxPhone, tablet } from "../../../utils/media";
 
 const PrivateKeyContainer = styled.div`
   width: 100%;
@@ -7,6 +7,23 @@ const PrivateKeyContainer = styled.div`
 
   .save-banner {
     margin: 35px 0 30px 0;
+
+    ${tablet(css`
+      h2,
+      p {
+        margin: 0;
+      }
+    `)}
+
+    ${maxPhone(css`
+      > div {
+        > div {
+          > div {
+            height: 16px;
+          }
+        }
+      }
+    `)}
   }
 
   .label {

@@ -9,7 +9,7 @@ import IconUpload from "../../icons/iconUpload";
 import PasswordInput from "../../components/input/passwordInput";
 import { getDataSource } from "../../datasource";
 import Link from "../../components/link/link";
-import ErrorLabel from "../../components/error-label/error";
+import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 import {
   validationError,
   VALIDATION_ERROR_TYPES,
@@ -265,7 +265,7 @@ export default function ImportPocket() {
                   accept=".json"
                 />
               </label>
-              <ErrorLabel message={ppkError} show={ppkError} />
+              <IconWithLabel message={ppkError} show={ppkError} type="error" />
             </div>
 
             <div className="error-label-container">
@@ -278,9 +278,10 @@ export default function ImportPocket() {
                     : undefined
                 }
               />
-              <ErrorLabel
+              <IconWithLabel
                 message={ppkPassphraseError}
                 show={ppkPassphraseError}
+                type="error"
               />
             </div>
             <Button
@@ -309,7 +310,11 @@ export default function ImportPocket() {
                     : undefined
                 }
               />
-              <ErrorLabel message={privateKeyError} show={privateKeyError} />
+              <IconWithLabel
+                message={privateKeyError}
+                show={privateKeyError}
+                type="error"
+              />
             </div>
             <p className="temporary-passphrase">
               Please create a temporary passphrase to encrypt your Private key
@@ -327,9 +332,10 @@ export default function ImportPocket() {
                     : undefined
                 }
               />
-              <ErrorLabel
+              <IconWithLabel
                 message={privateKeyPassphraseError}
                 show={privateKeyPassphraseError}
+                type="error"
               />
             </div>
             <Button
@@ -366,10 +372,11 @@ export default function ImportPocket() {
               <p className="ledger-description">
                 Connect your hardware Wallet directly to your computer.
               </p>
-              <ErrorLabel
+              <IconWithLabel
                 message={ledgerError}
                 show={ledgerError}
                 className="ledger-error"
+                type="error"
               />
               <Button
                 mode="primary"

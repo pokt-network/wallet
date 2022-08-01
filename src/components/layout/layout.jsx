@@ -9,7 +9,7 @@ const Layout = styled(Wrapper)`
   .title-container {
     background: ${(props) => props.theme.backgroundBorder};
     background-size: 100% 1px;
-    margin-bottom: 32px;
+    margin-bottom: 60px;
     width: 95%;
 
     .title {

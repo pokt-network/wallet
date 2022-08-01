@@ -7,12 +7,12 @@ const Wrapper = styled.main`
   margin: 0 auto;
   display: flex;
   &.wide-block-wr {
-      display: block;
+    display: block;
   }
   ${maxPhone(css`
     &.footer-w {
       display: block;
-   }
+    }
   `)};
   @media (min-width: 900px) {
     max-width: 870px;
@@ -21,13 +21,8 @@ const Wrapper = styled.main`
     max-width: 1100px;
   }
   &.header {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
+    display: flex;
     align-items: center;
-    ${maxPhone(css`
-      height: 70px;
-      grid-template-columns: 1fr;
-    `)};
   }
 `;
 
