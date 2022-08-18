@@ -13,6 +13,7 @@ import {
 import { useUser } from "../../../context/userContext";
 import { useTx } from "../../../context/txContext";
 import useTransport from "../../../hooks/useTransport";
+import { typeGuard } from "@pokt-network/pocket-js";
 
 const dataSource = getDataSource();
 
@@ -25,7 +26,10 @@ export default function UnjailUnstake({
   nodeAddress,
 }) {
   const theme = useTheme();
-  const { updateUser } = useUser();
+  const {
+    updateUser,
+    user: { addressHex: userAddress },
+  } = useUser();
   const { updateTx } = useTx();
   const { isUsingHardwareWallet, unjailNode: transportUnjailNode } =
     useTransport();
@@ -34,7 +38,31 @@ export default function UnjailUnstake({
 
   const unjailNode = useCallback(async () => {
     if (isUsingHardwareWallet) {
-      await transportUnjailNode(nodeAddress);
+      const ledgerUnjailResponse = await transportUnjailNode(nodeAddress);
+
+      if (typeGuard(ledgerUnjailResponse, Error)) {
+        setPassphraseError(
+          ledgerUnjailResponse?.message
+            ? ledgerUnjailResponse.message
+            : "Failed to send the transaction, please verify the information."
+        );
+        return;
+      }
+
+      updateTx(
+        "Unjail",
+        userAddress,
+        nodeAddress,
+        0,
+        ledgerUnjailResponse.txhash,
+        Number(Config.TX_FEE) / 1000000,
+        "Pending",
+        "Pending",
+        undefined,
+        "Pocket Wallet"
+      );
+      localStorage.setItem("unjailing", true);
+      pushToTxDetail(ledgerUnjailResponse.txhash);
       return;
     }
 
@@ -100,6 +128,7 @@ export default function UnjailUnstake({
     nodeAddress,
     transportUnjailNode,
     isUsingHardwareWallet,
+    userAddress,
   ]);
 
   const unstakeNode = useCallback(async () => {

@@ -514,7 +514,6 @@ export class DataSource {
       bytesToSign,
       txSignature
     );
-    console.log("2: ", rawTxOrError);
 
     if (typeGuard(rawTxOrError, RpcError)) {
       console.log(`Failed to process transaction with error: ${rawTxOrError}`);
