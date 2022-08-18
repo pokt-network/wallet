@@ -9,6 +9,7 @@ import { useTx } from "../../context/txContext";
 import useTransport from "../../hooks/useTransport";
 import ConfirmSend from "./confirm";
 import SendTransaction from "./sendTransaction";
+import { STDX_MSG_TYPES } from "../../utils/validations";
 
 const dataSource = getDataSource();
 
@@ -70,7 +71,7 @@ export default function Send() {
     if (isUsingHardwareWallet) {
       const ledgerTxResponse = await signTransaction(
         memoText,
-        "pos/Send",
+        STDX_MSG_TYPES.send,
         amountToSend,
         destinationAddress
       );

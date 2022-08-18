@@ -13,6 +13,7 @@ import pendingImg from "../../utils/images/pending.png";
 import IconTXStatus from "../../icons/iconTxStatus";
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 import { useTx } from "../../context/txContext";
+import { STDX_MSG_TYPES } from "../../utils/validations";
 
 const dataSource = getDataSource();
 const EXPLORER_BASE_URL = "https://pokt.watch";
@@ -53,8 +54,8 @@ export default function TransactionDetail() {
 
   const getTransactionData = useCallback((stdTx) => {
     if (
-      stdTx.msg.type === "pos/MsgUnjail" ||
-      stdTx.msg.type === "pos/8.0MsgUnjail"
+      stdTx.msg.type === STDX_MSG_TYPES.unjail ||
+      stdTx.msg.type === STDX_MSG_TYPES.unjail8
     ) {
       return {
         type: "Unjail",
@@ -62,14 +63,14 @@ export default function TransactionDetail() {
         to: stdTx.msg.value.address,
         amount: 0,
       };
-    } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
+    } else if (stdTx.msg.type === STDX_MSG_TYPES.unstake) {
       return {
         type: "Unstake",
         from: stdTx.msg.value.validator_address,
         to: stdTx.msg.value.validator_address,
         amount: 0,
       };
-    } else if (stdTx.msg.type === "pos/MsgStake") {
+    } else if (stdTx.msg.type === STDX_MSG_TYPES.stake) {
       return {
         type: "Stake",
         from: "Myself",

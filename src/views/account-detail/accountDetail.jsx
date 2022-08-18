@@ -17,6 +17,7 @@ import { useUser } from "../../context/userContext";
 import useTransport from "../../hooks/useTransport";
 import TransactionsTable from "../../components/transactionsTable/transactionsTable";
 import ExportKeyfile from "../../components/modals/export-keyfile/exportKeyfile";
+import { STDX_MSG_TYPES } from "../../utils/validations";
 
 const dataSource = getDataSource();
 
@@ -82,14 +83,17 @@ export default function AccountDetail() {
   }, [history, addressHex, publicKeyHex, ppk, pocketApp]);
 
   const getTransactionData = useCallback((stdTx) => {
-    if (stdTx.msg.type === "pos/MsgUnjail") {
+    if (
+      stdTx.msg.type === STDX_MSG_TYPES.unjail ||
+      stdTx.msg.type === STDX_MSG_TYPES.unjail8
+    ) {
       return { type: "unjail", amount: 0 };
-    } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
+    } else if (stdTx.msg.type === STDX_MSG_TYPES.unstake) {
       return { type: "unstake", amount: 0 };
-    } else if (stdTx.msg.type === "pos/MsgStake") {
+    } else if (stdTx.msg.type === STDX_MSG_TYPES.stake) {
       const value = stdTx.msg.value.value / 1000000;
       return { type: "stake", amount: value };
-    } else if (stdTx.msg.type === "pos/Send") {
+    } else if (stdTx.msg.type === STDX_MSG_TYPES.send) {
       const amount = stdTx.msg.value.amount / 1000000;
       return { type: "sent", amount: amount };
     } else {

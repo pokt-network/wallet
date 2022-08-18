@@ -14,3 +14,11 @@ export function validationError(type) {
 export const VALIDATION_ERROR_TYPES = {
   input: "input",
 };
+
+export const STDX_MSG_TYPES = {
+  unjail: "pos/MsgUnjail",
+  unjail8: "pos/8.0MsgUnjail",
+  unstake: "pos/MsgBeginUnstake",
+  stake: "pos/MsgStake",
+  send: "pos/Send",
+};

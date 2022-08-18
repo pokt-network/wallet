@@ -8,6 +8,7 @@ import { Config } from "../config/config";
 import { useUser } from "./userContext";
 import { getDataSource } from "../datasource";
 import { typeGuard } from "@pokt-network/pocket-js";
+import { STDX_MSG_TYPES } from "../utils/validations";
 
 const dataSource = getDataSource();
 
@@ -86,7 +87,7 @@ export function TransportProvider({ children }) {
 
   const signTransaction = async (
     memo = "Pocket Wallet",
-    type = "pos/Send",
+    type = STDX_MSG_TYPES.send,
     amount,
     toAddress
   ) => {
@@ -159,7 +160,7 @@ export function TransportProvider({ children }) {
       ],
       memo: "Unjail Node - Pocket Wallet",
       msg: {
-        type: "pos/8.0MsgUnjail",
+        type: STDX_MSG_TYPES.unjail8,
         value: {
           address: toAddress,
           signer_address: userAddress,
