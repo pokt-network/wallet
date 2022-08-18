@@ -55,6 +55,10 @@ export const SendTransactionModalContainer = styled.div`
     width: 220px;
     margin: 39px 0 25px 0;
   }
+
+  .ledger-banner-container {
+    margin-bottom: 2rem;
+  }
 `;
 
 export const SendTransactionViewContainer = styled.div`
@@ -89,14 +93,14 @@ export const SendTransactionViewContainer = styled.div`
     margin: 0 0 34px 0;
   }
 
-  h2 {
+  .you-are-sending {
     font-weight: normal;
     font-size: 16px;
     line-height: 140%;
     color: ${(props) => props.theme.secondaryWhite};
   }
 
-  p {
+  .pokt-amount {
     font-weight: bold;
     font-size: 18px;
     line-height: 110%;
@@ -106,5 +110,9 @@ export const SendTransactionViewContainer = styled.div`
 
   .to-address {
     margin-bottom: 44px;
+  }
+
+  .ledger-banner-container {
+    margin-bottom: 2rem;
   }
 `;

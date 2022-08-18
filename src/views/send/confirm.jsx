@@ -31,7 +31,7 @@ export default function ConfirmSend({
 }) {
   const theme = useTheme();
   const { width } = useWindowSize();
-  const { isUsingHardwareWallet } = useTransport();
+  const { isUsingHardwareWallet, isHardwareWalletLoading } = useTransport();
 
   const goBack = useCallback(() => setStep(0), [setStep]);
 
@@ -77,7 +77,7 @@ export default function ConfirmSend({
             className="pocket-modal"
           >
             <SendTransactionModalContainer>
-              {!isUsingHardwareWallet ? (
+              {!isUsingHardwareWallet && (
                 <>
                   <h1 className="title">
                     Confirm your passphrase to complete <br /> the transaction
@@ -97,11 +97,15 @@ export default function ConfirmSend({
                     />
                   </div>
                 </>
-              ) : (
-                <Banner title="Action Required" mode="info">
-                  Please confirm on your ledger device to complete the
-                  connection.
-                </Banner>
+              )}
+
+              {isUsingHardwareWallet && isHardwareWalletLoading && (
+                <div className="ledger-banner-container">
+                  <Banner title="Action Required" mode="info">
+                    Please confirm on your ledger device to complete the
+                    connection.
+                  </Banner>
+                </div>
               )}
 
               <h2 className="you-are-sending">
@@ -109,6 +113,13 @@ export default function ConfirmSend({
               </h2>
 
               <CopyButton text={toAddress} className="to-address" />
+              {isUsingHardwareWallet && (
+                <IconWithLabel
+                  message={passphraseError}
+                  show={passphraseError}
+                  type="error"
+                />
+              )}
 
               <Button
                 mode="primary"
@@ -137,7 +148,7 @@ export default function ConfirmSend({
           }
         >
           <SendTransactionViewContainer>
-            {!isUsingHardwareWallet ? (
+            {!isUsingHardwareWallet && (
               <div className="password-input-container">
                 <PasswordInput
                   placeholder="Keyfile Passphrase"
@@ -150,16 +161,28 @@ export default function ConfirmSend({
                   type="error"
                 />
               </div>
-            ) : (
-              <Banner title="Action Required" mode="info">
-                Please confirm on your ledger device to complete the connection.
-              </Banner>
             )}
 
-            <h2>You are sending</h2>
-            <p>{pokts / 1000000} POKT</p>
+            {isUsingHardwareWallet && isHardwareWalletLoading && (
+              <div className="ledger-banner-container">
+                <Banner title="Action Required" mode="info">
+                  Please confirm on your ledger device to complete the
+                  connection.
+                </Banner>
+              </div>
+            )}
+
+            <h2 className="you-are-sending">You are sending</h2>
+            <p className="pokt-amount">{pokts / 1000000} POKT</p>
 
             <CopyButton text={toAddress} className="to-address" />
+            {isUsingHardwareWallet && (
+              <IconWithLabel
+                message={passphraseError}
+                show={passphraseError}
+                type="error"
+              />
+            )}
 
             <Button
               mode="primary"

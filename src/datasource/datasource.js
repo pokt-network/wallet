@@ -308,9 +308,9 @@ export class DataSource {
       true
     );
 
-    const ItxSender = transactionSender.send(fromAddress, toAddress, amount);
+    const itxSender = transactionSender.send(fromAddress, toAddress, amount);
 
-    const unsignedTransaction = ItxSender.createUnsignedTransaction(
+    const unsignedTransaction = itxSender.createUnsignedTransaction(
       chainID,
       fee[0].amount,
       entropy,
@@ -460,6 +460,73 @@ export class DataSource {
         "sendRawTx",
         rawTxPayloadOrError.address,
         rawTxPayloadOrError.txHex
+      );
+    } catch (error) {
+      console.log(`Failed to send transaction with error: ${error.raw_log}`);
+      return new Error(error.raw_log);
+    }
+
+    return rawTxResponse;
+  }
+
+  async unjailNodeFromLedger(publicKey, signature, tx) {
+    const {
+      msg: {
+        value: { address: toAddress, signer_address: signerAddress },
+      },
+      chain_id: chainID,
+      fee,
+      entropy,
+      memo,
+    } = tx;
+    const txSignature = new TxSignature(
+      Buffer.from(publicKey, "hex"),
+      Buffer.from(signature, "hex")
+    );
+
+    const transactionSender = new TransactionSender(
+      this.__pocket,
+      null,
+      null,
+      true
+    );
+
+    const itxSender = transactionSender.nodeUnjail(toAddress, signerAddress);
+
+    const unsignedUnjailTx = itxSender.createUnsignedTransaction(
+      chainID,
+      fee[0].amount,
+      entropy,
+      "Upokt",
+      memo
+    );
+
+    if (typeGuard(unsignedUnjailTx, RpcError)) {
+      console.log(
+        `Failed to process transaction with error: ${unsignedUnjailTx}`
+      );
+      return new Error(unsignedUnjailTx);
+    }
+
+    const { bytesToSign, stdTxMsgObj } = unsignedUnjailTx;
+    const rawTxOrError = ProtoTransactionSigner.signTransaction(
+      stdTxMsgObj,
+      bytesToSign,
+      txSignature
+    );
+    console.log("2: ", rawTxOrError);
+
+    if (typeGuard(rawTxOrError, RpcError)) {
+      console.log(`Failed to process transaction with error: ${rawTxOrError}`);
+      return new Error(rawTxOrError.message);
+    }
+
+    let rawTxResponse;
+    try {
+      rawTxResponse = await this.gwClient.makeQuery(
+        "sendRawTx",
+        rawTxOrError.address,
+        rawTxOrError.txHex
       );
     } catch (error) {
       console.log(`Failed to send transaction with error: ${error.raw_log}`);

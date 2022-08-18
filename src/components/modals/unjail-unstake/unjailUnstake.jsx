@@ -12,6 +12,7 @@ import {
 } from "../../../utils/validations";
 import { useUser } from "../../../context/userContext";
 import { useTx } from "../../../context/txContext";
+import useTransport from "../../../hooks/useTransport";
 
 const dataSource = getDataSource();
 
@@ -26,10 +27,17 @@ export default function UnjailUnstake({
   const theme = useTheme();
   const { updateUser } = useUser();
   const { updateTx } = useTx();
+  const { isUsingHardwareWallet, unjailNode: transportUnjailNode } =
+    useTransport();
   const [passphrase, setPassphrase] = useState("");
   const [passphraseError, setPassphraseError] = useState("");
 
   const unjailNode = useCallback(async () => {
+    if (isUsingHardwareWallet) {
+      await transportUnjailNode(nodeAddress);
+      return;
+    }
+
     if (ppk && passphrase) {
       const account = await dataSource.importPortablePrivateKey(
         passphrase,
@@ -83,7 +91,16 @@ export default function UnjailUnstake({
     } else {
       setPassphraseError("Invalid passphrase");
     }
-  }, [ppk, passphrase, pushToTxDetail, updateUser, updateTx, nodeAddress]);
+  }, [
+    ppk,
+    passphrase,
+    pushToTxDetail,
+    updateUser,
+    updateTx,
+    nodeAddress,
+    transportUnjailNode,
+    isUsingHardwareWallet,
+  ]);
 
   const unstakeNode = useCallback(async () => {
     if (ppk && passphrase) {
@@ -154,16 +171,18 @@ export default function UnjailUnstake({
         <h1 className="title">
           You are about to send <br /> an {type} transaction{" "}
         </h1>
-        <PasswordInput
-          placeholder="Keyfile Passphrase"
-          color={theme.accentAlternative}
-          onChange={({ target }) => onPassphraseChange(target)}
-          style={
-            passphraseError
-              ? validationError(VALIDATION_ERROR_TYPES.input)
-              : undefined
-          }
-        />
+        {!isUsingHardwareWallet && (
+          <PasswordInput
+            placeholder="Keyfile Passphrase"
+            color={theme.accentAlternative}
+            onChange={({ target }) => onPassphraseChange(target)}
+            style={
+              passphraseError
+                ? validationError(VALIDATION_ERROR_TYPES.input)
+                : undefined
+            }
+          />
+        )}
         <IconWithLabel
           message={passphraseError}
           show={passphraseError}

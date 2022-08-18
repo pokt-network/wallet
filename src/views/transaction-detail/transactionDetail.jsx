@@ -52,7 +52,10 @@ export default function TransactionDetail() {
   );
 
   const getTransactionData = useCallback((stdTx) => {
-    if (stdTx.msg.type === "pos/MsgUnjail") {
+    if (
+      stdTx.msg.type === "pos/MsgUnjail" ||
+      stdTx.msg.type === "pos/8.0MsgUnjail"
+    ) {
       return {
         type: "Unjail",
         from: stdTx.msg.value.address,
@@ -226,8 +229,8 @@ export default function TransactionDetail() {
             <p>
               {location?.data?.comesFromSend
                 ? tx?.sentAmount
-                : tx?.sentAmount / 1000000}&nbsp;
-              POKT
+                : tx?.sentAmount / 1000000}
+              &nbsp; POKT
             </p>
           </div>
 

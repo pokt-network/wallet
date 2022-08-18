@@ -22,6 +22,18 @@ export default function JailedStatus({
           </Button>
         </JailedStatusContent>
       )}
+              <JailedStatusContent>
+          <div className="unjail-description">
+            <h2>Jailed Node</h2>
+            <p>Currently not dispaching Data</p>
+          </div>
+          <Button
+            className="unjail-button"
+            onClick={() => setIsUnjailModalVisible(true)}
+          >
+            Unjail
+          </Button>
+        </JailedStatusContent>
     </React.Fragment>
   );
 }

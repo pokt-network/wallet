@@ -86,10 +86,10 @@ function Validate({
       return;
     }
 
-    if (nodeOrError.output_address !== user.user.addressHex) {
-      setValidateStatus("error");
-      return;
-    }
+    // if (nodeOrError.output_address !== user.user.addressHex) {
+    //   setValidateStatus("error");
+    //   return;
+    // }
 
     const wasNodeAdded = addNode(nodeOrError);
     if (!wasNodeAdded) {
@@ -172,7 +172,10 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
             documentation.
           </Link>
         </p>
-        <JailedStatus nodeStakingStatus={nodeStakingStatus} />
+        <JailedStatus
+          nodeStakingStatus={nodeStakingStatus}
+          setIsUnjailModalVisible={setIsUnjailModalVisible}
+        />
         <h3 className="copy-title">Address</h3>
         <CopyButton className="address-input" text={address} width={488} />
         <NodeAppStatus

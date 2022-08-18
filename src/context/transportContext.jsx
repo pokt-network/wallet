@@ -18,15 +18,19 @@ const DEFAULT_TRANSPORT_STATE = {
   removeTransport: async () => null,
   signTransaction: async () => Promise(),
   isUsingHardwareWallet: false,
+  isHardwareWalletLoading: false,
+  setIsHardwareWalletLoading: null,
+  unjailNode: () => Promise(),
 };
 
 export const TransportContext = createContext(DEFAULT_TRANSPORT_STATE);
 
 export function TransportProvider({ children }) {
   const {
-    user: { addressHex: fromAddress, publicKeyHex: publicKey },
+    user: { addressHex: userAddress, publicKeyHex: publicKey },
   } = useUser();
   const [pocketApp, setPocketApp] = useState("");
+  const [isHardwareWalletLoading, setIsHardwareWalletLoading] = useState(false);
   const isUsingHardwareWallet = pocketApp?.transport ? true : false;
 
   const initializePocketApp = useCallback((transport) => {
@@ -86,13 +90,14 @@ export function TransportProvider({ children }) {
     amount,
     toAddress
   ) => {
-    const entropy = Number(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER))
-      .toString()
-      .toString();
+    setIsHardwareWalletLoading(true);
+    const entropy = Number(
+      Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+    ).toString();
 
     const tx = {
       chain_id: Config.CHAIN_ID,
-      entropy: entropy.toString(),
+      entropy: entropy,
       fee: [
         {
           amount: Config.TX_FEE || "10000",
@@ -104,7 +109,7 @@ export function TransportProvider({ children }) {
         type,
         value: {
           amount: amount.toString(),
-          from_address: fromAddress,
+          from_address: userAddress,
           to_address: toAddress,
         },
       },
@@ -124,12 +129,66 @@ export function TransportProvider({ children }) {
         tx
       );
       if (typeGuard(ledgerTxResponse, Error)) {
+        setIsHardwareWalletLoading(false);
         return ledgerTxResponse;
       }
 
+      setIsHardwareWalletLoading(false);
       return ledgerTxResponse;
     } catch (e) {
       console.error("error: ", e);
+      setIsHardwareWalletLoading(false);
+      return e;
+    }
+  };
+
+  const unjailNode = async (toAddress) => {
+    setIsHardwareWalletLoading(true);
+    const entropy = Number(
+      Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+    ).toString();
+
+    const tx = {
+      chain_id: Config.CHAIN_ID,
+      entropy: entropy,
+      fee: [
+        {
+          amount: Config.TX_FEE || "10000",
+          denom: "upokt",
+        },
+      ],
+      memo: "Unjail Node - Pocket Wallet",
+      msg: {
+        type: "pos/8.0MsgUnjail",
+        value: {
+          address: toAddress,
+          signer_address: userAddress,
+        },
+      },
+    };
+
+    try {
+      const stringifiedTx = JSON.stringify(tx);
+      const hexTx = Buffer.from(stringifiedTx, "utf-8").toString("hex");
+      const sig = await pocketApp.signTransaction(
+        LEDGER_CONFIG.derivationPath,
+        hexTx
+      );
+
+      const ledgerTxResponse = await dataSource.unjailNodeFromLedger(
+        publicKey,
+        sig.signature,
+        tx
+      );
+      if (typeGuard(ledgerTxResponse, Error)) {
+        setIsHardwareWalletLoading(false);
+        return ledgerTxResponse;
+      }
+      setIsHardwareWalletLoading(false);
+      return ledgerTxResponse;
+    } catch (e) {
+      console.error("error: ", e);
+      setIsHardwareWalletLoading(false);
       return e;
     }
   };
@@ -142,7 +201,10 @@ export function TransportProvider({ children }) {
         setPocketApp,
         removeTransport,
         isUsingHardwareWallet,
-        signTransaction
+        signTransaction,
+        isHardwareWalletLoading,
+        setIsHardwareWalletLoading,
+        unjailNode,
       }}
     >
       {children}
