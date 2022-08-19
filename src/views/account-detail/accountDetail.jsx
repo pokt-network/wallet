@@ -88,7 +88,10 @@ export default function AccountDetail() {
       stdTx.msg.type === STDX_MSG_TYPES.unjail8
     ) {
       return { type: "unjail", amount: 0 };
-    } else if (stdTx.msg.type === STDX_MSG_TYPES.unstake) {
+    } else if (
+      stdTx.msg.type === STDX_MSG_TYPES.unstake ||
+      stdTx.msg.type === STDX_MSG_TYPES.unstake8
+    ) {
       return { type: "unstake", amount: 0 };
     } else if (stdTx.msg.type === STDX_MSG_TYPES.stake) {
       const value = stdTx.msg.value.value / 1000000;

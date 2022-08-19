@@ -31,8 +31,11 @@ export default function UnjailUnstake({
     user: { addressHex: userAddress },
   } = useUser();
   const { updateTx } = useTx();
-  const { isUsingHardwareWallet, unjailNode: transportUnjailNode } =
-    useTransport();
+  const {
+    isUsingHardwareWallet,
+    unjailNode: transportUnjailNode,
+    unstakeNode: transportUnstakeNode,
+  } = useTransport();
   const [passphrase, setPassphrase] = useState("");
   const [passphraseError, setPassphraseError] = useState("");
 
@@ -132,6 +135,35 @@ export default function UnjailUnstake({
   ]);
 
   const unstakeNode = useCallback(async () => {
+    if (isUsingHardwareWallet) {
+      const ledgerUnjailResponse = await transportUnstakeNode(nodeAddress);
+
+      if (typeGuard(ledgerUnjailResponse, Error)) {
+        setPassphraseError(
+          ledgerUnjailResponse?.message
+            ? ledgerUnjailResponse.message
+            : "Failed to send the transaction, please verify the information."
+        );
+        return;
+      }
+
+      updateTx(
+        "Unstake",
+        userAddress,
+        nodeAddress,
+        0,
+        ledgerUnjailResponse.txhash,
+        Number(Config.TX_FEE) / 1000000,
+        "Pending",
+        "Pending",
+        undefined,
+        "Pocket Wallet"
+      );
+
+      pushToTxDetail(ledgerUnjailResponse.txhash);
+      return;
+    }
+
     if (ppk && passphrase) {
       const account = await dataSource.importPortablePrivateKey(
         passphrase,
@@ -188,7 +220,17 @@ export default function UnjailUnstake({
     } else {
       setPassphraseError("Invalid passphrase");
     }
-  }, [passphrase, ppk, pushToTxDetail, updateUser, updateTx, nodeAddress]);
+  }, [
+    passphrase,
+    ppk,
+    pushToTxDetail,
+    updateUser,
+    updateTx,
+    nodeAddress,
+    transportUnstakeNode,
+    isUsingHardwareWallet,
+    userAddress,
+  ]);
 
   const onPassphraseChange = useCallback(({ value }) => {
     setPassphrase(value);

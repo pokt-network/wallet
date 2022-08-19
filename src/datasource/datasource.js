@@ -535,6 +535,77 @@ export class DataSource {
     return rawTxResponse;
   }
 
+  async unstakeNodeFromLedger(publicKey, signature, tx) {
+    const {
+      msg: {
+        value: {
+          validator_address: validatorAddress,
+          signer_address: signerAddress,
+        },
+      },
+      chain_id: chainID,
+      fee,
+      entropy,
+      memo,
+    } = tx;
+
+    const txSignature = new TxSignature(
+      Buffer.from(publicKey, "hex"),
+      Buffer.from(signature, "hex")
+    );
+
+    const transactionSender = new TransactionSender(
+      this.__pocket,
+      null,
+      null,
+      true
+    );
+
+    const itxSender = transactionSender.nodeUnstake(
+      validatorAddress,
+      signerAddress
+    );
+    const unsignedUnstakeTx = itxSender.createUnsignedTransaction(
+      chainID,
+      fee[0].amount,
+      entropy,
+      "Upokt",
+      memo
+    );
+
+    if (typeGuard(unsignedUnstakeTx, RpcError)) {
+      console.log(
+        `Failed to process transaction with error: ${unsignedUnstakeTx}`
+      );
+      return new Error(unsignedUnstakeTx);
+    }
+
+    const { bytesToSign, stdTxMsgObj } = unsignedUnstakeTx;
+    const rawTxOrError = ProtoTransactionSigner.signTransaction(
+      stdTxMsgObj,
+      bytesToSign,
+      txSignature
+    );
+    if (typeGuard(rawTxOrError, RpcError)) {
+      console.log(`Failed to process transaction with error: ${rawTxOrError}`);
+      return new Error(rawTxOrError.message);
+    }
+
+    let rawTxResponse;
+    try {
+      rawTxResponse = await this.gwClient.makeQuery(
+        "sendRawTx",
+        rawTxOrError.address,
+        rawTxOrError.txHex
+      );
+    } catch (error) {
+      console.log(`Failed to send transaction with error: ${error.raw_log}`);
+      return new Error(error.raw_log);
+    }
+
+    return rawTxResponse;
+  }
+
   /**
    * @returns {Object}
    */

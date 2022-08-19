@@ -22,6 +22,7 @@ const DEFAULT_TRANSPORT_STATE = {
   isHardwareWalletLoading: false,
   setIsHardwareWalletLoading: null,
   unjailNode: () => Promise(),
+  unstakeNode: () => Promise(),
 };
 
 export const TransportContext = createContext(DEFAULT_TRANSPORT_STATE);
@@ -98,7 +99,7 @@ export function TransportProvider({ children }) {
 
     const tx = {
       chain_id: Config.CHAIN_ID,
-      entropy: entropy,
+      entropy,
       fee: [
         {
           amount: Config.TX_FEE || "10000",
@@ -151,7 +152,7 @@ export function TransportProvider({ children }) {
 
     const tx = {
       chain_id: Config.CHAIN_ID,
-      entropy: entropy,
+      entropy,
       fee: [
         {
           amount: Config.TX_FEE || "10000",
@@ -194,6 +195,56 @@ export function TransportProvider({ children }) {
     }
   };
 
+  const unstakeNode = async (validatorAddress) => {
+    setIsHardwareWalletLoading(true);
+    const entropy = Number(
+      Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+    ).toString();
+
+    const tx = {
+      chain_id: Config.CHAIN_ID,
+      entropy,
+      fee: [
+        {
+          amount: Config.TX_FEE || "10000",
+          denom: "upokt",
+        },
+      ],
+      memo: "Unstake Node - Pocket Wallet",
+      msg: {
+        type: STDX_MSG_TYPES.unstake8,
+        value: {
+          signer_address: userAddress,
+          validator_address: validatorAddress,
+        },
+      },
+    };
+
+    try {
+      const stringifiedTx = JSON.stringify(tx);
+      const hexTx = Buffer.from(stringifiedTx, "utf-8").toString("hex");
+      const sig = await pocketApp.signTransaction(
+        LEDGER_CONFIG.derivationPath,
+        hexTx
+      );
+
+      const ledgerTxResponse = await dataSource.unstakeNodeFromLedger(
+        publicKey,
+        sig.signature,
+        tx
+      );
+      if (typeGuard(ledgerTxResponse, Error)) {
+        setIsHardwareWalletLoading(false);
+        return ledgerTxResponse;
+      }
+      return ledgerTxResponse;
+    } catch (e) {
+      console.error("error: ", e);
+      setIsHardwareWalletLoading(false);
+      return e;
+    }
+  };
+
   return (
     <TransportContext.Provider
       value={{
@@ -206,6 +257,7 @@ export function TransportProvider({ children }) {
         isHardwareWalletLoading,
         setIsHardwareWalletLoading,
         unjailNode,
+        unstakeNode,
       }}
     >
       {children}

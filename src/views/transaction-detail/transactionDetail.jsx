@@ -63,7 +63,10 @@ export default function TransactionDetail() {
         to: stdTx.msg.value.address,
         amount: 0,
       };
-    } else if (stdTx.msg.type === STDX_MSG_TYPES.unstake) {
+    } else if (
+      stdTx.msg.type === STDX_MSG_TYPES.unstake ||
+      stdTx.msg.type === STDX_MSG_TYPES.unstake8
+    ) {
       return {
         type: "Unstake",
         from: stdTx.msg.value.validator_address,
