@@ -103,7 +103,7 @@ export default function ConfirmSend({
                 <div className="ledger-banner-container">
                   <Banner title="Action Required" mode="info">
                     Please confirm on your ledger device to complete the
-                    connection.
+                    transaction.
                   </Banner>
                 </div>
               )}
@@ -167,7 +167,7 @@ export default function ConfirmSend({
               <div className="ledger-banner-container">
                 <Banner title="Action Required" mode="info">
                   Please confirm on your ledger device to complete the
-                  connection.
+                  transaction.
                 </Banner>
               </div>
             )}

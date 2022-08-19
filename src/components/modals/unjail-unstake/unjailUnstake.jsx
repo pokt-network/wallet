@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Button, Modal, useTheme } from "@pokt-foundation/ui";
+import { Banner, Button, Modal, useTheme } from "@pokt-foundation/ui";
 
 import UnjailUnstakeContainer from "./container";
 import PasswordInput from "../../input/passwordInput";
@@ -33,6 +33,7 @@ export default function UnjailUnstake({
   const { updateTx } = useTx();
   const {
     isUsingHardwareWallet,
+    isHardwareWalletLoading,
     unjailNode: transportUnjailNode,
     unstakeNode: transportUnstakeNode,
   } = useTransport();
@@ -242,6 +243,15 @@ export default function UnjailUnstake({
         <h1 className="title">
           You are about to send <br /> an {type} transaction{" "}
         </h1>
+
+        {isUsingHardwareWallet && isHardwareWalletLoading && (
+          <div className="ledger-banner-container">
+            <Banner title="Action Required" mode="info">
+              Please confirm on your ledger device to complete the transaction.
+            </Banner>
+          </div>
+        )}
+
         {!isUsingHardwareWallet && (
           <PasswordInput
             placeholder="Keyfile Passphrase"
