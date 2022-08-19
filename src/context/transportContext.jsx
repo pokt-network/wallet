@@ -17,7 +17,7 @@ const DEFAULT_TRANSPORT_STATE = {
   setPocketApp: null,
   onSelectDevice: async () => Promise(),
   removeTransport: async () => null,
-  signTransaction: async () => Promise(),
+  sendTransaction: async () => Promise(),
   isUsingHardwareWallet: false,
   isHardwareWalletLoading: false,
   setIsHardwareWalletLoading: null,
@@ -85,7 +85,7 @@ export function TransportProvider({ children }) {
     }
   }, [pocketApp]);
 
-  const signTransaction = async (
+  const sendTransaction = async (
     memo = "Pocket Wallet",
     type = STDX_MSG_TYPES.send,
     amount,
@@ -202,7 +202,7 @@ export function TransportProvider({ children }) {
         setPocketApp,
         removeTransport,
         isUsingHardwareWallet,
-        signTransaction,
+        sendTransaction,
         isHardwareWalletLoading,
         setIsHardwareWalletLoading,
         unjailNode,

@@ -17,7 +17,11 @@ export default function Send() {
   const history = useHistory();
   const { updateUser, user } = useUser();
   const { updateTx } = useTx();
-  const { pocketApp, isUsingHardwareWallet, signTransaction } = useTransport();
+  const {
+    pocketApp,
+    isUsingHardwareWallet,
+    sendTransaction: sendTransactionWithLedger,
+  } = useTransport();
   const sendRef = useRef(null);
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
@@ -69,7 +73,7 @@ export default function Send() {
 
   const sendTransaction = useCallback(async () => {
     if (isUsingHardwareWallet) {
-      const ledgerTxResponse = await signTransaction(
+      const ledgerTxResponse = await sendTransactionWithLedger(
         memoText,
         STDX_MSG_TYPES.send,
         amountToSend,
@@ -144,7 +148,7 @@ export default function Send() {
     }
   }, [
     isUsingHardwareWallet,
-    signTransaction,
+    sendTransactionWithLedger,
     addressHex,
     amountToSend,
     destinationAddress,
