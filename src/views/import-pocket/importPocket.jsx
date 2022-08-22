@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router";
 import { typeGuard } from "@pokt-network/pocket-js";
-import { Button, TextInput } from "@pokt-foundation/ui";
+import { Banner, Button, TextInput } from "@pokt-foundation/ui";
 import Layout from "../../components/layout";
 import ImportPocketContent from "../../components/import-pocket/content";
 import Accordion from "../../components/accordion";
@@ -15,12 +15,22 @@ import {
   VALIDATION_ERROR_TYPES,
 } from "../../utils/validations";
 import { useUser } from "../../context/userContext";
+import LedgerIcon from "../../utils/images/ledger.png";
+import useTransport from "../../hooks/useTransport";
+import { LEDGER_CONFIG } from "../../utils/hardwareWallet";
+import { getAddressFromPublicKey } from "../../utils/utils";
 
 const dataSource = getDataSource();
 
 export default function ImportPocket() {
   const history = useHistory();
   const { updateUser } = useUser();
+  const {
+    onSelectDevice,
+    setPocketApp,
+    isHardwareWalletLoading,
+    setIsHardwareWalletLoading,
+  } = useTransport();
   const [fileName, setFileName] = useState("");
   const [ppk, setPpk] = useState("");
   const [privateKey, setPrivateKey] = useState("");
@@ -32,6 +42,7 @@ export default function ImportPocket() {
   const [filePassphrase, setFilePassphrase] = useState("");
   const [privKeyPassphrase, setPrivKeyPassphrase] = useState("");
   const [currentImportOption, setCurrentImportOption] = useState(undefined);
+  const [ledgerError, setLedgerError] = useState("");
 
   const parseFileInputContent = async (input) => {
     if (input && input.files.length > 0) {
@@ -96,7 +107,6 @@ export default function ImportPocket() {
       );
 
       if (typeGuard(account, Error)) {
-        console.error(account);
         setPpkPassphraseError(account.message);
         return false;
       }
@@ -171,6 +181,44 @@ export default function ImportPocket() {
       return false;
     }
   }, [history, privKeyPassphrase, privateKey, updateUser]);
+
+  const importAccountFromLedger = useCallback(async () => {
+    setIsHardwareWalletLoading(true);
+    setLedgerError("");
+    const [success, app] = await onSelectDevice();
+    if (!success) {
+      setLedgerError(`${app.name}: ${app.message}`);
+      setIsHardwareWalletLoading(false);
+      return;
+    }
+
+    setPocketApp(app);
+
+    try {
+      const { publicKey } = await app.getPublicKey(
+        LEDGER_CONFIG.derivationPath
+      );
+      const address = await getAddressFromPublicKey(publicKey);
+
+      updateUser(address, publicKey, "");
+      setLedgerError("");
+      setIsHardwareWalletLoading(false);
+      history.push({
+        pathname: "/account",
+        data: true,
+      });
+    } catch (error) {
+      console.error(error);
+      setLedgerError(`${error.name}: ${error.message}`);
+      setIsHardwareWalletLoading(false);
+    }
+  }, [
+    onSelectDevice,
+    setPocketApp,
+    setIsHardwareWalletLoading,
+    updateUser,
+    history,
+  ]);
 
   const passPhraseChange = useCallback((type, { target }) => {
     const { value } = target;
@@ -304,6 +352,48 @@ export default function ImportPocket() {
             >
               Import
             </Button>
+          </Accordion>
+
+          <Accordion
+            text={
+              <>
+                {" "}
+                Connect{" "}
+                <img
+                  src={LedgerIcon}
+                  alt="Ledger wallet"
+                  className="ledger-icon"
+                />
+              </>
+            }
+            open={currentImportOption === 2}
+            onClick={() => onAccordionClick(2)}
+          >
+            {isHardwareWalletLoading && !ledgerError ? (
+              <Banner title="Action Required" mode="info">
+                Please confirm on your ledger device to complete the connection.
+              </Banner>
+            ) : null}
+
+            <div className="error-label-container">
+              <p className="ledger-description">
+                Connect your hardware Wallet directly to your computer.
+              </p>
+              <IconWithLabel
+                message={ledgerError}
+                show={ledgerError}
+                className="ledger-error"
+                type="error"
+              />
+              <Button
+                mode="primary"
+                className="connect-button"
+                onClick={importAccountFromLedger}
+                disabled={isHardwareWalletLoading}
+              >
+                {isHardwareWalletLoading ? "Verifying" : "Connect"}
+              </Button>
+            </div>
           </Accordion>
 
           <p className="create-link">

@@ -8,6 +8,7 @@ import ThemeProvider from "./context/themeContext";
 import WalletRoutes from "./views/WalletRoutes";
 import { UserContextProvider } from "./context/userContext";
 import { TxContextProvider } from "./context/txContext";
+import { TransportProvider } from "./context/transportContext";
 
 function App() {
   useEffect(() => {
@@ -20,16 +21,18 @@ function App() {
   return (
     <Router history={history}>
       <UserContextProvider>
-        <TxContextProvider>
-          <ThemeProvider>
-            <div className="loader-container" id="loader">
-              <div className="loader"></div>
-            </div>
-            <Main>
-              <WalletRoutes />
-            </Main>
-          </ThemeProvider>
-        </TxContextProvider>
+        <TransportProvider>
+          <TxContextProvider>
+            <ThemeProvider>
+              <div className="loader-container" id="loader">
+                <div className="loader"></div>
+              </div>
+              <Main>
+                <WalletRoutes />
+              </Main>
+            </ThemeProvider>
+          </TxContextProvider>
+        </TransportProvider>
       </UserContextProvider>
     </Router>
   );

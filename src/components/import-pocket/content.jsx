@@ -27,6 +27,12 @@ const ImportPocketContent = styled.section`
     -ms-flex-align: center;
     align-items: center;
     margin-bottom: 30px !important;
+
+    .ledger-error {
+      display: flex;
+      justify-content: center;
+      margin: 0 0 8px 0;
+    }
   }
 
   .nimport-container {
@@ -49,7 +55,8 @@ const ImportPocketContent = styled.section`
       `)}
     }
 
-    .import-button {
+    .import-button,
+    .connect-button {
       width: 220px;
 
       ${maxPhone(css`
@@ -92,6 +99,26 @@ const ImportPocketContent = styled.section`
 
     .create-link {
       text-align: center;
+    }
+
+    .ledger-icon {
+      width: 64px;
+      height: 26px;
+    }
+
+    .ledger-description {
+      color: ${(props) => props.theme.colors.white};
+      width: 100%;
+      font-style: normal;
+      font-weight: normal;
+      line-height: 140%;
+      margin: 0 0 30px 0;
+      max-width: 488px;
+      text-align: center;
+
+      ${maxPhone(css`
+        width: 100%;
+      `)}
     }
   }
 `;

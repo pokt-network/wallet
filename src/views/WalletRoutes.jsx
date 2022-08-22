@@ -9,7 +9,6 @@ import TransactionDetail from "./transaction-detail/transactionDetail";
 import AccountDetail from "./account-detail/accountDetail";
 import Header from "../components/header";
 import Footer from "../components/footer";
-import { TransportProvider } from "../context/transportContext";
 import { ROUTES } from "../utils/routes";
 import NonCustodial from "./non-custodial/nonCustodial";
 
@@ -58,24 +57,18 @@ export default function WalletRoutes() {
           <Route exact path={ROUTES.import} component={ImportPocket}></Route>
           <Route exact path={ROUTES.create} component={Create}></Route>
 
-          <TransportProvider>
-            <Route exact path={ROUTES.send} component={Send}></Route>
-            <Route
-              exact
-              path={ROUTES.account}
-              component={AccountDetail}
-            ></Route>
-            <Route
-              exact
-              path={ROUTES.txDetail}
-              component={TransactionDetail}
-            ></Route>
-            <Route
-              exact
-              path={ROUTES.nonCustodial}
-              component={NonCustodial}
-            ></Route>
-          </TransportProvider>
+          <Route exact path={ROUTES.send} component={Send}></Route>
+          <Route exact path={ROUTES.account} component={AccountDetail}></Route>
+          <Route
+            exact
+            path={ROUTES.txDetail}
+            component={TransactionDetail}
+          ></Route>
+          <Route
+            exact
+            path={ROUTES.nonCustodial}
+            component={NonCustodial}
+          ></Route>
         </div>
       </Switch>
       <Footer />

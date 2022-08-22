@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Button, Modal, useTheme } from "@pokt-foundation/ui";
+import { Banner, Button, Modal, useTheme } from "@pokt-foundation/ui";
 
 import UnjailUnstakeContainer from "./container";
 import PasswordInput from "../../input/passwordInput";
@@ -12,6 +12,9 @@ import {
 } from "../../../utils/validations";
 import { useUser } from "../../../context/userContext";
 import { useTx } from "../../../context/txContext";
+import useTransport from "../../../hooks/useTransport";
+import { typeGuard } from "@pokt-network/pocket-js";
+import { UPOKT } from "../../../utils/utils";
 
 const dataSource = getDataSource();
 
@@ -24,12 +27,50 @@ export default function UnjailUnstake({
   nodeAddress,
 }) {
   const theme = useTheme();
-  const { updateUser } = useUser();
+  const {
+    updateUser,
+    user: { addressHex: userAddress },
+  } = useUser();
   const { updateTx } = useTx();
+  const {
+    isUsingHardwareWallet,
+    isHardwareWalletLoading,
+    unjailNode: transportUnjailNode,
+    unstakeNode: transportUnstakeNode,
+  } = useTransport();
   const [passphrase, setPassphrase] = useState("");
   const [passphraseError, setPassphraseError] = useState("");
 
   const unjailNode = useCallback(async () => {
+    if (isUsingHardwareWallet) {
+      const ledgerUnjailResponse = await transportUnjailNode(nodeAddress);
+
+      if (typeGuard(ledgerUnjailResponse, Error)) {
+        setPassphraseError(
+          ledgerUnjailResponse?.message
+            ? ledgerUnjailResponse.message
+            : "Failed to send the transaction, please verify the information."
+        );
+        return;
+      }
+
+      updateTx(
+        "Unjail",
+        userAddress,
+        nodeAddress,
+        0,
+        ledgerUnjailResponse.txhash,
+        Number(Config.TX_FEE) / UPOKT,
+        "Pending",
+        "Pending",
+        undefined,
+        "Pocket Wallet"
+      );
+      localStorage.setItem("unjailing", true);
+      pushToTxDetail(ledgerUnjailResponse.txhash);
+      return;
+    }
+
     if (ppk && passphrase) {
       const account = await dataSource.importPortablePrivateKey(
         passphrase,
@@ -67,7 +108,7 @@ export default function UnjailUnstake({
           nodeAddress,
           0,
           txResponse.txhash,
-          Number(Config.TX_FEE) / 1000000,
+          Number(Config.TX_FEE) / UPOKT,
           "Pending",
           "Pending",
           undefined,
@@ -83,9 +124,48 @@ export default function UnjailUnstake({
     } else {
       setPassphraseError("Invalid passphrase");
     }
-  }, [ppk, passphrase, pushToTxDetail, updateUser, updateTx, nodeAddress]);
+  }, [
+    ppk,
+    passphrase,
+    pushToTxDetail,
+    updateUser,
+    updateTx,
+    nodeAddress,
+    transportUnjailNode,
+    isUsingHardwareWallet,
+    userAddress,
+  ]);
 
   const unstakeNode = useCallback(async () => {
+    if (isUsingHardwareWallet) {
+      const ledgerUnjailResponse = await transportUnstakeNode(nodeAddress);
+
+      if (typeGuard(ledgerUnjailResponse, Error)) {
+        setPassphraseError(
+          ledgerUnjailResponse?.message
+            ? ledgerUnjailResponse.message
+            : "Failed to send the transaction, please verify the information."
+        );
+        return;
+      }
+
+      updateTx(
+        "Unstake",
+        userAddress,
+        nodeAddress,
+        0,
+        ledgerUnjailResponse.txhash,
+        Number(Config.TX_FEE) / UPOKT,
+        "Pending",
+        "Pending",
+        undefined,
+        "Pocket Wallet"
+      );
+
+      pushToTxDetail(ledgerUnjailResponse.txhash);
+      return;
+    }
+
     if (ppk && passphrase) {
       const account = await dataSource.importPortablePrivateKey(
         passphrase,
@@ -126,7 +206,7 @@ export default function UnjailUnstake({
           nodeAddress,
           0,
           txResponse.txhash,
-          Number(Config.TX_FEE) / 1000000,
+          Number(Config.TX_FEE) / UPOKT,
           "Pending",
           "Pending",
           undefined,
@@ -142,7 +222,17 @@ export default function UnjailUnstake({
     } else {
       setPassphraseError("Invalid passphrase");
     }
-  }, [passphrase, ppk, pushToTxDetail, updateUser, updateTx, nodeAddress]);
+  }, [
+    passphrase,
+    ppk,
+    pushToTxDetail,
+    updateUser,
+    updateTx,
+    nodeAddress,
+    transportUnstakeNode,
+    isUsingHardwareWallet,
+    userAddress,
+  ]);
 
   const onPassphraseChange = useCallback(({ value }) => {
     setPassphrase(value);
@@ -154,16 +244,27 @@ export default function UnjailUnstake({
         <h1 className="title">
           You are about to send <br /> an {type} transaction{" "}
         </h1>
-        <PasswordInput
-          placeholder="Keyfile Passphrase"
-          color={theme.accentAlternative}
-          onChange={({ target }) => onPassphraseChange(target)}
-          style={
-            passphraseError
-              ? validationError(VALIDATION_ERROR_TYPES.input)
-              : undefined
-          }
-        />
+
+        {isUsingHardwareWallet && isHardwareWalletLoading && (
+          <div className="ledger-banner-container">
+            <Banner title="Action Required" mode="info">
+              Please confirm on your ledger device to complete the transaction.
+            </Banner>
+          </div>
+        )}
+
+        {!isUsingHardwareWallet && (
+          <PasswordInput
+            placeholder="Keyfile Passphrase"
+            color={theme.accentAlternative}
+            onChange={({ target }) => onPassphraseChange(target)}
+            style={
+              passphraseError
+                ? validationError(VALIDATION_ERROR_TYPES.input)
+                : undefined
+            }
+          />
+        )}
         <IconWithLabel
           message={passphraseError}
           show={passphraseError}

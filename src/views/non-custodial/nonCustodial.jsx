@@ -13,6 +13,8 @@ import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 import { useUser } from "../../context/userContext";
 import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake";
 import { useHistory } from "react-router-dom";
+import useTransport from "../../hooks/useTransport";
+import { UPOKT } from "../../utils/utils";
 
 const dataSource = getDataSource();
 
@@ -49,7 +51,7 @@ function Validate({
       const isUnjailing = localStorage.getItem("unjailing");
 
       if (node?.tokens) {
-        obj.stakedTokens = (Number(node.tokens.toString()) / 1000000).toFixed(
+        obj.stakedTokens = (Number(node.tokens.toString()) / UPOKT).toFixed(
           3
         );
       }
@@ -131,13 +133,14 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
   const {
     user: { ppk, addressHex, publicKeyHex },
   } = user;
+  const { isUsingHardwareWallet } = useTransport();
   const [isUnjailModalVisible, setIsUnjailModalVisible] = useState(false);
   const [isUnstakeModalVisible, setIsUnstakeModalVisible] = useState(false);
   const isUnstakeDisabled = node.status !== 2;
 
   const pushToTxDetail = useCallback(
     (txHash) => {
-      if (!addressHex || !publicKeyHex || !ppk) {
+      if (!isUsingHardwareWallet && (!addressHex || !publicKeyHex || !ppk)) {
         console.error(
           "No account available, please create or import an account"
         );
@@ -152,7 +155,7 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
         });
       }
     },
-    [history, addressHex, publicKeyHex, ppk]
+    [history, addressHex, publicKeyHex, ppk, isUsingHardwareWallet]
   );
 
   return (
@@ -172,7 +175,10 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
             documentation.
           </Link>
         </p>
-        <JailedStatus nodeStakingStatus={nodeStakingStatus} />
+        <JailedStatus
+          nodeStakingStatus={nodeStakingStatus}
+          setIsUnjailModalVisible={setIsUnjailModalVisible}
+        />
         <h3 className="copy-title">Address</h3>
         <CopyButton className="address-input" text={address} width={488} />
         <NodeAppStatus
