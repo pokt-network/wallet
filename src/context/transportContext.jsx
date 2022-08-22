@@ -90,7 +90,7 @@ export function TransportProvider({ children }) {
     memo = "Pocket Wallet",
     type = STDX_MSG_TYPES.send,
     amount,
-    toAddress
+    toAddress,
   ) => {
     setIsHardwareWalletLoading(true);
     const entropy = Number(

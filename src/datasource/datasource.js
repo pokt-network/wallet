@@ -12,6 +12,7 @@ import {
 import { getGatewayClient } from "./gateway";
 import axios from "axios";
 import Errors from "./errors";
+import { UPOKT } from "../utils/utils";
 
 export class DataSource {
   constructor(config) {
@@ -156,7 +157,7 @@ export class DataSource {
     }
 
     const uPOKT = Number(balanceResponse?.balance?.toString());
-    return (uPOKT ? uPOKT : 0) / 1000000;
+    return (uPOKT ? uPOKT : 0) / UPOKT;
   }
 
   /**

@@ -14,6 +14,7 @@ import { useUser } from "../../context/userContext";
 import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake";
 import { useHistory } from "react-router-dom";
 import useTransport from "../../hooks/useTransport";
+import { UPOKT } from "../../utils/utils";
 
 const dataSource = getDataSource();
 
@@ -50,7 +51,7 @@ function Validate({
       const isUnjailing = localStorage.getItem("unjailing");
 
       if (node?.tokens) {
-        obj.stakedTokens = (Number(node.tokens.toString()) / 1000000).toFixed(
+        obj.stakedTokens = (Number(node.tokens.toString()) / UPOKT).toFixed(
           3
         );
       }

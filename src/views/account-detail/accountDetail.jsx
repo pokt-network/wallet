@@ -18,6 +18,7 @@ import useTransport from "../../hooks/useTransport";
 import TransactionsTable from "../../components/transactionsTable/transactionsTable";
 import ExportKeyfile from "../../components/modals/export-keyfile/exportKeyfile";
 import { STDX_MSG_TYPES } from "../../utils/validations";
+import { UPOKT } from "../../utils/utils";
 
 const dataSource = getDataSource();
 
@@ -94,15 +95,15 @@ export default function AccountDetail() {
     ) {
       return { type: "unstake", amount: 0 };
     } else if (stdTx.msg.type === STDX_MSG_TYPES.stake) {
-      const value = stdTx.msg.value.value / 1000000;
+      const value = stdTx.msg.value.value / UPOKT;
       return { type: "stake", amount: value };
     } else if (stdTx.msg.type === STDX_MSG_TYPES.send) {
-      const amount = stdTx.msg.value.amount / 1000000;
+      const amount = stdTx.msg.value.amount / UPOKT;
       return { type: "sent", amount: amount };
     } else {
       const sendAmount = Object.keys(stdTx.msg).includes("amount")
-        ? stdTx.msg.amount / 1000000
-        : stdTx.msg.value.amount / 1000000;
+        ? stdTx.msg.amount / UPOKT
+        : stdTx.msg.value.amount / UPOKT;
       return { type: "sent", amount: sendAmount };
     }
   }, []);
@@ -187,7 +188,7 @@ export default function AccountDetail() {
     const isUnjailing = localStorage.getItem("unjailing");
 
     if (node?.tokens) {
-      obj.stakedTokens = (Number(node.tokens.toString()) / 1000000).toFixed(3);
+      obj.stakedTokens = (Number(node.tokens.toString()) / UPOKT).toFixed(3);
     }
 
     if (node?.status === 1) {
@@ -225,7 +226,7 @@ export default function AccountDetail() {
     // Update the staked amount
     if (app?.staked_tokens) {
       obj.stakedTokens = (
-        Number(app.staked_tokens.toString()) / 1000000
+        Number(app.staked_tokens.toString()) / UPOKT
       ).toFixed(3);
     }
 

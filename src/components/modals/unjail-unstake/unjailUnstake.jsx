@@ -14,6 +14,7 @@ import { useUser } from "../../../context/userContext";
 import { useTx } from "../../../context/txContext";
 import useTransport from "../../../hooks/useTransport";
 import { typeGuard } from "@pokt-network/pocket-js";
+import { UPOKT } from "../../../utils/utils";
 
 const dataSource = getDataSource();
 
@@ -59,7 +60,7 @@ export default function UnjailUnstake({
         nodeAddress,
         0,
         ledgerUnjailResponse.txhash,
-        Number(Config.TX_FEE) / 1000000,
+        Number(Config.TX_FEE) / UPOKT,
         "Pending",
         "Pending",
         undefined,
@@ -107,7 +108,7 @@ export default function UnjailUnstake({
           nodeAddress,
           0,
           txResponse.txhash,
-          Number(Config.TX_FEE) / 1000000,
+          Number(Config.TX_FEE) / UPOKT,
           "Pending",
           "Pending",
           undefined,
@@ -154,7 +155,7 @@ export default function UnjailUnstake({
         nodeAddress,
         0,
         ledgerUnjailResponse.txhash,
-        Number(Config.TX_FEE) / 1000000,
+        Number(Config.TX_FEE) / UPOKT,
         "Pending",
         "Pending",
         undefined,
@@ -205,7 +206,7 @@ export default function UnjailUnstake({
           nodeAddress,
           0,
           txResponse.txhash,
-          Number(Config.TX_FEE) / 1000000,
+          Number(Config.TX_FEE) / UPOKT,
           "Pending",
           "Pending",
           undefined,

@@ -5,6 +5,7 @@ import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 import Layout from "../../components/layout";
 import SendContent from "../../components/send/content";
 import SendHeaderContainer from "../../components/send/header";
+import { UPOKT } from "../../utils/utils";
 import {
   validationError,
   VALIDATION_ERROR_TYPES,
@@ -98,7 +99,7 @@ export default function SendTransaction({
         />
         <p className="tx-memo-counter">{memoText.length}/75</p>
         <p className="tx-fee">
-          TX Fee {Number(fees / 1000000).toLocaleString("en-US")} POKT
+          TX Fee {Number(fees / UPOKT).toLocaleString("en-US")} POKT
         </p>
 
         <Button mode="primary" onClick={onSendClick}>

@@ -18,7 +18,7 @@ import { useUser } from "../../context/userContext";
 import LedgerIcon from "../../utils/images/ledger.png";
 import useTransport from "../../hooks/useTransport";
 import { LEDGER_CONFIG } from "../../utils/hardwareWallet";
-import { getAddressFromPublicKey } from "../../utils/publicKeyToAddress";
+import { getAddressFromPublicKey } from "../../utils/utils";
 
 const dataSource = getDataSource();
 

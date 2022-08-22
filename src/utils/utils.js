@@ -25,3 +25,5 @@ export async function getAddressFromPublicKey(publicKey) {
 
   return fromUint8Array(new Uint8Array(hash)).slice(0, 40);
 }
+
+export const UPOKT = 1000000;

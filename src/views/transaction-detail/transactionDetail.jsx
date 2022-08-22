@@ -14,6 +14,7 @@ import IconTXStatus from "../../icons/iconTxStatus";
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 import { useTx } from "../../context/txContext";
 import { STDX_MSG_TYPES } from "../../utils/validations";
+import { UPOKT } from "../../utils/utils";
 
 const dataSource = getDataSource();
 const EXPLORER_BASE_URL = "https://pokt.watch";
@@ -126,7 +127,7 @@ export default function TransactionDetail() {
           txSummary.to,
           txSummary.amount,
           txSummary.hash,
-          Number(Config.TX_FEE) / 1000000,
+          Number(Config.TX_FEE) / UPOKT,
           txSummary.status,
           "sent",
           txSummary.height,
@@ -136,7 +137,7 @@ export default function TransactionDetail() {
         updateTxInformation(undefined, {
           sentAmount: txSummary.amount,
           hash: txSummary.hash,
-          fee: Number(Config.TX_FEE) / 1000000,
+          fee: Number(Config.TX_FEE) / UPOKT,
           type: txSummary.type,
           fromAddress: txSummary.from,
           toAddress: txSummary.to,
@@ -233,7 +234,7 @@ export default function TransactionDetail() {
             <p>
               {location?.data?.comesFromSend
                 ? tx?.sentAmount
-                : tx?.sentAmount / 1000000}
+                : tx?.sentAmount / UPOKT}
               &nbsp; POKT
             </p>
           </div>

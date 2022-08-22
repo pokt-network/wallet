@@ -18,6 +18,7 @@ import SendHeaderContainer from "../../components/send/header";
 import useTransport from "../../hooks/useTransport";
 import useWindowSize from "../../hooks/useWindowSize";
 import IconBack from "../../icons/iconBack";
+import { UPOKT } from "../../utils/utils";
 
 export default function ConfirmSend({
   pokts,
@@ -109,7 +110,7 @@ export default function ConfirmSend({
               )}
 
               <h2 className="you-are-sending">
-                You are sending {pokts / 1000000} POKT to:
+                You are sending {pokts / UPOKT} POKT to:
               </h2>
 
               <CopyButton text={toAddress} className="to-address" />
@@ -173,7 +174,7 @@ export default function ConfirmSend({
             )}
 
             <h2 className="you-are-sending">You are sending</h2>
-            <p className="pokt-amount">{pokts / 1000000} POKT</p>
+            <p className="pokt-amount">{pokts / UPOKT} POKT</p>
 
             <CopyButton text={toAddress} className="to-address" />
             {isUsingHardwareWallet && (

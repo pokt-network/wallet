@@ -10,6 +10,7 @@ import useTransport from "../../hooks/useTransport";
 import ConfirmSend from "./confirm";
 import SendTransaction from "./sendTransaction";
 import { STDX_MSG_TYPES } from "../../utils/validations";
+import { UPOKT } from "../../utils/utils";
 
 const dataSource = getDataSource();
 
@@ -42,7 +43,7 @@ export default function Send() {
   const [memoText, setMemoText] = useState("");
 
   const getAccountBalance = useCallback(async (addressHex) => {
-    const upoktBalance = (await dataSource.getBalance(addressHex)) * 1000000;
+    const upoktBalance = (await dataSource.getBalance(addressHex)) * UPOKT;
     setUpoktBalance(upoktBalance);
   }, []);
 
@@ -94,9 +95,9 @@ export default function Send() {
         "TokenTransfer",
         addressHex,
         destinationAddress,
-        amountToSend / 1000000,
+        amountToSend / UPOKT,
         ledgerTxResponse.txhash,
-        txFee / 1000000,
+        txFee / UPOKT,
         "Pending",
         "Pending",
         undefined,
@@ -132,9 +133,9 @@ export default function Send() {
         "TokenTransfer",
         addressHex,
         destinationAddress,
-        amountToSend / 1000000,
+        amountToSend / UPOKT,
         txResponse.txhash,
-        txFee / 1000000,
+        txFee / UPOKT,
         "Pending",
         "Pending",
         undefined,
@@ -174,7 +175,7 @@ export default function Send() {
         return;
       }
 
-      const upoktValue = Math.round(normalizedValue * 1000000);
+      const upoktValue = Math.round(normalizedValue * UPOKT);
       if (upoktBalance < upoktValue + txFee) {
         setAmountToSend(upoktValue);
         setPoktAmount(formattedValue);
