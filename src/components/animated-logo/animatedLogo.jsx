@@ -24,65 +24,90 @@ const animMask = keyframes`
   90%, 100% { stroke-dashoffset: 0 }
 `;
 
-export default function AnimatedLogo({ done = false }) {
+export default function AnimatedLogo({ done = false, loading = false }) {
   return (
-    <div
-      css={`
-        position: relative;
-        width: 100%;
-        height: 70vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      `}
-    >
-      <svg width={100} height={100} viewBox="0 0 100 100" overflow="visible">
-        <Outline />
-        <Outline
-          gradient
+    <>
+      {loading && (
+        <div
           css={`
-            stroke-dasharray: ${DASH_ARRAY};
-            stroke-dashoffset: ${DASH_ARRAY};
-            animation: ${LOOP_DURATION}ms ${ANIM_FUNCTION} infinite
-              ${animGradient};
+            position: absolute;
+            width: 100vw;
+            height: 100%;
+            min-height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            top: 0;
+            bottom; 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
           `}
-          style={{
-            animationPlayState: done ? "paused" : "running",
-          }}
-        />
-        <Outline
-          css={`
-            stroke-dasharray: ${DASH_ARRAY};
-            stroke-dashoffset: ${DASH_ARRAY};
-            animation: ${LOOP_DURATION}ms ${ANIM_FUNCTION} infinite ${animMask};
-          `}
-          style={{
-            animationPlayState: done ? "paused" : "running",
-          }}
-        />{" "}
-        <Outline
-          gradient
-          css={`
-            transition: opacity ${DONE_TRANSITION_DURATION}ms ease-out;
-          `}
-          style={{ opacity: Number(done) }}
-        />
-        <defs>
-          <linearGradient
-            id={GRADIENT_ID}
-            x1={0}
-            y1={75.052}
-            x2={143.077}
-            y2={75.052}
-            gradientUnits="userSpaceOnUse"
+        >
+          <div
+            css={`
+              position: relative;
+              width: 100%;
+              height: 70vh;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+            `}
           >
-            <stop offset={0} stopColor={GRADIENT_COLOR_START} />
-            <stop offset={1} stopColor={GRADIENT_COLOR_STOP} />
-          </linearGradient>
-        </defs>
-      </svg>
-    </div>
+            <svg
+              width={100}
+              height={100}
+              viewBox="0 0 100 100"
+              overflow="visible"
+            >
+              <Outline />
+              <Outline
+                gradient
+                css={`
+                  stroke-dasharray: ${DASH_ARRAY};
+                  stroke-dashoffset: ${DASH_ARRAY};
+                  animation: ${LOOP_DURATION}ms ${ANIM_FUNCTION} infinite
+                    ${animGradient};
+                `}
+                style={{
+                  animationPlayState: done ? "paused" : "running",
+                }}
+              />
+              <Outline
+                css={`
+                  stroke-dasharray: ${DASH_ARRAY};
+                  stroke-dashoffset: ${DASH_ARRAY};
+                  animation: ${LOOP_DURATION}ms ${ANIM_FUNCTION} infinite
+                    ${animMask};
+                `}
+                style={{
+                  animationPlayState: done ? "paused" : "running",
+                }}
+              />{" "}
+              <Outline
+                gradient
+                css={`
+                  transition: opacity ${DONE_TRANSITION_DURATION}ms ease-out;
+                `}
+                style={{ opacity: Number(done) }}
+              />
+              <defs>
+                <linearGradient
+                  id={GRADIENT_ID}
+                  x1={0}
+                  y1={75.052}
+                  x2={143.077}
+                  y2={75.052}
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop offset={0} stopColor={GRADIENT_COLOR_START} />
+                  <stop offset={1} stopColor={GRADIENT_COLOR_STOP} />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

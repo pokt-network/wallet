@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router";
 import { typeGuard } from "@pokt-network/pocket-js";
-import { Banner, Button, TextInput } from "@pokt-foundation/ui";
+import { Button, TextInput } from "@pokt-foundation/ui";
 import Layout from "../../components/layout";
 import ImportPocketContent from "../../components/import-pocket/content";
 import Accordion from "../../components/accordion";
@@ -19,6 +19,8 @@ import LedgerIcon from "../../utils/images/ledger.png";
 import useTransport from "../../hooks/useTransport";
 import { LEDGER_CONFIG } from "../../utils/hardwareWallet";
 import { getAddressFromPublicKey } from "../../utils/utils";
+import TroubleConnectingModal from "../../components/modals/troubleConnecting/troubleConnecting";
+import { ROUTES } from "../../utils/routes";
 
 const dataSource = getDataSource();
 
@@ -31,6 +33,7 @@ export default function ImportPocket() {
     isHardwareWalletLoading,
     setIsHardwareWalletLoading,
   } = useTransport();
+  //TODO: refactor with a reducer
   const [fileName, setFileName] = useState("");
   const [ppk, setPpk] = useState("");
   const [privateKey, setPrivateKey] = useState("");
@@ -43,6 +46,7 @@ export default function ImportPocket() {
   const [privKeyPassphrase, setPrivKeyPassphrase] = useState("");
   const [currentImportOption, setCurrentImportOption] = useState(undefined);
   const [ledgerError, setLedgerError] = useState("");
+  const [troubleConnectingOpen, setTroubleConnectingOpen] = useState(false);
 
   const parseFileInputContent = async (input) => {
     if (input && input.files.length > 0) {
@@ -189,36 +193,40 @@ export default function ImportPocket() {
     if (!success) {
       setLedgerError(`${app.name}: ${app.message}`);
       setIsHardwareWalletLoading(false);
+      setTroubleConnectingOpen(true);
       return;
     }
 
     setPocketApp(app);
+    setLedgerError("");
+    setIsHardwareWalletLoading(false);
+    setTroubleConnectingOpen(false);
+    history.push({
+      pathname: ROUTES.selectAccount,
+      data: true,
+    });
+    // try {
+    // const { publicKey } = await app.getPublicKey(
+    //   LEDGER_CONFIG.derivationPath
+    // );
+    // const address = await getAddressFromPublicKey(publicKey);
 
-    try {
-      const { publicKey } = await app.getPublicKey(
-        LEDGER_CONFIG.derivationPath
-      );
-      const address = await getAddressFromPublicKey(publicKey);
+    // updateUser(address, publicKey, "");
+    // setLedgerError("");
+    // setIsHardwareWalletLoading(false);
+    // setTroubleConnectingOpen(false);
+    // history.push({
+    //   pathname: ROUTES.selectAccount,
+    //   data: true,
+    // });
 
-      updateUser(address, publicKey, "");
-      setLedgerError("");
-      setIsHardwareWalletLoading(false);
-      history.push({
-        pathname: "/account",
-        data: true,
-      });
-    } catch (error) {
-      console.error(error);
-      setLedgerError(`${error.name}: ${error.message}`);
-      setIsHardwareWalletLoading(false);
-    }
-  }, [
-    onSelectDevice,
-    setPocketApp,
-    setIsHardwareWalletLoading,
-    updateUser,
-    history,
-  ]);
+    // } catch (error) {
+    //   console.error(error);
+    //   setLedgerError(`${error.name}: ${error.message}`);
+    //   setTroubleConnectingOpen(true);
+    //   setIsHardwareWalletLoading(false);
+    // }
+  }, [onSelectDevice, setPocketApp, setIsHardwareWalletLoading, history]);
 
   const passPhraseChange = useCallback((type, { target }) => {
     const { value } = target;
@@ -369,12 +377,6 @@ export default function ImportPocket() {
             open={currentImportOption === 2}
             onClick={() => onAccordionClick(2)}
           >
-            {isHardwareWalletLoading && !ledgerError ? (
-              <Banner title="Action Required" mode="info">
-                Please confirm on your ledger device to complete the connection.
-              </Banner>
-            ) : null}
-
             <div className="error-label-container">
               <p className="ledger-description">
                 Connect your hardware Wallet directly to your computer.
@@ -401,6 +403,10 @@ export default function ImportPocket() {
           </p>
         </div>
       </ImportPocketContent>
+      <TroubleConnectingModal
+        open={troubleConnectingOpen}
+        onClose={() => setTroubleConnectingOpen(false)}
+      />
     </Layout>
   );
 }

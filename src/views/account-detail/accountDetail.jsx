@@ -27,6 +27,7 @@ export default function AccountDetail() {
   const { user } = useUser();
   const { addressHex, ppk, publicKeyHex } = user;
   const { pocketApp, isUsingHardwareWallet } = useTransport();
+  //TODO: refactor with a reducer
   const [poktsBalance, setPoktsBalance] = useState(0);
   const [, setUsdBalance] = useState(0);
   const [appStakedTokens, setAppStakedTokens] = useState(0);
@@ -225,9 +226,9 @@ export default function AccountDetail() {
 
     // Update the staked amount
     if (app?.staked_tokens) {
-      obj.stakedTokens = (
-        Number(app.staked_tokens.toString()) / UPOKT
-      ).toFixed(3);
+      obj.stakedTokens = (Number(app.staked_tokens.toString()) / UPOKT).toFixed(
+        3
+      );
     }
 
     if (app?.status === 1) {
@@ -303,7 +304,7 @@ export default function AccountDetail() {
     });
   }
 
-  if (loading) return <AnimatedLogo />;
+  // if (loading) return <AnimatedLogo loading={loading} />;
 
   return (
     <Layout
@@ -335,6 +336,8 @@ export default function AccountDetail() {
       }
     >
       <AccountContent isStaked={nodeStakingStatus === "STAKED"}>
+        <AnimatedLogo loading={loading} />
+
         {nodeStakingStatus === "JAILED" ? (
           <section className="unjail-container">
             <div className="unjail-description">
