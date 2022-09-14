@@ -1,9 +1,9 @@
 import { Button, DataView } from "@pokt-foundation/ui";
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 import Layout from "../../components/layout";
 import SelectAccountContent from "../../components/select-account/content";
+import { useLoader } from "../../context/loaderContext";
 import { useUser } from "../../context/userContext";
 import { getDataSource } from "../../datasource";
 import useTransport from "../../hooks/useTransport";
@@ -35,9 +35,9 @@ export default function SelectAccount() {
   let history = useHistory();
   const { pocketApp } = useTransport();
   const { updateUser } = useUser();
+  const { updateLoader } = useLoader();
   const [accounts, setAccounts] = useState([]);
   const [selectedIndx, setSelectedIdx] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [accountIdx, setAccountIdx] = useState(null);
   // 1 based. This makes it easier to correctly get the firstIdx,
   // also since slice doesn't include the end
@@ -48,13 +48,13 @@ export default function SelectAccount() {
   const accountsToRender = accounts.slice(firstIdxPos, lastIdxPos);
 
   const fillAccounts = useCallback(async () => {
-    setIsLoading(true);
+    updateLoader(true);
     const i = accounts.length > 0 ? accounts[accounts.length - 1].index + 1 : 0;
     const newAccounts = await getAccounts(i, pocketApp);
     setAccounts((prevAccounts) => [...prevAccounts, ...newAccounts]);
-    setIsLoading(false);
+    updateLoader(false);
     setAccountIdx(null);
-  }, [accounts, pocketApp]);
+  }, [accounts, pocketApp, updateLoader]);
 
   const prev = () => {
     if (selectedIndx === 0) return;
@@ -85,6 +85,13 @@ export default function SelectAccount() {
     getAccounts(0, pocketApp).then((account) => setAccounts(account));
   }, [pocketApp]);
 
+  useEffect(() => {
+    if (accounts.length === 0) updateLoader(true);
+    else updateLoader(false);
+
+    return () => updateLoader(false);
+  }, [accounts.length, updateLoader]);
+
   if (!pocketApp) {
     history.push({
       pathname: ROUTES.import,
@@ -95,7 +102,6 @@ export default function SelectAccount() {
   return (
     <Layout title={<h1 className="title">Select an Account</h1>}>
       <SelectAccountContent>
-        <AnimatedLogo loading={accounts.length === 0 || isLoading} />
         <DataView
           fields={[
             {

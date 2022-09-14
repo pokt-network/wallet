@@ -12,13 +12,13 @@ import sentReceivedIcon from "../../utils/images/icons/sentReceived.svg";
 import StakingOption from "../../components/account-detail/stakingOption";
 import RevealPrivateKey from "../../components/modals/private-key/revealPrivateKey";
 import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake";
-import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 import { useUser } from "../../context/userContext";
 import useTransport from "../../hooks/useTransport";
 import TransactionsTable from "../../components/transactionsTable/transactionsTable";
 import ExportKeyfile from "../../components/modals/export-keyfile/exportKeyfile";
 import { STDX_MSG_TYPES } from "../../utils/validations";
 import { UPOKT } from "../../utils/utils";
+import { useLoader } from "../../context/loaderContext";
 
 const dataSource = getDataSource();
 
@@ -27,6 +27,7 @@ export default function AccountDetail() {
   const { user } = useUser();
   const { addressHex, ppk, publicKeyHex } = user;
   const { pocketApp, isUsingHardwareWallet } = useTransport();
+  const { updateLoader } = useLoader();
   //TODO: refactor with a reducer
   const [poktsBalance, setPoktsBalance] = useState(0);
   const [, setUsdBalance] = useState(0);
@@ -42,7 +43,6 @@ export default function AccountDetail() {
   );
   const [txList, setTxList] = useState([]);
   const [price, setPrice] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [priceProvider, setPriceProvider] = useState("");
   const [priceProviderLink, setPriceProviderLink] = useState("");
   const [isExportKeyfileVisible, setIsExportKeyfileVisible] = useState(false);
@@ -280,7 +280,7 @@ export default function AccountDetail() {
   );
 
   useEffect(() => {
-    setLoading(true);
+    updateLoader(true);
     if (addressHex && publicKeyHex && (ppk || pocketApp?.transport)) {
       refreshView(addressHex);
     } else {
@@ -289,13 +289,23 @@ export default function AccountDetail() {
         pathname: "/",
       });
     }
-  }, [refreshView, history, addressHex, publicKeyHex, ppk, pocketApp]);
+  }, [
+    refreshView,
+    history,
+    addressHex,
+    publicKeyHex,
+    ppk,
+    pocketApp,
+    updateLoader,
+  ]);
 
   useEffect(() => {
     if (poktsBalance && txList && publicKeyHex && addressHex) {
-      setLoading(false);
+      updateLoader(false);
     }
-  }, [poktsBalance, txList, publicKeyHex, addressHex]);
+
+    return () => updateLoader(false);
+  }, [poktsBalance, txList, publicKeyHex, addressHex, updateLoader]);
 
   if (!addressHex || !publicKeyHex || (!ppk && !pocketApp?.transport)) {
     localStorage.clear();
@@ -303,8 +313,6 @@ export default function AccountDetail() {
       pathname: "/",
     });
   }
-
-  // if (loading) return <AnimatedLogo loading={loading} />;
 
   return (
     <Layout
@@ -336,8 +344,6 @@ export default function AccountDetail() {
       }
     >
       <AccountContent isStaked={nodeStakingStatus === "STAKED"}>
-        <AnimatedLogo loading={loading} />
-
         {nodeStakingStatus === "JAILED" ? (
           <section className="unjail-container">
             <div className="unjail-description">
