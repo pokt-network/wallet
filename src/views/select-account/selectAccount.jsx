@@ -7,6 +7,7 @@ import { useLoader } from "../../context/loaderContext";
 import { useUser } from "../../context/userContext";
 import { getDataSource } from "../../datasource";
 import useTransport from "../../hooks/useTransport";
+import useWindowSize from "../../hooks/useWindowSize";
 import { LEDGER_CONFIG } from "../../utils/hardwareWallet";
 import { ROUTES } from "../../utils/routes";
 import { getAddressFromPublicKey } from "../../utils/utils";
@@ -25,7 +26,12 @@ async function getAccounts(idx, pocketApp) {
     );
     const address = await getAddressFromPublicKey(publicKey);
     const balance = await dataSource.getBalance(address);
-    tempAccounts.push({ index: i, address, balance, publicKey });
+    tempAccounts.push({
+      index: i,
+      address,
+      balance: balance.toLocaleString("en-US"),
+      publicKey,
+    });
   }
 
   return tempAccounts;
@@ -36,6 +42,7 @@ export default function SelectAccount() {
   const { pocketApp } = useTransport();
   const { updateUser } = useUser();
   const { updateLoader } = useLoader();
+  const { width } = useWindowSize();
   const [accounts, setAccounts] = useState([]);
   const [selectedIndx, setSelectedIdx] = useState(0);
   const [accountIdx, setAccountIdx] = useState(null);
@@ -103,6 +110,7 @@ export default function SelectAccount() {
     <Layout title={<h1 className="title">Select an Account</h1>}>
       <SelectAccountContent>
         <DataView
+          mode={width > 768 ? "table" : "list"}
           fields={[
             {
               label: <></>,
@@ -134,10 +142,10 @@ export default function SelectAccount() {
 
         <div className="pagination">
           <Button className="prev" onClick={() => prev()}>
-            Prev
+            &lt; Prev
           </Button>
-          <Button className="next" mode="primary" onClick={() => next()}>
-            Next
+          <Button className="next" onClick={() => next()}>
+            Next &gt;
           </Button>
         </div>
 

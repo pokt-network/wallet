@@ -26,6 +26,8 @@ const SelectAccountContent = styled.section`
     .prev,
     .next {
       width: 128px;
+      border: none;
+      color: ${(props) => props.theme.colors.green};
     }
   }
 `;

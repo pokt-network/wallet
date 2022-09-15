@@ -17,8 +17,6 @@ import {
 import { useUser } from "../../context/userContext";
 import LedgerIcon from "../../utils/images/ledger.png";
 import useTransport from "../../hooks/useTransport";
-import { LEDGER_CONFIG } from "../../utils/hardwareWallet";
-import { getAddressFromPublicKey } from "../../utils/utils";
 import TroubleConnectingModal from "../../components/modals/troubleConnecting/troubleConnecting";
 import { ROUTES } from "../../utils/routes";
 
@@ -205,27 +203,6 @@ export default function ImportPocket() {
       pathname: ROUTES.selectAccount,
       data: true,
     });
-    // try {
-    // const { publicKey } = await app.getPublicKey(
-    //   LEDGER_CONFIG.derivationPath
-    // );
-    // const address = await getAddressFromPublicKey(publicKey);
-
-    // updateUser(address, publicKey, "");
-    // setLedgerError("");
-    // setIsHardwareWalletLoading(false);
-    // setTroubleConnectingOpen(false);
-    // history.push({
-    //   pathname: ROUTES.selectAccount,
-    //   data: true,
-    // });
-
-    // } catch (error) {
-    //   console.error(error);
-    //   setLedgerError(`${error.name}: ${error.message}`);
-    //   setTroubleConnectingOpen(true);
-    //   setIsHardwareWalletLoading(false);
-    // }
   }, [onSelectDevice, setPocketApp, setIsHardwareWalletLoading, history]);
 
   const passPhraseChange = useCallback((type, { target }) => {
