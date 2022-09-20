@@ -109,6 +109,18 @@ export default function Header() {
             )}
             {isLoggedIn && (
               <StyledLi>
+                <Link
+                  to={ROUTES.staking}
+                  className={
+                    location.pathname === ROUTES.staking ? "active" : undefined
+                  }
+                >
+                  Staking
+                </Link>
+              </StyledLi>
+            )}
+            {isLoggedIn && (
+              <StyledLi>
                 <button
                   className="nav-button"
                   id="log-out-nav"
