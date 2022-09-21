@@ -54,8 +54,17 @@ export const StakingModalContent = styled.div`
     color: ${(props) => props.theme.colors.white};
   }
 
-  input,
-  button {
+  input {
     margin-bottom: 16px;
+  }
+
+  .confirm-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    button {
+      margin: 16px 0;
+    }
   }
 `;

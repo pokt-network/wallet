@@ -480,7 +480,6 @@ export class DataSource {
     serviceURI
   ) {
     const defaultFee = this.config.txFee || 10000;
-
     const accountOrUndefined = await this.__pocket.keybase.importPPKFromJSON(
       passphrase,
       ppk,

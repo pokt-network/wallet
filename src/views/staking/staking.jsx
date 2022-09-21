@@ -15,17 +15,19 @@ import { getDataSource } from "../../datasource";
 import IconQuestion from "../../icons/iconQuestion";
 import { UPOKT } from "../../utils/utils";
 import { ROUTES } from "../../utils/routes";
+import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 
 const dataSource = getDataSource();
 
 export default function Staking() {
   let history = useHistory();
   const {
-    user: { ppk, addressHex },
+    user: { ppk, addressHex, publicKeyHex },
   } = useUser();
   const { updateTx } = useTx();
   const [isNonCustodial, setIsNonCustodial] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [error, setError] = useState("");
   const stakeData = useRef(null);
 
   const handleSubmit = (e) => {
@@ -34,48 +36,50 @@ export default function Staking() {
     const data = Object.fromEntries(formData);
     stakeData.current = data;
     setIsModalOpen(true);
+    setError("");
   };
 
   const handleConfirmSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const { passphrase = "" } = Object.fromEntries(formData);
+    const { passphrase } = Object.fromEntries(formData);
     const {
       serviceURI,
       amount,
-      fromAddress = "",
-      operatorPublicKey = "",
-      outputAddress = "",
+      operatorPublicKey,
+      outputAddress,
       relayChainIds,
     } = stakeData.current;
 
     const fmtRelayChainsIds = relayChainIds.split(",");
     const url = new URL(serviceURI);
 
+    // Add public key + addres validation
+
     const request = await dataSource.stakeNode(
       ppk,
       passphrase,
-      fromAddress ?? operatorPublicKey,
-      outputAddress,
+      operatorPublicKey ?? publicKeyHex,
+      outputAddress ?? addressHex,
       fmtRelayChainsIds,
-      amount * UPOKT,
+      (Number(amount) * UPOKT).toString(),
       url
     );
 
     if (typeGuard(request, Error)) {
       // Display some error
+      setError(`${request}`);
       console.error(request);
       return;
     }
 
-    const { txHash } = request;
-    console.log(request);
+    const { txhash } = request;
     updateTx(
       "Node Stake",
       addressHex,
       operatorPublicKey,
       amount,
-      txHash,
+      txhash,
       Number(Config.TX_FEE) / UPOKT,
       "Pending",
       "Pending",
@@ -85,7 +89,7 @@ export default function Staking() {
 
     history.push({
       pathname: ROUTES.txDetail,
-      data: { txHash, comesFromSend: true },
+      data: { txhash, comesFromSend: true },
       loadFromCache: true,
     });
     return;
@@ -102,39 +106,24 @@ export default function Staking() {
             name="amount"
             adornment={<span className="adornment">POKT</span>}
             adornmentPosition="end"
-            type="number"
             required
           />
           <IconQuestion />
 
-          {!isNonCustodial ? (
-            <>
-              <TextInput
-                key="fromAddress"
-                placeholder="From Address"
-                name="fromAddress"
-                required
-              />
-              <IconQuestion />
-            </>
-          ) : (
-            <>
-              <TextInput
-                key="operatorPublicKey"
-                placeholder="Operator Public Key"
-                name="operatorPublicKey"
-                required
-              />
-              <IconQuestion />
-              <TextInput
-                key="outputAddress"
-                placeholder="Output Address"
-                name="outputAddress"
-                required
-              />
-              <IconQuestion />
-            </>
-          )}
+          <TextInput
+            key="operatorPublicKey"
+            placeholder="Operator Public Key"
+            name="operatorPublicKey"
+            required
+          />
+          <IconQuestion />
+          <TextInput
+            key="outputAddress"
+            placeholder="Output Address"
+            name="outputAddress"
+            required
+          />
+          <IconQuestion />
 
           <TextInput
             placeholder="Relay Chain IDs"
@@ -142,16 +131,6 @@ export default function Staking() {
             required
           />
           <IconQuestion />
-
-          <div className="activate-non-custodial">
-            <p>Activate non-custodial?</p>
-            <input
-              className="checkbox"
-              checked={isNonCustodial}
-              onChange={() => setIsNonCustodial((prevChecked) => !prevChecked)}
-              type="checkbox"
-            />
-          </div>
           <Button className="stake" mode="primary" type="submit">
             Stake Node
           </Button>
@@ -174,10 +153,13 @@ export default function Staking() {
                 name="passphrase"
                 required
               />
+              <IconWithLabel message={error} show={error} type="error" />
             </div>
-            <Button mode="primary" type="submit">
-              Confirm Stake Node
-            </Button>
+            <div className="confirm-container">
+              <Button mode="primary" type="submit">
+                Confirm Stake Node
+              </Button>
+            </div>
           </form>
         </StakingModalContent>
       </Modal>
