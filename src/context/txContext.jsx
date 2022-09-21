@@ -12,6 +12,8 @@ const DEFAULT_TX_STATE = {
     sentStatus: "",
     height: 0,
     memo: "",
+    outputAddress: "",
+    operatorPublicKey: "",
   },
   updateTx: () => null,
   removeTx: () => null,
@@ -41,6 +43,8 @@ export function TxContextProvider({ children }) {
     sentStatus: "",
     height: 0,
     memo: "",
+    outputAddress: "",
+    operatorPublicKey: "",
   });
 
   const updateTx = useCallback(
@@ -54,7 +58,9 @@ export function TxContextProvider({ children }) {
       status,
       sentStatus,
       height,
-      memo
+      memo,
+      operatorPublicKey = "",
+      outputAddress = ""
     ) => {
       setTx({
         type,
@@ -67,6 +73,8 @@ export function TxContextProvider({ children }) {
         sentStatus,
         height,
         memo,
+        operatorPublicKey,
+        outputAddress,
       });
     },
     []

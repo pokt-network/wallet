@@ -13,19 +13,19 @@ import { useTx } from "../../context/txContext";
 import { useUser } from "../../context/userContext";
 import { getDataSource } from "../../datasource";
 import IconQuestion from "../../icons/iconQuestion";
-import { UPOKT } from "../../utils/utils";
+import { getAddressFromPublicKey, UPOKT } from "../../utils/utils";
 import { ROUTES } from "../../utils/routes";
 import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
+import { isAddress } from "../../utils/isAddress";
 
 const dataSource = getDataSource();
 
 export default function Staking() {
   let history = useHistory();
   const {
-    user: { ppk, addressHex, publicKeyHex },
+    user: { ppk },
   } = useUser();
   const { updateTx } = useTx();
-  const [isNonCustodial, setIsNonCustodial] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState("");
   const stakeData = useRef(null);
@@ -54,13 +54,25 @@ export default function Staking() {
     const fmtRelayChainsIds = relayChainIds.split(",");
     const url = new URL(serviceURI);
 
-    // Add public key + addres validation
+    // Ledger staking
+    // Add get chains
+    // Chains UI
+    // Test staking again
+    if (!isAddress(outputAddress)) {
+      setError("Invalid Output Address");
+      return;
+    }
+
+    if (!isAddress(getAddressFromPublicKey(operatorPublicKey))) {
+      setError("Invalid Operator Public Key");
+      return;
+    }
 
     const request = await dataSource.stakeNode(
       ppk,
       passphrase,
-      operatorPublicKey ?? publicKeyHex,
-      outputAddress ?? addressHex,
+      operatorPublicKey,
+      outputAddress,
       fmtRelayChainsIds,
       (Number(amount) * UPOKT).toString(),
       url
@@ -73,10 +85,11 @@ export default function Staking() {
       return;
     }
 
+    setError("");
     const { txhash } = request;
     updateTx(
       "Node Stake",
-      addressHex,
+      outputAddress,
       operatorPublicKey,
       amount,
       txhash,
@@ -99,7 +112,13 @@ export default function Staking() {
     <Layout title={<h1 className="title">Node Stake</h1>}>
       <StakingContent>
         <form onSubmit={(e) => handleSubmit(e)}>
-          <TextInput placeholder="Service URI" name="serviceURI" required />
+          <TextInput
+            placeholder="Service URI"
+            name="serviceURI"
+            type="url"
+            pattern="https://.*"
+            required
+          />
           <IconQuestion />
           <TextInput
             placeholder="Amount"

@@ -95,7 +95,10 @@ export default function AccountDetail() {
       stdTx.msg.type === STDX_MSG_TYPES.unstake8
     ) {
       return { type: "unstake", amount: 0 };
-    } else if (stdTx.msg.type === STDX_MSG_TYPES.stake) {
+    } else if (
+      stdTx.msg.type === STDX_MSG_TYPES.stake ||
+      stdTx.msg.type === STDX_MSG_TYPES.stake8
+    ) {
       const value = stdTx.msg.value.value / UPOKT;
       return { type: "stake", amount: value };
     } else if (stdTx.msg.type === STDX_MSG_TYPES.send) {
