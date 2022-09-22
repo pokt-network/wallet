@@ -17,6 +17,8 @@ import { getAddressFromPublicKey, UPOKT } from "../../utils/utils";
 import { ROUTES } from "../../utils/routes";
 import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 import { isAddress } from "../../utils/isAddress";
+import useTransport from "../../hooks/useTransport";
+import { STDX_MSG_TYPES } from "../../utils/validations";
 
 const dataSource = getDataSource();
 
@@ -26,6 +28,12 @@ export default function Staking() {
     user: { ppk },
   } = useUser();
   const { updateTx } = useTx();
+  const {
+    isHardwareWalletLoading,
+    isUsingHardwareWallet,
+    pocketApp,
+    stakeNode,
+  } = useTransport();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSelectChainsOpen, setIsSelectChainsOpen] = useState(false);
   const [supportedChains, setSupportedChains] = useState([]);
@@ -68,6 +76,48 @@ export default function Staking() {
       return;
     }
 
+    if (isUsingHardwareWallet) {
+      const ledgerTxResponse = await stakeNode(
+        selectedChains,
+        operatorPublicKey,
+        url,
+        (Number(amount) * UPOKT).toString(),
+        outputAddress
+      );
+
+      if (typeGuard(ledgerTxResponse, Error)) {
+        setError(
+          ledgerTxResponse?.message
+            ? ledgerTxResponse.message
+            : "Failed to send the transaction, please verify the information."
+        );
+        // if (sendRef.current) sendRef.current.disabled = false;
+        return;
+      }
+
+      updateTx(
+        STDX_MSG_TYPES.stake8,
+        "",
+        "",
+        amount,
+        ledgerTxResponse.txhash,
+        Number(Config.TX_FEE) / UPOKT,
+        "Pending",
+        "Pending",
+        undefined,
+        "Stake Node - Pocket Wallet",
+        operatorPublicKey,
+        outputAddress
+      );
+
+      history.push({
+        pathname: "/transaction-detail",
+        data: { txHash: ledgerTxResponse.txhash, comesFromSend: true },
+        loadFromCache: true,
+      });
+      return;
+    }
+
     const request = await dataSource.stakeNode(
       ppk,
       passphrase,
@@ -96,7 +146,7 @@ export default function Staking() {
       "Pending",
       "Pending",
       undefined,
-      "Pocket wallet"
+      "Stake Node - Pocket wallet"
     );
 
     history.push({
