@@ -14,7 +14,7 @@ import IconTXStatus from "../../icons/iconTxStatus";
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 import { useTx } from "../../context/txContext";
 import { STDX_MSG_TYPES } from "../../utils/validations";
-import { getAddressFromPublicKey, UPOKT } from "../../utils/utils";
+import { UPOKT } from "../../utils/utils";
 
 const dataSource = getDataSource();
 const EXPLORER_BASE_URL = "https://pokt.watch";

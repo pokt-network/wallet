@@ -772,6 +772,22 @@ export class DataSource {
   }
 
   /**
+   * @returns {string[]}
+   */
+  async getSupportedChains(height = 0) {
+    try {
+      const supportedchains = await this.gwClient.makeQuery(
+        "getSupportedChains",
+        height
+      );
+      return supportedchains;
+    } catch (error) {
+      console.error({ error });
+      return undefined;
+    }
+  }
+
+  /**
    * @returns {boolean}
    */
   validateAddress(address) {

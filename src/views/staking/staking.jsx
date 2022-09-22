@@ -1,6 +1,6 @@
 import { Button, Modal, TextInput } from "@pokt-foundation/ui";
 import { typeGuard } from "@pokt-network/pocket-js";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import PasswordInput from "../../components/input/passwordInput";
 import Layout from "../../components/layout";
@@ -27,6 +27,9 @@ export default function Staking() {
   } = useUser();
   const { updateTx } = useTx();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSelectChainsOpen, setIsSelectChainsOpen] = useState(false);
+  const [supportedChains, setSupportedChains] = useState([]);
+  const [selectedChains, setSelectedChains] = useState([]);
   const [error, setError] = useState("");
   const stakeData = useRef(null);
 
@@ -43,28 +46,25 @@ export default function Staking() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const { passphrase } = Object.fromEntries(formData);
-    const {
-      serviceURI,
-      amount,
-      operatorPublicKey,
-      outputAddress,
-      relayChainIds,
-    } = stakeData.current;
+    const { serviceURI, amount, operatorPublicKey, outputAddress } =
+      stakeData.current;
 
-    const fmtRelayChainsIds = relayChainIds.split(",");
     const url = new URL(serviceURI);
 
-    // Ledger staking
-    // Add get chains
-    // Chains UI
-    // Test staking again
     if (!isAddress(outputAddress)) {
       setError("Invalid Output Address");
       return;
     }
 
-    if (!isAddress(getAddressFromPublicKey(operatorPublicKey))) {
+    const operatorAddress = await getAddressFromPublicKey(operatorPublicKey);
+
+    if (!isAddress(operatorAddress)) {
       setError("Invalid Operator Public Key");
+      return;
+    }
+
+    if (selectedChains.length === 0) {
+      setError("At least one chain must be selected");
       return;
     }
 
@@ -73,13 +73,12 @@ export default function Staking() {
       passphrase,
       operatorPublicKey,
       outputAddress,
-      fmtRelayChainsIds,
+      selectedChains,
       (Number(amount) * UPOKT).toString(),
       url
     );
 
     if (typeGuard(request, Error)) {
-      // Display some error
       setError(`${request}`);
       console.error(request);
       return;
@@ -107,6 +106,18 @@ export default function Staking() {
     });
     return;
   };
+
+  const getSupportedChains = async () => {
+    const supportedChains = await dataSource.getSupportedChains();
+    if (!supportedChains) {
+      return;
+    }
+    setSupportedChains(supportedChains);
+  };
+
+  useEffect(() => {
+    getSupportedChains();
+  }, []);
 
   return (
     <Layout title={<h1 className="title">Node Stake</h1>}>
@@ -147,9 +158,56 @@ export default function Staking() {
           <TextInput
             placeholder="Relay Chain IDs"
             name="relayChainIds"
+            readOnly
             required
+            onClick={() => setIsSelectChainsOpen((prev) => !prev)}
           />
           <IconQuestion />
+
+          {isSelectChainsOpen && (
+            <div className="dropdown">
+              <div className="dropdown-container">
+                {supportedChains.map((chain) => (
+                  <>
+                    <div className="dropdown-row" key={chain}>
+                      <input
+                        type="checkbox"
+                        checked={
+                          selectedChains.find((sc) => sc === chain)
+                            ? true
+                            : false
+                        }
+                        onChange={(e) => {
+                          const {
+                            target: { checked },
+                          } = e;
+                          if (!checked) {
+                            setSelectedChains(
+                              selectedChains.filter(
+                                (selectedChain) => selectedChain !== chain
+                              )
+                            );
+                            return;
+                          }
+                          setSelectedChains((prev) => [...prev, chain]);
+                        }}
+                      />
+                      <span>{chain}</span>
+                    </div>
+                    <div className="dropdown-spacer" />
+                  </>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {selectedChains.length > 0 && (
+            <div className="selected-chains-container">
+              {selectedChains.map((selectedChain) => (
+                <div className="selected-chain-tag">{selectedChain}</div>
+              ))}
+            </div>
+          )}
           <Button className="stake" mode="primary" type="submit">
             Stake Node
           </Button>
