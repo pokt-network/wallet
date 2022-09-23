@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { css } from "styled-components";
+import { maxPhone } from "../../utils/media";
 
 export const StakingContent = styled.section`
   form {
@@ -27,6 +29,28 @@ export const StakingContent = styled.section`
     color: ${(props) => props.theme.colors.blue};
   }
 
+  .relay-chains-container {
+    position: relative;
+
+    svg {
+      display: block;
+    }
+
+    .searchbar {
+      width: 422px;
+    }
+
+    .search-icon {
+      color: white;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 64px;
+      z-index: 99999;
+    }
+  }
+
   .dropdown {
     width: 100%;
     height: 286px;
@@ -35,6 +59,9 @@ export const StakingContent = styled.section`
     background-color: #192430;
     padding: 16px 8px;
     margin: -8px 0 8px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .dropdown-container {
@@ -81,7 +108,7 @@ export const StakingContent = styled.section`
     width: 100%;
     max-width: 488px;
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
     flex-wrap: wrap;
   }
 
@@ -90,9 +117,21 @@ export const StakingContent = styled.section`
     border-radius: 4px;
     height: 32px;
     width: 64px;
-    padding: 8px;
-    margin: 4px 0;
+    margin: 18px 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
+
+  ${maxPhone(css`
+    input {
+      width: 100%;
+    }
+
+    .relay-chains-container .searchbar {
+      width: 90%;
+    }
+  `)}
 `;
 
 export const StakingModalContent = styled.div`
@@ -117,5 +156,18 @@ export const StakingModalContent = styled.div`
     button {
       margin: 16px 0;
     }
+  }
+
+  .ledger-banner-container {
+    margin-bottom: 2rem;
+  }
+
+  .you-are-sending {
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 110%;
+    text-align: center;
+    color: ${(props) => props.theme.secondaryWhite};
+    margin-bottom: 17px;
   }
 `;

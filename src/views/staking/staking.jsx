@@ -1,43 +1,20 @@
-import { Button, Modal, TextInput } from "@pokt-foundation/ui";
-import { typeGuard } from "@pokt-network/pocket-js";
+import { Button, IconSearch, TextInput } from "@pokt-foundation/ui";
 import React, { useEffect, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
-import PasswordInput from "../../components/input/passwordInput";
+import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 import Layout from "../../components/layout";
-import {
-  StakingContent,
-  StakingModalContent,
-} from "../../components/staking/content";
-import { Config } from "../../config/config";
-import { useTx } from "../../context/txContext";
-import { useUser } from "../../context/userContext";
+import { StakingContent } from "../../components/staking/content";
 import { getDataSource } from "../../datasource";
 import IconQuestion from "../../icons/iconQuestion";
-import { getAddressFromPublicKey, UPOKT } from "../../utils/utils";
-import { ROUTES } from "../../utils/routes";
-import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
-import { isAddress } from "../../utils/isAddress";
-import useTransport from "../../hooks/useTransport";
-import { STDX_MSG_TYPES } from "../../utils/validations";
+import StakingModal from "./stakingModal";
 
 const dataSource = getDataSource();
 
 export default function Staking() {
-  let history = useHistory();
-  const {
-    user: { ppk },
-  } = useUser();
-  const { updateTx } = useTx();
-  const {
-    isHardwareWalletLoading,
-    isUsingHardwareWallet,
-    pocketApp,
-    stakeNode,
-  } = useTransport();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSelectChainsOpen, setIsSelectChainsOpen] = useState(false);
   const [supportedChains, setSupportedChains] = useState([]);
   const [selectedChains, setSelectedChains] = useState([]);
+  const [chainsToRender, setChainsToRender] = useState(supportedChains);
   const [error, setError] = useState("");
   const stakeData = useRef(null);
 
@@ -45,124 +22,64 @@ export default function Staking() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
-    stakeData.current = data;
-    setIsModalOpen(true);
-    setError("");
-  };
-
-  const handleConfirmSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const { passphrase } = Object.fromEntries(formData);
-    const { serviceURI, amount, operatorPublicKey, outputAddress } =
-      stakeData.current;
-
-    const url = new URL(serviceURI);
-
-    if (!isAddress(outputAddress)) {
-      setError("Invalid Output Address");
-      return;
-    }
-
-    const operatorAddress = await getAddressFromPublicKey(operatorPublicKey);
-
-    if (!isAddress(operatorAddress)) {
-      setError("Invalid Operator Public Key");
-      return;
-    }
 
     if (selectedChains.length === 0) {
       setError("At least one chain must be selected");
       return;
     }
 
-    if (isUsingHardwareWallet) {
-      const ledgerTxResponse = await stakeNode(
-        selectedChains,
-        operatorPublicKey,
-        url,
-        (Number(amount) * UPOKT).toString(),
-        outputAddress
-      );
-
-      if (typeGuard(ledgerTxResponse, Error)) {
-        setError(
-          ledgerTxResponse?.message
-            ? ledgerTxResponse.message
-            : "Failed to send the transaction, please verify the information."
-        );
-        // if (sendRef.current) sendRef.current.disabled = false;
-        return;
-      }
-
-      updateTx(
-        STDX_MSG_TYPES.stake8,
-        "",
-        "",
-        amount,
-        ledgerTxResponse.txhash,
-        Number(Config.TX_FEE) / UPOKT,
-        "Pending",
-        "Pending",
-        undefined,
-        "Stake Node - Pocket Wallet",
-        operatorPublicKey,
-        outputAddress
-      );
-
-      history.push({
-        pathname: "/transaction-detail",
-        data: { txHash: ledgerTxResponse.txhash, comesFromSend: true },
-        loadFromCache: true,
-      });
-      return;
-    }
-
-    const request = await dataSource.stakeNode(
-      ppk,
-      passphrase,
-      operatorPublicKey,
-      outputAddress,
-      selectedChains,
-      (Number(amount) * UPOKT).toString(),
-      url
-    );
-
-    if (typeGuard(request, Error)) {
-      setError(`${request}`);
-      console.error(request);
-      return;
-    }
-
+    stakeData.current = data;
+    setIsModalOpen(true);
     setError("");
-    const { txhash } = request;
-    updateTx(
-      "Node Stake",
-      outputAddress,
-      operatorPublicKey,
-      amount,
-      txhash,
-      Number(Config.TX_FEE) / UPOKT,
-      "Pending",
-      "Pending",
-      undefined,
-      "Stake Node - Pocket wallet"
-    );
-
-    history.push({
-      pathname: ROUTES.txDetail,
-      data: { txhash, comesFromSend: true },
-      loadFromCache: true,
-    });
-    return;
   };
 
   const getSupportedChains = async () => {
     const supportedChains = await dataSource.getSupportedChains();
     if (!supportedChains) {
+      setError("Error while fetching chains data.");
       return;
     }
+    setError("");
     setSupportedChains(supportedChains);
+    setChainsToRender(supportedChains);
+  };
+
+  const onChainChange = (e, chain) => {
+    const {
+      target: { checked },
+    } = e;
+    if (!checked) {
+      setSelectedChains(
+        selectedChains.filter((selectedChain) => selectedChain !== chain)
+      );
+      return;
+    }
+
+    if (selectedChains.length === 0) {
+      setError("");
+    }
+    setSelectedChains((prev) => [...prev, chain]);
+  };
+
+  const onChainsSearch = (e) => {
+    const {
+      target: { value },
+    } = e;
+
+    if (value.length === 0) {
+      setChainsToRender(supportedChains);
+      return;
+    }
+
+    const tempChains = [];
+
+    for (const chain of supportedChains) {
+      if (chain.toLowerCase().includes(value.toLowerCase())) {
+        tempChains.push(chain);
+      }
+    }
+
+    setChainsToRender(tempChains);
   };
 
   useEffect(() => {
@@ -205,51 +122,56 @@ export default function Staking() {
           />
           <IconQuestion />
 
-          <TextInput
-            placeholder="Relay Chain IDs"
-            name="relayChainIds"
-            readOnly
-            required
-            onClick={() => setIsSelectChainsOpen((prev) => !prev)}
-          />
-          <IconQuestion />
-
-          {isSelectChainsOpen && (
-            <div className="dropdown">
-              <div className="dropdown-container">
-                {supportedChains.map((chain) => (
-                  <>
-                    <div className="dropdown-row" key={chain}>
-                      <input
-                        type="checkbox"
-                        checked={
-                          selectedChains.find((sc) => sc === chain)
-                            ? true
-                            : false
-                        }
-                        onChange={(e) => {
-                          const {
-                            target: { checked },
-                          } = e;
-                          if (!checked) {
-                            setSelectedChains(
-                              selectedChains.filter(
-                                (selectedChain) => selectedChain !== chain
-                              )
-                            );
-                            return;
+          <div className="relay-chains-container">
+            <TextInput
+              placeholder="Select Chains IDs"
+              name="relayChainIds"
+              adornment={<IconSearch className="search-icon" />}
+              adornmentPosition="end"
+              readOnly
+              required
+              onClick={() =>
+                setIsSelectChainsOpen((prev) => {
+                  if (prev) {
+                    setChainsToRender(supportedChains);
+                  }
+                  return !prev;
+                })
+              }
+            />
+            <IconQuestion />
+            {isSelectChainsOpen && (
+              <div className="dropdown">
+                <TextInput
+                  className="searchbar"
+                  placeholder="Search Chains IDS"
+                  name="relayChainIds"
+                  adornment={<IconSearch className="search-icon" />}
+                  adornmentPosition="end"
+                  onChange={(e) => onChainsSearch(e)}
+                />
+                <div className="dropdown-container">
+                  {chainsToRender.map((chain) => (
+                    <>
+                      <div className="dropdown-row" key={chain}>
+                        <input
+                          type="checkbox"
+                          checked={
+                            selectedChains.find((sc) => sc === chain)
+                              ? true
+                              : false
                           }
-                          setSelectedChains((prev) => [...prev, chain]);
-                        }}
-                      />
-                      <span>{chain}</span>
-                    </div>
-                    <div className="dropdown-spacer" />
-                  </>
-                ))}
+                          onChange={(e) => onChainChange(e, chain)}
+                        />
+                        <span>{chain}</span>
+                      </div>
+                      <div className="dropdown-spacer" />
+                    </>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {selectedChains.length > 0 && (
             <div className="selected-chains-container">
@@ -258,38 +180,20 @@ export default function Staking() {
               ))}
             </div>
           )}
+
+          <IconWithLabel message={error} show={error} type="error" />
           <Button className="stake" mode="primary" type="submit">
             Stake Node
           </Button>
         </form>
       </StakingContent>
 
-      <Modal
-        visible={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        className="pocket-modal"
-      >
-        <StakingModalContent>
-          <form onSubmit={(e) => handleConfirmSubmit(e)}>
-            <h1 className="modal-title">
-              Confirm your passphrase to complete the transaction
-            </h1>
-            <div>
-              <PasswordInput
-                placeholder="Passphrase"
-                name="passphrase"
-                required
-              />
-              <IconWithLabel message={error} show={error} type="error" />
-            </div>
-            <div className="confirm-container">
-              <Button mode="primary" type="submit">
-                Confirm Stake Node
-              </Button>
-            </div>
-          </form>
-        </StakingModalContent>
-      </Modal>
+      <StakingModal
+        isOpen={isModalOpen}
+        selectedChains={selectedChains}
+        setIsOpen={setIsModalOpen}
+        stakeData={stakeData}
+      />
     </Layout>
   );
 }

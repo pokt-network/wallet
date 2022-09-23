@@ -82,6 +82,7 @@ export default function SelectAccount() {
   const unlockAccount = () => {
     const account = accounts[accountIdx];
     updateUser(account.address, account.publicKey, "");
+    LEDGER_CONFIG.updateDerivationPath(accountIdx);
     history.push({
       pathname: ROUTES.account,
       data: true,

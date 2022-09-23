@@ -143,7 +143,9 @@ export default function ConfirmSend({
           title={
             <SendHeaderContainer>
               <h1 className="secondary-title">
-                Confirm your Passphase to complete the transaction
+                {!isUsingHardwareWallet
+                  ? "Confirm your Passphase to complete the transaction"
+                  : "Confirm your information to complete the transaction"}
               </h1>
             </SendHeaderContainer>
           }
