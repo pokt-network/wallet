@@ -1,7 +1,6 @@
 import React, { createContext, useState, useCallback } from "react";
 import WebHIDTransport from "@ledgerhq/hw-transport-webhid";
 import WebUSBTransport from "@ledgerhq/hw-transport-webusb";
-import U2FTransport from "@ledgerhq/hw-transport-u2f";
 import AppPokt from "hw-app-pokt";
 import { LEDGER_CONFIG } from "../utils/hardwareWallet";
 import { Config } from "../config/config";
@@ -63,14 +62,6 @@ export function TransportProvider({ children }) {
         return [true, initializePocketApp(transport)];
       } catch (e) {
         console.error(`WebUSB Transport is not supported: ${e}`);
-        error = e;
-      }
-    } else {
-      try {
-        transport = await U2FTransport.create();
-        return [true, initializePocketApp(transport)];
-      } catch (e) {
-        console.error(`U2F Transport is not supported: ${e}`);
         error = e;
       }
     }

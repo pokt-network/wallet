@@ -173,12 +173,14 @@ export default function Staking() {
             )}
           </div>
 
-          {selectedChains.length > 0 && (
+          {selectedChains.length > 0 ? (
             <div className="selected-chains-container">
               {selectedChains.map((selectedChain) => (
                 <div className="selected-chain-tag">{selectedChain}</div>
               ))}
             </div>
+          ) : (
+            <p>Loading chains...</p>
           )}
 
           <IconWithLabel message={error} show={error} type="error" />
