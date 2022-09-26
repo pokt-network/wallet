@@ -25,7 +25,7 @@ const SelectAccountContent = styled.section`
 
     .prev,
     .next {
-      width: 128px;
+      width: fit-content;
       border: none;
       color: ${(props) => props.theme.colors.green};
     }

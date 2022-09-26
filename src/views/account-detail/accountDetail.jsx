@@ -54,7 +54,7 @@ export default function AccountDetail() {
   }, [maxTxListCount]);
 
   const pushToTxDetail = useCallback(
-    (txHash, useCache) => {
+    (txHash, useCache, comesFromSend) => {
       if (!isUsingHardwareWallet && (!addressHex || !publicKeyHex || !ppk)) {
         console.error(
           "No account available, please create or import an account"
@@ -65,7 +65,7 @@ export default function AccountDetail() {
       if (txHash) {
         history.push({
           pathname: "/transaction-detail",
-          data: { txHash },
+          data: { txHash, comesFromSend },
           loadFromCache: useCache,
         });
       }
