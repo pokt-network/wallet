@@ -151,36 +151,46 @@ export default function Staking() {
                   onChange={(e) => onChainsSearch(e)}
                 />
                 <div className="dropdown-container">
-                  {chainsToRender.map((chain) => (
-                    <>
-                      <div className="dropdown-row" key={chain}>
-                        <input
-                          type="checkbox"
-                          checked={
-                            selectedChains.find((sc) => sc === chain)
-                              ? true
-                              : false
-                          }
-                          onChange={(e) => onChainChange(e, chain)}
+                  {chainsToRender.length > 0 ? (
+                    chainsToRender.map((chain) => (
+                      <>
+                        <div className="dropdown-row" key={chain}>
+                          <input
+                            type="checkbox"
+                            checked={
+                              selectedChains.find((sc) => sc === chain)
+                                ? true
+                                : false
+                            }
+                            onChange={(e) => onChainChange(e, chain)}
+                          />
+                          <span>{chain}</span>
+                        </div>
+                        <div
+                          className="dropdown-spacer"
+                          key={`spacer-${chain}`}
                         />
-                        <span>{chain}</span>
-                      </div>
-                      <div className="dropdown-spacer" />
-                    </>
-                  ))}
+                      </>
+                    ))
+                  ) : (
+                    <p>Loading chains...</p>
+                  )}
                 </div>
               </div>
             )}
           </div>
 
-          {selectedChains.length > 0 ? (
+          {selectedChains.length > 0 && (
             <div className="selected-chains-container">
               {selectedChains.map((selectedChain) => (
-                <div className="selected-chain-tag">{selectedChain}</div>
+                <div
+                  className="selected-chain-tag"
+                  key={`selected-${selectedChain}`}
+                >
+                  {selectedChain}
+                </div>
               ))}
             </div>
-          ) : (
-            <p>Loading chains...</p>
           )}
 
           <IconWithLabel message={error} show={error} type="error" />

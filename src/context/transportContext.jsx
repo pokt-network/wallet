@@ -49,7 +49,7 @@ export function TransportProvider({ children }) {
     let error;
 
     try {
-      transport = await WebHIDTransport.create();
+      transport = await WebHIDTransport.request();
       return [true, initializePocketApp(transport)];
     } catch (e) {
       console.error(`HID Transport is not supported: ${e}`);
@@ -58,14 +58,14 @@ export function TransportProvider({ children }) {
 
     if (window.USB) {
       try {
-        transport = await WebUSBTransport.create();
+        transport = await WebUSBTransport.request();
         return [true, initializePocketApp(transport)];
       } catch (e) {
         console.error(`WebUSB Transport is not supported: ${e}`);
         error = e;
       }
     }
-
+    
     return [false, error];
   }, [initializePocketApp, pocketApp]);
 
