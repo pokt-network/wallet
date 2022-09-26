@@ -10,6 +10,7 @@ import { typeGuard } from "@pokt-network/pocket-js";
 import { STDX_MSG_TYPES } from "../utils/validations";
 
 const dataSource = getDataSource();
+const PUBLIC_KEY_TYPE = "crypto/ed25519_public_key";
 
 const DEFAULT_TRANSPORT_STATE = {
   pocketApp: "",
@@ -65,7 +66,7 @@ export function TransportProvider({ children }) {
         error = e;
       }
     }
-    
+
     return [false, error];
   }, [initializePocketApp, pocketApp]);
 
@@ -265,7 +266,7 @@ export function TransportProvider({ children }) {
           chains,
           output_address: outputAddress,
           public_key: {
-            type: "crypto/ed25519_public_key",
+            type: PUBLIC_KEY_TYPE,
             value: publicKey,
           },
           service_url: `${
