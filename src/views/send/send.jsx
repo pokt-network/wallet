@@ -24,6 +24,7 @@ export default function Send() {
     sendTransaction: sendTransactionWithLedger,
   } = useTransport();
   const sendRef = useRef(null);
+  //TODO: refactor with a reducer
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
   const [destinationAddress, setDestinationAddress] = useState(undefined);
