@@ -81,6 +81,13 @@ export default function TransactionDetail() {
         to: "Myself",
         amount: stdTx.msg.value.value,
       };
+    } else if (stdTx.msg.type === STDX_MSG_TYPES.stake8) {
+      return {
+        type: "Stake",
+        outputAddress: stdTx.msg.value.output_address,
+        operatorPublicKey: stdTx.msg.value.public_key.value,
+        amount: stdTx.msg.value.value,
+      };
     } else {
       return {
         type: "TokenTransfer",
@@ -108,6 +115,8 @@ export default function TransactionDetail() {
           from: fromAddress,
           to: toAddress,
           amount,
+          operatorPublicKey = "",
+          outputAddress = "",
         } = getTransactionData(txResponse.stdTx);
 
         const txSummary = {
@@ -119,6 +128,8 @@ export default function TransactionDetail() {
           type: transactiontype,
           height: txResponse.height,
           memo: txResponse.stdTx.memo,
+          operatorPublicKey,
+          outputAddress,
         };
 
         updateTx(
@@ -131,7 +142,9 @@ export default function TransactionDetail() {
           txSummary.status,
           "sent",
           txSummary.height,
-          txSummary.memo
+          txSummary.memo,
+          txSummary.operatorPublicKey,
+          txSummary.outputAddress
         );
 
         updateTxInformation(undefined, {
@@ -145,6 +158,8 @@ export default function TransactionDetail() {
           sentStatus: "Sent",
           height: txSummary.height,
           memo: txSummary.memo,
+          operatorPublicKey: txSummary.operatorPublicKey,
+          outputAddress: txSummary.outputAddress,
         });
 
         setGetTxWasCalled(true);
@@ -249,15 +264,36 @@ export default function TransactionDetail() {
             <p>{tx?.type}</p>
           </div>
 
-          <div className="tx-detail-row">
-            <h2>To address</h2>
-            <Link
-              href={`${EXPLORER_BASE_URL}/address/${tx?.toAddress}`}
-              className="to-address"
-            >
-              {tx?.toAddress}
-            </Link>
-          </div>
+          {tx?.toAddress && (
+            <div className="tx-detail-row">
+              <h2>To address</h2>
+              <Link
+                href={`${EXPLORER_BASE_URL}/address/${tx?.toAddress}`}
+                className="to-address"
+              >
+                {tx?.toAddress}
+              </Link>
+            </div>
+          )}
+
+          {tx?.outputAddress && (
+            <div className="tx-detail-row">
+              <h2>Output Address</h2>
+              <Link
+                href={`${EXPLORER_BASE_URL}/address/${tx?.outputAddress}`}
+                className="to-address"
+              >
+                {tx?.outputAddress}
+              </Link>
+            </div>
+          )}
+
+          {tx?.operatorPublicKey && (
+            <div className="tx-detail-row">
+              <h2 className="overflow">Operator Public Key</h2>
+              <p className="overflow">{tx?.operatorPublicKey}</p>
+            </div>
+          )}
 
           <div className="tx-detail-row">
             <h2>Block #</h2>

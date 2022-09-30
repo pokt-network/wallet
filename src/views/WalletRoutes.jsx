@@ -12,6 +12,7 @@ import Footer from "../components/footer";
 import { ROUTES } from "../utils/routes";
 import NonCustodial from "./non-custodial/nonCustodial";
 import SelectAccount from "./select-account/selectAccount";
+import Staking from "./staking/staking";
 
 export default function WalletRoutes() {
   const theme = useTheme();
@@ -75,6 +76,7 @@ export default function WalletRoutes() {
             path={ROUTES.nonCustodial}
             component={NonCustodial}
           ></Route>
+          <Route exact path={ROUTES.staking} component={Staking}></Route>
         </div>
       </Switch>
       <Footer />

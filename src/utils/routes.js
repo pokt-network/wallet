@@ -7,6 +7,7 @@ export const ROUTES = {
   txDetail: "/transaction-detail",
   nonCustodial: "/non-custodial",
   selectAccount: "/select-account",
+  staking: "/staking",
 };
 
 export const PUBLIC_ROUTES = [

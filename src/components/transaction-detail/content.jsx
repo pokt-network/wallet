@@ -62,7 +62,8 @@ const TransactionDetailContent = styled.section`
         text-align: left;
       }
 
-      .to-address {
+      .to-address,
+      .overflow {
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;

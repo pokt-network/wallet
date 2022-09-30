@@ -54,7 +54,7 @@ export default function AccountDetail() {
   }, [maxTxListCount]);
 
   const pushToTxDetail = useCallback(
-    (txHash, useCache) => {
+    (txHash, useCache, comesFromSend) => {
       if (!isUsingHardwareWallet && (!addressHex || !publicKeyHex || !ppk)) {
         console.error(
           "No account available, please create or import an account"
@@ -65,7 +65,7 @@ export default function AccountDetail() {
       if (txHash) {
         history.push({
           pathname: "/transaction-detail",
-          data: { txHash },
+          data: { txHash, comesFromSend },
           loadFromCache: useCache,
         });
       }
@@ -95,7 +95,10 @@ export default function AccountDetail() {
       stdTx.msg.type === STDX_MSG_TYPES.unstake8
     ) {
       return { type: "unstake", amount: 0 };
-    } else if (stdTx.msg.type === STDX_MSG_TYPES.stake) {
+    } else if (
+      stdTx.msg.type === STDX_MSG_TYPES.stake ||
+      stdTx.msg.type === STDX_MSG_TYPES.stake8
+    ) {
       const value = stdTx.msg.value.value / UPOKT;
       return { type: "stake", amount: value };
     } else if (stdTx.msg.type === STDX_MSG_TYPES.send) {

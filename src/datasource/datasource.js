@@ -470,6 +470,138 @@ export class DataSource {
     return rawTxResponse;
   }
 
+  async stakeNode(
+    ppk,
+    passphrase,
+    nodePubKey,
+    outputAddress,
+    chains,
+    amount,
+    serviceURI
+  ) {
+    const defaultFee = this.config.txFee || 10000;
+    const accountOrUndefined = await this.__pocket.keybase.importPPKFromJSON(
+      passphrase,
+      ppk,
+      passphrase
+    );
+
+    if (typeGuard(accountOrUndefined, Error)) {
+      return new Error(
+        "Failed to import account due to wrong passphrase provided"
+      );
+    }
+
+    const transactionSenderOrError = await this.__pocket.withImportedAccount(
+      accountOrUndefined.address,
+      passphrase
+    );
+
+    if (typeGuard(transactionSenderOrError, RpcError)) {
+      return new Error(transactionSenderOrError.message);
+    }
+    const rawTxPayloadOrError = await transactionSenderOrError
+      .nodeStake(nodePubKey, outputAddress, chains, amount, serviceURI)
+      .createTransaction(
+        this.config.chainId,
+        defaultFee.toString(),
+        CoinDenom.Upokt,
+        "Stake Node - Pocket Wallet"
+      );
+
+    if (typeGuard(rawTxPayloadOrError, RpcError)) {
+      console.log(
+        `Failed to process transaction with error: ${rawTxPayloadOrError}`
+      );
+      return new Error(rawTxPayloadOrError.message);
+    }
+
+    let rawTxResponse;
+    try {
+      rawTxResponse = await this.gwClient.makeQuery(
+        "sendRawTx",
+        rawTxPayloadOrError.address,
+        rawTxPayloadOrError.txHex
+      );
+    } catch (error) {
+      console.log(`Failed to send transaction with error: ${error.raw_log}`);
+      return new Error(error.raw_log);
+    }
+
+    return rawTxResponse;
+  }
+
+  async stakeNodeFromLedger(publicKey, signature, url, tx) {
+    const {
+      chain_id: chainID,
+      msg: {
+        value: { chains, public_key, value, output_address },
+      },
+      fee,
+      entropy,
+    } = tx;
+
+    const txSignature = new TxSignature(
+      Buffer.from(publicKey, "hex"),
+      Buffer.from(signature, "hex")
+    );
+
+    const transactionSender = new TransactionSender(
+      this.__pocket,
+      null,
+      null,
+      true
+    );
+
+    const itxSender = transactionSender.nodeStake(
+      public_key.value,
+      output_address,
+      chains,
+      value,
+      url
+    );
+
+    const unsignedStakeTx = itxSender.createUnsignedTransaction(
+      chainID,
+      fee[0].amount,
+      entropy,
+      CoinDenom.Upokt,
+      "Stake Node - Pocket Wallet"
+    );
+
+    if (typeGuard(unsignedStakeTx, RpcError)) {
+      console.log(
+        `Failed to process transaction with error: ${unsignedStakeTx}`
+      );
+      return new Error(unsignedStakeTx);
+    }
+
+    const { bytesToSign, stdTxMsgObj } = unsignedStakeTx;
+    const rawTxOrError = ProtoTransactionSigner.signTransaction(
+      stdTxMsgObj,
+      bytesToSign,
+      txSignature
+    );
+    if (typeGuard(rawTxOrError, RpcError)) {
+      console.log(`Failed to process transaction with error: ${rawTxOrError}`);
+      return new Error(rawTxOrError.message);
+    }
+
+    let rawTxResponse;
+    try {
+      rawTxResponse = await this.gwClient.makeQuery(
+        "sendRawTx",
+        rawTxOrError.address,
+        rawTxOrError.txHex
+      );
+    } catch (error) {
+      console.log(`Failed to send transaction with error: ${error.raw_log}`);
+      return new Error(error.raw_log);
+    }
+
+    return rawTxResponse;
+  }
+
   async unjailNodeFromLedger(publicKey, signature, tx) {
     const {
       msg: {
@@ -708,6 +840,22 @@ export class DataSource {
     }
 
     return receivedTxs;
+  }
+
+  /**
+   * @returns {string[]}
+   */
+  async getSupportedChains(height = 0) {
+    try {
+      const supportedchains = await this.gwClient.makeQuery(
+        "getSupportedChains",
+        height
+      );
+      return supportedchains;
+    } catch (error) {
+      console.error({ error });
+      return undefined;
+    }
   }
 
   /**

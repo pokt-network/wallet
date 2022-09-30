@@ -67,7 +67,7 @@ export default function UnjailUnstake({
         "Pocket Wallet"
       );
       localStorage.setItem("unjailing", true);
-      pushToTxDetail(ledgerUnjailResponse.txhash);
+      pushToTxDetail(ledgerUnjailResponse.txhash, true, true);
       return;
     }
 
@@ -115,7 +115,7 @@ export default function UnjailUnstake({
           "Pocket Wallet"
         );
         localStorage.setItem("unjailing", true);
-        pushToTxDetail(txResponse.txhash);
+        pushToTxDetail(txResponse.txhash, true, true);
         return;
       } else {
         setPassphrase("Failed to submit unjail tx");
@@ -162,7 +162,7 @@ export default function UnjailUnstake({
         "Pocket Wallet"
       );
 
-      pushToTxDetail(ledgerUnjailResponse.txhash);
+      pushToTxDetail(ledgerUnjailResponse.txhash, true, true);
       return;
     }
 
@@ -213,7 +213,7 @@ export default function UnjailUnstake({
           "Pocket Wallet"
         );
 
-        pushToTxDetail(txResponse.txhash);
+        pushToTxDetail(txResponse.txhash, true, true);
         return;
       } else {
         setPassphraseError("Invalid passphrase");
@@ -266,6 +266,7 @@ export default function UnjailUnstake({
           />
         )}
         <IconWithLabel
+          className="error-label"
           message={passphraseError}
           show={passphraseError}
           type="error"

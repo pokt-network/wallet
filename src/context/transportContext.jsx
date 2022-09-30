@@ -1,7 +1,6 @@
 import React, { createContext, useState, useCallback } from "react";
 import WebHIDTransport from "@ledgerhq/hw-transport-webhid";
 import WebUSBTransport from "@ledgerhq/hw-transport-webusb";
-import U2FTransport from "@ledgerhq/hw-transport-u2f";
 import AppPokt from "hw-app-pokt";
 import { LEDGER_CONFIG } from "../utils/hardwareWallet";
 import { Config } from "../config/config";
@@ -11,6 +10,7 @@ import { typeGuard } from "@pokt-network/pocket-js";
 import { STDX_MSG_TYPES } from "../utils/validations";
 
 const dataSource = getDataSource();
+const PUBLIC_KEY_TYPE = "crypto/ed25519_public_key";
 
 const DEFAULT_TRANSPORT_STATE = {
   pocketApp: "",
@@ -23,6 +23,7 @@ const DEFAULT_TRANSPORT_STATE = {
   setIsHardwareWalletLoading: null,
   unjailNode: () => Promise(),
   unstakeNode: () => Promise(),
+  stakeNode: () => Promise(),
 };
 
 export const TransportContext = createContext(DEFAULT_TRANSPORT_STATE);
@@ -49,7 +50,7 @@ export function TransportProvider({ children }) {
     let error;
 
     try {
-      transport = await WebHIDTransport.create();
+      transport = await WebHIDTransport.request();
       return [true, initializePocketApp(transport)];
     } catch (e) {
       console.error(`HID Transport is not supported: ${e}`);
@@ -58,18 +59,10 @@ export function TransportProvider({ children }) {
 
     if (window.USB) {
       try {
-        transport = await WebUSBTransport.create();
+        transport = await WebUSBTransport.request();
         return [true, initializePocketApp(transport)];
       } catch (e) {
         console.error(`WebUSB Transport is not supported: ${e}`);
-        error = e;
-      }
-    } else {
-      try {
-        transport = await U2FTransport.create();
-        return [true, initializePocketApp(transport)];
-      } catch (e) {
-        console.error(`U2F Transport is not supported: ${e}`);
         error = e;
       }
     }
@@ -90,7 +83,7 @@ export function TransportProvider({ children }) {
     memo = "Pocket Wallet",
     type = STDX_MSG_TYPES.send,
     amount,
-    toAddress,
+    toAddress
   ) => {
     setIsHardwareWalletLoading(true);
     const entropy = Number(
@@ -237,6 +230,74 @@ export function TransportProvider({ children }) {
         setIsHardwareWalletLoading(false);
         return ledgerTxResponse;
       }
+      setIsHardwareWalletLoading(false);
+      return ledgerTxResponse;
+    } catch (e) {
+      console.error("error: ", e);
+      setIsHardwareWalletLoading(false);
+      return e;
+    }
+  };
+
+  const stakeNode = async (
+    chains,
+    publicKey,
+    serviceURL,
+    amount,
+    outputAddress
+  ) => {
+    setIsHardwareWalletLoading(true);
+    const entropy = Number(
+      Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+    ).toString();
+
+    const tx = {
+      chain_id: Config.CHAIN_ID,
+      entropy,
+      fee: [
+        {
+          amount: Config.TX_FEE || "10000",
+          denom: "upokt",
+        },
+      ],
+      memo: "Stake Node - Pocket Wallet",
+      msg: {
+        type: STDX_MSG_TYPES.stake8,
+        value: {
+          chains,
+          output_address: outputAddress,
+          public_key: {
+            type: PUBLIC_KEY_TYPE,
+            value: publicKey,
+          },
+          service_url: `${
+            serviceURL.protocol ? serviceURL.protocol : "https:"
+          }//${serviceURL.hostname}:${
+            serviceURL.port ? serviceURL.port : "443"
+          }`,
+          value: amount,
+        },
+      },
+    };
+
+    try {
+      const stringifiedTx = JSON.stringify(tx);
+      const hexTx = Buffer.from(stringifiedTx, "utf-8").toString("hex");
+      const sig = await pocketApp.signTransaction(
+        LEDGER_CONFIG.derivationPath,
+        hexTx
+      );
+      const ledgerTxResponse = await dataSource.stakeNodeFromLedger(
+        publicKey,
+        sig.signature,
+        serviceURL,
+        tx
+      );
+      if (typeGuard(ledgerTxResponse, Error)) {
+        setIsHardwareWalletLoading(false);
+        return ledgerTxResponse;
+      }
+      setIsHardwareWalletLoading(false);
       return ledgerTxResponse;
     } catch (e) {
       console.error("error: ", e);
@@ -258,6 +319,7 @@ export function TransportProvider({ children }) {
         setIsHardwareWalletLoading,
         unjailNode,
         unstakeNode,
+        stakeNode,
       }}
     >
       {children}
