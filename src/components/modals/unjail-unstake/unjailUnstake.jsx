@@ -266,6 +266,7 @@ export default function UnjailUnstake({
           />
         )}
         <IconWithLabel
+          className="error-label"
           message={passphraseError}
           show={passphraseError}
           type="error"

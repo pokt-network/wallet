@@ -20,6 +20,11 @@ const UnjailUnstakeContainer = styled.div`
     width: 220px;
     margin: 32px 0 65px 0;
   }
+
+  .error-label {
+    display: flex;
+    justify-content: center;
+  }
 `;
 
 export default UnjailUnstakeContainer;

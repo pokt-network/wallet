@@ -230,6 +230,7 @@ export function TransportProvider({ children }) {
         setIsHardwareWalletLoading(false);
         return ledgerTxResponse;
       }
+      setIsHardwareWalletLoading(false);
       return ledgerTxResponse;
     } catch (e) {
       console.error("error: ", e);
@@ -296,6 +297,7 @@ export function TransportProvider({ children }) {
         setIsHardwareWalletLoading(false);
         return ledgerTxResponse;
       }
+      setIsHardwareWalletLoading(false);
       return ledgerTxResponse;
     } catch (e) {
       console.error("error: ", e);
