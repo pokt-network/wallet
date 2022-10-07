@@ -261,6 +261,7 @@ export default function Send() {
           sendTransaction={sendTransaction}
           setPassphrase={setPassphrase}
           passphraseError={passphraseError}
+          setPassphraseError={setPassphraseError}
           sendRef={sendRef}
         />
       )}

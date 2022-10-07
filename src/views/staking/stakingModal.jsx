@@ -28,7 +28,7 @@ export default function StakingModal({
     user: { ppk },
   } = useUser();
   const { updateTx } = useTx();
-  const { isUsingHardwareWallet, isHardwareWalletLoading, stakeNode } =
+  const { isUsingHardwareWallet, isHardwareWalletLoading, stakeNode, setIsHardwareWalletLoading } =
     useTransport();
   const sendRef = useRef(null);
   const [error, setError] = useState("");
@@ -153,6 +153,7 @@ export default function StakingModal({
       onClose={() => {
         setError("");
         setIsOpen(false);
+        setIsHardwareWalletLoading(false)
       }}
       className="pocket-modal"
     >
@@ -179,7 +180,12 @@ export default function StakingModal({
                 required
               />
             )}
-            <IconWithLabel message={error} show={error} type="error" />
+            <IconWithLabel
+              message={error}
+              show={error}
+              type="error"
+              className="error"
+            />
           </div>
 
           <h2 className="you-are-sending">

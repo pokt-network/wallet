@@ -29,12 +29,21 @@ export default function ConfirmSend({
   setPassphrase,
   passphraseError,
   sendRef,
+  setPassphraseError,
 }) {
   const theme = useTheme();
   const { width } = useWindowSize();
-  const { isUsingHardwareWallet, isHardwareWalletLoading } = useTransport();
+  const {
+    isUsingHardwareWallet,
+    isHardwareWalletLoading,
+    setIsHardwareWalletLoading,
+  } = useTransport();
 
-  const goBack = useCallback(() => setStep(0), [setStep]);
+  const goBack = useCallback(() => {
+    setPassphraseError("");
+    setStep(0);
+    setIsHardwareWalletLoading(false);
+  }, [setStep, setPassphraseError, setIsHardwareWalletLoading]);
 
   const onPassphraseChange = useCallback(
     ({ target }) => {
