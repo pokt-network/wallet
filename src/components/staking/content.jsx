@@ -170,4 +170,10 @@ export const StakingModalContent = styled.div`
     color: ${(props) => props.theme.secondaryWhite};
     margin-bottom: 17px;
   }
+
+  .error {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
 `;
