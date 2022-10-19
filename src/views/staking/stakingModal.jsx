@@ -28,8 +28,12 @@ export default function StakingModal({
     user: { ppk },
   } = useUser();
   const { updateTx } = useTx();
-  const { isUsingHardwareWallet, isHardwareWalletLoading, stakeNode, setIsHardwareWalletLoading } =
-    useTransport();
+  const {
+    isUsingHardwareWallet,
+    isHardwareWalletLoading,
+    stakeNode,
+    setIsHardwareWalletLoading,
+  } = useTransport();
   const sendRef = useRef(null);
   const [error, setError] = useState("");
 
@@ -147,14 +151,17 @@ export default function StakingModal({
     return;
   };
 
+  const onClose = () => {
+    setError("");
+    setIsOpen(false);
+    setIsHardwareWalletLoading(false);
+  };
+
   return (
     <Modal
       visible={isOpen}
-      onClose={() => {
-        setError("");
-        setIsOpen(false);
-        setIsHardwareWalletLoading(false)
-      }}
+      onClose={isHardwareWalletLoading ? () => null : onClose}
+      closeButton={!isHardwareWalletLoading}
       className="pocket-modal"
     >
       <StakingModalContent>

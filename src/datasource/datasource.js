@@ -316,7 +316,7 @@ export class DataSource {
       fee[0].amount,
       entropy,
       "Upokt",
-      memo
+      memo ? memo : "Pocket Wallet"
     );
 
     if (typeGuard(unsignedTransaction, RpcError)) {

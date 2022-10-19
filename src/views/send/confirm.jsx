@@ -82,7 +82,8 @@ export default function ConfirmSend({
         >
           <Modal
             visible={step === 1}
-            onClose={goBack}
+            onClose={isHardwareWalletLoading ? () => null : goBack}
+            closeButton={!isHardwareWalletLoading}
             padding="44px 24px"
             className="pocket-modal"
           >
@@ -140,10 +141,12 @@ export default function ConfirmSend({
                 Send
               </Button>
 
-              <button className="back-button" onClick={goBack}>
-                <IconBack />
-                <span>Back</span>
-              </button>
+              {isUsingHardwareWallet && passphraseError && !isHardwareWalletLoading && (
+                <button className="back-button" onClick={goBack}>
+                  <IconBack />
+                  <span>Back</span>
+                </button>
+              )}
             </SendTransactionModalContainer>
           </Modal>
         </Layout>

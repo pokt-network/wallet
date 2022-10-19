@@ -256,7 +256,7 @@ export default function TransactionDetail() {
 
           <div className="tx-detail-row">
             <h2>TX fee</h2>
-            <p>{tx?.fee} POKT</p>
+            <p>{tx?.txFee} POKT</p>
           </div>
 
           <div className="tx-detail-row">
