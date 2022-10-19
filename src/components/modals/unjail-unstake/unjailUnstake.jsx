@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import { Banner, Button, Modal, useTheme } from "@pokt-foundation/ui";
-
 import UnjailUnstakeContainer from "./container";
 import PasswordInput from "../../input/passwordInput";
 import { getDataSource } from "../../../datasource";
