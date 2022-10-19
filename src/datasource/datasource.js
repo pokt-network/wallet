@@ -297,6 +297,8 @@ export class DataSource {
       },
     } = tx;
 
+    console.log('send: ', tx)
+
     const txSignature = new TxSignature(
       Buffer.from(publicKey, "hex"),
       Buffer.from(signature, "hex")
@@ -316,7 +318,7 @@ export class DataSource {
       fee[0].amount,
       entropy,
       "Upokt",
-      memo
+      memo ? memo : "Pocket Wallet"
     );
 
     if (typeGuard(unsignedTransaction, RpcError)) {

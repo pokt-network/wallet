@@ -241,10 +241,15 @@ export default function UnjailUnstake({
   return (
     <Modal
       visible={visible}
-      onClose={() => {
-        setPassphraseError("");
-        onClose();
-      }}
+      onClose={
+        isHardwareWalletLoading
+          ? () => null
+          : () => {
+              setPassphraseError("");
+              onClose();
+            }
+      }
+      closeButton={!isHardwareWalletLoading}
       className="pocket-modal"
     >
       <UnjailUnstakeContainer>
