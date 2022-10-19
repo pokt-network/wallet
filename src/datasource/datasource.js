@@ -297,8 +297,6 @@ export class DataSource {
       },
     } = tx;
 
-    console.log('send: ', tx)
-
     const txSignature = new TxSignature(
       Buffer.from(publicKey, "hex"),
       Buffer.from(signature, "hex")
