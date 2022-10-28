@@ -25,56 +25,64 @@ class PocketQueriesController {
 
   requests = {
     getBalance: (address, height) => ({
-      url: '/v1/query/balance',
-      method: 'post',
+      url: "/v1/query/balance",
+      method: "post",
       data: {
         address,
         height,
-      }
+      },
     }),
     getTransaction: (id) => ({
-      url: '/v1/query/tx',
-      method: 'post',
+      url: "/v1/query/tx",
+      method: "post",
       data: {
         hash: id,
-      }
+      },
     }),
     getApp: (address, height) => ({
-      url: '/v1/query/app',
-      method: 'post',
+      url: "/v1/query/app",
+      method: "post",
       data: {
         address,
         height,
-      }
+      },
     }),
     getNode: (address, height) => ({
-      url: '/v1/query/node',
-      method: 'post',
+      url: "/v1/query/node",
+      method: "post",
       data: {
         address,
         height,
-      }
+      },
     }),
-    getAccountTxs: (address, received, prove, page, per_page) => ({
-      url: '/v1/query/accounttxs',
-      method: 'post',
+    getAccountTxs: (address, received, prove, page, per_page, order) => ({
+      url: "/v1/query/accounttxs",
+      method: "post",
       data: {
         address,
         prove,
         received,
         page,
         per_page,
-      }
+        order,
+      },
     }),
     sendRawTx: (fromAddress, tx) => ({
-      url: '/v1/client/rawtx',
-      method: 'post',
+      url: "/v1/client/rawtx",
+      method: "post",
       data: {
         address: fromAddress,
         raw_hex_bytes: tx,
-      }
-    })
-  }
+      },
+    }),
+    getSupportedChains: (height) => ({
+      url: "/v1/query/supportedchains",
+      method: "post",
+      data: {
+        height,
+      },
+    }),
+  };
 
   use(provider) {
     this.provider = provider;
@@ -86,8 +94,11 @@ class PocketQueriesController {
   // and responds with errors in response.data
   // in a non-consistent form.
   parseSuccessfulResponse = (response) => {
-    if (typeof response.data === 'string' && response.data.indexOf('Method Not Allowed') > -1) {
-      throw new Error('Method Not Allowed')
+    if (
+      typeof response.data === "string" &&
+      response.data.indexOf("Method Not Allowed") > -1
+    ) {
+      throw new Error("Method Not Allowed");
     }
 
     if (response.data.code && response.data.code !== 200) {
@@ -95,44 +106,58 @@ class PocketQueriesController {
     }
 
     return response.data;
-  }
+  };
 
   parseErrorResponse = (error) => {
     if (error.response && error.response.data && error.response.data.error) {
       throw error.response.data.error;
     }
 
-    if (typeof error === 'string') {
-      throw new Error(error)
+    if (typeof error === "string") {
+      throw new Error(error);
     }
 
     throw error;
-
-  }
+  };
 
   perform = async (requestName, ...args) => {
-    const reqConfig = typeof this.requests[requestName] === 'function' ?
-      this.requests[requestName](...args) :
-      this.requests[requestName];
+    const reqConfig =
+      typeof this.requests[requestName] === "function"
+        ? this.requests[requestName](...args)
+        : this.requests[requestName];
 
-    const response = await this
-      .provider
-      .http
+    const response = await this.provider.http
       .request(reqConfig)
       .then(this.parseSuccessfulResponse)
       .catch(this.parseErrorResponse);
 
     return response;
-  }
-  
+  };
+
   // does not really need to be bound to `this`, but keeping it for semantics' sake.
-  // arguments explicit forwardong for clear signature lookup, avoid using `...args` 
-  _getBalance = (address, height) => this.perform.call(this, 'getBalance', address, height) 
-  _getTransaction = (id) => this.perform.call(this, 'getTransaction', id)
-  _getApp = (address, height) => this.perform.call(this, 'getApp', address, height)
-  _getNode = (address, height) => this.perform.call(this, 'getNode', address, height)
-  _getAccountTxs = (address, received, prove, page, per_page) => this.perform.call(this, 'getAccountTxs', address, received, prove, page, per_page)
-  _sendRawTx = (fromAddress, tx) => this.perform.call(this, 'sendRawTx', fromAddress, tx)
+  // arguments explicit forwardong for clear signature lookup, avoid using `...args`
+  _getBalance = (address, height) =>
+    this.perform.call(this, "getBalance", address, height);
+  _getTransaction = (id) => this.perform.call(this, "getTransaction", id);
+  _getApp = (address, height) =>
+    this.perform.call(this, "getApp", address, height);
+  _getNode = (address, height) =>
+    this.perform.call(this, "getNode", address, height);
+  _getAccountTxs = (address, received, prove, page, per_page, order) =>
+    this.perform.call(
+      this,
+      "getAccountTxs",
+      address,
+      received,
+      prove,
+      page,
+      per_page,
+      order
+    );
+  _sendRawTx = (fromAddress, tx) =>
+    this.perform.call(this, "sendRawTx", fromAddress, tx);
+  _getSupportedchains = (height) =>
+    this.perform.call(this, "getSupportedChains", height);
 
   // For semantic separation, and for "ease of middlewaring" when necessary.
   // hook your processors to your cals in here
@@ -149,19 +174,23 @@ class PocketQueriesController {
     },
     sendRawTx: async (fromAddress, tx) => {
       const request = this.processors.rawTx.processRequest({ fromAddress, tx });
-      const rawResponse = await this._sendRawTx(request.addressHex, request.rawTxBytes);
+      const rawResponse = await this._sendRawTx(
+        request.addressHex,
+        request.rawTxBytes
+      );
       const response = this.processors.rawTx.processResponse(rawResponse);
 
       return response;
-    }
-  }
+    },
+    getSupportedChains: this._getSupportedchains,
+  };
 
   // request/response processors
   processors = {
     rawTx: {
       processRequest: ({ fromAddress, tx }) => ({
-        addressHex: fromAddress.toString('hex'),
-        rawTxBytes: tx.toString('hex'),
+        addressHex: fromAddress.toString("hex"),
+        rawTxBytes: tx.toString("hex"),
       }),
       processResponse: (response) => response,
     },
@@ -174,24 +203,26 @@ class PocketQueriesController {
           value: base64ToStr(kvObj.value),
         });
 
-        const mapEvents = (events) => events ? events.map(
-          (e) => ({ ...e, attributes: e.attributes.map(kvToStr) })
-        ) : []
+        const mapEvents = (events) =>
+          events
+            ? events.map((e) => ({
+                ...e,
+                attributes: e.attributes.map(kvToStr),
+              }))
+            : [];
 
-        const txs = response.txs.map(
-          (tx) => ({
-            ...tx,
-            tx_result: {
-              ...tx.tx_result,
-              events: mapEvents(tx.tx_result.events),
-            }
-          })
-        )
+        const txs = response.txs.map((tx) => ({
+          ...tx,
+          tx_result: {
+            ...tx.tx_result,
+            events: mapEvents(tx.tx_result.events),
+          },
+        }));
 
-        return { ...response, txs }
-      }
-   }
-  }
+        return { ...response, txs };
+      },
+    },
+  };
 }
 
 /**
@@ -200,43 +231,45 @@ class PocketQueriesController {
  */
 class GatewayClient {
   constructor(httpProvider, requestsController, config) {
-    this.controller = requestsController.use(httpProvider)
-    this.config     = config;
+    this.controller = requestsController.use(httpProvider);
+    this.config = config;
   }
 
   queries = [
-    'getBalance',
-    'getTransaction',
-    'getApp',
-    'getNode',
-    'getAccountTxs',
-    'sendRawTx',
-  ]
+    "getBalance",
+    "getTransaction",
+    "getApp",
+    "getNode",
+    "getAccountTxs",
+    "sendRawTx",
+    "getSupportedChains",
+  ];
 
   /**
    * @returns {BigInt}
    */
   async makeQuery(queryName, ...args) {
     if (!(this.queries.includes(queryName) > -1)) {
-      throw Errors
+      throw Errors;
     }
-    return await this
-      .controller
-      .query[queryName](...args);
+    return await this.controller.query[queryName](...args);
   }
 }
 
 const getGatewayClient = (baseUrl, config) => {
   const httpProvider = new AxiosProvider(baseUrl, config);
   const requestsCtrl = new PocketQueriesController();
-  const gwClient = new GatewayClient(httpProvider, requestsCtrl, { baseUrl, ...config });
+  const gwClient = new GatewayClient(httpProvider, requestsCtrl, {
+    baseUrl,
+    ...config,
+  });
 
   return gwClient;
-}
+};
 
 export {
   AxiosProvider,
   PocketQueriesController,
   GatewayClient,
   getGatewayClient,
-}
+};

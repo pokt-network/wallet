@@ -9,18 +9,29 @@ import IconUpload from "../../icons/iconUpload";
 import PasswordInput from "../../components/input/passwordInput";
 import { getDataSource } from "../../datasource";
 import Link from "../../components/link/link";
-import ErrorLabel from "../../components/error-label/error";
+import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 import {
   validationError,
   VALIDATION_ERROR_TYPES,
 } from "../../utils/validations";
 import { useUser } from "../../context/userContext";
+// import LedgerIcon from "../../utils/images/ledger.png";
+// import useTransport from "../../hooks/useTransport";
+import TroubleConnectingModal from "../../components/modals/troubleConnecting/troubleConnecting";
+// import { ROUTES } from "../../utils/routes";
 
 const dataSource = getDataSource();
 
 export default function ImportPocket() {
   const history = useHistory();
   const { updateUser } = useUser();
+  // const {
+  //   onSelectDevice,
+  //   setPocketApp,
+  //   isHardwareWalletLoading,
+  //   setIsHardwareWalletLoading,
+  // } = useTransport();
+  //TODO: refactor with a reducer
   const [fileName, setFileName] = useState("");
   const [ppk, setPpk] = useState("");
   const [privateKey, setPrivateKey] = useState("");
@@ -32,6 +43,8 @@ export default function ImportPocket() {
   const [filePassphrase, setFilePassphrase] = useState("");
   const [privKeyPassphrase, setPrivKeyPassphrase] = useState("");
   const [currentImportOption, setCurrentImportOption] = useState(undefined);
+  // const [ledgerError, setLedgerError] = useState("");
+  const [troubleConnectingOpen, setTroubleConnectingOpen] = useState(false);
 
   const parseFileInputContent = async (input) => {
     if (input && input.files.length > 0) {
@@ -96,7 +109,6 @@ export default function ImportPocket() {
       );
 
       if (typeGuard(account, Error)) {
-        console.error(account);
         setPpkPassphraseError(account.message);
         return false;
       }
@@ -172,6 +184,27 @@ export default function ImportPocket() {
     }
   }, [history, privKeyPassphrase, privateKey, updateUser]);
 
+  // const importAccountFromLedger = useCallback(async () => {
+  //   setIsHardwareWalletLoading(true);
+  //   setLedgerError("");
+  //   const [success, app] = await onSelectDevice();
+  //   if (!success) {
+  //     setLedgerError(`${app.name}: ${app.message}`);
+  //     setIsHardwareWalletLoading(false);
+  //     setTroubleConnectingOpen(true);
+  //     return;
+  //   }
+
+  //   setPocketApp(app);
+  //   setLedgerError("");
+  //   setIsHardwareWalletLoading(false);
+  //   setTroubleConnectingOpen(false);
+  //   history.push({
+  //     pathname: ROUTES.selectAccount,
+  //     data: true,
+  //   });
+  // }, [onSelectDevice, setPocketApp, setIsHardwareWalletLoading, history]);
+
   const passPhraseChange = useCallback((type, { target }) => {
     const { value } = target;
 
@@ -224,7 +257,7 @@ export default function ImportPocket() {
                   accept=".json"
                 />
               </label>
-              <ErrorLabel message={ppkError} show={ppkError} />
+              <IconWithLabel message={ppkError} show={ppkError} type="error" />
             </div>
 
             <div className="error-label-container">
@@ -237,9 +270,10 @@ export default function ImportPocket() {
                     : undefined
                 }
               />
-              <ErrorLabel
+              <IconWithLabel
                 message={ppkPassphraseError}
                 show={ppkPassphraseError}
+                type="error"
               />
             </div>
             <Button
@@ -268,7 +302,11 @@ export default function ImportPocket() {
                     : undefined
                 }
               />
-              <ErrorLabel message={privateKeyError} show={privateKeyError} />
+              <IconWithLabel
+                message={privateKeyError}
+                show={privateKeyError}
+                type="error"
+              />
             </div>
             <p className="temporary-passphrase">
               Please create a temporary passphrase to encrypt your Private key
@@ -286,9 +324,10 @@ export default function ImportPocket() {
                     : undefined
                 }
               />
-              <ErrorLabel
+              <IconWithLabel
                 message={privateKeyPassphraseError}
                 show={privateKeyPassphraseError}
+                type="error"
               />
             </div>
             <Button
@@ -300,11 +339,51 @@ export default function ImportPocket() {
             </Button>
           </Accordion>
 
+          {/* <Accordion
+            text={
+              <>
+                {" "}
+                Connect{" "}
+                <img
+                  src={LedgerIcon}
+                  alt="Ledger wallet"
+                  className="ledger-icon"
+                />
+              </>
+            }
+            open={currentImportOption === 2}
+            onClick={() => onAccordionClick(2)}
+          >
+            <div className="error-label-container">
+              <p className="ledger-description">
+                Connect your hardware Wallet directly to your computer.
+              </p>
+              <IconWithLabel
+                message={ledgerError}
+                show={ledgerError}
+                className="ledger-error"
+                type="error"
+              />
+              <Button
+                mode="primary"
+                className="connect-button"
+                onClick={importAccountFromLedger}
+                disabled={isHardwareWalletLoading}
+              >
+                {isHardwareWalletLoading ? "Verifying" : "Connect"}
+              </Button>
+            </div>
+          </Accordion> */}
+
           <p className="create-link">
             Don't have a wallet? <Link to="/create">Create Wallet</Link>{" "}
           </p>
         </div>
       </ImportPocketContent>
+      <TroubleConnectingModal
+        open={troubleConnectingOpen}
+        onClose={() => setTroubleConnectingOpen(false)}
+      />
     </Layout>
   );
 }

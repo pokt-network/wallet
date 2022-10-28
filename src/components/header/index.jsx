@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
 import Wrapper from "../wrapper";
 import Menu from "./menu";
 import MobileButton from "./mobile-button";
@@ -15,7 +15,7 @@ import IconDollarSign from "../../icons/iconDollarSign";
 import { PUBLIC_ROUTES, ROUTES } from "../../utils/routes";
 import { useUser } from "../../context/userContext";
 import { useTx } from "../../context/txContext";
-import { useHistory } from "react-router-dom";
+import useTransport from "../../hooks/useTransport";
 import useWindowSize from "../../hooks/useWindowSize";
 
 export default function Header() {
@@ -23,6 +23,7 @@ export default function Header() {
   const history = useHistory();
   const { width } = useWindowSize();
   const { user, removeUser } = useUser();
+  const { pocketApp, removeTransport } = useTransport();
   const { removeTx } = useTx();
   const [isMenuHidden, setIsMenuHidden] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -34,12 +35,15 @@ export default function Header() {
   const onLogOut = useCallback(() => {
     removeUser();
     removeTx();
+    removeTransport();
     history.push(ROUTES.import);
-  }, [removeUser, removeTx, history]);
+  }, [removeUser, removeTx, removeTransport, history]);
 
   const loggedInCheck = useCallback(() => {
     const { addressHex, publicKeyHex, ppk } = user;
-    const userInfo = addressHex && publicKeyHex && ppk;
+    const { transport } = pocketApp;
+    const userInfo =
+      transport && addressHex ? true : addressHex && publicKeyHex && ppk;
 
     if (userInfo) {
       setIsLoggedIn(true);
@@ -49,7 +53,7 @@ export default function Header() {
         history.push(ROUTES.home);
       }
     }
-  }, [user, history, location]);
+  }, [user, history, location, pocketApp]);
 
   useEffect(() => {
     loggedInCheck();
@@ -64,7 +68,7 @@ export default function Header() {
         <Menu isHidden={isMenuHidden}>
           <StyledUl>
             <div className="separator" />
-            {isLoggedIn ? (
+            {isLoggedIn && (
               <StyledLi
                 className={
                   location.pathname === ROUTES.account ? "active" : undefined
@@ -80,7 +84,7 @@ export default function Header() {
                   Account Detail
                 </Link>
               </StyledLi>
-            ) : null}
+            )}
             <StyledLi>
               <a tartget="_target" href={Config.BUY_POKT_BASE_URL}>
                 {width <= 767 && (
@@ -89,7 +93,33 @@ export default function Header() {
                 Buy POKT
               </a>
             </StyledLi>
-            {isLoggedIn ? (
+            {isLoggedIn && (
+              <StyledLi>
+                <Link
+                  to={ROUTES.staking}
+                  className={
+                    location.pathname === ROUTES.staking ? "active" : undefined
+                  }
+                >
+                  Staking
+                </Link>
+              </StyledLi>
+            )}
+            {isLoggedIn && (
+              <StyledLi>
+                <Link
+                  to={ROUTES.nonCustodial}
+                  className={
+                    location.pathname === ROUTES.nonCustodial
+                      ? "active"
+                      : undefined
+                  }
+                >
+                  Manage Non-Custodial Nodes
+                </Link>
+              </StyledLi>
+            )}
+            {isLoggedIn && (
               <StyledLi>
                 <button
                   className="nav-button"
@@ -101,7 +131,7 @@ export default function Header() {
                   {isMenuHidden && <IconLogOut className="log-out-icon" />}
                 </button>
               </StyledLi>
-            ) : null}
+            )}
           </StyledUl>
         </Menu>
         <MobileButton onClick={onToggleMenu} isOpen={!isMenuHidden} />
