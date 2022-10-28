@@ -339,7 +339,7 @@ export default function ImportPocket() {
             </Button>
           </Accordion>
 
-          <Accordion
+          {/* <Accordion
             text={
               <>
                 {" "}
@@ -373,7 +373,7 @@ export default function ImportPocket() {
                 {isHardwareWalletLoading ? "Verifying" : "Connect"}
               </Button>
             </div>
-          </Accordion>
+          </Accordion> */}
 
           <p className="create-link">
             Don't have a wallet? <Link to="/create">Create Wallet</Link>{" "}
