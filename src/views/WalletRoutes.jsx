@@ -9,8 +9,10 @@ import TransactionDetail from "./transaction-detail/transactionDetail";
 import AccountDetail from "./account-detail/accountDetail";
 import Header from "../components/header";
 import Footer from "../components/footer";
-import { TransportProvider } from "../context/transportContext";
 import { ROUTES } from "../utils/routes";
+import NonCustodial from "./non-custodial/nonCustodial";
+import SelectAccount from "./select-account/selectAccount";
+import Staking from "./staking/staking";
 
 export default function WalletRoutes() {
   const theme = useTheme();
@@ -56,20 +58,25 @@ export default function WalletRoutes() {
           <Route exact path={ROUTES.home} component={Home}></Route>
           <Route exact path={ROUTES.import} component={ImportPocket}></Route>
           <Route exact path={ROUTES.create} component={Create}></Route>
+          <Route
+            exact
+            path={ROUTES.selectAccount}
+            component={SelectAccount}
+          ></Route>
 
-          <TransportProvider>
-            <Route exact path={ROUTES.send} component={Send}></Route>
-            <Route
-              exact
-              path={ROUTES.account}
-              component={AccountDetail}
-            ></Route>
-            <Route
-              exact
-              path={ROUTES.txDetail}
-              component={TransactionDetail}
-            ></Route>
-          </TransportProvider>
+          <Route exact path={ROUTES.send} component={Send}></Route>
+          <Route exact path={ROUTES.account} component={AccountDetail}></Route>
+          <Route
+            exact
+            path={ROUTES.txDetail}
+            component={TransactionDetail}
+          ></Route>
+          <Route
+            exact
+            path={ROUTES.nonCustodial}
+            component={NonCustodial}
+          ></Route>
+          <Route exact path={ROUTES.staking} component={Staking}></Route>
         </div>
       </Switch>
       <Footer />

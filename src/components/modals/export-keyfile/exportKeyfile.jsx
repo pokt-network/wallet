@@ -5,7 +5,7 @@ import ExportKeyfileContainer from "./container";
 import PasswordInput from "../../input/passwordInput";
 import { useCallback } from "react";
 import { getDataSource } from "../../../datasource";
-import ErrorLabel from "../../error-label/error";
+import IconWithLabel from "../../iconWithLabel/iconWithLabel";
 import { typeGuard } from "@pokt-network/pocket-js";
 import { isPassphraseValid } from "../../../utils/validations";
 
@@ -78,10 +78,11 @@ export default function ExportKeyfile({ visible, onClose }) {
           className="private-key-input"
           onChange={({ target }) => setPrivateKey(target.value)}
         />
-        <ErrorLabel
+        <IconWithLabel
           message={privateKeyError}
           show={privateKeyError}
           className="error"
+          type="error"
         />
 
         <PasswordInput
@@ -90,10 +91,11 @@ export default function ExportKeyfile({ visible, onClose }) {
           className="keyfile-passphrase-input"
           onChange={({ target }) => setPassphrase(target.value)}
         />
-        <ErrorLabel
+        <IconWithLabel
           message={passphraseError}
           show={passphraseError}
           className="error"
+          type="error"
         />
 
         <div className="export-button-container">

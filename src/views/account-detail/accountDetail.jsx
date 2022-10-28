@@ -12,10 +12,13 @@ import sentReceivedIcon from "../../utils/images/icons/sentReceived.svg";
 import StakingOption from "../../components/account-detail/stakingOption";
 import RevealPrivateKey from "../../components/modals/private-key/revealPrivateKey";
 import UnjailUnstake from "../../components/modals/unjail-unstake/unjailUnstake";
-import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 import { useUser } from "../../context/userContext";
+import useTransport from "../../hooks/useTransport";
 import TransactionsTable from "../../components/transactionsTable/transactionsTable";
 import ExportKeyfile from "../../components/modals/export-keyfile/exportKeyfile";
+import { STDX_MSG_TYPES } from "../../utils/validations";
+import { UPOKT } from "../../utils/utils";
+import { useLoader } from "../../context/loaderContext";
 
 const dataSource = getDataSource();
 
@@ -23,6 +26,9 @@ export default function AccountDetail() {
   const history = useHistory();
   const { user } = useUser();
   const { addressHex, ppk, publicKeyHex } = user;
+  const { pocketApp, isUsingHardwareWallet } = useTransport();
+  const { updateLoader } = useLoader();
+  //TODO: refactor with a reducer
   const [poktsBalance, setPoktsBalance] = useState(0);
   const [, setUsdBalance] = useState(0);
   const [appStakedTokens, setAppStakedTokens] = useState(0);
@@ -37,7 +43,6 @@ export default function AccountDetail() {
   );
   const [txList, setTxList] = useState([]);
   const [price, setPrice] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [priceProvider, setPriceProvider] = useState("");
   const [priceProviderLink, setPriceProviderLink] = useState("");
   const [isExportKeyfileVisible, setIsExportKeyfileVisible] = useState(false);
@@ -49,8 +54,8 @@ export default function AccountDetail() {
   }, [maxTxListCount]);
 
   const pushToTxDetail = useCallback(
-    (txHash, useCache) => {
-      if (!addressHex || !publicKeyHex || !ppk) {
+    (txHash, useCache, comesFromSend) => {
+      if (!isUsingHardwareWallet && (!addressHex || !publicKeyHex || !ppk)) {
         console.error(
           "No account available, please create or import an account"
         );
@@ -60,16 +65,16 @@ export default function AccountDetail() {
       if (txHash) {
         history.push({
           pathname: "/transaction-detail",
-          data: { txHash },
+          data: { txHash, comesFromSend },
           loadFromCache: useCache,
         });
       }
     },
-    [history, addressHex, publicKeyHex, ppk]
+    [history, addressHex, publicKeyHex, ppk, isUsingHardwareWallet]
   );
 
   const pushToSend = useCallback(() => {
-    if (!addressHex || !publicKeyHex || !ppk) {
+    if (!addressHex || !publicKeyHex || (!ppk && !pocketApp?.transport)) {
       console.error("No account available, please create an account");
       return;
     }
@@ -77,23 +82,32 @@ export default function AccountDetail() {
     history.push({
       pathname: "/send",
     });
-  }, [history, addressHex, publicKeyHex, ppk]);
+  }, [history, addressHex, publicKeyHex, ppk, pocketApp]);
 
   const getTransactionData = useCallback((stdTx) => {
-    if (stdTx.msg.type === "pos/MsgUnjail") {
+    if (
+      stdTx.msg.type === STDX_MSG_TYPES.unjail ||
+      stdTx.msg.type === STDX_MSG_TYPES.unjail8
+    ) {
       return { type: "unjail", amount: 0 };
-    } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
+    } else if (
+      stdTx.msg.type === STDX_MSG_TYPES.unstake ||
+      stdTx.msg.type === STDX_MSG_TYPES.unstake8
+    ) {
       return { type: "unstake", amount: 0 };
-    } else if (stdTx.msg.type === "pos/MsgStake") {
-      const value = stdTx.msg.value.value / 1000000;
+    } else if (
+      stdTx.msg.type === STDX_MSG_TYPES.stake ||
+      stdTx.msg.type === STDX_MSG_TYPES.stake8
+    ) {
+      const value = stdTx.msg.value.value / UPOKT;
       return { type: "stake", amount: value };
-    } else if (stdTx.msg.type === "pos/Send") {
-      const amount = stdTx.msg.value.amount / 1000000;
+    } else if (stdTx.msg.type === STDX_MSG_TYPES.send) {
+      const amount = stdTx.msg.value.amount / UPOKT;
       return { type: "sent", amount: amount };
     } else {
       const sendAmount = Object.keys(stdTx.msg).includes("amount")
-        ? stdTx.msg.amount / 1000000
-        : stdTx.msg.value.amount / 1000000;
+        ? stdTx.msg.amount / UPOKT
+        : stdTx.msg.value.amount / UPOKT;
       return { type: "sent", amount: sendAmount };
     }
   }, []);
@@ -138,15 +152,12 @@ export default function AccountDetail() {
   );
 
   const getTransactions = useCallback(async () => {
-    const allTxs = await dataSource.getAllTransactions(
-      addressHex,
-      maxTxListCount
-    );
+    const allTxs = await dataSource.getAllTransactions(addressHex);
 
     if (allTxs !== undefined) {
       updateTransactionList(allTxs);
     }
-  }, [addressHex, maxTxListCount, updateTransactionList]);
+  }, [addressHex, updateTransactionList]);
 
   const getBalance = useCallback(async (addressHex) => {
     if (addressHex) {
@@ -181,7 +192,7 @@ export default function AccountDetail() {
     const isUnjailing = localStorage.getItem("unjailing");
 
     if (node?.tokens) {
-      obj.stakedTokens = (Number(node.tokens.toString()) / 1000000).toFixed(3);
+      obj.stakedTokens = (Number(node.tokens.toString()) / UPOKT).toFixed(3);
     }
 
     if (node?.status === 1) {
@@ -218,9 +229,9 @@ export default function AccountDetail() {
 
     // Update the staked amount
     if (app?.staked_tokens) {
-      obj.stakedTokens = (
-        Number(app.staked_tokens.toString()) / 1000000
-      ).toFixed(3);
+      obj.stakedTokens = (Number(app.staked_tokens.toString()) / UPOKT).toFixed(
+        3
+      );
     }
 
     if (app?.status === 1) {
@@ -272,8 +283,8 @@ export default function AccountDetail() {
   );
 
   useEffect(() => {
-    setLoading(true);
-    if (addressHex && publicKeyHex && ppk) {
+    updateLoader(true);
+    if (addressHex && publicKeyHex && (ppk || pocketApp?.transport)) {
       refreshView(addressHex);
     } else {
       localStorage.clear();
@@ -281,22 +292,30 @@ export default function AccountDetail() {
         pathname: "/",
       });
     }
-  }, [refreshView, history, addressHex, publicKeyHex, ppk]);
+  }, [
+    refreshView,
+    history,
+    addressHex,
+    publicKeyHex,
+    ppk,
+    pocketApp,
+    updateLoader,
+  ]);
 
   useEffect(() => {
     if (poktsBalance && txList && publicKeyHex && addressHex) {
-      setLoading(false);
+      updateLoader(false);
     }
-  }, [poktsBalance, txList, publicKeyHex, addressHex]);
 
-  if (!addressHex || !publicKeyHex) {
+    return () => updateLoader(false);
+  }, [poktsBalance, txList, publicKeyHex, addressHex, updateLoader]);
+
+  if (!addressHex || !publicKeyHex || (!ppk && !pocketApp?.transport)) {
     localStorage.clear();
     history.push({
       pathname: "/",
     });
   }
-
-  if (loading) return <AnimatedLogo />;
 
   return (
     <Layout
@@ -401,12 +420,14 @@ export default function AccountDetail() {
         <CopyButton text={publicKeyHex} width={488} />
 
         <section className="actions">
-          <Button
-            className="reveal-private-key"
-            onClick={() => setIsPkRevealModalVisible(true)}
-          >
-            Reveal Private Key
-          </Button>
+          {!isUsingHardwareWallet && (
+            <Button
+              className="reveal-private-key"
+              onClick={() => setIsPkRevealModalVisible(true)}
+            >
+              Reveal Private Key
+            </Button>
+          )}
 
           <Button
             className="export-keyfile"
@@ -435,6 +456,7 @@ export default function AccountDetail() {
           visible={isUnjailModalVisible}
           onClose={() => setIsUnjailModalVisible(false)}
           pushToTxDetail={pushToTxDetail}
+          nodeAddress={addressHex}
         />
 
         <UnjailUnstake
@@ -443,6 +465,7 @@ export default function AccountDetail() {
           visible={isUnstakeModalVisible}
           onClose={() => setIsUnstakeModalVisible(false)}
           pushToTxDetail={pushToTxDetail}
+          nodeAddress={addressHex}
         />
       </AccountContent>
     </Layout>

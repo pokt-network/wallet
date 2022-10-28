@@ -5,6 +5,14 @@ export const ROUTES = {
   send: "/send",
   account: "/account",
   txDetail: "/transaction-detail",
+  nonCustodial: "/non-custodial",
+  selectAccount: "/select-account",
+  staking: "/staking",
 };
 
-export const PUBLIC_ROUTES = [ROUTES.home, ROUTES.import, ROUTES.create];
+export const PUBLIC_ROUTES = [
+  ROUTES.home,
+  ROUTES.import,
+  ROUTES.create,
+  ROUTES.selectAccount,
+];

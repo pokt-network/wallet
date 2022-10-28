@@ -13,6 +13,8 @@ import pendingImg from "../../utils/images/pending.png";
 import IconTXStatus from "../../icons/iconTxStatus";
 import AnimatedLogo from "../../components/animated-logo/animatedLogo";
 import { useTx } from "../../context/txContext";
+import { STDX_MSG_TYPES } from "../../utils/validations";
+import { UPOKT } from "../../utils/utils";
 
 const dataSource = getDataSource();
 const EXPLORER_BASE_URL = "https://pokt.watch";
@@ -52,25 +54,38 @@ export default function TransactionDetail() {
   );
 
   const getTransactionData = useCallback((stdTx) => {
-    if (stdTx.msg.type === "pos/MsgUnjail") {
+    if (
+      stdTx.msg.type === STDX_MSG_TYPES.unjail ||
+      stdTx.msg.type === STDX_MSG_TYPES.unjail8
+    ) {
       return {
         type: "Unjail",
         from: stdTx.msg.value.address,
         to: stdTx.msg.value.address,
         amount: 0,
       };
-    } else if (stdTx.msg.type === "pos/MsgBeginUnstake") {
+    } else if (
+      stdTx.msg.type === STDX_MSG_TYPES.unstake ||
+      stdTx.msg.type === STDX_MSG_TYPES.unstake8
+    ) {
       return {
         type: "Unstake",
         from: stdTx.msg.value.validator_address,
         to: stdTx.msg.value.validator_address,
         amount: 0,
       };
-    } else if (stdTx.msg.type === "pos/MsgStake") {
+    } else if (stdTx.msg.type === STDX_MSG_TYPES.stake) {
       return {
         type: "Stake",
         from: "Myself",
         to: "Myself",
+        amount: stdTx.msg.value.value,
+      };
+    } else if (stdTx.msg.type === STDX_MSG_TYPES.stake8) {
+      return {
+        type: "Stake",
+        outputAddress: stdTx.msg.value.output_address,
+        operatorPublicKey: stdTx.msg.value.public_key.value,
         amount: stdTx.msg.value.value,
       };
     } else {
@@ -100,6 +115,8 @@ export default function TransactionDetail() {
           from: fromAddress,
           to: toAddress,
           amount,
+          operatorPublicKey = "",
+          outputAddress = "",
         } = getTransactionData(txResponse.stdTx);
 
         const txSummary = {
@@ -111,6 +128,8 @@ export default function TransactionDetail() {
           type: transactiontype,
           height: txResponse.height,
           memo: txResponse.stdTx.memo,
+          operatorPublicKey,
+          outputAddress,
         };
 
         updateTx(
@@ -119,17 +138,19 @@ export default function TransactionDetail() {
           txSummary.to,
           txSummary.amount,
           txSummary.hash,
-          Number(Config.TX_FEE) / 1000000,
+          Number(Config.TX_FEE) / UPOKT,
           txSummary.status,
           "sent",
           txSummary.height,
-          txSummary.memo
+          txSummary.memo,
+          txSummary.operatorPublicKey,
+          txSummary.outputAddress
         );
 
         updateTxInformation(undefined, {
           sentAmount: txSummary.amount,
           hash: txSummary.hash,
-          fee: Number(Config.TX_FEE) / 1000000,
+          fee: Number(Config.TX_FEE) / UPOKT,
           type: txSummary.type,
           fromAddress: txSummary.from,
           toAddress: txSummary.to,
@@ -137,6 +158,8 @@ export default function TransactionDetail() {
           sentStatus: "Sent",
           height: txSummary.height,
           memo: txSummary.memo,
+          operatorPublicKey: txSummary.operatorPublicKey,
+          outputAddress: txSummary.outputAddress,
         });
 
         setGetTxWasCalled(true);
@@ -226,14 +249,14 @@ export default function TransactionDetail() {
             <p>
               {location?.data?.comesFromSend
                 ? tx?.sentAmount
-                : tx?.sentAmount / 1000000}&nbsp;
-              POKT
+                : tx?.sentAmount / UPOKT}
+              &nbsp; POKT
             </p>
           </div>
 
           <div className="tx-detail-row">
             <h2>TX fee</h2>
-            <p>{tx?.fee} POKT</p>
+            <p>{tx?.txFee} POKT</p>
           </div>
 
           <div className="tx-detail-row">
@@ -241,15 +264,36 @@ export default function TransactionDetail() {
             <p>{tx?.type}</p>
           </div>
 
-          <div className="tx-detail-row">
-            <h2>To address</h2>
-            <Link
-              href={`${EXPLORER_BASE_URL}/address/${tx?.toAddress}`}
-              className="to-address"
-            >
-              {tx?.toAddress}
-            </Link>
-          </div>
+          {tx?.toAddress && (
+            <div className="tx-detail-row">
+              <h2>To address</h2>
+              <Link
+                href={`${EXPLORER_BASE_URL}/address/${tx?.toAddress}`}
+                className="to-address"
+              >
+                {tx?.toAddress}
+              </Link>
+            </div>
+          )}
+
+          {tx?.outputAddress && (
+            <div className="tx-detail-row">
+              <h2>Output Address</h2>
+              <Link
+                href={`${EXPLORER_BASE_URL}/address/${tx?.outputAddress}`}
+                className="to-address"
+              >
+                {tx?.outputAddress}
+              </Link>
+            </div>
+          )}
+
+          {tx?.operatorPublicKey && (
+            <div className="tx-detail-row">
+              <h2 className="overflow">Operator Public Key</h2>
+              <p className="overflow">{tx?.operatorPublicKey}</p>
+            </div>
+          )}
 
           <div className="tx-detail-row">
             <h2>Block #</h2>
