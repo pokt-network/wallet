@@ -167,12 +167,37 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
             output address.
           </Banner>
         )}
-        {/* Do we have a way to conditionally tell if it's the operator
-	      or output address from this component? */}
+        {/* user.address === node.outputAddress && user.pubKey === node.operatorPubKey */}
         <p className="description">
-          Your account is a custodian of the below node. Through this interface.
-          you can only view and unstake the node. For more information and
-          additional commands, please see the{" "}
+          Your account is the a custodial owner of the below node. Through this
+          interface. you can only view and unstake the node. Running the unstake
+          command measns that the currently staked tokens will be available on
+          this account after the unstaking period is over. For more information
+          and additional commands, please see the{" "}
+          <Link href="https://docs.pokt.network/core/specs/cli/node">
+            documentation.
+          </Link>
+        </p>
+        {/* user.address === node.outputAddress */}
+        <p className="description">
+          Your account is the a output for the below node. Through this
+          interface. you can only view and unstake the node. Running the unstake
+          command measns that the currently staked tokens will be available on
+          this account after the unstaking period is over. For more information
+          and additional commands, please see the{" "}
+          <Link href="https://docs.pokt.network/core/specs/cli/node">
+            documentation.
+          </Link>
+        </p>
+        {/*  user.pubKey === node.operatorPubKey */}
+        <p className="description">
+          Your account is the output account for the below node. Through this
+          interface. you can only view and unstake the node. Running the unstake
+          command measns that the currently staked tokens will be available on
+          the output account [OUTPUT ADDRESS HERE] after the unstaking period is
+          over. The unstaked tokens will not be available from on this account
+          once unstaking has occurred. For more information and additional
+          commands, please see the{" "}
           <Link href="https://docs.pokt.network/core/specs/cli/node">
             documentation.
           </Link>
