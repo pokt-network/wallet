@@ -140,7 +140,9 @@ export default function StakingModal({
       "Pending",
       "Pending",
       undefined,
-      "Stake Node - Pocket wallet"
+      "Stake Node - Pocket wallet",
+      operatorPublicKey,
+      outputAddress
     );
 
     history.push({

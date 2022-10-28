@@ -167,41 +167,47 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
             output address.
           </Banner>
         )}
-        {/* user.address === node.outputAddress && user.pubKey === node.operatorPubKey */}
-        <p className="description">
-          Your account is the a custodial owner of the below node. Through this
-          interface. you can only view and unstake the node. Running the unstake
-          command measns that the currently staked tokens will be available on
-          this account after the unstaking period is over. For more information
-          and additional commands, please see the{" "}
-          <Link href="https://docs.pokt.network/core/specs/cli/node">
-            documentation.
-          </Link>
-        </p>
-        {/* user.address === node.outputAddress */}
-        <p className="description">
-          Your account is the a output for the below node. Through this
-          interface. you can only view and unstake the node. Running the unstake
-          command measns that the currently staked tokens will be available on
-          this account after the unstaking period is over. For more information
-          and additional commands, please see the{" "}
-          <Link href="https://docs.pokt.network/core/specs/cli/node">
-            documentation.
-          </Link>
-        </p>
-        {/*  user.pubKey === node.operatorPubKey */}
-        <p className="description">
-          Your account is the output account for the below node. Through this
-          interface. you can only view and unstake the node. Running the unstake
-          command measns that the currently staked tokens will be available on
-          the output account [OUTPUT ADDRESS HERE] after the unstaking period is
-          over. The unstaked tokens will not be available from on this account
-          once unstaking has occurred. For more information and additional
-          commands, please see the{" "}
-          <Link href="https://docs.pokt.network/core/specs/cli/node">
-            documentation.
-          </Link>
-        </p>
+        {user.user.addressHex === node.output_address &&
+          user.user.publicKeyHex === node.public_key && (
+            <p className="description">
+              Your account is the a custodial owner of the below node. Through
+              this interface. you can only view and unstake the node. Running
+              the unstake command measns that the currently staked tokens will
+              be available on this account after the unstaking period is over.
+              For more information and additional commands, please see the{" "}
+              <Link href="https://docs.pokt.network/core/specs/cli/node">
+                documentation.
+              </Link>
+            </p>
+          )}
+        {user.user.addressHex === node.output_address &&
+          user.user.publicKeyHex !== node.public_key && (
+            <p className="description">
+              Your account is the a output for the below node. Through this
+              interface. you can only view and unstake the node. Running the
+              unstake command measns that the currently staked tokens will be
+              available on this account after the unstaking period is over. For
+              more information and additional commands, please see the{" "}
+              <Link href="https://docs.pokt.network/core/specs/cli/node">
+                documentation.
+              </Link>
+            </p>
+          )}
+        {user.user.publicKeyHex === node.public_key &&
+          user.user.addressHex !== node.output_address && (
+            <p className="description">
+              Your account is the operator account for the below node. Through
+              this interface. you can only view and unstake the node. Running
+              the unstake command measns that the currently staked tokens will
+              be available on the output account {node.output_address} after the
+              unstaking period is over. The unstaked tokens will not be
+              available from on this account once unstaking has occurred. For
+              more information and additional commands, please see the{" "}
+              <Link href="https://docs.pokt.network/core/specs/cli/node">
+                documentation.
+              </Link>
+            </p>
+          )}
         <JailedStatus
           nodeStakingStatus={nodeStakingStatus}
           setIsUnjailModalVisible={setIsUnjailModalVisible}
