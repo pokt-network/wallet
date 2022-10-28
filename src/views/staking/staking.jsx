@@ -28,6 +28,12 @@ export default function Staking() {
       return;
     }
 
+    if (selectedChains.length > 15) {
+      // TODO: We need to have this value pulled from the "pos/MaximumChains" param instead of hardcoding
+      setError("Only a maximum of 15 chains can be selected.");
+      return;
+    }
+
     stakeData.current = data;
     setIsModalOpen(true);
     setError("");
@@ -87,9 +93,19 @@ export default function Staking() {
   }, []);
 
   return (
-    <Layout title={<h1 className="title">Node Stake</h1>}>
+    <Layout title={<h1 className="title">Stake Node</h1>}>
+      {/* Is there anything keeping the ordering from being:
+        - Amount
+	- Operator
+	- Output
+	- Service URI
+	- Relay Chains
+	*/}
       <StakingContent>
         <form onSubmit={(e) => handleSubmit(e)}>
+          {/* The Service URI is the URL that the node is advertised as available for service at.
+
+	   If Staking Non-Custodially, this value needs to be provided by your operator. */}
           <TextInput
             placeholder="Service URI"
             name="serviceURI"
@@ -106,7 +122,10 @@ export default function Staking() {
             required
           />
           <IconQuestion />
+          {/* The Operator Public Key is the Public Key associated with the account that
+	   will be located on the node signing transactions.
 
+	   If Staking Non-Custodially, this value needs to be provided by your operator.*/}
           <TextInput
             key="operatorPublicKey"
             placeholder="Operator Public Key"
@@ -114,14 +133,20 @@ export default function Staking() {
             required
           />
           <IconQuestion />
+          {/* The Output Address is the address that rewards will be sent to.
+
+	   You should only change this if you want rewards to go to a wallet
+	   that is different from this one. */}
           <TextInput
             key="outputAddress"
-            placeholder="Output Address"
+            placeholder="Output Address" // can we placeholder the wallet address here?
             name="outputAddress"
             required
           />
           <IconQuestion />
+          {/* These are the relay chains that the operator will be providing service for.
 
+	   If Staking Non-Custodially, these values need to be provided by your operator. */}
           <div className="relay-chains-container">
             <TextInput
               placeholder="Select Chains IDs"

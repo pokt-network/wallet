@@ -30,7 +30,7 @@ function Validate({
   const [validateStatus, setValidateStatus] = useState("");
   const validateStatusMessage =
     validateStatus === "error"
-      ? "Sorry, your account does not have access to interact with this node"
+      ? "Sorry, your account is neither the operator or output address for the given node."
       : validateStatus === "loading"
       ? "loading"
       : "";
@@ -51,9 +51,7 @@ function Validate({
       const isUnjailing = localStorage.getItem("unjailing");
 
       if (node?.tokens) {
-        obj.stakedTokens = (Number(node.tokens.toString()) / UPOKT).toFixed(
-          3
-        );
+        obj.stakedTokens = (Number(node.tokens.toString()) / UPOKT).toFixed(3);
       }
 
       if (node?.status === 1) {
@@ -104,11 +102,12 @@ function Validate({
   }, [addNode, address, goNext, user.user]);
 
   return (
-    <Layout title={<h1 className="title">Validate Access</h1>}>
+    <Layout title={<h1 className="title">Verify Node Access</h1>}>
       <ValidateContent>
         <p className="description">
-          Please enter the node address. Note that you must have custodial
-          access to this node to view details about this node.
+          Please enter the operator address of the node. Note, that your account
+          must either be the operator or output account associated with the node
+          to either view, or manage the node.
         </p>
         <TextInput
           onChange={({ target }) => setAddress(target.value)}
@@ -159,14 +158,17 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
   );
 
   return (
-    <Layout title={<h1 className="title">Custodial Nodes</h1>}>
+    <Layout title={<h1 className="title">Manage Non-Custodial Nodes</h1>}>
       <DetailContent>
         {nodeStakingStatus === "UNSTAKING" && (
           <Banner mode="info" title="Node Unstake In Progress">
             This node is currently being unstaked. After this is complete, the
-            POKT balance from this node will be available in your account.
+            POKT balance from this node will be available in the account of the
+            output address.
           </Banner>
         )}
+        {/* Do we have a way to conditionally tell if it's the operator
+	      or output address from this component? */}
         <p className="description">
           Your account is a custodian of the below node. Through this interface.
           you can only view and unstake the node. For more information and
@@ -179,7 +181,7 @@ function Detail({ nodeStakingStatus, nodeStakedTokens, address, user, node }) {
           nodeStakingStatus={nodeStakingStatus}
           setIsUnjailModalVisible={setIsUnjailModalVisible}
         />
-        <h3 className="copy-title">Address</h3>
+        <h3 className="copy-title">Operator Address</h3>
         <CopyButton className="address-input" text={address} width={488} />
         <NodeAppStatus
           nodeStakingStatus={nodeStakingStatus}
