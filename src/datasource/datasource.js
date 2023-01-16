@@ -316,7 +316,7 @@ export class DataSource {
       fee[0].amount,
       entropy,
       "Upokt",
-      memo ? memo : "Pocket Wallet"
+      memo
     );
 
     if (typeGuard(unsignedTransaction, RpcError)) {
@@ -336,7 +336,6 @@ export class DataSource {
       console.log(`Failed to process transaction with error: ${rawTxOrError}`);
       return new Error(rawTxOrError.message);
     }
-
     let rawTxResponse;
     try {
       rawTxResponse = await this.gwClient.makeQuery(
