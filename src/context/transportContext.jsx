@@ -80,26 +80,27 @@ export function TransportProvider({ children }) {
   }, [pocketApp]);
 
   const sendTransaction = async (
-    memo = "Pocket Wallet",
+    memo,
     type = STDX_MSG_TYPES.send,
     amount,
     toAddress
   ) => {
     setIsHardwareWalletLoading(true);
+    /* global BigInt */
     const entropy = Number(
-      Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+      BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()
     ).toString();
 
     const tx = {
       chain_id: Config.CHAIN_ID,
-      entropy,
+      entropy: entropy.toString(),
       fee: [
         {
           amount: Config.TX_FEE || "10000",
           denom: "upokt",
         },
       ],
-      memo,
+      memo: memo ? memo : "Pocket Wallet",
       msg: {
         type,
         value: {
