@@ -9,9 +9,14 @@ export const StakingContent = styled.section`
     align-items: center;
   }
 
-  input {
+  input,
+  p.description {
     margin-bottom: 8px;
     width: 488px;
+  }
+
+  p.description {
+    font-size: 12px;
   }
 
   .adornment {
@@ -124,7 +129,8 @@ export const StakingContent = styled.section`
   }
 
   ${maxPhone(css`
-    input {
+    input,
+    p.description {
       width: 100%;
     }
 

@@ -96,6 +96,18 @@ export default function Header() {
             {isLoggedIn && (
               <StyledLi>
                 <Link
+                  to={ROUTES.staking}
+                  className={
+                    location.pathname === ROUTES.staking ? "active" : undefined
+                  }
+                >
+                  Staking
+                </Link>
+              </StyledLi>
+            )}
+            {isLoggedIn && (
+              <StyledLi>
+                <Link
                   to={ROUTES.nonCustodial}
                   className={
                     location.pathname === ROUTES.nonCustodial
@@ -103,19 +115,7 @@ export default function Header() {
                       : undefined
                   }
                 >
-                  Custodial Nodes
-                </Link>
-              </StyledLi>
-            )}
-            {isLoggedIn && (
-              <StyledLi>
-                <Link
-                  to={ROUTES.staking}
-                  className={
-                    location.pathname === ROUTES.staking ? "active" : undefined
-                  }
-                >
-                  Staking
+                  Manage Non-Custodial Nodes
                 </Link>
               </StyledLi>
             )}

@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
 import Layout from "../../components/layout";
 import { StakingContent } from "../../components/staking/content";
+import { useUser } from "../../context/userContext";
 import { getDataSource } from "../../datasource";
 import IconQuestion from "../../icons/iconQuestion";
 import StakingModal from "./stakingModal";
@@ -10,6 +11,7 @@ import StakingModal from "./stakingModal";
 const dataSource = getDataSource();
 
 export default function Staking() {
+  const user = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSelectChainsOpen, setIsSelectChainsOpen] = useState(false);
   const [supportedChains, setSupportedChains] = useState([]);
@@ -25,6 +27,12 @@ export default function Staking() {
 
     if (selectedChains.length === 0) {
       setError("At least one chain must be selected");
+      return;
+    }
+
+    if (selectedChains.length > 15) {
+      // TODO: We need to have this value pulled from the "pos/MaximumChains" param instead of hardcoding
+      setError("Only a maximum of 15 chains can be selected.");
       return;
     }
 
@@ -87,17 +95,9 @@ export default function Staking() {
   }, []);
 
   return (
-    <Layout title={<h1 className="title">Node Stake</h1>}>
+    <Layout title={<h1 className="title">Stake Node</h1>}>
       <StakingContent>
         <form onSubmit={(e) => handleSubmit(e)}>
-          <TextInput
-            placeholder="Service URI"
-            name="serviceURI"
-            type="url"
-            pattern="https://.*"
-            required
-          />
-          <IconQuestion />
           <TextInput
             placeholder="Amount"
             name="amount"
@@ -107,6 +107,12 @@ export default function Staking() {
           />
           <IconQuestion />
 
+          <p className="description">
+            The Operator Public Key is the Public Key associated with the
+            account that will be located on the node signing transactions. If
+            Staking Non-Custodially, this value needs to be provided by your
+            operator.
+          </p>
           <TextInput
             key="operatorPublicKey"
             placeholder="Operator Public Key"
@@ -114,14 +120,40 @@ export default function Staking() {
             required
           />
           <IconQuestion />
+
+          <p className="description">
+            The Output Address is the address that rewards will be sent to. You
+            should only change this if you want rewards to go to a wallet that
+            is different from this one.
+          </p>
           <TextInput
             key="outputAddress"
             placeholder="Output Address"
             name="outputAddress"
             required
+            defaultValue={user.user.addressHex}
           />
           <IconQuestion />
 
+          <p className="description">
+            The Service URI is the URL that the node is advertised as available
+            for service at. If Staking Non-Custodially, this value needs to be
+            provided by your operator.
+          </p>
+          <TextInput
+            placeholder="Service URI"
+            name="serviceURI"
+            type="url"
+            pattern="https://.*"
+            required
+          />
+          <IconQuestion />
+
+          <p className="description">
+            These are the relay chains that the operator will be providing
+            service for. If Staking Non-Custodially, these values need to be
+            provided by your operator.
+          </p>
           <div className="relay-chains-container">
             <TextInput
               placeholder="Select Chains IDs"
