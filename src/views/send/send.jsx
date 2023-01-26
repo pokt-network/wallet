@@ -11,6 +11,10 @@ import ConfirmSend from "./confirm";
 import SendTransaction from "./sendTransaction";
 import { STDX_MSG_TYPES } from "../../utils/validations";
 import { UPOKT } from "../../utils/utils";
+import { Resolution } from "@unstoppabledomains/resolution";
+import { useLoader } from "../../context/loaderContext";
+
+const resolution = new Resolution();
 
 const dataSource = getDataSource();
 
@@ -23,8 +27,8 @@ export default function Send() {
     isUsingHardwareWallet,
     sendTransaction: sendTransactionWithLedger,
   } = useTransport();
+  const { updateLoader } = useLoader();
   const sendRef = useRef(null);
-  //TODO: refactor with a reducer
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
   const [destinationAddress, setDestinationAddress] = useState(undefined);
@@ -33,7 +37,6 @@ export default function Send() {
   const [amountToSend, setAmountToSend] = useState(0);
   const [upoktBalance, setUpoktBalance] = useState(0);
   const [isAmountValid, setIsAmountValid] = useState(false);
-  const [isAddressValid, setIsAddressValid] = useState(false);
   const [txFee] = useState(Number(Config.TX_FEE));
   const [poktAmount, setPoktAmount] = useState(undefined);
   const [, setPoktAmountUsd] = useState(undefined);
@@ -49,18 +52,13 @@ export default function Send() {
   }, []);
 
   const validate = useCallback(() => {
-    if (isAddressValid === false) {
-      setAddressError("Invalid address.");
-      return false;
-    }
-
     if (isAmountValid === false) {
       setAmountError("Invalid amount.");
       return false;
     }
 
     return true;
-  }, [isAddressValid, isAmountValid]);
+  }, [isAmountValid]);
 
   const pushToTxDetail = useCallback(
     (txHash) => {
@@ -193,26 +191,48 @@ export default function Send() {
   );
 
   const updateDestinationAddress = useCallback(
-    ({ target }) => {
-      const { value } = target;
+    async (value) => {
+      updateLoader(true);
 
-      if (addressHex.toLowerCase() === value.toLowerCase()) {
+      let addr;
+      try {
+        addr = await resolution.addr(value, "POKT");
+      } catch (e) {
+        console.error("Resolution Error: ", e);
+      }
+
+      if (
+        addressHex.toLowerCase() === value.toLowerCase() ||
+        addressHex.toLowerCase() === addr.toLowerCase()
+      ) {
         setAddressError(
           "Recipient address cannot be the same as the sender's address."
         );
-        setIsAddressValid(false);
+        updateLoader(false);
+        return;
       } else if (isAddress(value)) {
         setDestinationAddress(value);
-        setIsAddressValid(true);
         setAddressError("");
-        return;
+      } else if (isAddress(addr)) {
+        setDestinationAddress(addr);
+        setAddressError("");
       } else {
         setDestinationAddress(value);
-        setIsAddressValid(false);
         setAddressError("Address is invalid.");
+        updateLoader(false);
+        return;
       }
+
+      const isValid = validate();
+      if (!isValid) {
+        updateLoader(false);
+        return;
+      }
+
+      updateLoader(false);
+      setStep(1);
     },
-    [addressHex]
+    [addressHex, updateLoader, validate]
   );
 
   useEffect(() => {
@@ -243,14 +263,12 @@ export default function Send() {
           fees={txFee}
           handlePoktValueChange={handlePoktValueChange}
           poktAmount={poktAmount}
-          validate={validate}
-          setStep={setStep}
           updateDestinationAddress={updateDestinationAddress}
           amountError={amountError}
           addressError={addressError}
-          destinationAddress={destinationAddress}
           memoText={memoText}
           setMemoText={setMemoText}
+          destinationAddress={destinationAddress}
         />
       ) : (
         <ConfirmSend
