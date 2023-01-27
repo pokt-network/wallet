@@ -21,6 +21,7 @@ export default function SendTransaction({
   memoText,
   setMemoText,
   destinationAddress,
+  uDomain,
 }) {
   const onSendClick = useCallback(
     (e) => {
@@ -63,11 +64,11 @@ export default function SendTransaction({
           />
         </div>
 
-        <form onSubmit={(e) => onSendClick(e)}>
+        <form className="send-form" onSubmit={(e) => onSendClick(e)}>
           <TextInput
             name="destinationAddress"
             placeholder="Send to Address"
-            defaultValue={destinationAddress}
+            defaultValue={uDomain ? uDomain : destinationAddress}
             style={
               addressError
                 ? validationError(VALIDATION_ERROR_TYPES.input)

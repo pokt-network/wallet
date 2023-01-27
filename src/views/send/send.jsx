@@ -45,6 +45,7 @@ export default function Send() {
   const [passphraseError, setPassphraseError] = useState(undefined);
   const [passphrase, setPassphrase] = useState(undefined);
   const [memoText, setMemoText] = useState("");
+  const [uDomain, setUdomain] = useState("");
 
   const getAccountBalance = useCallback(async (addressHex) => {
     const upoktBalance = (await dataSource.getBalance(addressHex)) * UPOKT;
@@ -192,8 +193,28 @@ export default function Send() {
 
   const updateDestinationAddress = useCallback(
     async (value) => {
-      updateLoader(true);
+      if (addressHex.toLowerCase() === value.toLowerCase()) {
+        setAddressError(
+          "Recipient address cannot be the same as the sender's address."
+        );
+        return;
+      }
 
+      if (isAddress(value)) {
+        setUdomain("");
+        setDestinationAddress(value);
+        setAddressError("");
+        
+        const isValid = validate();
+        if (!isValid) {
+          return;
+        }
+  
+        setStep(1);
+        return;
+      }
+
+      updateLoader(true);
       let addr;
       try {
         addr = await resolution.addr(value, "POKT");
@@ -201,27 +222,25 @@ export default function Send() {
         console.error("Resolution Error: ", e);
       }
 
-      if (
-        addressHex.toLowerCase() === value.toLowerCase() ||
-        addressHex.toLowerCase() === addr.toLowerCase()
-      ) {
+      if (addressHex.toLowerCase() === addr?.toLowerCase()) {
         setAddressError(
           "Recipient address cannot be the same as the sender's address."
         );
         updateLoader(false);
         return;
-      } else if (isAddress(value)) {
-        setDestinationAddress(value);
-        setAddressError("");
-      } else if (isAddress(addr)) {
-        setDestinationAddress(addr);
-        setAddressError("");
-      } else {
+      }
+
+      if (!isAddress(addr)) {
+        setUdomain("");
         setDestinationAddress(value);
         setAddressError("Address is invalid.");
         updateLoader(false);
         return;
       }
+
+      setUdomain(value);
+      setDestinationAddress(addr);
+      setAddressError("");
 
       const isValid = validate();
       if (!isValid) {
@@ -269,6 +288,7 @@ export default function Send() {
           memoText={memoText}
           setMemoText={setMemoText}
           destinationAddress={destinationAddress}
+          uDomain={uDomain}
         />
       ) : (
         <ConfirmSend
@@ -281,6 +301,7 @@ export default function Send() {
           passphraseError={passphraseError}
           setPassphraseError={setPassphraseError}
           sendRef={sendRef}
+          uDomain={uDomain}
         />
       )}
     </>

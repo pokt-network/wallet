@@ -30,6 +30,7 @@ export default function ConfirmSend({
   passphraseError,
   sendRef,
   setPassphraseError,
+  uDomain,
 }) {
   const theme = useTheme();
   const { width } = useWindowSize();
@@ -124,6 +125,8 @@ export default function ConfirmSend({
               </h2>
 
               <CopyButton text={toAddress} className="to-address" />
+              {uDomain && <CopyButton text={uDomain} className="to-udomain" />}
+
               {isUsingHardwareWallet && (
                 <IconWithLabel
                   message={passphraseError}
@@ -141,12 +144,14 @@ export default function ConfirmSend({
                 Send
               </Button>
 
-              {isUsingHardwareWallet && passphraseError && !isHardwareWalletLoading && (
-                <button className="back-button" onClick={goBack}>
-                  <IconBack />
-                  <span>Back</span>
-                </button>
-              )}
+              {isUsingHardwareWallet &&
+                passphraseError &&
+                !isHardwareWalletLoading && (
+                  <button className="back-button" onClick={goBack}>
+                    <IconBack />
+                    <span>Back</span>
+                  </button>
+                )}
             </SendTransactionModalContainer>
           </Modal>
         </Layout>
@@ -191,6 +196,8 @@ export default function ConfirmSend({
             <p className="pokt-amount">{pokts / UPOKT} POKT</p>
 
             <CopyButton text={toAddress} className="to-address" />
+            {uDomain && <CopyButton text={uDomain} className="to-udomain" />}
+
             {isUsingHardwareWallet && (
               <IconWithLabel
                 message={passphraseError}

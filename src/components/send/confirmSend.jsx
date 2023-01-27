@@ -47,7 +47,8 @@ export const SendTransactionModalContainer = styled.div`
     margin-bottom: 17px;
   }
 
-  .to-address {
+  .to-address,
+  .to-udomain {
     width: 100%;
   }
 
@@ -108,7 +109,8 @@ export const SendTransactionViewContainer = styled.div`
     margin: 7px 0;
   }
 
-  .to-address {
+  .to-address,
+  .to-udomain {
     margin-bottom: 44px;
   }
 
