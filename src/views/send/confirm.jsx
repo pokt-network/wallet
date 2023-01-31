@@ -124,8 +124,14 @@ export default function ConfirmSend({
                 You are sending {pokts / UPOKT} POKT to:
               </h2>
 
+              {uDomain && <h3 className="copyBtn-title">Address</h3>}
               <CopyButton text={toAddress} className="to-address" />
-              {uDomain && <CopyButton text={uDomain} className="to-udomain" />}
+              {uDomain && (
+                <>
+                  <h3 className="copyBtn-title">Domain</h3>
+                  <CopyButton text={uDomain} className="to-udomain" />
+                </>
+              )}
 
               {isUsingHardwareWallet && (
                 <IconWithLabel
@@ -195,8 +201,14 @@ export default function ConfirmSend({
             <h2 className="you-are-sending">You are sending</h2>
             <p className="pokt-amount">{pokts / UPOKT} POKT</p>
 
+            {uDomain && <h3 className="copyBtn-title">Address</h3>}
             <CopyButton text={toAddress} className="to-address" />
-            {uDomain && <CopyButton text={uDomain} className="to-udomain" />}
+            {uDomain && (
+              <>
+                <h3 className="copyBtn-title">Domain</h3>
+                <CopyButton text={uDomain} className="to-udomain" />
+              </>
+            )}
 
             {isUsingHardwareWallet && (
               <IconWithLabel
