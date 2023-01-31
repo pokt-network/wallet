@@ -226,6 +226,13 @@ export default function ImportPocket() {
     [currentImportOption]
   );
 
+  const onKeyPress = (e, onImport) => {
+    const code = e?.keyCode || e?.which;
+    if (code === 13) {
+      onImport();
+    }
+  };
+
   return (
     <Layout title={<h1 className="title">Import Account</h1>}>
       <ImportPocketContent hasFile={fileName ? true : false}>
@@ -264,6 +271,7 @@ export default function ImportPocket() {
               <PasswordInput
                 placeholder="Keyfile Passphrase"
                 onChange={(e) => passPhraseChange("file", e)}
+                onKeyPress={(e) => onKeyPress(e, importAccountFromFile)}
                 style={
                   ppkPassphraseError
                     ? validationError(VALIDATION_ERROR_TYPES.input)
@@ -318,6 +326,7 @@ export default function ImportPocket() {
                 className="pk-passphrase"
                 placeholder="Session Passphrase"
                 onChange={(e) => passPhraseChange("private", e)}
+                onKeyPress={(e) => onKeyPress(e, importAccountFromPrivateKey)}
                 style={
                   privateKeyPassphraseError
                     ? validationError(VALIDATION_ERROR_TYPES.input)
