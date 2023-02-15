@@ -16,30 +16,23 @@ export default function SendTransaction({
   handlePoktValueChange,
   poktAmount,
   updateDestinationAddress,
-  validate,
-  setStep,
   amountError,
   addressError,
-  destinationAddress,
   memoText,
   setMemoText,
+  destinationAddress,
+  uDomain,
 }) {
-  const onSendClick = useCallback(() => {
-    const isValid = validate();
-
-    if (!isValid) {
-      return;
-    }
-
-    setStep(1);
-  }, [validate, setStep]);
-
-  const onMemoChange = useCallback(
-    ({ target }) => {
-      const { value } = target;
-      setMemoText(value);
+  const onSendClick = useCallback(
+    (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const dAddr = formData.get("destinationAddress");
+      const txMemo = formData.get("tx-memo");
+      updateDestinationAddress(dAddr);
+      setMemoText(txMemo);
     },
-    [setMemoText]
+    [setMemoText, updateDestinationAddress]
   );
 
   return (
@@ -70,41 +63,44 @@ export default function SendTransaction({
             type="error"
           />
         </div>
-        <TextInput
-          placeholder="Send to Address"
-          onChange={updateDestinationAddress}
-          value={destinationAddress}
-          style={
-            addressError
-              ? validationError(VALIDATION_ERROR_TYPES.input)
-              : undefined
-          }
-        />
-        <IconWithLabel
-          message={addressError}
-          show={addressError}
-          type="error"
-        />
 
-        <label className="tx-memo-label" htmlFor="tx-memo">
-          Tx Memo
-        </label>
-        <TextInput
-          multiline
-          placeholder="XXXXXXXXXXXXXXXXX (Optional)"
-          className="tx-memo-area"
-          name="tx-memo"
-          maxLength={75}
-          onChange={onMemoChange}
-        />
-        <p className="tx-memo-counter">{memoText.length}/75</p>
-        <p className="tx-fee">
-          TX Fee {Number(fees / UPOKT).toLocaleString("en-US")} POKT
-        </p>
+        <form className="send-form" onSubmit={(e) => onSendClick(e)}>
+          <TextInput
+            name="destinationAddress"
+            placeholder="Send to Address"
+            defaultValue={uDomain ? uDomain : destinationAddress}
+            style={
+              addressError
+                ? validationError(VALIDATION_ERROR_TYPES.input)
+                : undefined
+            }
+          />
+          <IconWithLabel
+            message={addressError}
+            show={addressError}
+            type="error"
+          />
 
-        <Button mode="primary" onClick={onSendClick}>
-          Send
-        </Button>
+          <label className="tx-memo-label" htmlFor="tx-memo">
+            Tx Memo
+          </label>
+          <TextInput
+            multiline
+            placeholder="XXXXXXXXXXXXXXXXX (Optional)"
+            className="tx-memo-area"
+            name="tx-memo"
+            maxLength={75}
+            defaultValue={memoText}
+          />
+          <p className="tx-memo-counter">{memoText.length}/75</p>
+          <p className="tx-fee">
+            TX Fee {Number(fees / UPOKT).toLocaleString("en-US")} POKT
+          </p>
+
+          <Button mode="primary" type="submit">
+            Send
+          </Button>
+        </form>
       </SendContent>
     </Layout>
   );
