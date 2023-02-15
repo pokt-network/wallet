@@ -1,0 +1,8 @@
+site_name: "Pocket Wallet"
+site_description: "Documentation for the Pocket Wallet web app"
+
+nav:
+  - Home: index.md
+
+plugins:
+  - techdocs-core
