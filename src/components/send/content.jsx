@@ -8,6 +8,12 @@ const SendContent = styled.section`
   align-items: center;
   justify-content: center;
 
+  .send-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   .amount-error-container {
     width: 100%;
     margin-top: -35px;

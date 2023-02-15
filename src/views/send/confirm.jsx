@@ -30,6 +30,7 @@ export default function ConfirmSend({
   passphraseError,
   sendRef,
   setPassphraseError,
+  uDomain,
 }) {
   const theme = useTheme();
   const { width } = useWindowSize();
@@ -74,6 +75,7 @@ export default function ConfirmSend({
                   step="0.01"
                   name="pokt"
                   min={0}
+                  value={pokts / UPOKT}
                 />
                 <label htmlFor="pokt">POKT</label>
               </div>
@@ -123,7 +125,15 @@ export default function ConfirmSend({
                 You are sending {pokts / UPOKT} POKT to:
               </h2>
 
+              {uDomain && <h3 className="copyBtn-title">Address</h3>}
               <CopyButton text={toAddress} className="to-address" />
+              {uDomain && (
+                <>
+                  <h3 className="copyBtn-title">Domain</h3>
+                  <CopyButton text={uDomain} className="to-udomain" />
+                </>
+              )}
+
               {isUsingHardwareWallet && (
                 <IconWithLabel
                   message={passphraseError}
@@ -141,12 +151,14 @@ export default function ConfirmSend({
                 Send
               </Button>
 
-              {isUsingHardwareWallet && passphraseError && !isHardwareWalletLoading && (
-                <button className="back-button" onClick={goBack}>
-                  <IconBack />
-                  <span>Back</span>
-                </button>
-              )}
+              {isUsingHardwareWallet &&
+                passphraseError &&
+                !isHardwareWalletLoading && (
+                  <button className="back-button" onClick={goBack}>
+                    <IconBack />
+                    <span>Back</span>
+                  </button>
+                )}
             </SendTransactionModalContainer>
           </Modal>
         </Layout>
@@ -190,7 +202,15 @@ export default function ConfirmSend({
             <h2 className="you-are-sending">You are sending</h2>
             <p className="pokt-amount">{pokts / UPOKT} POKT</p>
 
+            {uDomain && <h3 className="copyBtn-title">Address</h3>}
             <CopyButton text={toAddress} className="to-address" />
+            {uDomain && (
+              <>
+                <h3 className="copyBtn-title">Domain</h3>
+                <CopyButton text={uDomain} className="to-udomain" />
+              </>
+            )}
+
             {isUsingHardwareWallet && (
               <IconWithLabel
                 message={passphraseError}

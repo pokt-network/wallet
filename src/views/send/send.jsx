@@ -11,6 +11,10 @@ import ConfirmSend from "./confirm";
 import SendTransaction from "./sendTransaction";
 import { STDX_MSG_TYPES } from "../../utils/validations";
 import { UPOKT } from "../../utils/utils";
+import { Resolution } from "@unstoppabledomains/resolution";
+import { useLoader } from "../../context/loaderContext";
+
+const resolution = new Resolution();
 
 const dataSource = getDataSource();
 
@@ -23,8 +27,8 @@ export default function Send() {
     isUsingHardwareWallet,
     sendTransaction: sendTransactionWithLedger,
   } = useTransport();
+  const { updateLoader } = useLoader();
   const sendRef = useRef(null);
-  //TODO: refactor with a reducer
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
   const [destinationAddress, setDestinationAddress] = useState(undefined);
@@ -33,7 +37,6 @@ export default function Send() {
   const [amountToSend, setAmountToSend] = useState(0);
   const [upoktBalance, setUpoktBalance] = useState(0);
   const [isAmountValid, setIsAmountValid] = useState(false);
-  const [isAddressValid, setIsAddressValid] = useState(false);
   const [txFee] = useState(Number(Config.TX_FEE));
   const [poktAmount, setPoktAmount] = useState(undefined);
   const [, setPoktAmountUsd] = useState(undefined);
@@ -42,6 +45,7 @@ export default function Send() {
   const [passphraseError, setPassphraseError] = useState(undefined);
   const [passphrase, setPassphrase] = useState(undefined);
   const [memoText, setMemoText] = useState("");
+  const [uDomain, setUdomain] = useState("");
 
   const getAccountBalance = useCallback(async (addressHex) => {
     const upoktBalance = (await dataSource.getBalance(addressHex)) * UPOKT;
@@ -49,18 +53,13 @@ export default function Send() {
   }, []);
 
   const validate = useCallback(() => {
-    if (isAddressValid === false) {
-      setAddressError("Invalid address.");
-      return false;
-    }
-
     if (isAmountValid === false) {
       setAmountError("Invalid amount.");
       return false;
     }
 
     return true;
-  }, [isAddressValid, isAmountValid]);
+  }, [isAmountValid]);
 
   const pushToTxDetail = useCallback(
     (txHash) => {
@@ -193,26 +192,66 @@ export default function Send() {
   );
 
   const updateDestinationAddress = useCallback(
-    ({ target }) => {
-      const { value } = target;
-
+    async (value) => {
       if (addressHex.toLowerCase() === value.toLowerCase()) {
         setAddressError(
           "Recipient address cannot be the same as the sender's address."
         );
-        setIsAddressValid(false);
-      } else if (isAddress(value)) {
-        setDestinationAddress(value);
-        setIsAddressValid(true);
-        setAddressError("");
         return;
-      } else {
-        setDestinationAddress(value);
-        setIsAddressValid(false);
-        setAddressError("Address is invalid.");
       }
+
+      if (isAddress(value)) {
+        setUdomain("");
+        setDestinationAddress(value);
+        setAddressError("");
+        
+        const isValid = validate();
+        if (!isValid) {
+          return;
+        }
+  
+        setStep(1);
+        return;
+      }
+
+      updateLoader(true);
+      let addr;
+      try {
+        addr = await resolution.addr(value, "POKT");
+      } catch (e) {
+        console.error("Resolution Error: ", e);
+      }
+
+      if (addressHex.toLowerCase() === addr?.toLowerCase()) {
+        setAddressError(
+          "Recipient address cannot be the same as the sender's address."
+        );
+        updateLoader(false);
+        return;
+      }
+
+      if (!isAddress(addr)) {
+        setUdomain("");
+        setDestinationAddress(value);
+        setAddressError("Address is invalid.");
+        updateLoader(false);
+        return;
+      }
+
+      setUdomain(value);
+      setDestinationAddress(addr);
+      setAddressError("");
+
+      const isValid = validate();
+      if (!isValid) {
+        updateLoader(false);
+        return;
+      }
+
+      updateLoader(false);
+      setStep(1);
     },
-    [addressHex]
+    [addressHex, updateLoader, validate]
   );
 
   useEffect(() => {
@@ -243,14 +282,13 @@ export default function Send() {
           fees={txFee}
           handlePoktValueChange={handlePoktValueChange}
           poktAmount={poktAmount}
-          validate={validate}
-          setStep={setStep}
           updateDestinationAddress={updateDestinationAddress}
           amountError={amountError}
           addressError={addressError}
-          destinationAddress={destinationAddress}
           memoText={memoText}
           setMemoText={setMemoText}
+          destinationAddress={destinationAddress}
+          uDomain={uDomain}
         />
       ) : (
         <ConfirmSend
@@ -263,6 +301,7 @@ export default function Send() {
           passphraseError={passphraseError}
           setPassphraseError={setPassphraseError}
           sendRef={sendRef}
+          uDomain={uDomain}
         />
       )}
     </>

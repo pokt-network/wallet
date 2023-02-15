@@ -1,0 +1,23 @@
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: pocket-wallet
+  annotations:
+    github.com/project-slug: pokt-foundation/wallet
+    github.com/team-slug: pokt-foundation/front-end-devs
+    backstage.io/techdocs-ref: dir:.
+  tags:
+  - react
+  - javascript
+   links:
+    - url: https://wallet.pokt.network/
+      title: Website URL
+      type: prod
+spec:
+  type: website
+  lifecycle: production
+  owner: frontend
+  system: portal
+  dependsOn:
+    - pocket-portal
+    - coingecko
