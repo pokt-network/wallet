@@ -18,7 +18,7 @@ const LandingContent = styled.section`
     background-size: 100% 1px;
 
     h1 {
-      margin: 0 0 15px 0;
+      margin: 40px 0 15px 0;
       font-size: 50px;
       font-weight: bold;
       color: ${(props) => props.theme.colors.blue};
