@@ -19,6 +19,7 @@ import useTransport from "../../hooks/useTransport";
 import useWindowSize from "../../hooks/useWindowSize";
 import IconBack from "../../icons/iconBack";
 import { UPOKT } from "../../utils/utils";
+import { useLoader } from "../../context/loaderContext";
 
 export default function ConfirmSend({
   pokts,
@@ -31,6 +32,8 @@ export default function ConfirmSend({
   sendRef,
   setPassphraseError,
   uDomain,
+  isSendBtnDisabledVisually,
+  setIsSendBtnDisabledVisually,
 }) {
   const theme = useTheme();
   const { width } = useWindowSize();
@@ -39,6 +42,7 @@ export default function ConfirmSend({
     isHardwareWalletLoading,
     setIsHardwareWalletLoading,
   } = useTransport();
+  const { updateLoader } = useLoader();
 
   const goBack = useCallback(() => {
     setPassphraseError("");
@@ -57,9 +61,11 @@ export default function ConfirmSend({
   const onSendClick = useCallback(() => {
     if (sendRef.current) {
       sendRef.current.disabled = true;
+      setIsSendBtnDisabledVisually(true);
+      updateLoader(true);
       sendTransaction();
     }
-  }, [sendTransaction, sendRef]);
+  }, [sendTransaction, sendRef, setIsSendBtnDisabledVisually, updateLoader]);
 
   return (
     <>
@@ -147,6 +153,7 @@ export default function ConfirmSend({
                 className="send-button"
                 onClick={onSendClick}
                 innerRef={sendRef}
+                disabled={isSendBtnDisabledVisually}
               >
                 Send
               </Button>
@@ -225,6 +232,7 @@ export default function ConfirmSend({
               wide
               onClick={onSendClick}
               innerRef={sendRef}
+              disabled={isSendBtnDisabledVisually}
             >
               Send
             </Button>

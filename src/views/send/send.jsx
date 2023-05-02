@@ -29,6 +29,8 @@ export default function Send() {
   } = useTransport();
   const { updateLoader } = useLoader();
   const sendRef = useRef(null);
+  const [isSendBtnDisabledVisually, setIsSendBtnDisabledVisually] =
+    useState(false);
   const [step, setStep] = useState(0);
   const [addressHex, setAddressHex] = useState(undefined);
   const [destinationAddress, setDestinationAddress] = useState(undefined);
@@ -73,6 +75,7 @@ export default function Send() {
   );
 
   const sendTransaction = useCallback(async () => {
+    // Hardware wallet
     if (isUsingHardwareWallet) {
       const ledgerTxResponse = await sendTransactionWithLedger(
         memoText,
@@ -87,7 +90,11 @@ export default function Send() {
             ? ledgerTxResponse.message
             : "Failed to send the transaction, please verify the information."
         );
-        if (sendRef.current) sendRef.current.disabled = false;
+        if (sendRef.current) {
+          setIsSendBtnDisabledVisually(false);
+          sendRef.current.disabled = false;
+        }
+        updateLoader(false);
         return;
       }
 
@@ -104,10 +111,12 @@ export default function Send() {
         memoText ? memoText : "Pocket wallet"
       );
 
+      updateLoader(false);
       pushToTxDetail(ledgerTxResponse.txhash);
       return;
     }
 
+    // Web wallet
     if (passphrase && destinationAddress && ppk && amountToSend > 0) {
       const txResponse = await dataSource.sendTransaction(
         ppk,
@@ -123,7 +132,12 @@ export default function Send() {
             ? txResponse.message
             : "Failed to send the transaction, please verify the information."
         );
-        if (sendRef.current) sendRef.current.disabled = false;
+        if (sendRef.current) {
+          setIsSendBtnDisabledVisually(false);
+          sendRef.current.disabled = false;
+        }
+
+        updateLoader(false);
         return;
       }
 
@@ -142,10 +156,15 @@ export default function Send() {
         memoText ? memoText : "Pocket wallet"
       );
 
+      updateLoader(false);
       pushToTxDetail(txResponse.txhash);
     } else {
       setAddressError("Amount to send or the destination address are invalid.");
-      if (sendRef.current) sendRef.current.disabled = false;
+      updateLoader(false);
+      if (sendRef.current) {
+        setIsSendBtnDisabledVisually(false);
+        sendRef.current.disabled = false;
+      }
     }
   }, [
     isUsingHardwareWallet,
@@ -161,6 +180,7 @@ export default function Send() {
     memoText,
     updateUser,
     updateTx,
+    updateLoader,
   ]);
 
   const handlePoktValueChange = useCallback(
@@ -204,12 +224,12 @@ export default function Send() {
         setUdomain("");
         setDestinationAddress(value);
         setAddressError("");
-        
+
         const isValid = validate();
         if (!isValid) {
           return;
         }
-  
+
         setStep(1);
         return;
       }
@@ -302,6 +322,8 @@ export default function Send() {
           setPassphraseError={setPassphraseError}
           sendRef={sendRef}
           uDomain={uDomain}
+          isSendBtnDisabledVisually={isSendBtnDisabledVisually}
+          setIsSendBtnDisabledVisually={setIsSendBtnDisabledVisually}
         />
       )}
     </>
