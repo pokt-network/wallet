@@ -58,14 +58,14 @@ export default function ConfirmSend({
     [setPassphrase]
   );
 
-  const onSendClick = useCallback(() => {
+  const onSendClick = () => {
     if (sendRef.current) {
       sendRef.current.disabled = true;
       setIsSendBtnDisabledVisually(true);
       updateLoader(true);
       sendTransaction();
     }
-  }, [sendTransaction, sendRef, setIsSendBtnDisabledVisually, updateLoader]);
+  };
 
   return (
     <>
