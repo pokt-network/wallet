@@ -2,7 +2,7 @@ name: Testnet Deployment
 
 on:
   push:
-    branches: [ staging,develop ]
+    branches: [ staging ]
 
 jobs:
   build:
@@ -45,8 +45,7 @@ jobs:
         REACT_APP_MIN_TRANSACTION_LIST_COUNT: "200"
         REACT_APP_TX_FEE: "10000"
         REACT_APP_SESSION_LENGTH: "15"
-        #REACT_APP_GATEWAY_BASE_URL: "https://testnet.gateway-testnet.pokt.network/v1/lb/6214f2f34827d34f48d35f6a"
-        REACT_APP_GATEWAY_BASE_URL: "https://pnfchains:FJaH6b4Modr8QDvQSgkh@pokt-dispatchers.us-east4-1.poktnodes.network:8443"
+        REACT_APP_GATEWAY_BASE_URL: "https://testnet.gateway-testnet.pokt.network/v1/lb/6214f2f34827d34f48d35f6a"
         REACT_APP_HTTP_TIMEOUT: 0
         REACT_APP_USE_LEGACY_CODEC: "false"
         REACT_APP_HTTP_HEADERS: '{"Content-Type": "application/json"}'
