@@ -104,6 +104,7 @@ const ImportPocketContent = styled.section`
     .ledger-icon {
       width: 64px;
       height: 26px;
+      margin: 0 8px;
     }
 
     .ledger-description {

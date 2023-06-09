@@ -15,7 +15,7 @@ import {
   VALIDATION_ERROR_TYPES,
 } from "../../utils/validations";
 import { useUser } from "../../context/userContext";
-import LedgerIcon from "../../utils/images/ledger.png";
+import LedgerIcon from "../../utils/images/ledger-white.png";
 import useTransport from "../../hooks/useTransport";
 import TroubleConnectingModal from "../../components/modals/troubleConnecting/troubleConnecting";
 import { ROUTES } from "../../utils/routes";

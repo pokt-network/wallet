@@ -20,7 +20,7 @@ export async function getAddressFromPublicKey(publicKey) {
     {
       name: "SHA-256",
     },
-    hexStringToByte(publicKey)
+    typeof publicKey === "object" ? publicKey : hexStringToByte(publicKey)
   );
 
   return fromUint8Array(new Uint8Array(hash)).slice(0, 40);
