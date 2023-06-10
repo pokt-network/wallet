@@ -47,7 +47,7 @@ export default function Staking() {
       setError("Error while fetching chains data.");
       return;
     }
-    const parsedSupportedChains = JSON.parse(supportedChains);
+    const parsedSupportedChains = typeof supportedChains === 'string'? JSON.parse(supportedChains) : supportedChains;
     setError("");
     setSupportedChains(parsedSupportedChains);
     setChainsToRender(parsedSupportedChains);
