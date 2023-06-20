@@ -162,6 +162,7 @@ export default function Send() {
         updateLoader(false);
         pushToTxDetail(txResponse.txHash);
       } catch (e) {
+        console.log("error: ", e)
         setPassphraseError(
           txResponse?.message
             ? txResponse.message
