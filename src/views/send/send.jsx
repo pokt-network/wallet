@@ -13,10 +13,17 @@ import { STDX_MSG_TYPES } from "../../utils/validations";
 import { UPOKT } from "../../utils/utils";
 import { Resolution } from "@unstoppabledomains/resolution";
 import { useLoader } from "../../context/loaderContext";
+import {
+  createPPKSigner,
+  createQueryProvider,
+  createTransactionBuilder,
+} from "../../datasource/sdk";
 
 const resolution = new Resolution();
 
 const dataSource = getDataSource();
+
+const provider = createQueryProvider();
 
 export default function Send() {
   const history = useHistory();
@@ -118,19 +125,44 @@ export default function Send() {
 
     // Web wallet
     if (passphrase && destinationAddress && ppk && amountToSend > 0) {
-      const txResponse = await dataSource.sendTransaction(
-        ppk,
-        passphrase,
-        destinationAddress,
-        amountToSend,
-        memoText ? memoText : undefined
-      );
+      const signer = await createPPKSigner(passphrase, ppk);
+      const transactionBuilder = createTransactionBuilder(provider, signer);
 
-      if (typeGuard(txResponse, Error)) {
+      const sendMsg = transactionBuilder.send({
+        amount: amountToSend.toString(),
+        toAddress: destinationAddress,
+        fromAddress: signer.getAddress(),
+      });
+
+      let txResponse;
+      try {
+        txResponse = await transactionBuilder.submit({
+          txMsg: sendMsg,
+          memo: "Pocket Wallet",
+        });
+
+        updateUser(addressHex, publicKeyHex, ppk);
+
+        updateTx(
+          "TokenTransfer",
+          addressHex,
+          destinationAddress,
+          amountToSend / UPOKT,
+          txResponse.txHash,
+          txFee / UPOKT,
+          "Pending",
+          "Pending",
+          undefined,
+          memoText ? memoText : "Pocket wallet"
+        );
+
+        updateLoader(false);
+        pushToTxDetail(txResponse.txHash);
+      } catch (e) {
         setPassphraseError(
           txResponse?.message
             ? txResponse.message
-            : "Failed to send the transaction, please verify the information."
+            : `${txResponse}. Failed to send the transaction, please verify the information.`
         );
         if (sendRef.current) {
           setIsSendBtnDisabledVisually(false);
@@ -140,24 +172,46 @@ export default function Send() {
         updateLoader(false);
         return;
       }
+      // const txResponse = await dataSource.sendTransaction(
+      //   ppk,
+      //   passphrase,
+      //   destinationAddress,
+      //   amountToSend,
+      //   memoText ? memoText : undefined
+      // );
 
-      updateUser(addressHex, publicKeyHex, ppk);
+      // if (typeGuard(txResponse, Error) && !txResponse.txHash) {
+      //   setPassphraseError(
+      //     txResponse?.message
+      //       ? txResponse.message
+      //       : `${txResponse}. Failed to send the transaction, please verify the information.`
+      //   );
+      //   if (sendRef.current) {
+      //     setIsSendBtnDisabledVisually(false);
+      //     sendRef.current.disabled = false;
+      //   }
 
-      updateTx(
-        "TokenTransfer",
-        addressHex,
-        destinationAddress,
-        amountToSend / UPOKT,
-        txResponse.txhash,
-        txFee / UPOKT,
-        "Pending",
-        "Pending",
-        undefined,
-        memoText ? memoText : "Pocket wallet"
-      );
+      //   updateLoader(false);
+      //   return;
+      // }
 
-      updateLoader(false);
-      pushToTxDetail(txResponse.txhash);
+      // updateUser(addressHex, publicKeyHex, ppk);
+
+      // updateTx(
+      //   "TokenTransfer",
+      //   addressHex,
+      //   destinationAddress,
+      //   amountToSend / UPOKT,
+      //   txResponse.txhash,
+      //   txFee / UPOKT,
+      //   "Pending",
+      //   "Pending",
+      //   undefined,
+      //   memoText ? memoText : "Pocket wallet"
+      // );
+
+      // updateLoader(false);
+      // pushToTxDetail(txResponse.txhash);
     } else {
       setAddressError("Amount to send or the destination address are invalid.");
       updateLoader(false);
