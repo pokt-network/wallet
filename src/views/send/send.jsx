@@ -18,7 +18,6 @@ import {
   createQueryProvider,
   createTransactionBuilder,
 } from "../../datasource/sdk";
-
 const resolution = new Resolution();
 
 const dataSource = getDataSource();
@@ -125,14 +124,17 @@ export default function Send() {
 
     // Web wallet
     if (passphrase && destinationAddress && ppk && amountToSend > 0) {
+      console.log("USEEFFECT")
       const signer = await createPPKSigner(passphrase, ppk);
+      console.log("signer: ", signer)
       const transactionBuilder = createTransactionBuilder(provider, signer);
-
+      console.log("transaction builder: ", transactionBuilder)
       const sendMsg = transactionBuilder.send({
         amount: amountToSend.toString(),
         toAddress: destinationAddress,
         fromAddress: signer.getAddress(),
       });
+      console.log("sendmsg: ", sendMsg)
 
       let txResponse;
       try {
@@ -140,6 +142,7 @@ export default function Send() {
           txMsg: sendMsg,
           memo: "Pocket Wallet",
         });
+        console.log("txResponse: ", txResponse)
 
         updateUser(addressHex, publicKeyHex, ppk);
 
