@@ -5,7 +5,7 @@ import { TransactionBuilder } from "@pokt-foundation/pocketjs-transaction-builde
 // Initializes and returns a provider that cannot be used for relays only for querying the network
 export function createQueryProvider() {
   return new IsomorphicProvider({
-    rpcUrl: import.meta.env.REACT_APP_GATEWAY_BASE_URL,
+    rpcUrl: import.meta.env.VITE_GATEWAY_BASE_URL,
   });
 }
 
@@ -38,7 +38,7 @@ export async function createPrivateKeySigner(pk) {
 export function createTransactionBuilder(provider, signer) {
   console.log("func createTransactionBuilder: ", provider, signer)
   return new TransactionBuilder({
-    chainID: import.meta.env.REACT_APP_CHAIN_ID,
+    chainID: import.meta.env.VITE_CHAIN_ID,
     provider: provider,
     signer: signer,
   });
