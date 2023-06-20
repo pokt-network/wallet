@@ -1,5 +1,4 @@
 import React from "react";
-import { keyframes } from "styled-components/macro";
 
 const STROKE_WIDTH = 2;
 const LOOP_DURATION = 1800;
@@ -14,12 +13,12 @@ const GRADIENT_COLOR_STOP = "#1D8AED";
 const ANIM_FUNCTION = "cubic-bezier(0.7, 0, 0.3, 1)";
 const GRADIENT_ID = "loading-screen-logo-gradient";
 
-const animGradient = keyframes`
+const animGradient = `
   0% { stroke-dashoffset: ${DASH_ARRAY} }
   60%, 100% { stroke-dashoffset: 0 }
 `;
 
-const animMask = keyframes`
+const animMask = `
   0%, 10% { stroke-dashoffset: ${DASH_ARRAY} }
   90%, 100% { stroke-dashoffset: 0 }
 `;
