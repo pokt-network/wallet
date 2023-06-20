@@ -9,6 +9,7 @@
     "@pokt-foundation/pocketjs-isomorphic-provider": "^2.1.0",
     "@pokt-foundation/pocketjs-signer": "^1.2.0",
     "@pokt-foundation/pocketjs-transaction-builder": "^2.2.0-rc.3",
+    "@pokt-foundation/pocketjs-utils": "^2.1.0",
     "@pokt-foundation/ui": "^0.3.0",
     "@pokt-network/pocket-js": "^0.9.2-rc",
     "@testing-library/jest-dom": "^4.2.4",
