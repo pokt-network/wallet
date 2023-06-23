@@ -19,6 +19,7 @@ import useTransport from "../../hooks/useTransport";
 import useWindowSize from "../../hooks/useWindowSize";
 import IconBack from "../../icons/iconBack";
 import { UPOKT } from "../../utils/utils";
+import { useLoader } from "../../context/loaderContext";
 
 export default function ConfirmSend({
   pokts,
@@ -30,6 +31,9 @@ export default function ConfirmSend({
   passphraseError,
   sendRef,
   setPassphraseError,
+  uDomain,
+  isSendBtnDisabledVisually,
+  setIsSendBtnDisabledVisually,
 }) {
   const theme = useTheme();
   const { width } = useWindowSize();
@@ -38,6 +42,7 @@ export default function ConfirmSend({
     isHardwareWalletLoading,
     setIsHardwareWalletLoading,
   } = useTransport();
+  const { updateLoader } = useLoader();
 
   const goBack = useCallback(() => {
     setPassphraseError("");
@@ -53,12 +58,14 @@ export default function ConfirmSend({
     [setPassphrase]
   );
 
-  const onSendClick = useCallback(() => {
+  const onSendClick = () => {
     if (sendRef.current) {
       sendRef.current.disabled = true;
+      setIsSendBtnDisabledVisually(true);
+      updateLoader(true);
       sendTransaction();
     }
-  }, [sendTransaction, sendRef]);
+  };
 
   return (
     <>
@@ -74,6 +81,7 @@ export default function ConfirmSend({
                   step="0.01"
                   name="pokt"
                   min={0}
+                  value={pokts / UPOKT}
                 />
                 <label htmlFor="pokt">POKT</label>
               </div>
@@ -123,7 +131,15 @@ export default function ConfirmSend({
                 You are sending {pokts / UPOKT} POKT to:
               </h2>
 
+              {uDomain && <h3 className="copyBtn-title">Address</h3>}
               <CopyButton text={toAddress} className="to-address" />
+              {uDomain && (
+                <>
+                  <h3 className="copyBtn-title">Domain</h3>
+                  <CopyButton text={uDomain} className="to-udomain" />
+                </>
+              )}
+
               {isUsingHardwareWallet && (
                 <IconWithLabel
                   message={passphraseError}
@@ -137,16 +153,19 @@ export default function ConfirmSend({
                 className="send-button"
                 onClick={onSendClick}
                 innerRef={sendRef}
+                disabled={isSendBtnDisabledVisually}
               >
                 Send
               </Button>
 
-              {isUsingHardwareWallet && passphraseError && !isHardwareWalletLoading && (
-                <button className="back-button" onClick={goBack}>
-                  <IconBack />
-                  <span>Back</span>
-                </button>
-              )}
+              {isUsingHardwareWallet &&
+                passphraseError &&
+                !isHardwareWalletLoading && (
+                  <button className="back-button" onClick={goBack}>
+                    <IconBack />
+                    <span>Back</span>
+                  </button>
+                )}
             </SendTransactionModalContainer>
           </Modal>
         </Layout>
@@ -190,7 +209,15 @@ export default function ConfirmSend({
             <h2 className="you-are-sending">You are sending</h2>
             <p className="pokt-amount">{pokts / UPOKT} POKT</p>
 
+            {uDomain && <h3 className="copyBtn-title">Address</h3>}
             <CopyButton text={toAddress} className="to-address" />
+            {uDomain && (
+              <>
+                <h3 className="copyBtn-title">Domain</h3>
+                <CopyButton text={uDomain} className="to-udomain" />
+              </>
+            )}
+
             {isUsingHardwareWallet && (
               <IconWithLabel
                 message={passphraseError}
@@ -205,6 +232,7 @@ export default function ConfirmSend({
               wide
               onClick={onSendClick}
               innerRef={sendRef}
+              disabled={isSendBtnDisabledVisually}
             >
               Send
             </Button>

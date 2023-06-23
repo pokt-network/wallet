@@ -17,7 +17,7 @@ import { STDX_MSG_TYPES } from "../../utils/validations";
 import { UPOKT } from "../../utils/utils";
 
 const dataSource = getDataSource();
-const EXPLORER_BASE_URL = "https://pokt.watch";
+const EXPLORER_BASE_URL = "https://poktscan.com";
 
 export default function TransactionDetail() {
   const location = useLocation();
@@ -268,7 +268,7 @@ export default function TransactionDetail() {
             <div className="tx-detail-row">
               <h2>To address</h2>
               <Link
-                href={`${EXPLORER_BASE_URL}/address/${tx?.toAddress}`}
+                href={`${EXPLORER_BASE_URL}/account/${tx?.toAddress}`}
                 className="to-address"
               >
                 {tx?.toAddress}
@@ -280,7 +280,7 @@ export default function TransactionDetail() {
             <div className="tx-detail-row">
               <h2>Output Address</h2>
               <Link
-                href={`${EXPLORER_BASE_URL}/address/${tx?.outputAddress}`}
+                href={`${EXPLORER_BASE_URL}/account/${tx?.outputAddress}`}
                 className="to-address"
               >
                 {tx?.outputAddress}

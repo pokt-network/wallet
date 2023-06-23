@@ -1,3 +1,4 @@
+import { Banner } from "@pokt-foundation/ui";
 import React from "react";
 import { withRouter } from "react-router-dom";
 import LandingContent from "../../components/landing/landing-content";
@@ -7,6 +8,18 @@ function Home() {
   return (
     <LandingContent>
       <div className="top">
+        <Banner title="">
+          Now supporting Unstoppable Domains! You can now use an unstoppable
+          domain to send transactions. For more information, check out our{" "}
+          <a
+            href="https://twitter.com/POKTnetwork/status/1625948417888292871"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            announcement
+          </a>
+          .
+        </Banner>
         <h1>
           Welcome to <br /> Pocket Wallet
         </h1>

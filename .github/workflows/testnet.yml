@@ -66,4 +66,18 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
         DISTRIBUTION_ID: ${{ secrets.AWS_TESTNET_DISTRIBUTION_ID }}
-
+    - name: Deploy to GCS
+      uses: actions-hub/gcloud@master
+      env:
+        PROJECT_ID: portal-gb-prod
+        APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+      with:
+        args: -m rsync -r ./build gs://pocket-wallet-testnet-frontend
+        cli: gsutil
+    - name: Clear Cloud CDN Cache
+      uses: actions-hub/gcloud@master
+      env:
+        PROJECT_ID: portal-gb-prod
+        APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+      with:
+        args: compute url-maps invalidate-cdn-cache wallet-testnet-url-map --path \"\/\*\"
