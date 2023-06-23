@@ -79,4 +79,3 @@ jobs:
         APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
       with:
         args: compute url-maps invalidate-cdn-cache wallet-prod-url-map --path \"\/\*\"
-
