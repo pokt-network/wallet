@@ -47,7 +47,8 @@ export const SendTransactionModalContainer = styled.div`
     margin-bottom: 17px;
   }
 
-  .to-address {
+  .to-address,
+  .to-udomain {
     width: 100%;
   }
 
@@ -58,6 +59,15 @@ export const SendTransactionModalContainer = styled.div`
 
   .ledger-banner-container {
     margin-bottom: 2rem;
+  }
+
+  .copyBtn-title {
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 110%;
+    color: ${(props) => props.theme.secondaryWhite};
+    margin-bottom: 17px;
+    align-self: baseline;
   }
 `;
 
@@ -108,11 +118,21 @@ export const SendTransactionViewContainer = styled.div`
     margin: 7px 0;
   }
 
-  .to-address {
+  .to-address,
+  .to-udomain {
     margin-bottom: 44px;
   }
 
   .ledger-banner-container {
     margin-bottom: 2rem;
+  }
+
+  .copyBtn-title {
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 110%;
+    color: ${(props) => props.theme.secondaryWhite};
+    margin-bottom: 17px;
+    align-self: baseline;
   }
 `;

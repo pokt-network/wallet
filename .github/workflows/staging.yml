@@ -43,7 +43,7 @@ jobs:
        REACT_APP_MIN_TRANSACTION_LIST_COUNT: "200"
        REACT_APP_TX_FEE: "10000"
        REACT_APP_SESSION_LENGTH: "30"
-       REACT_APP_GATEWAY_BASE_URL: "http://gateway.pokt.network/v1/lb/60a2ac11b1747c6552385c61"
+       REACT_APP_GATEWAY_BASE_URL: "https://gateway.pokt.network/v1/lb/60a2ac11b1747c6552385c61"
        REACT_APP_HTTP_TIMEOUT: 0
        REACT_APP_HTTP_HEADERS: '{"Content-Type": "application/json"}'
        REACT_APP_USE_LEGACY_CODEC: 'false'
@@ -64,4 +64,18 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
         DISTRIBUTION_ID: ${{ secrets.AWS_STAGING_DISTRIBUTION_ID }}
-
+    - name: Deploy to GCS
+      uses: actions-hub/gcloud@master
+      env:
+        PROJECT_ID: portal-gb-prod
+        APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+      with:
+        args: -m rsync -r ./build gs://pocket-wallet-staging-frontend
+        cli: gsutil
+    - name: Clear Cloud CDN Cache
+      uses: actions-hub/gcloud@master
+      env:
+        PROJECT_ID: portal-gb-prod
+        APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+      with:
+        args: compute url-maps invalidate-cdn-cache wallet-staging-url-map --path \"\/\*\"

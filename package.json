@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "private": true,
   "dependencies": {
+    "@ampproject/remapping": "^2.2.0",
     "@ledgerhq/hw-transport-webhid": "^6.27.1",
     "@ledgerhq/hw-transport-webusb": "^6.27.1",
     "@pokt-foundation/pocketjs-signer": "^1.2.0",
@@ -13,6 +14,7 @@
     "@testing-library/user-event": "^7.2.1",
     "@types/ledgerhq__hw-transport-u2f": "^4.21.2",
     "@types/ledgerhq__hw-transport-webusb": "^4.70.1",
+    "@unstoppabledomains/resolution": "^8.4.0",
     "axios": "^0.21.2",
     "big-integer": "^1.6.48",
     "fast-sha256": "^1.3.0",
