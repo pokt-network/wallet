@@ -80,5 +80,4 @@ jobs:
         PROJECT_ID: portal-gb-prod
         APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
       with:
-        args: compute url-maps invalidate-cdn-cache wallet-testnet-url-map --path "/*" --project portal-gb-prod
-
+        args: compute url-maps invalidate-cdn-cache wallet-testnet-url-map --path \"\/\*\"
