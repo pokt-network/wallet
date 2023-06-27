@@ -336,7 +336,7 @@ export default function AccountDetail() {
                 minimumFractionDigits: 2,
               })}{" "}
               USD{" "}
-              {process.env.REACT_APP_CHAIN_ID !== "testnet" ? (
+              {import.meta.env.VITE_CHAIN_ID !== "testnet" ? (
                 <Link href={priceProviderLink}>Price by {priceProvider}</Link>
               ) : (
                 <p>Testing tokens</p>
