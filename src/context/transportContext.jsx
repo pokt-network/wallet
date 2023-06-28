@@ -247,7 +247,7 @@ export function TransportProvider({ children }) {
     amount,
     outputAddress
   ) => {
-    console.lo("TRANSPORT CONTEXT");
+    console.log("TRANSPORT CONTEXT");
     setIsHardwareWalletLoading(true);
     const entropy = Number(
       Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
