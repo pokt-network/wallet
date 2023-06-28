@@ -531,6 +531,8 @@ export class DataSource {
   }
 
   async stakeNodeFromLedger(publicKey, signature, url, tx) {
+    console.log("STAKE NODE FROM LEDGER DATASOURCE");
+    console.log(publicKey, signature, url, tx);
     const {
       chain_id: chainID,
       msg: {
@@ -545,11 +547,23 @@ export class DataSource {
       Buffer.from(signature, "hex")
     );
 
+    console.log("txSignature: ", txSignature);
+
     const transactionSender = new TransactionSender(
       this.__pocket,
       null,
       null,
       true
+    );
+
+    console.log("transactionSender: ", transactionSender);
+    console.log(
+      "transactionSender params: ",
+      public_key.value,
+      output_address,
+      chains,
+      value,
+      url
     );
 
     const itxSender = transactionSender.nodeStake(
@@ -560,6 +574,16 @@ export class DataSource {
       url
     );
 
+    console.log("itxSender: ", itxSender);
+    console.log(
+      "usignedstaketx params: ",
+      chainID,
+      fee[0].amount,
+      entropy,
+      CoinDenom.Upokt,
+      "Stake Node - Pocket Wallet"
+    );
+
     const unsignedStakeTx = itxSender.createUnsignedTransaction(
       chainID,
       fee[0].amount,
@@ -568,6 +592,8 @@ export class DataSource {
       "Stake Node - Pocket Wallet"
     );
 
+    console.log("unsignedStaketx: ", unsignedStakeTx);
+
     if (typeGuard(unsignedStakeTx, RpcError)) {
       console.log(
         `Failed to process transaction with error: ${unsignedStakeTx}`
@@ -575,25 +601,39 @@ export class DataSource {
       return new Error(unsignedStakeTx);
     }
 
+    console.log("unsignedStaketx after error check: ", unsignedStakeTx);
+
     const { bytesToSign, stdTxMsgObj } = unsignedStakeTx;
+    console.log("unsignedstaktx destructured: ", bytesToSign, stdTxMsgObj);
+    console.log("sign params: ", stdTxMsgObj, bytesToSign, txSignature);
     const rawTxOrError = ProtoTransactionSigner.signTransaction(
       stdTxMsgObj,
       bytesToSign,
       txSignature
     );
+    console.log("rawTxorError: ", rawTxOrError);
     if (typeGuard(rawTxOrError, RpcError)) {
       console.log(`Failed to process transaction with error: ${rawTxOrError}`);
       return new Error(rawTxOrError.message);
     }
+    console.log("rawTxorError sfter error check: ", rawTxOrError);
 
     let rawTxResponse;
     try {
+      console.log(
+        "sendRawTx params: ",
+        "sendRawTx",
+        rawTxOrError.address,
+        rawTxOrError.txHex
+      );
       rawTxResponse = await this.gwClient.makeQuery(
         "sendRawTx",
         rawTxOrError.address,
         rawTxOrError.txHex
       );
+      console.log("rawtxres: ", rawTxResponse);
     } catch (error) {
+      console.log("rawtxres error: ", error);
       console.log(`Failed to send transaction with error: ${error.raw_log}`);
       return new Error(error.raw_log);
     }

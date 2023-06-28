@@ -25,6 +25,10 @@ export default function Staking() {
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
 
+    console.log("FORM DATA: ", formData)
+    console.log("SELECTED CHAINS: ", selectedChains)
+
+
     if (selectedChains.length === 0) {
       setError("At least one chain must be selected");
       return;
