@@ -23,6 +23,8 @@ export default function StakingModal({
   stakeData,
   selectedChains,
 }) {
+  console.log("STAKE DATA: ", stakeData);
+  console.log("SELECTED CHAINS (MODAL): ", selectedChains);
   let history = useHistory();
   const {
     user: { ppk },
@@ -42,18 +44,23 @@ export default function StakingModal({
     if (sendRef.current) {
       sendRef.current.disabled = true;
     }
+    console.log("staking modal submit");
     const formData = new FormData(e.target);
     const { passphrase } = Object.fromEntries(formData);
     const { serviceURI, amount, operatorPublicKey, outputAddress } =
       stakeData.current;
+    console.log("STAKING MODAL FORM DATA: ", formData);
 
     const url = new URL(serviceURI);
+    console.log("URL: ", url);
 
     if (!isAddress(outputAddress)) {
       setError("Invalid Output Address");
       if (sendRef.current) sendRef.current.disabled = false;
       return;
     }
+
+    console.log("OUTPUT ADDRESS IS GOOD");
 
     const operatorAddress = await getAddressFromPublicKey(operatorPublicKey);
 
@@ -63,13 +70,18 @@ export default function StakingModal({
       return;
     }
 
+    console.log("OPERATOR ADDRESS IS GOOD");
+
     if (selectedChains.length === 0) {
       setError("At least one chain must be selected");
       if (sendRef.current) sendRef.current.disabled = false;
       return;
     }
 
+    console.log("SELECTED CHAINS IS GOOD");
+
     if (isUsingHardwareWallet) {
+      console.log("IS USING HARDWARE WALLET");
       const ledgerTxResponse = await stakeNode(
         selectedChains,
         operatorPublicKey,
@@ -79,6 +91,7 @@ export default function StakingModal({
       );
 
       if (typeGuard(ledgerTxResponse, Error)) {
+        console.log("LEDGER TX RES ERROR: ", ledgerTxResponse);
         setError(
           ledgerTxResponse?.message
             ? ledgerTxResponse.message
