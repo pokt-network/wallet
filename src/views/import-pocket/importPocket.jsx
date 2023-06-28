@@ -31,7 +31,6 @@ export default function ImportPocket() {
     isHardwareWalletLoading,
     setIsHardwareWalletLoading,
   } = useTransport();
-  //TODO: refactor with a reducer
   const [fileName, setFileName] = useState("");
   const [ppk, setPpk] = useState("");
   const [privateKey, setPrivateKey] = useState("");
