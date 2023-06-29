@@ -266,6 +266,7 @@ export function TransportProvider({ children }) {
         type: STDX_MSG_TYPES.stake8,
         value: {
           chains,
+          output_address: outputAddress,
           public_key: {
             type: PUBLIC_KEY_TYPE,
             value: operatorPublicKey,
@@ -276,7 +277,6 @@ export function TransportProvider({ children }) {
             serviceURL.port ? serviceURL.port : "443"
           }`,
           value: amount,
-          output_address: outputAddress,
         },
       },
     };
