@@ -247,12 +247,10 @@ export function TransportProvider({ children }) {
     amount,
     outputAddress
   ) => {
-    console.log("TRANSPORT CONTEXT");
     setIsHardwareWalletLoading(true);
     const entropy = Number(
       Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
     ).toString();
-    console.log("entropy: ", entropy);
 
     const tx = {
       chain_id: Config.CHAIN_ID,
@@ -283,18 +281,13 @@ export function TransportProvider({ children }) {
       },
     };
 
-    console.log("tx: ", tx);
-
     try {
       const stringifiedTx = JSON.stringify(tx);
-      console.log("string tx: ", stringifiedTx);
       const hexTx = Buffer.from(stringifiedTx, "utf-8").toString("hex");
-      console.log("hexTx: ", hexTx);
       const sig = await pocketApp.signTransaction(
         LEDGER_CONFIG.derivationPath,
         hexTx
       );
-      console.log("sig: ", sig);
       const ledgerTxResponse = await dataSource.stakeNodeFromLedger(
         publicKey,
         sig.signature,
@@ -302,7 +295,6 @@ export function TransportProvider({ children }) {
         tx
       );
       if (typeGuard(ledgerTxResponse, Error)) {
-        console.log("TRANSPORT LEDGER TX RES ERROR: ", ledgerTxResponse);
         setIsHardwareWalletLoading(false);
         return ledgerTxResponse;
       }
