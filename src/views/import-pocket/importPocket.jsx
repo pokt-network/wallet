@@ -16,21 +16,21 @@ import {
 } from "../../utils/validations";
 import { useUser } from "../../context/userContext";
 // import LedgerIcon from "../../utils/images/ledger-white.png";
-import useTransport from "../../hooks/useTransport";
+// import useTransport from "../../hooks/useTransport";
 import TroubleConnectingModal from "../../components/modals/troubleConnecting/troubleConnecting";
-import { ROUTES } from "../../utils/routes";
+// import { ROUTES } from "../../utils/routes";
 
 const dataSource = getDataSource();
 
 export default function ImportPocket() {
   const history = useHistory();
   const { updateUser } = useUser();
-  const {
-    onSelectDevice,
-    setPocketApp,
-    // isHardwareWalletLoading,
-    setIsHardwareWalletLoading,
-  } = useTransport();
+  // const {
+  //   onSelectDevice,
+  //   setPocketApp,
+  //   isHardwareWalletLoading,
+  //   setIsHardwareWalletLoading,
+  // } = useTransport();
   const [fileName, setFileName] = useState("");
   const [ppk, setPpk] = useState("");
   const [privateKey, setPrivateKey] = useState("");
@@ -42,7 +42,7 @@ export default function ImportPocket() {
   const [filePassphrase, setFilePassphrase] = useState("");
   const [privKeyPassphrase, setPrivKeyPassphrase] = useState("");
   const [currentImportOption, setCurrentImportOption] = useState(undefined);
-  const [ledgerError, setLedgerError] = useState("");
+  // const [ledgerError, setLedgerError] = useState("");
   const [troubleConnectingOpen, setTroubleConnectingOpen] = useState(false);
 
   const parseFileInputContent = async (input) => {
