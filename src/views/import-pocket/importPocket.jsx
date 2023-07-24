@@ -15,7 +15,7 @@ import {
   VALIDATION_ERROR_TYPES,
 } from "../../utils/validations";
 import { useUser } from "../../context/userContext";
-import LedgerIcon from "../../utils/images/ledger-white.png";
+// import LedgerIcon from "../../utils/images/ledger-white.png";
 import useTransport from "../../hooks/useTransport";
 import TroubleConnectingModal from "../../components/modals/troubleConnecting/troubleConnecting";
 import { ROUTES } from "../../utils/routes";
@@ -28,7 +28,7 @@ export default function ImportPocket() {
   const {
     onSelectDevice,
     setPocketApp,
-    isHardwareWalletLoading,
+    // isHardwareWalletLoading,
     setIsHardwareWalletLoading,
   } = useTransport();
   const [fileName, setFileName] = useState("");
@@ -183,26 +183,26 @@ export default function ImportPocket() {
     }
   }, [history, privKeyPassphrase, privateKey, updateUser]);
 
-  const importAccountFromLedger = useCallback(async () => {
-    setIsHardwareWalletLoading(true);
-    setLedgerError("");
-    const [success, app] = await onSelectDevice();
-    if (!success) {
-      setLedgerError(`${app.name}: ${app.message}`);
-      setIsHardwareWalletLoading(false);
-      setTroubleConnectingOpen(true);
-      return;
-    }
+  // const importAccountFromLedger = useCallback(async () => {
+  //   setIsHardwareWalletLoading(true);
+  //   setLedgerError("");
+  //   const [success, app] = await onSelectDevice();
+  //   if (!success) {
+  //     setLedgerError(`${app.name}: ${app.message}`);
+  //     setIsHardwareWalletLoading(false);
+  //     setTroubleConnectingOpen(true);
+  //     return;
+  //   }
 
-    setPocketApp(app);
-    setLedgerError("");
-    setIsHardwareWalletLoading(false);
-    setTroubleConnectingOpen(false);
-    history.push({
-      pathname: ROUTES.selectAccount,
-      data: true,
-    });
-  }, [onSelectDevice, setPocketApp, setIsHardwareWalletLoading, history]);
+  //   setPocketApp(app);
+  //   setLedgerError("");
+  //   setIsHardwareWalletLoading(false);
+  //   setTroubleConnectingOpen(false);
+  //   history.push({
+  //     pathname: ROUTES.selectAccount,
+  //     data: true,
+  //   });
+  // }, [onSelectDevice, setPocketApp, setIsHardwareWalletLoading, history]);
 
   const passPhraseChange = useCallback((type, { target }) => {
     const { value } = target;
@@ -347,7 +347,7 @@ export default function ImportPocket() {
             </Button>
           </Accordion>
 
-          <Accordion
+          {/* <Accordion
             text={
               <>
                 {" "}
@@ -381,7 +381,7 @@ export default function ImportPocket() {
                 {isHardwareWalletLoading ? "Verifying" : "Connect"}
               </Button>
             </div>
-          </Accordion>
+          </Accordion> */}
 
           <p className="create-link">
             Don't have a wallet? <Link to="/create">Create Wallet</Link>{" "}
