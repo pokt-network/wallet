@@ -11,18 +11,31 @@ export function createQueryProvider() {
 
 // Initializes a signer from a PPK
 export async function createPPKSigner(password, ppk) {
-  const signer = await KeyManager.fromPPK({
-    password: password,
-    ppk: ppk,
-  });
-  return signer;
+  try {
+    const signer = await KeyManager.fromPPK({
+      password: password,
+      ppk: ppk,
+    });
+
+    return signer;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
 }
 
 // Initializes a transaction builder to send transactions over the network
 export function createTransactionBuilder(provider, signer) {
-  return new TransactionBuilder({
-    chainID: import.meta.env.VITE_CHAIN_ID,
-    provider: provider,
-    signer: signer,
-  });
+  try {
+    const tb = new TransactionBuilder({
+      chainID: import.meta.env.VITE_CHAIN_ID,
+      provider: provider,
+      signer: signer,
+    });
+
+    return tb;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
 }

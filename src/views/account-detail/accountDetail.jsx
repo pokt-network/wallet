@@ -19,6 +19,9 @@ import ExportKeyfile from "../../components/modals/export-keyfile/exportKeyfile"
 import { STDX_MSG_TYPES } from "../../utils/validations";
 import { UPOKT } from "../../utils/utils";
 import { useLoader } from "../../context/loaderContext";
+import { LEDGER_CONFIG } from "../../utils/hardwareWallet";
+import IconWithLabel from "../../components/iconWithLabel/iconWithLabel";
+import VerifyAddressModal from "../../components/modals/verifyAddress/verifyAddress";
 
 const dataSource = getDataSource();
 
@@ -46,6 +49,8 @@ export default function AccountDetail() {
   const [priceProvider, setPriceProvider] = useState("");
   const [priceProviderLink, setPriceProviderLink] = useState("");
   const [isExportKeyfileVisible, setIsExportKeyfileVisible] = useState(false);
+  const [verifyAddressError, setVerifyAddressError] = useState("");
+  const [verifyAddressModalOpen, setVerifyAddressModalOpen] = useState(false);
 
   const increaseMaxTxListCount = useCallback(() => {
     if (maxTxListCount < Number(Config.MAX_TRANSACTION_LIST_COUNT)) {
@@ -282,6 +287,21 @@ export default function AccountDetail() {
     ]
   );
 
+  const verifyAddress = async () => {
+    setVerifyAddressModalOpen(true);
+
+    try {
+      // returns pk and address
+      await pocketApp.verifyAddress(LEDGER_CONFIG.derivationPath);
+      setVerifyAddressError("");
+      setVerifyAddressModalOpen(false);
+    } catch (e) {
+      console.error(e);
+      setVerifyAddressError(typeof e === "object" ? e.message : e);
+      setVerifyAddressModalOpen(false);
+    }
+  };
+
   useEffect(() => {
     updateLoader(true);
     if (addressHex && publicKeyHex && (ppk || pocketApp?.transport)) {
@@ -419,22 +439,37 @@ export default function AccountDetail() {
 
         <CopyButton text={publicKeyHex} width={488} />
 
-        <section className="actions">
-          {!isUsingHardwareWallet && (
-            <Button
-              className="reveal-private-key"
-              onClick={() => setIsPkRevealModalVisible(true)}
-            >
-              Reveal Private Key
-            </Button>
-          )}
+        <section
+          className={isUsingHardwareWallet ? "ledger-actions" : "actions"}
+        >
+          {isUsingHardwareWallet ? (
+            <div>
+              <Button onClick={() => verifyAddress()}>
+                Verify Ledger Address
+              </Button>
+              <IconWithLabel
+                message={verifyAddressError}
+                show={verifyAddressError}
+                type="error"
+              />
+            </div>
+          ) : (
+            <>
+              <Button
+                className="reveal-private-key"
+                onClick={() => setIsPkRevealModalVisible(true)}
+              >
+                Reveal Private Key
+              </Button>
 
-          <Button
-            className="export-keyfile"
-            onClick={() => setIsExportKeyfileVisible(true)}
-          >
-            Export Keyfile
-          </Button>
+              <Button
+                className="export-keyfile"
+                onClick={() => setIsExportKeyfileVisible(true)}
+              >
+                Export Keyfile
+              </Button>
+            </>
+          )}
         </section>
 
         <TransactionsTable txList={txList} />
@@ -468,6 +503,8 @@ export default function AccountDetail() {
           nodeAddress={addressHex}
         />
       </AccountContent>
+
+      <VerifyAddressModal open={verifyAddressModalOpen} address={addressHex} />
     </Layout>
   );
 }
