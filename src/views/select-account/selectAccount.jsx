@@ -28,7 +28,7 @@ async function getAccounts(idx, pocketApp) {
       const { publicKey: ledgerPublicKey } = await pocketApp.getPublicKey(
         LEDGER_CONFIG.generateDerivationPath(i)
       );
-      publicKey = ledgerPublicKey;
+      publicKey = Buffer.from(ledgerPublicKey, "hex").toString("hex");
     } catch (error) {
       console.error(`${error}`);
       throw error;

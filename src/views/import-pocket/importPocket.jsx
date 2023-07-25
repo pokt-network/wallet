@@ -15,7 +15,7 @@ import {
   VALIDATION_ERROR_TYPES,
 } from "../../utils/validations";
 import { useUser } from "../../context/userContext";
-// import LedgerIcon from "../../utils/images/ledger.png";
+// import LedgerIcon from "../../utils/images/ledger-white.png";
 // import useTransport from "../../hooks/useTransport";
 import TroubleConnectingModal from "../../components/modals/troubleConnecting/troubleConnecting";
 // import { ROUTES } from "../../utils/routes";
@@ -31,7 +31,6 @@ export default function ImportPocket() {
   //   isHardwareWalletLoading,
   //   setIsHardwareWalletLoading,
   // } = useTransport();
-  //TODO: refactor with a reducer
   const [fileName, setFileName] = useState("");
   const [ppk, setPpk] = useState("");
   const [privateKey, setPrivateKey] = useState("");
