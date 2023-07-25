@@ -47,23 +47,6 @@ jobs:
        VITE_APP_HTTP_TIMEOUT: 0
        VITE_APP_HTTP_HEADERS: '{"Content-Type": "application/json"}'
        VITE_APP_USE_LEGACY_CODEC: 'false'
-    - name: Deploy to S3
-      uses: jakejarvis/s3-sync-action@master
-      with:
-        args: --acl public-read --delete
-      env:
-        AWS_S3_BUCKET: ${{ secrets.AWS_PRODUCTION_BUCKET_NAME }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-        SOURCE_DIR: "build"
-    - name: Clear CloudFront Cache
-      uses: awact/cloudfront-action@master
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-        DISTRIBUTION_ID: ${{ secrets.AWS_PRODUCTION_DISTRIBUTION_ID }}
     - name: Deploy to GCS
       uses: actions-hub/gcloud@master
       env:
