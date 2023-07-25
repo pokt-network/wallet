@@ -21,32 +21,32 @@ jobs:
     - name: Production build
       run: npm run build
       env:
-       VITE_APP_CLIENT_PASSPHRASE: ${{ secrets.WALLET_PRODUCTION_CLIENT_PASSPHRASE }}
-       VITE_APP_CLIENT_PUBLIC_KEY: ${{ secrets.WALLET_PRODUCTION_CLIENT_PUBLIC_KEY }}
-       VITE_APP_CLIENT_PRIVATE_KEY: ${{ secrets.WALLET_PRODUCTION_CLIENT_PRIVATE_KEY }}
-       VITE_APP_WALLET_APP_PUBLIC_KEY: ${{ secrets.WALLET_PRODUCTION_APP_PUBLIC_KEY }}
-       VITE_APP_WALLET_APP_AAT_SIGNATURE: ${{ secrets.WALLET_PRODUCTION_APP_AAT_SIGNATURE }}
-       VITE_APP_POKT_USD_VALUE: ${{ secrets.POKT_USD_MARKET_PRICE }}
-       VITE_APP_SECURE_LS_ENCRYPTION_SECRET: ${{ secrets.SECURE_LS_ENCRYPTION_SECRET }}
-       VITE_APP_SECURE_LS_ENCODING_TYPE: "aes"
-       VITE_APP_SECURE_LS_IS_COMPRESSION: true
-       VITE_APP_AAT_VERSION: "0.0.1"
-       VITE_APP_MAX_DISPATCHERS: 0
-       VITE_APP_PROVIDER_TYPE: "http"
-       VITE_APP_BLOCK_EXPLORER_BASE_URL: "https://explorer.pokt.network"
-       VITE_APP_DASHBOARD_BASE_URL: "https://dashboard.pokt.network"
-       VITE_APP_BUY_POKT_BASE_URL: "https://forum.pokt.network/t/secondary-markets-for-pokt/629"
-       VITE_APP_CHAIN: "0001"
-       VITE_APP_CHAIN_ID: "mainnet"
-       VITE_APP_BLOCK_TIME: "900000"
-       VITE_APP_MAX_TRANSACTION_LIST_COUNT: "5000"
-       VITE_APP_MIN_TRANSACTION_LIST_COUNT: "200"
-       VITE_APP_TX_FEE: "10000"
-       VITE_APP_SESSION_LENGTH: "30"
-       VITE_APP_GATEWAY_BASE_URL: "https://gateway.pokt.network/v1/lb/60a2ac11b1747c6552385c61"
-       VITE_APP_HTTP_TIMEOUT: 0
-       VITE_APP_HTTP_HEADERS: '{"Content-Type": "application/json"}'
-       VITE_APP_USE_LEGACY_CODEC: 'false'
+       VITE_CLIENT_PASSPHRASE: ${{ secrets.WALLET_PRODUCTION_CLIENT_PASSPHRASE }}
+       VITE_CLIENT_PUBLIC_KEY: ${{ secrets.WALLET_PRODUCTION_CLIENT_PUBLIC_KEY }}
+       VITE_CLIENT_PRIVATE_KEY: ${{ secrets.WALLET_PRODUCTION_CLIENT_PRIVATE_KEY }}
+       VITE_WALLET_APP_PUBLIC_KEY: ${{ secrets.WALLET_PRODUCTION_APP_PUBLIC_KEY }}
+       VITE_WALLET_APP_AAT_SIGNATURE: ${{ secrets.WALLET_PRODUCTION_APP_AAT_SIGNATURE }}
+       VITE_POKT_USD_VALUE: ${{ secrets.POKT_USD_MARKET_PRICE }}
+       VITE_SECURE_LS_ENCRYPTION_SECRET: ${{ secrets.SECURE_LS_ENCRYPTION_SECRET }}
+       VITE_SECURE_LS_ENCODING_TYPE: "aes"
+       VITE_SECURE_LS_IS_COMPRESSION: true
+       VITE_AAT_VERSION: "0.0.1"
+       VITE_MAX_DISPATCHERS: 0
+       VITE_PROVIDER_TYPE: "http"
+       VITE_BLOCK_EXPLORER_BASE_URL: "https://explorer.pokt.network"
+       VITE_DASHBOARD_BASE_URL: "https://dashboard.pokt.network"
+       VITE_BUY_POKT_BASE_URL: "https://forum.pokt.network/t/secondary-markets-for-pokt/629"
+       VITE_CHAIN: "0001"
+       VITE_CHAIN_ID: "mainnet"
+       VITE_BLOCK_TIME: "900000"
+       VITE_MAX_TRANSACTION_LIST_COUNT: "5000"
+       VITE_MIN_TRANSACTION_LIST_COUNT: "200"
+       VITE_TX_FEE: "10000"
+       VITE_SESSION_LENGTH: "30"
+       VITE_GATEWAY_BASE_URL: "https://gateway.pokt.network/v1/lb/60a2ac11b1747c6552385c61"
+       VITE_HTTP_TIMEOUT: 0
+       VITE_HTTP_HEADERS: '{"Content-Type": "application/json"}'
+       VITE_USE_LEGACY_CODEC: 'false'
     - name: Deploy to GCS
       uses: actions-hub/gcloud@master
       env:
