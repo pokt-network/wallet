@@ -242,7 +242,7 @@ export function TransportProvider({ children }) {
 
   const stakeNode = async (
     chains,
-    publicKey,
+    operatorPublicKey,
     serviceURL,
     amount,
     outputAddress
@@ -269,7 +269,7 @@ export function TransportProvider({ children }) {
           output_address: outputAddress,
           public_key: {
             type: PUBLIC_KEY_TYPE,
-            value: publicKey,
+            value: operatorPublicKey,
           },
           service_url: `${
             serviceURL.protocol ? serviceURL.protocol : "https:"

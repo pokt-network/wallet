@@ -97,7 +97,7 @@ export default function Footer() {
                     <a href="https://docs.pokt.network/">Dev Portal</a>
                   </li>
                   <li className="menu-item">
-                    <a href="https://pokt.network/site-terms-of-use/">
+                    <a href="https://www.pokt.network/terms-of-use/">
                       Terms Of Use
                     </a>
                   </li>
