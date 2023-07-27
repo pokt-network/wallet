@@ -43,7 +43,7 @@ jobs:
        VITE_MIN_TRANSACTION_LIST_COUNT: "200"
        VITE_TX_FEE: "10000"
        VITE_SESSION_LENGTH: "30"
-       VITE_GATEWAY_BASE_URL: "http://gateway.pokt.network/v1/lb/60a2ac11b1747c6552385c61"
+       VITE_GATEWAY_BASE_URL: "https://gateway.pokt.network/v1/lb/60a2ac11b1747c6552385c61"
        VITE_HTTP_TIMEOUT: 0
        VITE_HTTP_HEADERS: '{"Content-Type": "application/json"}'
        VITE_USE_LEGACY_CODEC: 'false'
