@@ -1,11 +1,12 @@
 import { IsomorphicProvider } from "@pokt-foundation/pocketjs-isomorphic-provider";
 import { KeyManager } from "@pokt-foundation/pocketjs-signer";
 import { TransactionBuilder } from "@pokt-foundation/pocketjs-transaction-builder";
+import { Config } from "../config/config";
 
 // Initializes and returns a provider that cannot be used for relays only for querying the network
 export function createQueryProvider() {
   return new IsomorphicProvider({
-    rpcUrl: import.meta.env.VITE_GATEWAY_BASE_URL,
+    rpcUrl: Config.GATEWAY_BASE_URL,
   });
 }
 
