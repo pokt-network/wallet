@@ -3,6 +3,7 @@ name: Testnet Deployment
 on:
   push:
     branches: [ staging ]
+  workflow_dispatch:
 
 jobs:
   build:
