@@ -47,7 +47,10 @@ export default function Staking() {
       setError("Error while fetching chains data.");
       return;
     }
-    const parsedSupportedChains = typeof supportedChains === 'string'? JSON.parse(supportedChains) : supportedChains;
+    const parsedSupportedChains =
+      typeof supportedChains === "string"
+        ? JSON.parse(supportedChains)
+        : supportedChains;
     setError("");
     setSupportedChains(parsedSupportedChains);
     setChainsToRender(parsedSupportedChains);
@@ -139,7 +142,9 @@ export default function Staking() {
           <p className="description">
             The Service URI is the URL that the node is advertised as available
             for service at. If Staking Non-Custodially, this value needs to be
-            provided by your operator.
+            provided by your operator. NOTE: The Ledger Nano S model service URL
+            is limited to 64 bytes. The Ledger Nano S Plus and Nano X service
+            URLs have a 256 byte limit.
           </p>
           <TextInput
             placeholder="Service URI"
@@ -153,7 +158,9 @@ export default function Staking() {
           <p className="description">
             These are the relay chains that the operator will be providing
             service for. If Staking Non-Custodially, these values need to be
-            provided by your operator.
+            provided by your operator. NOTE: The Ledger Nano S model supports
+            non-custodial staking for up to 4 chains. The Ledger Nano S Plus and
+            Nano X models suport non-custodial staking for up to 50 chains.
           </p>
           <div className="relay-chains-container">
             <TextInput
