@@ -149,7 +149,7 @@ export default function Send() {
       try {
         txResponse = await transactionBuilder.submit({
           txMsg: sendMsg,
-          memo: "Pocket Wallet",
+          memo: memoText ? memoText : "Pocket wallet",
         });
 
         updateUser(addressHex, publicKeyHex, ppk);
