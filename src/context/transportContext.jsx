@@ -105,8 +105,8 @@ export function TransportProvider({ children }) {
         type,
         value: {
           amount: amount.toString(),
-          from_address: userAddress,
-          to_address: toAddress,
+          from_address: userAddress.toLowerCase(),
+          to_address: toAddress.toString().toLowerCase(),
         },
       },
     };
