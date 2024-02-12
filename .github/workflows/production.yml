@@ -2,7 +2,7 @@ name: Production Deployment
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
@@ -10,56 +10,41 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 16.18.0 ]
+        node-version: [16.18.0]
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: NPM install
-      run: npm install
-    - name: Production build
-      run: npm run build
-      env:
-       VITE_CLIENT_PASSPHRASE: ${{ secrets.WALLET_PRODUCTION_CLIENT_PASSPHRASE }}
-       VITE_CLIENT_PUBLIC_KEY: ${{ secrets.WALLET_PRODUCTION_CLIENT_PUBLIC_KEY }}
-       VITE_CLIENT_PRIVATE_KEY: ${{ secrets.WALLET_PRODUCTION_CLIENT_PRIVATE_KEY }}
-       VITE_WALLET_APP_PUBLIC_KEY: ${{ secrets.WALLET_PRODUCTION_APP_PUBLIC_KEY }}
-       VITE_WALLET_APP_AAT_SIGNATURE: ${{ secrets.WALLET_PRODUCTION_APP_AAT_SIGNATURE }}
-       VITE_POKT_USD_VALUE: ${{ secrets.POKT_USD_MARKET_PRICE }}
-       VITE_SECURE_LS_ENCRYPTION_SECRET: ${{ secrets.SECURE_LS_ENCRYPTION_SECRET }}
-       VITE_SECURE_LS_ENCODING_TYPE: "aes"
-       VITE_SECURE_LS_IS_COMPRESSION: true
-       VITE_AAT_VERSION: "0.0.1"
-       VITE_MAX_DISPATCHERS: 0
-       VITE_PROVIDER_TYPE: "http"
-       VITE_BLOCK_EXPLORER_BASE_URL: "https://explorer.pokt.network"
-       VITE_DASHBOARD_BASE_URL: "https://dashboard.pokt.network"
-       VITE_BUY_POKT_BASE_URL: "https://forum.pokt.network/t/secondary-markets-for-pokt/629"
-       VITE_CHAIN: "0001"
-       VITE_CHAIN_ID: "mainnet"
-       VITE_BLOCK_TIME: "900000"
-       VITE_MAX_TRANSACTION_LIST_COUNT: "5000"
-       VITE_MIN_TRANSACTION_LIST_COUNT: "200"
-       VITE_TX_FEE: "10000"
-       VITE_SESSION_LENGTH: "30"
-       VITE_GATEWAY_BASE_URL: "https://gateway.pokt.network/v1/lb/60a2ac11b1747c6552385c61"
-       VITE_HTTP_TIMEOUT: 0
-       VITE_HTTP_HEADERS: '{"Content-Type": "application/json"}'
-       VITE_USE_LEGACY_CODEC: 'false'
-    - name: Deploy to GCS
-      uses: actions-hub/gcloud@master
-      env:
-        PROJECT_ID: portal-gb-prod
-        APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
-      with:
-        args: -m rsync -r build gs://pocket-wallet-prod-frontend
-        cli: gsutil
-    - name: Clear Cloud CDN Cache
-      uses: actions-hub/gcloud@master
-      env:
-        PROJECT_ID: portal-gb-prod
-        APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
-      with:
-        args: compute url-maps invalidate-cdn-cache wallet-prod-url-map --path \"/*\"
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: NPM install
+        run: npm install
+      - name: Production build
+        run: npm run build
+        env:
+          VITE_CHAIN_ID: "mainnet"
+          VITE_GATEWAY_BASE_URL: "https://mainnet.rpc.grove.city/v1/60a2ac11b1747c6552385c61"
+          VITE_TX_FEE: "10000"
+          VITE_MAX_TRANSACTION_LIST_COUNT: "5000"
+          VITE_MIN_TRANSACTION_LIST_COUNT: "200"
+          VITE_BLOCK_EXPLORER_BASE_URL: "https://poktscan.com"
+          VITE_BUY_POKT_BASE_URL: "https://forum.pokt.network/t/secondary-markets-for-pokt/629"
+          VITE_POKT_USD_VALUE: ${{ secrets.POKT_USD_MARKET_PRICE }}
+          VITE_HTTP_TIMEOUT: 0
+          VITE_HTTP_HEADERS: '{"Content-Type": "application/json"}'
+          VITE_USE_LEGACY_CODEC: "false"
+      - name: Deploy to GCS
+        uses: actions-hub/gcloud@master
+        env:
+          PROJECT_ID: portal-gb-prod
+          APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+        with:
+          args: -m rsync -r build gs://pocket-wallet-prod-frontend
+          cli: gsutil
+      - name: Clear Cloud CDN Cache
+        uses: actions-hub/gcloud@master
+        env:
+          PROJECT_ID: portal-gb-prod
+          APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+        with:
+          args: compute url-maps invalidate-cdn-cache wallet-prod-url-map --path \"/*\"
