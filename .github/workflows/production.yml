@@ -27,7 +27,7 @@ jobs:
           VITE_TX_FEE: "10000"
           VITE_MAX_TRANSACTION_LIST_COUNT: "5000"
           VITE_MIN_TRANSACTION_LIST_COUNT: "200"
-          VITE_BLOCK_EXPLORER_BASE_URL: "https://explorer.pokt.network"
+          VITE_BLOCK_EXPLORER_BASE_URL: "https://poktscan.com"
           VITE_BUY_POKT_BASE_URL: "https://forum.pokt.network/t/secondary-markets-for-pokt/629"
           VITE_POKT_USD_VALUE: ${{ secrets.POKT_USD_MARKET_PRICE }}
           VITE_HTTP_TIMEOUT: 0
