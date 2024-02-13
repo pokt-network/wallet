@@ -3,7 +3,9 @@ const validators = {
     const isEmpty = value === "";
 
     if (isEmpty) {
-      throw new Error("Required configuration environment variable GATEWAY_BASE_URL, received none");
+      throw new Error(
+        "Required configuration environment variable GATEWAY_BASE_URL, received none"
+      );
     }
 
     const isLocalhostUrl = value.includes("localhost");
@@ -12,11 +14,15 @@ const validators = {
       return value;
     }
 
-    const isOfficialDomainUrl = value.includes("gateway.pokt.network");
-    const hasChainIdSubdomain = !value.includes("http://gateway.pokt") && !value.includes("https://gateway.pokt");
+    const isOfficialDomainUrl = value.includes("rpc.grove.city");
+    const hasChainIdSubdomain =
+      !value.includes("http://rpc/grove") &&
+      !value.includes("https://rpc.grove");
 
     if (isOfficialDomainUrl && !hasChainIdSubdomain) {
-      console.warn("Expecting configuration environment variable GATEWAY_BASE_URL to respect the following format: `https://{CHAIN_ID}.{GATEWAY_DOMAIN}`, but received invalid URL");
+      console.warn(
+        "Expecting configuration environment variable GATEWAY_BASE_URL to respect the following format: `https://{CHAIN_ID}.{GATEWAY_DOMAIN}`, but received invalid URL"
+      );
       console.warn("Constructing proper URL...");
 
       const gatewayDomainUrl = value.split("://")[1];
@@ -34,50 +40,33 @@ const validators = {
     const isEmpty = value === "";
 
     if (isEmpty) {
-      throw new Error("Required configuration environment variable CHAIN_ID, received none");
+      throw new Error(
+        "Required configuration environment variable CHAIN_ID, received none"
+      );
     }
 
     return value;
-  }
-}
-
+  },
+};
 
 const configEnvVars = [
-  'VITE_CLIENT_PASSPHRASE',
-  'VITE_CLIENT_PUBLIC_KEY',
-  'VITE_CLIENT_PRIVATE_KEY',
-  'VITE_WALLET_APP_PUBLIC_KEY',
-  'VITE_WALLET_APP_AAT_SIGNATURE',
-  'VITE_POKT_USD_VALUE',
-  'VITE_SECURE_LS_ENCRYPTION_SECRET',
-  'VITE_SECURE_LS_ENCODING_TYPE',
-  'VITE_SECURE_LS_IS_COMPRESSION',
-  'VITE_DISPATCHERS',
-  'VITE_HTTP_PROVIDER',
-  'VITE_AAT_VERSION',
-  'VITE_MAX_DISPATCHERS',
-  'VITE_PROVIDER_TYPE',
-  'VITE_BLOCK_EXPLORER_BASE_URL',
-  'VITE_DASHBOARD_BASE_URL',
-  'VITE_BUY_POKT_BASE_URL',
-  'VITE_CHAIN',
-  'VITE_CHAIN_ID',
-  'VITE_BLOCK_TIME',
-  'VITE_MAX_TRANSACTION_LIST_COUNT',
-  'VITE_TX_FEE',
-  'VITE_SESSION_LENGTH',
-  'VITE_GATEWAY_BASE_URL',
-  'VITE_HTTP_TIMEOUT',
-  'VITE_HTTP_HEADERS',
-  'VITE_USE_LEGACY_CODEC'
-]
+  "VITE_CHAIN_ID",
+  "VITE_GATEWAY_BASE_URL",
+  "VITE_TX_FEE",
+  "VITE_MAX_TRANSACTION_LIST_COUNT",
+  "VITE_MIN_TRANSACTION_LIST_COUNT",
+  "VITE_BLOCK_EXPLORER_BASE_URL",
+  "VITE_BUY_POKT_BASE_URL",
+  "VITE_POKT_USD_VALUE",
+  "VITE_HTTP_TIMEOUT",
+  "VITE_HTTP_HEADERS",
+  "VITE_USE_LEGACY_CODEC",
+];
 
-const loadEnvFromList = (list) => list.reduce(
-  (cfg, k) => {
-     return { ...cfg, [k.replace(/VITE_/g, '')]: import.meta.env[k] }
-  },
-  {},
-)
+const loadEnvFromList = (list) =>
+  list.reduce((cfg, k) => {
+    return { ...cfg, [k.replace(/VITE_/g, "")]: import.meta.env[k] };
+  }, {});
 
 /**
  * For now the config is literraly = env variables
@@ -87,17 +76,15 @@ const loadConfigFromEnv = () => {
   const configObj = loadEnvFromList(configEnvVars);
 
   // order of values matters!
-  const validatedEnvVars = ['CHAIN_ID', 'GATEWAY_BASE_URL']
+  const validatedEnvVars = ["CHAIN_ID", "GATEWAY_BASE_URL"];
 
-  validatedEnvVars.forEach(
-    (envVarKey) => {
-      console.log({ envVarKey, envVarVal: configObj[envVarKey] })
-      const v = validators[envVarKey](configObj[envVarKey], configObj); // as long as it does not through we are good
-      configObj[envVarKey] = v;
-    }
-  );
+  validatedEnvVars.forEach((envVarKey) => {
+    console.log({ envVarKey, envVarVal: configObj[envVarKey] });
+    const v = validators[envVarKey](configObj[envVarKey], configObj); // as long as it does not through we are good
+    configObj[envVarKey] = v;
+  });
 
   return configObj;
-}
+};
 
 export const Config = loadConfigFromEnv();
