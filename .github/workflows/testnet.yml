@@ -23,7 +23,7 @@ jobs:
         run: npm run build
         env:
           VITE_CHAIN_ID: "testnet"
-          VITE_GATEWAY_BASE_URL: "https://testnet.gateway-testnet.pokt.network/v1/lb/6214f2f34827d34f48d35f6a"
+          VITE_GATEWAY_BASE_URL: "https://rpc.testnet.pokt.network/lb/6d6f727365"
           VITE_TX_FEE: "10000"
           VITE_MAX_TRANSACTION_LIST_COUNT: "5000"
           VITE_MIN_TRANSACTION_LIST_COUNT: "200"
