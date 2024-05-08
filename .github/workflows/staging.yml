@@ -23,7 +23,7 @@ jobs:
         run: npm run build
         env:
           VITE_CHAIN_ID: "mainnet"
-          VITE_GATEWAY_BASE_URL: "https://mainnet.rpc.grove.city/v1/60a2ac11b1747c6552385c61"
+          VITE_GATEWAY_BASE_URL: "https://pokt-archival.rpc.grove.city/v1/440ae1fc"
           VITE_TX_FEE: "10000"
           VITE_MAX_TRANSACTION_LIST_COUNT: "5000"
           VITE_MIN_TRANSACTION_LIST_COUNT: "200"
